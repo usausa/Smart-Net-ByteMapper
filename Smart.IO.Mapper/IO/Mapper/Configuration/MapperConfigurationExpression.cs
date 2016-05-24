@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Text;
 
-    using Smart.IO.Mapper.Formatters;
+    using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Mappers;
 
     /// <summary>
@@ -22,7 +22,7 @@
 
         private readonly Dictionary<Type, bool> nullIfEmptyOfType = new Dictionary<Type, bool>();
 
-        private readonly Dictionary<Type, IFormatter> formatterOfType = new Dictionary<Type, IFormatter>();
+        private readonly Dictionary<Type, IValueConverter> formatterOfType = new Dictionary<Type, IValueConverter>();
 
         private Padding defaultPadding = Padding.Right;
 
@@ -32,7 +32,7 @@
 
         private bool defaultNullIfEmpty = true;
 
-        private IFormatter defaultFormatter = new DefaultFormatter();
+        private IValueConverter defaultConverter = new DefaultConverter();
 
         private byte defaultFiller;
 
@@ -96,9 +96,9 @@
             return this;
         }
 
-        public IMapperConfigurationExpresion DefaultFormatter(IFormatter value)
+        public IMapperConfigurationExpresion DefaultConverter(IValueConverter value)
         {
-            defaultFormatter = value;
+            defaultConverter = value;
             return this;
         }
 
@@ -133,7 +133,7 @@
             return this;
         }
 
-        public IMapperConfigurationExpresion DefaultFormatter(Type type, IFormatter value)
+        public IMapperConfigurationExpresion DefaultConverter(Type type, IValueConverter value)
         {
             formatterOfType[type] = value;
             return this;
@@ -163,10 +163,10 @@
             return nullIfEmptyOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullIfEmpty;
         }
 
-        IFormatter IDefaultSettings.GetFormatter(Type type)
+        IValueConverter IDefaultSettings.GetConverter(Type type)
         {
-            IFormatter value;
-            return formatterOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultFormatter;
+            IValueConverter value;
+            return formatterOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultConverter;
         }
 
         public ITypeExpression<T> CreateMap<T>(int length)

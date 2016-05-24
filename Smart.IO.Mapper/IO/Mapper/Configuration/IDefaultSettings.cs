@@ -40,6 +40,6 @@
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        IFormatter GetFormatter(Type type);
+        IValueConverter GetConverter(Type type);
     }
 }

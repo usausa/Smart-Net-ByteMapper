@@ -46,6 +46,6 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        IMemberConfigurationExpression Formatter(IFormatter value);
+        IMemberConfigurationExpression Converter(IValueConverter value);
     }
 }

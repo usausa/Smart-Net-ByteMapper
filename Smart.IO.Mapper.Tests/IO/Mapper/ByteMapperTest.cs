@@ -125,5 +125,59 @@
 
             Assert.AreEqual(entity.Value, entity2.Value);
         }
+
+        // ------------------------------------------------------------
+        // ToByte
+        // ------------------------------------------------------------
+
+        private class FormatEntity
+        {
+            public float Value { get; set; }
+        }
+
+        private class FormatProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding)
+                    .DefaultPadding(0x20)
+                    .DefaultPadding(typeof(float), Padding.Left);
+
+                config.CreateMap<FormatEntity>(5)
+                    .ForMember(_ => _.Value, 5, c => c.Format("F2"));
+            }
+        }
+
+        [TestMethod]
+        public void TestFormat()
+        {
+            var builder = new MapperConfigBuilder(new FormatProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var entity = new FormatEntity { Value = 1.23f };
+            var bytes = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(SjisEncoding.GetBytes(" 1.23"), bytes);
+
+            var entity2 = mapper.FromByte<FormatEntity>(bytes);
+
+            Assert.AreEqual(entity.Value, entity2.Value);
+        }
+
+        // ------------------------------------------------------------
+        // DateTime
+        // ------------------------------------------------------------
+
+        // TODO Add DateTime support ParseExact
+
+        // ------------------------------------------------------------
+        // Enum
+        // ------------------------------------------------------------
+
+        // TODO Add Enum support
+
+        // TODO Add NumberStyle parse support
     }
 }

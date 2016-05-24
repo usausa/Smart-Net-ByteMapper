@@ -77,7 +77,7 @@
                 PaddingByte = defaultSettings.GetPaddingByte(memberType),
                 Trim = defaultSettings.GetTrim(memberType),
                 NullIfEmpty = defaultSettings.GetNullIfEmpty(memberType),
-                Formatter = defaultSettings.GetFormatter(memberType),
+                Converter = defaultSettings.GetConverter(memberType),
                 Accessor = accessor
             };
 

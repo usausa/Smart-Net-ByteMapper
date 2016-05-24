@@ -80,9 +80,9 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        public IMemberConfigurationExpression Formatter(IFormatter value)
+        public IMemberConfigurationExpression Converter(IValueConverter value)
         {
-            memberMapper.Formatter = value;
+            memberMapper.Converter = value;
             return this;
         }
     }

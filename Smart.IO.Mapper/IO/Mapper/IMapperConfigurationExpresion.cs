@@ -70,7 +70,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        IMapperConfigurationExpresion DefaultFormatter(IFormatter value);
+        IMapperConfigurationExpresion DefaultConverter(IValueConverter value);
 
         /// <summary>
         ///
@@ -119,7 +119,7 @@
         /// <param name="type"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        IMapperConfigurationExpresion DefaultFormatter(Type type, IFormatter value);
+        IMapperConfigurationExpresion DefaultConverter(Type type, IValueConverter value);
 
         /// <summary>
         ///

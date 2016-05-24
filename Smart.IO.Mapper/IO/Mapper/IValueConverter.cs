@@ -6,7 +6,7 @@
     /// <summary>
     ///
     /// </summary>
-    public interface IFormatter
+    public interface IValueConverter
     {
         /// <summary>
         ///
@@ -15,7 +15,7 @@
         /// <param name="encoding"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        byte[] Format(Type type, Encoding encoding, object value);
+        byte[] ToByte(Type type, Encoding encoding, object value);
 
         /// <summary>
         ///
@@ -26,6 +26,6 @@
         /// <param name="offset"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        object Parse(Type type, Encoding encoding, byte[] buffer, int offset, int length);
+        object FromByte(Type type, Encoding encoding, byte[] buffer, int offset, int length);
     }
 }

@@ -37,7 +37,7 @@
         /// <summary>
         ///
         /// </summary>
-        internal IFormatter Formatter { get; set; }
+        internal IValueConverter Converter { get; set; }
 
         /// <summary>
         ///
@@ -86,7 +86,7 @@
 
             var value = (start >= end) && NullIfEmpty
                 ? DefaultValue.Of(Accessor.Type)
-                : Formatter.Parse(Accessor.Type, encoding, buffer, start, end - start);
+                : Converter.FromByte(Accessor.Type, encoding, buffer, start, end - start);
 
             Accessor.SetValue(target, value);
         }
@@ -111,7 +111,7 @@
             }
             else
             {
-                var bytes = Formatter.Format(Accessor.Type, encoding, value);
+                var bytes = Converter.ToByte(Accessor.Type, encoding, value);
                 if (bytes.Length >= length)
                 {
                     Array.Copy(bytes, 0, buffer, offset, length);
