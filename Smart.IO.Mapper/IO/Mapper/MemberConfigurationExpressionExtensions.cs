@@ -34,6 +34,11 @@
             string format,
             IFormatProvider provider)
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             return expression.Converter(new DefaultConverter(format, provider));
         }
 
@@ -62,6 +67,11 @@
             string format,
             IFormatProvider provider)
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             return expression.Converter(new DateTimeConverter(format, provider));
         }
     }

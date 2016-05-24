@@ -41,6 +41,7 @@
         /// <param name="encoding"></param>
         /// <param name="value"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
         public byte[] ToByte(Type type, Encoding encoding, object value)
         {
             if (value == null)
@@ -60,6 +61,7 @@
         /// <param name="offset"></param>
         /// <param name="length"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
         public object FromByte(Type type, Encoding encoding, byte[] buffer, int offset, int length)
         {
             try

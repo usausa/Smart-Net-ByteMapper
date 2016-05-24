@@ -139,6 +139,7 @@
         private class FormatProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
             public void Configure(IMapperConfigurationExpresion config)
             {
                 config
@@ -181,6 +182,7 @@
         private class DateTimeProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
             public void Configure(IMapperConfigurationExpresion config)
             {
                 config
