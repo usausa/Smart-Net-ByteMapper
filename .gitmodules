@@ -1,0 +1,3 @@
+[submodule "Smart.Windows"]
+	path = Smart.Windows
+	url = https://github.com/usausa/Smart-Net-Windows.git
