@@ -26,7 +26,7 @@ private class Entity
 }
 ```
 
-# Configuration
+## Configuration
 
 ```cs
 private class Profile : IMapperProfile
@@ -52,7 +52,7 @@ private class Profile : IMapperProfile
 
 ```
 
-# Usage
+## Usage
 
 ```cs
 // Create mapper
