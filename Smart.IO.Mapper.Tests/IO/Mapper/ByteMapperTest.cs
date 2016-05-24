@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System;
     using System.Text;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -127,7 +128,7 @@
         }
 
         // ------------------------------------------------------------
-        // ToByte
+        // Format
         // ------------------------------------------------------------
 
         private class FormatEntity
@@ -146,7 +147,7 @@
                     .DefaultPadding(typeof(float), Padding.Left);
 
                 config.CreateMap<FormatEntity>(5)
-                    .ForMember(_ => _.Value, 5, c => c.Format("F2"));
+                    .ForMember(_ => _.Value, 5, c => c.Formatter("F2"));
             }
         }
 
@@ -170,7 +171,44 @@
         // DateTime
         // ------------------------------------------------------------
 
-        // TODO Add DateTime support ParseExact
+        private class DateTimeEntity
+        {
+            public DateTime Value1 { get; set; }
+
+            public DateTime? Value2 { get; set; }
+        }
+
+        private class DateTimeProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding)
+                    .DefaultPadding(0x20);
+
+                config.CreateMap<DateTimeEntity>(28)
+                    .ForMember(_ => _.Value1, 14, c => c.DateTime("yyyyMMddHHmmss"))
+                    .ForMember(_ => _.Value2, 14, c => c.DateTime("yyyyMMddHHmmss"));
+            }
+        }
+
+        [TestMethod]
+        public void TestDateTime()
+        {
+            var builder = new MapperConfigBuilder(new DateTimeProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var entity = new DateTimeEntity { Value1 = new DateTime(2000, 12, 31, 23, 59, 59), Value2 = null };
+            var bytes = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(SjisEncoding.GetBytes("20001231235959              "), bytes);
+
+            var entity2 = mapper.FromByte<DateTimeEntity>(bytes);
+
+            Assert.AreEqual(entity.Value1, entity2.Value1);
+            Assert.AreEqual(entity.Value2, entity2.Value2);
+        }
 
         // ------------------------------------------------------------
         // Enum

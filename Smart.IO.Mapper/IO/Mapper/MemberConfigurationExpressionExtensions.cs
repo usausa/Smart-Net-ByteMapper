@@ -15,11 +15,11 @@
         /// <param name="expression"></param>
         /// <param name="format"></param>
         /// <returns></returns>
-        public static IMemberConfigurationExpression Format(
+        public static IMemberConfigurationExpression Formatter(
             this IMemberConfigurationExpression expression,
             string format)
         {
-            return Format(expression, format, null);
+            return Formatter(expression, format, null);
         }
 
         /// <summary>
@@ -29,12 +29,40 @@
         /// <param name="format"></param>
         /// <param name="provider"></param>
         /// <returns></returns>
-        public static IMemberConfigurationExpression Format(
+        public static IMemberConfigurationExpression Formatter(
             this IMemberConfigurationExpression expression,
             string format,
             IFormatProvider provider)
         {
             return expression.Converter(new DefaultConverter(format, provider));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="format"></param>
+        /// <returns></returns>
+        public static IMemberConfigurationExpression DateTime(
+            this IMemberConfigurationExpression expression,
+            string format)
+        {
+            return DateTime(expression, format, null);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="format"></param>
+        /// <param name="provider"></param>
+        /// <returns></returns>
+        public static IMemberConfigurationExpression DateTime(
+            this IMemberConfigurationExpression expression,
+            string format,
+            IFormatProvider provider)
+        {
+            return expression.Converter(new DateTimeConverter(format, provider));
         }
     }
 }

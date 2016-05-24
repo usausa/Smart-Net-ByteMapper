@@ -6,7 +6,7 @@
     /// <summary>
     ///
     /// </summary>
-    public class DefaultConverter : IValueConverter
+    public class DateTimeConverter : IValueConverter
     {
         private static readonly byte[] Empty = new byte[0];
 
@@ -17,8 +17,9 @@
         /// <summary>
         ///
         /// </summary>
-        public DefaultConverter()
-            : this(null, null)
+        /// <param name="format"></param>
+        public DateTimeConverter(string format)
+            : this(format, null)
         {
         }
 
@@ -27,7 +28,7 @@
         /// </summary>
         /// <param name="format"></param>
         /// <param name="provider"></param>
-        public DefaultConverter(string format, IFormatProvider provider)
+        public DateTimeConverter(string format, IFormatProvider provider)
         {
             this.format = format;
             this.provider = provider;
@@ -40,7 +41,6 @@
         /// <param name="encoding"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
         public byte[] ToByte(Type type, Encoding encoding, object value)
         {
             if (value == null)
@@ -48,16 +48,7 @@
                 return Empty;
             }
 
-            if (!String.IsNullOrEmpty(format))
-            {
-                var formatable = value as IFormattable;
-                if (formatable != null)
-                {
-                    return encoding.GetBytes(formatable.ToString(format, provider));
-                }
-            }
-
-            return encoding.GetBytes(Convert.ToString(value, provider));
+            return encoding.GetBytes(((DateTime)value).ToString(format, provider));
         }
 
         /// <summary>
@@ -69,16 +60,15 @@
         /// <param name="offset"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
         public object FromByte(Type type, Encoding encoding, byte[] buffer, int offset, int length)
         {
             try
             {
-                return Convert.ChangeType(encoding.GetString(buffer, offset, length), Nullable.GetUnderlyingType(type) ?? type, provider);
+                return DateTime.ParseExact(encoding.GetString(buffer, offset, length), format, provider);
             }
             catch (FormatException)
             {
-                return Nullable.GetUnderlyingType(type) == null ? (object)default(DateTime) : null;
+                return DefaultValue.Of(type);
             }
         }
     }

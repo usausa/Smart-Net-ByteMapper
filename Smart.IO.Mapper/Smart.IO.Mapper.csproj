@@ -48,6 +48,7 @@
     <Compile Include="IO\Mapper\ByteMapper.cs" />
     <Compile Include="IO\Mapper\ByteMapperException.cs" />
     <Compile Include="IO\Mapper\Configuration\IDefaultSettings.cs" />
+    <Compile Include="IO\Mapper\Converters\DateTimeConverter.cs" />
     <Compile Include="IO\Mapper\MapperConfig.cs" />
     <Compile Include="IO\Mapper\Configuration\MapperConfigurationExpression.cs" />
     <Compile Include="IO\Mapper\Configuration\MemberConfigurationExpression.cs" />
