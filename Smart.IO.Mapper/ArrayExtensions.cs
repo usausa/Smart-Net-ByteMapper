@@ -40,7 +40,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Array.Copy(array, offset, array, offset + copy, copy);
             }
@@ -76,7 +76,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -112,7 +112,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -148,7 +148,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -184,7 +184,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -220,7 +220,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -256,7 +256,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -292,7 +292,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
@@ -328,7 +328,7 @@
             array[offset] = value;
 
             int copy;
-            for (copy = 1; copy < length / 2; copy <<= 1)
+            for (copy = 1; copy <= length / 2; copy <<= 1)
             {
                 Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }

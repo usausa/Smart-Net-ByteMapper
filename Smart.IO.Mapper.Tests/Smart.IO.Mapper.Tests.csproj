@@ -56,7 +56,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="IO\Mapper\ByteMapperTest.cs" />
-    <Compile Include="IO\Mapper\Entity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

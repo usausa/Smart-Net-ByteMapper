@@ -43,7 +43,7 @@
         {
             try
             {
-                return Convert.ChangeType(encoding.GetString(buffer, offset, length), type, CultureInfo.InvariantCulture);
+                return Convert.ChangeType(encoding.GetString(buffer, offset, length), Nullable.GetUnderlyingType(type) ?? type, CultureInfo.InvariantCulture);
             }
             catch (FormatException)
             {

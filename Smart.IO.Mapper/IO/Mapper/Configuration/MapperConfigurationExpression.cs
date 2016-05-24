@@ -142,31 +142,31 @@
         Padding IDefaultSettings.GetPadding(Type type)
         {
             Padding value;
-            return paddingOfType.TryGetValue(type, out value) ? value : defaultPadding;
+            return paddingOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultPadding;
         }
 
         byte IDefaultSettings.GetPaddingByte(Type type)
         {
             byte value;
-            return paddingBytesOfType.TryGetValue(type, out value) ? value : defaultPaddingByte;
+            return paddingBytesOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultPaddingByte;
         }
 
         bool IDefaultSettings.GetTrim(Type type)
         {
             bool value;
-            return trimOfType.TryGetValue(type, out value) ? value : defaultTrim;
+            return trimOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultTrim;
         }
 
         bool IDefaultSettings.GetNullIfEmpty(Type type)
         {
             bool value;
-            return nullIfEmptyOfType.TryGetValue(type, out value) ? value : defaultNullIfEmpty;
+            return nullIfEmptyOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullIfEmpty;
         }
 
         IFormatter IDefaultSettings.GetFormatter(Type type)
         {
             IFormatter value;
-            return formatterOfType.TryGetValue(type, out value) ? value : defaultFormatter;
+            return formatterOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultFormatter;
         }
 
         public ITypeExpression<T> CreateMap<T>(int length)
