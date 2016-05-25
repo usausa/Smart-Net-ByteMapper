@@ -17,14 +17,14 @@
         // Basic
         // ------------------------------------------------------------
 
-        private class BasicEntity
+        protected class BasicEntity
         {
             public int Id { get; set; }
 
             public string Name { get; set; }
         }
 
-        private class BasicProfile : IMapperProfile
+        protected class BasicProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             public void Configure(IMapperConfigurationExpresion config)
@@ -76,12 +76,12 @@
         // Nullable
         // ------------------------------------------------------------
 
-        private class NullableEntity
+        protected class NullableEntity
         {
             public int? Value { get; set; }
         }
 
-        private class NullableProfile : IMapperProfile
+        protected class NullableProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             public void Configure(IMapperConfigurationExpresion config)
@@ -132,12 +132,12 @@
         // Format
         // ------------------------------------------------------------
 
-        private class FormatEntity
+        protected class FormatEntity
         {
             public float Value { get; set; }
         }
 
-        private class FormatProfile : IMapperProfile
+        protected class FormatProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
@@ -169,12 +169,12 @@
             Assert.AreEqual(entity.Value, entity2.Value);
         }
 
-        private class ParseEntity
+        protected class ParseEntity
         {
             public int Value { get; set; }
         }
 
-        private class ParseProfile : IMapperProfile
+        protected class ParseProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIParseProvider", Justification = "Ignore")]
@@ -208,17 +208,64 @@
         }
 
         // ------------------------------------------------------------
+        // Enum
+        // ------------------------------------------------------------
+
+        protected enum EnumType
+        {
+            Zero,
+            One,
+            Two
+        }
+
+        protected class EnumEntity
+        {
+            public EnumType Value { get; set; }
+        }
+
+        protected class EnumProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding)
+                    .DefaultPadding(0x20);
+
+                config.CreateMap<EnumEntity>(1)
+                    .ForMember(_ => _.Value, 1);
+            }
+        }
+
+        [TestMethod]
+        public void TestEnum()
+        {
+            var builder = new MapperConfigBuilder(new EnumProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var entity = new EnumEntity { Value = EnumType.One };
+            var bytes = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(SjisEncoding.GetBytes("1"), bytes);
+
+            var entity2 = mapper.FromByte<EnumEntity>(bytes);
+
+            Assert.AreEqual(entity.Value, entity2.Value);
+        }
+
+        // ------------------------------------------------------------
         // DateTime
         // ------------------------------------------------------------
 
-        private class DateTimeEntity
+        protected class DateTimeEntity
         {
             public DateTime Value1 { get; set; }
 
             public DateTime? Value2 { get; set; }
         }
 
-        private class DateTimeProfile : IMapperProfile
+        protected class DateTimeProfile : IMapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
@@ -250,11 +297,5 @@
             Assert.AreEqual(entity.Value1, entity2.Value1);
             Assert.AreEqual(entity.Value2, entity2.Value2);
         }
-
-        // ------------------------------------------------------------
-        // Enum
-        // ------------------------------------------------------------
-
-        // TODO Add Enum support
     }
 }

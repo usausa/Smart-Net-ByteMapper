@@ -96,16 +96,21 @@
                 return Empty;
             }
 
+            var valueType = Nullable.GetUnderlyingType(type);
+            var targetType = valueType ?? type;
+
+            var source = targetType.IsEnum ? Convert.ChangeType(value, targetType.GetEnumUnderlyingType()) : value;
+
             if (!String.IsNullOrEmpty(format))
             {
-                var formatable = value as IFormattable;
+                var formatable = source as IFormattable;
                 if (formatable != null)
                 {
                     return encoding.GetBytes(formatable.ToString(format, provider));
                 }
             }
 
-            return encoding.GetBytes(Convert.ToString(value, provider));
+            return encoding.GetBytes(Convert.ToString(source, provider));
         }
 
         /// <summary>
@@ -120,19 +125,25 @@
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
         public object FromByte(Type type, Encoding encoding, byte[] buffer, int offset, int length)
         {
-            var str = encoding.GetString(buffer, offset, length);
             var valueType = Nullable.GetUnderlyingType(type);
             var targetType = valueType ?? type;
 
+            var source = encoding.GetString(buffer, offset, length);
+
             try
             {
+                if (targetType.IsEnum)
+                {
+                    return Enum.Parse(targetType, source);
+                }
+
                 Func<string, NumberStyles, IFormatProvider, object> parser;
                 if (Parsers.TryGetValue(targetType, out parser))
                 {
-                    return parser(str, style, provider);
+                    return parser(source, style, provider);
                 }
 
-                return Convert.ChangeType(str, targetType, provider);
+                return Convert.ChangeType(source, targetType, provider);
             }
             catch (FormatException)
             {
