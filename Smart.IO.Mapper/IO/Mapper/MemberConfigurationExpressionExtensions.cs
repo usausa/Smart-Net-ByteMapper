@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper
 {
     using System;
+    using System.Globalization;
 
     using Smart.IO.Mapper.Converters;
 
@@ -19,7 +20,12 @@
             this IMemberConfigurationExpression expression,
             string format)
         {
-            return Formatter(expression, format, null);
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            return expression.Converter(new DefaultConverter(format, null));
         }
 
         /// <summary>
@@ -52,7 +58,12 @@
             this IMemberConfigurationExpression expression,
             string format)
         {
-            return DateTime(expression, format, null);
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            return expression.Converter(new DateTimeConverter(format, null));
         }
 
         /// <summary>
@@ -73,6 +84,28 @@
             }
 
             return expression.Converter(new DateTimeConverter(format, provider));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="format"></param>
+        /// <param name="provider"></param>
+        /// <param name="style"></param>
+        /// <returns></returns>
+        public static IMemberConfigurationExpression DateTime(
+            this IMemberConfigurationExpression expression,
+            string format,
+            IFormatProvider provider,
+            DateTimeStyles style)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            return expression.Converter(new DateTimeConverter(format, provider, style));
         }
     }
 }

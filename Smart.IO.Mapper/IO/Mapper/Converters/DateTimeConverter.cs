@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
+    using System.Globalization;
     using System.Text;
 
     /// <summary>
@@ -14,12 +15,14 @@
 
         private readonly IFormatProvider provider;
 
+        private readonly DateTimeStyles style;
+
         /// <summary>
         ///
         /// </summary>
         /// <param name="format"></param>
         public DateTimeConverter(string format)
-            : this(format, null)
+            : this(format, null, DateTimeStyles.None)
         {
         }
 
@@ -29,9 +32,21 @@
         /// <param name="format"></param>
         /// <param name="provider"></param>
         public DateTimeConverter(string format, IFormatProvider provider)
+            : this(format, provider, DateTimeStyles.None)
+        {
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="format"></param>
+        /// <param name="provider"></param>
+        /// <param name="style"></param>
+        public DateTimeConverter(string format, IFormatProvider provider, DateTimeStyles style)
         {
             this.format = format;
             this.provider = provider;
+            this.style = style;
         }
 
         /// <summary>
@@ -66,7 +81,7 @@
         {
             try
             {
-                return DateTime.ParseExact(encoding.GetString(buffer, offset, length), format, provider);
+                return DateTime.ParseExact(encoding.GetString(buffer, offset, length), format, provider, style);
             }
             catch (FormatException)
             {

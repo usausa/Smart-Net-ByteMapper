@@ -26,6 +26,15 @@
         ///
         /// </summary>
         /// <param name="format"></param>
+        public DefaultConverter(string format)
+            : this(format, null)
+        {
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="format"></param>
         /// <param name="provider"></param>
         public DefaultConverter(string format, IFormatProvider provider)
         {
