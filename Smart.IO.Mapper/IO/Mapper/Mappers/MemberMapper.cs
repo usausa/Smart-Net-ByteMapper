@@ -114,7 +114,7 @@
                 var bytes = Converter.ToByte(Accessor.Type, encoding, value);
                 if (bytes.Length >= length)
                 {
-                    Array.Copy(bytes, 0, buffer, offset, length);
+                    Array.Copy(bytes, Padding == Padding.Right ? 0 : bytes.Length - length, buffer, offset, length);
                 }
                 else
                 {

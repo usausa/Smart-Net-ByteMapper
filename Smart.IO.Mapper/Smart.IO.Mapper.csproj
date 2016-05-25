@@ -69,7 +69,7 @@
     <Compile Include="IO\Mapper\IMapperConfig.cs" />
     <Compile Include="IO\Mapper\Mappers\ITypeMapper.cs" />
     <Compile Include="IO\Mapper\Mappers\MemberMapper.cs" />
-    <Compile Include="IO\Mapper\Mappers\TypeEntry.cs" />
+    <Compile Include="IO\Mapper\Mappers\TypeMapper.cs" />
     <Compile Include="IO\Mapper\MemberConfigurationExpressionExtensions.cs" />
     <Compile Include="IO\Mapper\Padding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

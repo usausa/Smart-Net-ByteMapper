@@ -31,6 +31,7 @@
             {
                 config
                     .DefaultEncording(SjisEncoding)
+                    .DefaultFiller(0x20)
                     .DefaultPadding(0x20)
                     .DefaultNullIfEmpty(true)
                     .DefaultDelimitter(new byte[] { 0x0D, 0x0A })
@@ -168,6 +169,44 @@
             Assert.AreEqual(entity.Value, entity2.Value);
         }
 
+        private class ParseEntity
+        {
+            public int Value { get; set; }
+        }
+
+        private class ParseProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIParseProvider", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding)
+                    .DefaultPadding(0x20)
+                    .DefaultPadding(typeof(int), Padding.Left);
+
+                config.CreateMap<ParseEntity>(6)
+                    .ForMember(_ => _.Value, 6, c => c.Formatter("#,0"));
+            }
+        }
+
+        [TestMethod]
+        public void TestParse()
+        {
+            var builder = new MapperConfigBuilder(new ParseProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var bytes = SjisEncoding.GetBytes(" 1,000");
+
+            var entity = mapper.FromByte<ParseEntity>(bytes);
+
+            Assert.AreEqual(1000, entity.Value);
+
+            var bytes2 = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(bytes, bytes2);
+        }
+
         // ------------------------------------------------------------
         // DateTime
         // ------------------------------------------------------------
@@ -217,7 +256,5 @@
         // ------------------------------------------------------------
 
         // TODO Add Enum support
-
-        // TODO Add NumberStyle parse support
     }
 }
