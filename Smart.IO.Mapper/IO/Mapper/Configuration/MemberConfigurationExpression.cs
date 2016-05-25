@@ -80,6 +80,17 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        public IMemberConfigurationExpression NullValue(byte[] value)
+        {
+            memberMapper.NullValue = value;
+            return this;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public IMemberConfigurationExpression Converter(IValueConverter value)
         {
             memberMapper.Converter = value;

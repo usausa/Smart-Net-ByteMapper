@@ -71,6 +71,7 @@
             var accessor = prop.ToAccessor();
             var memberType = accessor.Type;
 
+            // TODO nullvalue
             var memberMapper = new MemberMapper(offset, length)
             {
                 Padding = defaultSettings.GetPadding(memberType),

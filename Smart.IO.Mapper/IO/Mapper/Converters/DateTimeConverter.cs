@@ -54,24 +54,6 @@
         /// </summary>
         /// <param name="type"></param>
         /// <param name="encoding"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
-        public byte[] ToByte(Type type, Encoding encoding, object value)
-        {
-            if (value == null)
-            {
-                return Empty;
-            }
-
-            return encoding.GetBytes(((DateTime)value).ToString(format, provider));
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="encoding"></param>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="length"></param>
@@ -87,6 +69,24 @@
             {
                 return DefaultValue.Of(type);
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="encoding"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
+        public byte[] ToByte(Type type, Encoding encoding, object value)
+        {
+            if (value == null)
+            {
+                return Empty;
+            }
+
+            return encoding.GetBytes(((DateTime)value).ToString(format, provider));
         }
     }
 }

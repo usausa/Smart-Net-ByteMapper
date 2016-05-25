@@ -138,6 +138,16 @@
         /// <param name="stream"></param>
         public void ToByte<T>(IEnumerable<T> source, Stream stream)
         {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            if (stream == null)
+            {
+                throw new ArgumentNullException(nameof(stream));
+            }
+
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
 

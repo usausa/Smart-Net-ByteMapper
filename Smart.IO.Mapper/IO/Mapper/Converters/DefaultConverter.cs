@@ -86,38 +86,6 @@
         /// </summary>
         /// <param name="type"></param>
         /// <param name="encoding"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
-        public byte[] ToByte(Type type, Encoding encoding, object value)
-        {
-            if (value == null)
-            {
-                return Empty;
-            }
-
-            var valueType = Nullable.GetUnderlyingType(type);
-            var targetType = valueType ?? type;
-
-            var source = targetType.IsEnum ? Convert.ChangeType(value, targetType.GetEnumUnderlyingType(), provider) : value;
-
-            if (!String.IsNullOrEmpty(format))
-            {
-                var formatable = source as IFormattable;
-                if (formatable != null)
-                {
-                    return encoding.GetBytes(formatable.ToString(format, provider));
-                }
-            }
-
-            return encoding.GetBytes(Convert.ToString(source, provider));
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="encoding"></param>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
         /// <param name="length"></param>
@@ -149,6 +117,38 @@
             {
                 return valueType == null ? DefaultValue.Of(type) : null;
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="encoding"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Framework only")]
+        public byte[] ToByte(Type type, Encoding encoding, object value)
+        {
+            if (value == null)
+            {
+                return Empty;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            var targetType = valueType ?? type;
+
+            var source = targetType.IsEnum ? Convert.ChangeType(value, targetType.GetEnumUnderlyingType(), provider) : value;
+
+            if (!String.IsNullOrEmpty(format))
+            {
+                var formatable = source as IFormattable;
+                if (formatable != null)
+                {
+                    return encoding.GetBytes(formatable.ToString(format, provider));
+                }
+            }
+
+            return encoding.GetBytes(Convert.ToString(source, provider));
         }
     }
 }

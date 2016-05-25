@@ -107,5 +107,45 @@
 
             return expression.Converter(new DateTimeConverter(format, provider, style));
         }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="trueValue"></param>
+        /// <param name="falseValue"></param>
+        /// <returns></returns>
+        public static IMemberConfigurationExpression Boolean(
+            this IMemberConfigurationExpression expression,
+            byte trueValue,
+            byte falseValue)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            return expression.Converter(new BooleanConverter(new[] { trueValue }, new[] { falseValue }));
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="expression"></param>
+        /// <param name="trueValue"></param>
+        /// <param name="falseValue"></param>
+        /// <returns></returns>
+        public static IMemberConfigurationExpression Boolean(
+            this IMemberConfigurationExpression expression,
+            byte[] trueValue,
+            byte[] falseValue)
+        {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            return expression.Converter(new BooleanConverter(trueValue, falseValue));
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace Smart
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     /// <summary>
@@ -752,5 +753,52 @@
 
             return result;
         }
+
+        //--------------------------------------------------------------------------------
+        // ArrayEqual
+        //--------------------------------------------------------------------------------
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="offset"></param>
+        /// <param name="other"></param>
+        /// <param name="otherOffset"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Extensions")]
+        public static bool ArrayEquals<T>(this T[] array, int offset, T[] other, int otherOffset, int length)
+        {
+            return ArrayEquals(array, offset, other, otherOffset, length, EqualityComparer<T>.Default);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="array"></param>
+        /// <param name="offset"></param>
+        /// <param name="other"></param>
+        /// <param name="otherOffset"></param>
+        /// <param name="length"></param>
+        /// <param name="comparer"></param>
+        /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Extensions")]
+        public static bool ArrayEquals<T>(this T[] array, int offset, T[] other, int otherOffset, int length, IEqualityComparer<T> comparer)
+        {
+            for (var i = 0; i < length; i++)
+            {
+                if (!comparer.Equals(array[offset + i], other[otherOffset + i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        // TODO
     }
 }

@@ -46,6 +46,13 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        IMemberConfigurationExpression NullValue(byte[] value);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         IMemberConfigurationExpression Converter(IValueConverter value);
     }
 }

@@ -37,6 +37,11 @@
         /// <summary>
         ///
         /// </summary>
+        internal byte[] NullValue { get; set; }
+
+        /// <summary>
+        ///
+        /// </summary>
         internal IValueConverter Converter { get; set; }
 
         /// <summary>
@@ -69,30 +74,32 @@
                 return;
             }
 
+            var isNullValue = (NullValue != null) && NullValue.ArrayEquals(0, buffer, offset, length);
+
             var start = offset;
-            var end = offset + length;
-            if (Trim)
+            var size = length;
+            if (!isNullValue && Trim)
             {
                 if (Padding == Padding.Left)
                 {
-                    while ((start < end) && (buffer[start] == PaddingByte))
+                    while ((start < offset + length) && (buffer[start] == PaddingByte))
                     {
                         start++;
+                        size--;
                     }
                 }
-
-                if (Padding == Padding.Right)
+                else
                 {
-                    while ((start < end) && (buffer[end - 1] == PaddingByte))
+                    while ((size > 0) && (buffer[offset + size - 1] == PaddingByte))
                     {
-                        end--;
+                        size--;
                     }
                 }
             }
 
-            var value = (start >= end) && NullIfEmpty
+            var value = isNullValue || ((size <= 0) && NullIfEmpty)
                 ? DefaultValue.Of(Accessor.Type)
-                : Converter.FromByte(Accessor.Type, encoding, buffer, start, end - start);
+                : Converter.FromByte(Accessor.Type, encoding, buffer, start, size);
 
             Accessor.SetValue(target, value);
         }
@@ -110,6 +117,7 @@
                 return;
             }
 
+            // TODO nullの時, NullIfEmpty, NullValueの関係
             var value = Accessor.GetValue(target);
             if ((value == null) && NullIfEmpty)
             {
