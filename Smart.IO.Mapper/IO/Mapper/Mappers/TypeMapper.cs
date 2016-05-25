@@ -8,11 +8,11 @@
     /// </summary>
     internal class TypeMapper : ITypeMapper
     {
-        private readonly int length;
-
         private readonly byte filler;
 
         private readonly IList<IFieldMapper> fields = new List<IFieldMapper>();
+
+        public int Length { get; }
 
         /// <summary>
         ///
@@ -21,7 +21,7 @@
         /// <param name="filler"></param>
         public TypeMapper(int length, byte filler)
         {
-            this.length = length;
+            Length = length;
             this.filler = filler;
         }
 
@@ -56,10 +56,10 @@
         /// <returns></returns>
         public byte[] ToByte(Encoding encoding, object target)
         {
-            var buffer = new byte[length];
+            var buffer = new byte[Length];
             if (filler != 0)
             {
-                buffer.Fill(0, length, filler);
+                buffer.Fill(0, Length, filler);
             }
 
             foreach (var field in fields)

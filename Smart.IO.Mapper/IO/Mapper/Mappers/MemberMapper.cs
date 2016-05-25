@@ -73,14 +73,20 @@
             var end = offset + length;
             if (Trim)
             {
-                while ((start < end) && (buffer[start] == PaddingByte))
+                if (Padding == Padding.Left)
                 {
-                    start++;
+                    while ((start < end) && (buffer[start] == PaddingByte))
+                    {
+                        start++;
+                    }
                 }
 
-                while ((start < end) && (buffer[end - 1] == PaddingByte))
+                if (Padding == Padding.Right)
                 {
-                    end--;
+                    while ((start < end) && (buffer[end - 1] == PaddingByte))
+                    {
+                        end--;
+                    }
                 }
             }
 

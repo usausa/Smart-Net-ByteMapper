@@ -17,28 +17,22 @@
         /// <summary>
         ///
         /// </summary>
-        public MemberInfo MemberInfo { get; private set; }
+        public MemberInfo MemberInfo { get; }
 
         /// <summary>
         ///
         /// </summary>
-        public Type Type { get; private set; }
+        public Type Type { get; }
 
         /// <summary>
         ///
         /// </summary>
-        public bool CanRead
-        {
-            get { return getter != null; }
-        }
+        public bool CanRead => getter != null;
 
         /// <summary>
         ///
         /// </summary>
-        public bool CanWrite
-        {
-            get { return setter != null; }
-        }
+        public bool CanWrite => setter != null;
 
         /// <summary>
         ///
@@ -92,28 +86,22 @@
         /// <summary>
         ///
         /// </summary>
-        public MemberInfo MemberInfo { get; private set; }
+        public MemberInfo MemberInfo { get; }
 
         /// <summary>
         ///
         /// </summary>
-        public Type Type { get; private set; }
+        public Type Type { get; }
 
         /// <summary>
         ///
         /// </summary>
-        public bool CanRead
-        {
-            get { return getter != null; }
-        }
+        public bool CanRead => getter != null;
 
         /// <summary>
         ///
         /// </summary>
-        public bool CanWrite
-        {
-            get { return setter != null; }
-        }
+        public bool CanWrite => setter != null;
 
         /// <summary>
         ///

@@ -99,7 +99,7 @@
             var valueType = Nullable.GetUnderlyingType(type);
             var targetType = valueType ?? type;
 
-            var source = targetType.IsEnum ? Convert.ChangeType(value, targetType.GetEnumUnderlyingType()) : value;
+            var source = targetType.IsEnum ? Convert.ChangeType(value, targetType.GetEnumUnderlyingType(), provider) : value;
 
             if (!String.IsNullOrEmpty(format))
             {
@@ -147,7 +147,7 @@
             }
             catch (FormatException)
             {
-                return valueType == null ? (object)default(DateTime) : null;
+                return valueType == null ? DefaultValue.Of(type) : null;
             }
         }
     }
