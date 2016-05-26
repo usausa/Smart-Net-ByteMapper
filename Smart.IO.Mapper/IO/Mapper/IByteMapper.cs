@@ -31,9 +31,27 @@
         ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromBytes<T>(IEnumerable<byte[]> source)
+            where T : new();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromBytes<T>(IEnumerable<byte[]> source, Func<T> factory);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="stream"></param>
         /// <returns></returns>
-        IEnumerable<T> FromByte<T>(Stream stream)
+        IEnumerable<T> FromBytes<T>(Stream stream)
             where T : new();
 
         /// <summary>
@@ -43,7 +61,7 @@
         /// <param name="stream"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        IEnumerable<T> FromByte<T>(Stream stream, Func<T> factory);
+        IEnumerable<T> FromBytes<T>(Stream stream, Func<T> factory);
 
         /// <summary>
         ///
@@ -58,7 +76,15 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <returns></returns>
+        IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
         /// <param name="stream"></param>
-        void ToByte<T>(IEnumerable<T> source, Stream stream);
+        void ToBytes<T>(IEnumerable<T> source, Stream stream);
     }
 }

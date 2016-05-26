@@ -78,9 +78,59 @@
         ///
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        public IEnumerable<T> FromBytes<T>(IEnumerable<byte[]> source)
+            where T : new()
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var type = typeof(T);
+            var mapper = FindTypeMapper(type);
+
+            foreach (var buffer in source)
+            {
+                var obj = new T();
+                mapper.FromByte(mapperConfig.Encoding, buffer, obj);
+                yield return obj;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        public IEnumerable<T> FromBytes<T>(IEnumerable<byte[]> source, Func<T> factory)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var type = typeof(T);
+            var mapper = FindTypeMapper(type);
+
+            foreach (var buffer in source)
+            {
+                var obj = factory();
+                mapper.FromByte(mapperConfig.Encoding, buffer, obj);
+                yield return obj;
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="stream"></param>
         /// <returns></returns>
-        public IEnumerable<T> FromByte<T>(Stream stream)
+        public IEnumerable<T> FromBytes<T>(Stream stream)
             where T : new()
         {
             var type = typeof(T);
@@ -102,7 +152,7 @@
         /// <param name="stream"></param>
         /// <param name="factory"></param>
         /// <returns></returns>
-        public IEnumerable<T> FromByte<T>(Stream stream, Func<T> factory)
+        public IEnumerable<T> FromBytes<T>(Stream stream, Func<T> factory)
         {
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
@@ -135,8 +185,30 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <returns></returns>
+        public IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source)
+        {
+            if (source == null)
+            {
+                throw new ArgumentNullException(nameof(source));
+            }
+
+            var type = typeof(T);
+            var mapper = FindTypeMapper(type);
+
+            foreach (var obj in source)
+            {
+                yield return mapper.ToByte(mapperConfig.Encoding, obj);
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
         /// <param name="stream"></param>
-        public void ToByte<T>(IEnumerable<T> source, Stream stream)
+        public void ToBytes<T>(IEnumerable<T> source, Stream stream)
         {
             if (source == null)
             {
