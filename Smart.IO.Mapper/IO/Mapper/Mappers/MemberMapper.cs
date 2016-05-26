@@ -117,9 +117,12 @@
                 return;
             }
 
-            // TODO nullの時, NullIfEmpty, NullValueの関係
             var value = Accessor.GetValue(target);
-            if ((value == null) && NullIfEmpty)
+            if ((value == null) && (NullValue != null))
+            {
+                Buffer.BlockCopy(NullValue, 0, buffer, offset, Math.Min(NullValue.Length, length));
+            }
+            else if ((value == null) && NullIfEmpty)
             {
                 buffer.Fill(offset, length, PaddingByte);
             }
@@ -128,11 +131,11 @@
                 var bytes = Converter.ToByte(Accessor.Type, encoding, value);
                 if (bytes.Length >= length)
                 {
-                    Array.Copy(bytes, Padding == Padding.Right ? 0 : bytes.Length - length, buffer, offset, length);
+                    Buffer.BlockCopy(bytes, Padding == Padding.Right ? 0 : bytes.Length - length, buffer, offset, length);
                 }
                 else
                 {
-                    Array.Copy(bytes, 0, buffer, Padding == Padding.Right ? offset : offset + length - bytes.Length, bytes.Length);
+                    Buffer.BlockCopy(bytes, 0, buffer, Padding == Padding.Right ? offset : offset + length - bytes.Length, bytes.Length);
                     buffer.Fill(Padding == Padding.Right ? offset + bytes.Length : offset, length - bytes.Length, PaddingByte);
                 }
             }

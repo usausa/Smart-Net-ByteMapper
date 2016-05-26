@@ -71,13 +71,13 @@
             var accessor = prop.ToAccessor();
             var memberType = accessor.Type;
 
-            // TODO nullvalue
             var memberMapper = new MemberMapper(offset, length)
             {
                 Padding = defaultSettings.GetPadding(memberType),
                 PaddingByte = defaultSettings.GetPaddingByte(memberType),
                 Trim = defaultSettings.GetTrim(memberType),
                 NullIfEmpty = defaultSettings.GetNullIfEmpty(memberType),
+                NullValue = defaultSettings.GetNullValue(memberType),
                 Converter = defaultSettings.GetConverter(memberType),
                 Accessor = accessor
             };

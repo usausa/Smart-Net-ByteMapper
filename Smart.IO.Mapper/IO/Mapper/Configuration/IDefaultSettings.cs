@@ -1,15 +1,20 @@
 ﻿namespace Smart.IO.Mapper.Configuration
 {
     using System;
+    using System.Text;
 
     /// <summary>
     ///
     /// </summary>
     internal interface IDefaultSettings
     {
-        // TODO nullvalue
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        Encoding GetEncoding();
 
-            /// <summary>
+        /// <summary>
         ///
         /// </summary>
         /// <param name="type"></param>
@@ -36,6 +41,13 @@
         /// <param name="type"></param>
         /// <returns></returns>
         bool GetNullIfEmpty(Type type);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        byte[] GetNullValue(Type type);
 
         /// <summary>
         ///

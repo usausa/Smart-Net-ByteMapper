@@ -129,6 +129,44 @@
         }
 
         // ------------------------------------------------------------
+        // NullValue
+        // ------------------------------------------------------------
+
+        protected class NullValueEntity
+        {
+            public DateTime? Value { get; set; }
+        }
+
+        protected class NullValueProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding);
+
+                config.CreateMap<NullValueEntity>(8)
+                    .ForMember(_ => _.Value, 8, c => c.DateTime("yyyyMMdd", null).NullValue(SjisEncoding.GetBytes("--------")));
+            }
+        }
+
+        [TestMethod]
+        public void TestNullValue()
+        {
+            var builder = new MapperConfigBuilder(new NullValueProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var entity = new NullValueEntity { Value = null };
+            var bytes = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(SjisEncoding.GetBytes("--------"), bytes);
+
+            var entity2 = mapper.FromByte<NullValueEntity>(bytes);
+
+            Assert.AreEqual(entity.Value, entity2.Value);
+        }
+
+        // ------------------------------------------------------------
         // Format
         // ------------------------------------------------------------
 
@@ -293,6 +331,50 @@
             CollectionAssert.AreEqual(SjisEncoding.GetBytes("20001231235959              "), bytes);
 
             var entity2 = mapper.FromByte<DateTimeEntity>(bytes);
+
+            Assert.AreEqual(entity.Value1, entity2.Value1);
+            Assert.AreEqual(entity.Value2, entity2.Value2);
+        }
+
+        // ------------------------------------------------------------
+        // Boolean
+        // ------------------------------------------------------------
+
+        protected class BooleanEntity
+        {
+            public bool Value1 { get; set; }
+
+            public bool? Value2 { get; set; }
+        }
+
+        protected class BooleanProfile : IMapperProfile
+        {
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
+            public void Configure(IMapperConfigurationExpresion config)
+            {
+                config
+                    .DefaultEncording(SjisEncoding)
+                    .DefaultPadding(0x20);
+
+                config.CreateMap<BooleanEntity>(2)
+                    .ForMember(_ => _.Value1, 1, c => c.Boolean((byte)'1', (byte)'0'))
+                    .ForMember(_ => _.Value2, 1, c => c.Boolean((byte)'1', (byte)'0'));
+            }
+        }
+
+        [TestMethod]
+        public void TestBoolean()
+        {
+            var builder = new MapperConfigBuilder(new BooleanProfile());
+            var mapper = new ByteMapper(builder.Build());
+
+            var entity = new BooleanEntity { Value1 = true, Value2 = null };
+            var bytes = mapper.ToByte(entity);
+
+            CollectionAssert.AreEqual(SjisEncoding.GetBytes("1 "), bytes);
+
+            var entity2 = mapper.FromByte<BooleanEntity>(bytes);
 
             Assert.AreEqual(entity.Value1, entity2.Value1);
             Assert.AreEqual(entity.Value2, entity2.Value2);

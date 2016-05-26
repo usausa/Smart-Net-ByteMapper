@@ -41,7 +41,7 @@
         /// <param name="target"></param>
         public void ToByte(Encoding encoding, byte[] buffer, object target)
         {
-            Array.Copy(constant, 0, buffer, offset, constant.Length);
+            Buffer.BlockCopy(constant, 0, buffer, offset, constant.Length);
         }
     }
 }

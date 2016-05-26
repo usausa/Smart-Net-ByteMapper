@@ -70,6 +70,13 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
+        IMapperConfigurationExpresion DefaultNullValue(byte[] value);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         IMapperConfigurationExpresion DefaultConverter(IValueConverter value);
 
         /// <summary>
@@ -119,6 +126,14 @@
         /// <param name="type"></param>
         /// <param name="value"></param>
         /// <returns></returns>
+        IMapperConfigurationExpresion DefaultValue(Type type, byte[] value);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         IMapperConfigurationExpresion DefaultConverter(Type type, IValueConverter value);
 
         /// <summary>
@@ -157,6 +172,10 @@
         /// <returns></returns>
         ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimitter);
 
-        // TODO void CreateMap(Type type);
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        void CreateMap(Type type);
     }
 }

@@ -43,10 +43,10 @@
             int copy;
             for (copy = 1; copy <= length / 2; copy <<= 1)
             {
-                Array.Copy(array, offset, array, offset + copy, copy);
+                Buffer.BlockCopy(array, offset, array, offset + copy, copy);
             }
 
-            Array.Copy(array, offset, array, offset + copy, length - copy);
+            Buffer.BlockCopy(array, offset, array, offset + copy, length - copy);
 
             return array;
         }
@@ -360,12 +360,12 @@
 
             var result = new T[array.Length + others.Sum(_ => _.Length)];
 
-            Array.Copy(array, 0, result, 0, array.Length);
+            Buffer.BlockCopy(array, 0, result, 0, array.Length);
 
             var offset = array.Length;
             foreach (var other in others)
             {
-                Array.Copy(other, 0, result, offset, other.Length);
+                Buffer.BlockCopy(other, 0, result, offset, other.Length);
                 offset += other.Length;
             }
 
@@ -613,7 +613,7 @@
         {
             var result = new T[Math.Min(length, array.Length - offset)];
 
-            Array.Copy(array, offset, result, 0, result.Length);
+            Buffer.BlockCopy(array, offset, result, 0, result.Length);
 
             return result;
         }

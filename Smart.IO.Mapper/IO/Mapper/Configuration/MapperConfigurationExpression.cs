@@ -22,6 +22,8 @@
 
         private readonly Dictionary<Type, bool> nullIfEmptyOfType = new Dictionary<Type, bool>();
 
+        private readonly Dictionary<Type, byte[]> nullValueOfType = new Dictionary<Type, byte[]>();
+
         private readonly Dictionary<Type, IValueConverter> formatterOfType = new Dictionary<Type, IValueConverter>();
 
         private Padding defaultPadding = Padding.Right;
@@ -31,6 +33,8 @@
         private bool defaultTrim = true;
 
         private bool defaultNullIfEmpty = true;
+
+        private byte[] defaultNullValue;
 
         private IValueConverter defaultConverter = new DefaultConverter();
 
@@ -96,6 +100,12 @@
             return this;
         }
 
+        public IMapperConfigurationExpresion DefaultNullValue(byte[] value)
+        {
+            defaultNullValue = value;
+            return this;
+        }
+
         public IMapperConfigurationExpresion DefaultConverter(IValueConverter value)
         {
             defaultConverter = value;
@@ -133,10 +143,21 @@
             return this;
         }
 
+        public IMapperConfigurationExpresion DefaultValue(Type type, byte[] value)
+        {
+            nullValueOfType[type] = value;
+            return this;
+        }
+
         public IMapperConfigurationExpresion DefaultConverter(Type type, IValueConverter value)
         {
             formatterOfType[type] = value;
             return this;
+        }
+
+        public Encoding GetEncoding()
+        {
+            return mapperConfig.Encoding;
         }
 
         Padding IDefaultSettings.GetPadding(Type type)
@@ -161,6 +182,12 @@
         {
             bool value;
             return nullIfEmptyOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullIfEmpty;
+        }
+
+        public byte[] GetNullValue(Type type)
+        {
+            byte[] value;
+            return nullValueOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullValue;
         }
 
         IValueConverter IDefaultSettings.GetConverter(Type type)
@@ -199,6 +226,14 @@
             return expression;
         }
 
-        // TODO Attribute Version
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="type"></param>
+        public void CreateMap(Type type)
+        {
+            // TODO Attrbute version
+            throw new NotImplementedException();
+        }
     }
 }

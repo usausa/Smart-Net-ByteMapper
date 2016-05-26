@@ -3,6 +3,9 @@
     using System;
     using System.Text;
 
+    /// <summary>
+    ///
+    /// </summary>
     public class BooleanConverter : IValueConverter
     {
         private static readonly byte[] Empty = new byte[0];
