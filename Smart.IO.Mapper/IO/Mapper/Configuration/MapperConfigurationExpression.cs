@@ -163,37 +163,73 @@
         Padding IDefaultSettings.GetPadding(Type type)
         {
             Padding value;
-            return paddingOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultPadding;
+            if (paddingOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && paddingOfType.TryGetValue(valueType, out value) ? value : defaultPadding;
         }
 
         byte IDefaultSettings.GetPaddingByte(Type type)
         {
             byte value;
-            return paddingBytesOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultPaddingByte;
+            if (paddingBytesOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && paddingBytesOfType.TryGetValue(valueType, out value) ? value : defaultPaddingByte;
         }
 
         bool IDefaultSettings.GetTrim(Type type)
         {
             bool value;
-            return trimOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultTrim;
+            if (trimOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && trimOfType.TryGetValue(valueType, out value) ? value : defaultTrim;
         }
 
         bool IDefaultSettings.GetNullIfEmpty(Type type)
         {
             bool value;
-            return nullIfEmptyOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullIfEmpty;
+            if (nullIfEmptyOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && nullIfEmptyOfType.TryGetValue(valueType, out value) ? value : defaultNullIfEmpty;
         }
 
         public byte[] GetNullValue(Type type)
         {
             byte[] value;
-            return nullValueOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultNullValue;
+            if (nullValueOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && nullValueOfType.TryGetValue(valueType, out value) ? value : defaultNullValue;
         }
 
         IValueConverter IDefaultSettings.GetConverter(Type type)
         {
             IValueConverter value;
-            return formatterOfType.TryGetValue(Nullable.GetUnderlyingType(type) ?? type, out value) ? value : defaultConverter;
+            if (formatterOfType.TryGetValue(type, out value))
+            {
+                return value;
+            }
+
+            var valueType = Nullable.GetUnderlyingType(type);
+            return (valueType != null) && formatterOfType.TryGetValue(valueType, out value) ? value : defaultConverter;
         }
 
         public ITypeExpression<T> CreateMap<T>(int length)
