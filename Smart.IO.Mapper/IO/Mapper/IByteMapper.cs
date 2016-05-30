@@ -86,5 +86,83 @@
         /// <param name="source"></param>
         /// <param name="stream"></param>
         void ToBytes<T>(IEnumerable<T> source, Stream stream);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        T FromString<T>(string str)
+            where T : new();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="str"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        T FromString<T>(string str, T target);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromStrings<T>(IEnumerable<string> source)
+            where T : new();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromStrings<T>(IEnumerable<string> source, Func<T> factory);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stream"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromStrings<T>(StreamReader stream)
+            where T : new();
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="stream"></param>
+        /// <param name="factory"></param>
+        /// <returns></returns>
+        IEnumerable<T> FromStrings<T>(StreamReader stream, Func<T> factory);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        string ToString<T>(T source);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        IEnumerable<string> ToStrings<T>(IEnumerable<T> source);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="stream"></param>
+        void ToStrings<T>(IEnumerable<T> source, StreamWriter stream);
     }
 }
