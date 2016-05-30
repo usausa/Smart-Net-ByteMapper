@@ -15,6 +15,11 @@
         /// <summary>
         ///
         /// </summary>
+        public int RequiredLength => 0;
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="offset"></param>
         /// <param name="constant"></param>
         public ConstantMapper(int offset, byte[] constant)

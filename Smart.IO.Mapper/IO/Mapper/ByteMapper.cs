@@ -56,7 +56,7 @@
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
 
-            if (buffer.Length < mapper.Length)
+            if (buffer.Length < mapper.RequiredLength)
             {
                 return default(T);
             }
@@ -89,7 +89,7 @@
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
 
-            if (buffer.Length < mapper.Length)
+            if (buffer.Length < mapper.RequiredLength)
             {
                 return default(T);
             }
@@ -118,7 +118,7 @@
 
             foreach (var buffer in source)
             {
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -153,7 +153,7 @@
 
             foreach (var buffer in source)
             {
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -184,7 +184,7 @@
             var buffer = new byte[mapper.Length];
             while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
             {
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -220,7 +220,7 @@
             var buffer = new byte[mapper.Length];
             while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
             {
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -318,7 +318,7 @@
             var mapper = FindTypeMapper(type);
 
             var buffer = mapperConfig.Encoding.GetBytes(str);
-            if (buffer.Length < mapper.Length)
+            if (buffer.Length < mapper.RequiredLength)
             {
                 return default(T);
             }
@@ -352,7 +352,7 @@
             var mapper = FindTypeMapper(type);
 
             var buffer = mapperConfig.Encoding.GetBytes(str);
-            if (buffer.Length < mapper.Length)
+            if (buffer.Length < mapper.RequiredLength)
             {
                 return default(T);
             }
@@ -382,7 +382,7 @@
             foreach (var str in source)
             {
                 var buffer = mapperConfig.Encoding.GetBytes(str);
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -418,7 +418,7 @@
             foreach (var str in source)
             {
                 var buffer = mapperConfig.Encoding.GetBytes(str);
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -450,7 +450,7 @@
             while ((str = stream.ReadLine()) != null)
             {
                 var buffer = mapperConfig.Encoding.GetBytes(str);
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }
@@ -487,7 +487,7 @@
             while ((str = stream.ReadLine()) != null)
             {
                 var buffer = mapperConfig.Encoding.GetBytes(str);
-                if (buffer.Length < mapper.Length)
+                if (buffer.Length < mapper.RequiredLength)
                 {
                     continue;
                 }

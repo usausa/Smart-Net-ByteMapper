@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
+    using System;
     using System.Collections.Generic;
     using System.Text;
 
@@ -12,7 +13,15 @@
 
         private readonly IList<IFieldMapper> fields = new List<IFieldMapper>();
 
+        /// <summary>
+        ///
+        /// </summary>
         public int Length { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
+        public int RequiredLength { get; set; }
 
         /// <summary>
         ///
@@ -32,6 +41,7 @@
         internal void AddFiled(IFieldMapper fieldMapper)
         {
             fields.Add(fieldMapper);
+            RequiredLength = Math.Max(RequiredLength, fieldMapper.RequiredLength);
         }
 
         /// <summary>

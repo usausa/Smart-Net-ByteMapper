@@ -52,6 +52,11 @@
         /// <summary>
         ///
         /// </summary>
+        public int RequiredLength => offset + length;
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="offset"></param>
         /// <param name="length"></param>
         internal MemberMapper(int offset, int length)

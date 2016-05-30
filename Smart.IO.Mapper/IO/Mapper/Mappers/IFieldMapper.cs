@@ -10,6 +10,11 @@
         /// <summary>
         ///
         /// </summary>
+        int RequiredLength { get; }
+
+        /// <summary>
+        ///
+        /// </summary>
         /// <param name="encoding"></param>
         /// <param name="buffer"></param>
         /// <param name="target"></param>
