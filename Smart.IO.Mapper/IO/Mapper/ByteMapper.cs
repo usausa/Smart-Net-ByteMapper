@@ -239,6 +239,18 @@
         /// <returns></returns>
         public byte[] ToByte<T>(T source)
         {
+            return ToByte(source, true);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
+        /// <returns></returns>
+        public byte[] ToByte<T>(T source, bool appendDelimiter)
+        {
             if (source == null)
             {
                 throw new ArgumentNullException(nameof(source));
@@ -247,7 +259,7 @@
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
 
-            return mapper.ToByte(mapperConfig.Encoding, source);
+            return mapper.ToByte(mapperConfig.Encoding, appendDelimiter, source);
         }
 
         /// <summary>
@@ -257,6 +269,18 @@
         /// <param name="source"></param>
         /// <returns></returns>
         public IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source)
+        {
+            return ToBytes(source, true);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
+        /// <returns></returns>
+        public IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source, bool appendDelimiter)
         {
             if (source == null)
             {
@@ -268,7 +292,7 @@
 
             foreach (var obj in source)
             {
-                yield return mapper.ToByte(mapperConfig.Encoding, obj);
+                yield return mapper.ToByte(mapperConfig.Encoding, appendDelimiter, obj);
             }
         }
 
@@ -279,6 +303,18 @@
         /// <param name="source"></param>
         /// <param name="stream"></param>
         public void ToBytes<T>(IEnumerable<T> source, Stream stream)
+        {
+            ToBytes(source, true, stream);
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
+        /// <param name="stream"></param>
+        public void ToBytes<T>(IEnumerable<T> source, bool appendDelimiter, Stream stream)
         {
             if (source == null)
             {
@@ -295,7 +331,7 @@
 
             foreach (var obj in source)
             {
-                var buffer = mapper.ToByte(mapperConfig.Encoding, obj);
+                var buffer = mapper.ToByte(mapperConfig.Encoding, appendDelimiter, obj);
                 stream.Write(buffer, 0, buffer.Length);
             }
         }
@@ -514,7 +550,7 @@
             var type = typeof(T);
             var mapper = FindTypeMapper(type);
 
-            var buffer = mapper.ToByte(mapperConfig.Encoding, source);
+            var buffer = mapper.ToByte(mapperConfig.Encoding, false, source);
 
             return mapperConfig.Encoding.GetString(buffer);
         }
@@ -537,8 +573,7 @@
 
             foreach (var obj in source)
             {
-                var buffer = mapper.ToByte(mapperConfig.Encoding, obj);
-
+                var buffer = mapper.ToByte(mapperConfig.Encoding, false, obj);
                 yield return mapperConfig.Encoding.GetString(buffer);
             }
         }
@@ -566,7 +601,7 @@
 
             foreach (var obj in source)
             {
-                var buffer = mapper.ToByte(mapperConfig.Encoding, obj);
+                var buffer = mapper.ToByte(mapperConfig.Encoding, false, obj);
                 stream.WriteLine(mapperConfig.Encoding.GetString(buffer));
             }
         }

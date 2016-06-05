@@ -34,7 +34,7 @@
                     .DefaultFiller(0x20)
                     .DefaultPadding(0x20)
                     .DefaultNullIfEmpty(true)
-                    .DefaultDelimitter(new byte[] { 0x0D, 0x0A })
+                    .DefaultDelimiter(new byte[] { 0x0D, 0x0A })
                     .DefaultPadding(typeof(int), Padding.Left);
 
                 config.CreateMap<BasicEntity>(17)

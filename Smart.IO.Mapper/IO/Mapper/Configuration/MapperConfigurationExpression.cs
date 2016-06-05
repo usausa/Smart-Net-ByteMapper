@@ -12,6 +12,8 @@
     /// </summary>
     internal class MapperConfigurationExpression : IMapperConfigurationExpresion, IDefaultSettings
     {
+        private static readonly byte[] EmptyDelimiter = new byte[0];
+
         private readonly MapperConfig mapperConfig;
 
         private readonly Dictionary<Type, Padding> paddingOfType = new Dictionary<Type, Padding>();
@@ -40,7 +42,7 @@
 
         private byte defaultFiller;
 
-        private byte[] defaultDelimitter;
+        private byte[] defaultDelimiter;
 
         /// <summary>
         ///
@@ -57,9 +59,9 @@
             return this;
         }
 
-        public IMapperConfigurationExpresion DefaultDelimitter(byte[] value)
+        public IMapperConfigurationExpresion DefaultDelimiter(byte[] value)
         {
-            defaultDelimitter = value;
+            defaultDelimiter = value;
             return this;
         }
 
@@ -234,32 +236,24 @@
 
         public ITypeExpression<T> CreateMap<T>(int length)
         {
-            return CreateMap<T>(length, defaultFiller, defaultDelimitter);
+            return CreateMap<T>(length, defaultFiller, defaultDelimiter);
         }
 
         public ITypeExpression<T> CreateMap<T>(int length, byte filler)
         {
-            return CreateMap<T>(length, filler, defaultDelimitter);
+            return CreateMap<T>(length, filler, defaultDelimiter);
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length, byte[] delimitter)
+        public ITypeExpression<T> CreateMap<T>(int length, byte[] delimiter)
         {
-            return CreateMap<T>(length, defaultFiller, delimitter);
+            return CreateMap<T>(length, defaultFiller, delimiter);
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimitter)
+        public ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter)
         {
-            var typeMapper = new TypeMapper(length, filler);
+            var typeMapper = new TypeMapper(length, filler, delimiter ?? EmptyDelimiter);
             mapperConfig.AddTypeMapper(typeof(T), typeMapper);
-
-            var expression = new TypeExpression<T>(this, typeMapper);
-
-            if (delimitter != null)
-            {
-                typeMapper.AddFiled(new ConstantMapper(length - delimitter.Length, delimitter));
-            }
-
-            return expression;
+            return new TypeExpression<T>(this, typeMapper);
         }
 
         /// <summary>

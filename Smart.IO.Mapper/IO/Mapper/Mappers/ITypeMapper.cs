@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
+    using System;
     using System.Text;
 
     /// <summary>
@@ -29,8 +30,9 @@
         ///
         /// </summary>
         /// <param name="encoding"></param>
+        /// <param name="appendDelimiter"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        byte[] ToByte(Encoding encoding, object target);
+        byte[] ToByte(Encoding encoding, bool appendDelimiter, object target);
     }
 }

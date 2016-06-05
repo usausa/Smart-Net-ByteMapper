@@ -76,6 +76,15 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
+        /// <returns></returns>
+        byte[] ToByte<T>(T source, bool appendDelimiter);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
         /// <returns></returns>
         IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source);
 
@@ -84,8 +93,18 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
+        /// <returns></returns>
+        IEnumerable<byte[]> ToBytes<T>(IEnumerable<T> source, bool appendDelimiter);
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="appendDelimiter"></param>
         /// <param name="stream"></param>
-        void ToBytes<T>(IEnumerable<T> source, Stream stream);
+        void ToBytes<T>(IEnumerable<T> source, bool appendDelimiter, Stream stream);
 
         /// <summary>
         ///

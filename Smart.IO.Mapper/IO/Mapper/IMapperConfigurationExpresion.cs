@@ -27,7 +27,7 @@
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
-        IMapperConfigurationExpresion DefaultDelimitter(byte[] value);
+        IMapperConfigurationExpresion DefaultDelimiter(byte[] value);
 
         /// <summary>
         ///
@@ -158,9 +158,9 @@
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="length"></param>
-        /// <param name="delimitter"></param>
+        /// <param name="delimiter"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length, byte[] delimitter);
+        ITypeExpression<T> CreateMap<T>(int length, byte[] delimiter);
 
         /// <summary>
         ///
@@ -168,9 +168,9 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="length"></param>
         /// <param name="filler"></param>
-        /// <param name="delimitter"></param>
+        /// <param name="delimiter"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimitter);
+        ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter);
 
         /// <summary>
         ///

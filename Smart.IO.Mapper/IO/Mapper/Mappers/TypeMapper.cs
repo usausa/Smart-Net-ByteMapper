@@ -11,6 +11,8 @@
     {
         private readonly byte filler;
 
+        private readonly byte[] delimiter;
+
         private readonly IList<IFieldMapper> fields = new List<IFieldMapper>();
 
         /// <summary>
@@ -28,10 +30,12 @@
         /// </summary>
         /// <param name="length"></param>
         /// <param name="filler"></param>
-        public TypeMapper(int length, byte filler)
+        /// <param name="delimiter"></param>
+        public TypeMapper(int length, byte filler, byte[] delimiter)
         {
             Length = length;
             this.filler = filler;
+            this.delimiter = delimiter;
         }
 
         /// <summary>
@@ -62,19 +66,25 @@
         ///
         /// </summary>
         /// <param name="encoding"></param>
+        /// <param name="appendDelimiter"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        public byte[] ToByte(Encoding encoding, object target)
+        public byte[] ToByte(Encoding encoding, bool appendDelimiter, object target)
         {
             var buffer = new byte[Length];
             if (filler != 0)
             {
-                buffer.Fill(0, Length, filler);
+                buffer.Fill(0, Length - (appendDelimiter ? delimiter.Length : 0), filler);
             }
 
             foreach (var field in fields)
             {
                 field.ToByte(encoding, buffer, target);
+            }
+
+            if (appendDelimiter)
+            {
+                Buffer.BlockCopy(delimiter, 0, buffer, Length - delimiter.Length, delimiter.Length);
             }
 
             return buffer;
