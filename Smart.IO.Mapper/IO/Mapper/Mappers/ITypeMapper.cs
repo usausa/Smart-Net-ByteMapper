@@ -1,6 +1,5 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
-    using System;
     using System.Text;
 
     /// <summary>

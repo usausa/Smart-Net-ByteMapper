@@ -19,7 +19,7 @@
         {
             if (pi == null)
             {
-                throw new ArgumentNullException("pi");
+                throw new ArgumentNullException(nameof(pi));
             }
 
             if (pi.DeclaringType == null)
@@ -69,7 +69,7 @@
         {
             if (pi == null)
             {
-                throw new ArgumentNullException("pi");
+                throw new ArgumentNullException(nameof(pi));
             }
 
             if (pi.DeclaringType == null)
