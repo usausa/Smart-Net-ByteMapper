@@ -71,7 +71,7 @@
         /// <returns></returns>
         public byte[] ToByte(Encoding encoding, bool appendDelimiter, object target)
         {
-            var buffer = new byte[Length];
+            var buffer = new byte[Length - (appendDelimiter ? 0 : delimiter.Length)];
             if (filler != 0)
             {
                 buffer.Fill(0, Length - (appendDelimiter ? delimiter.Length : 0), filler);
