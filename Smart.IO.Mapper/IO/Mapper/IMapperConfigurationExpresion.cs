@@ -142,7 +142,7 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="length"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length);
+        ITypeConfigurationExpression<T> CreateMap<T>(int length);
 
         /// <summary>
         ///
@@ -151,7 +151,7 @@
         /// <param name="length"></param>
         /// <param name="filler"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length, byte filler);
+        ITypeConfigurationExpression<T> CreateMap<T>(int length, byte filler);
 
         /// <summary>
         ///
@@ -160,7 +160,7 @@
         /// <param name="length"></param>
         /// <param name="delimiter"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length, byte[] delimiter);
+        ITypeConfigurationExpression<T> CreateMap<T>(int length, byte[] delimiter);
 
         /// <summary>
         ///
@@ -170,7 +170,7 @@
         /// <param name="filler"></param>
         /// <param name="delimiter"></param>
         /// <returns></returns>
-        ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter);
+        ITypeConfigurationExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter);
 
         /// <summary>
         ///

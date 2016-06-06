@@ -238,26 +238,26 @@
             return (valueType != null) && formatterOfType.TryGetValue(valueType, out value) ? value : defaultConverter;
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length)
+        public ITypeConfigurationExpression<T> CreateMap<T>(int length)
         {
             return CreateMap<T>(length, defaultFiller, defaultDelimiter);
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length, byte filler)
+        public ITypeConfigurationExpression<T> CreateMap<T>(int length, byte filler)
         {
             return CreateMap<T>(length, filler, defaultDelimiter);
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length, byte[] delimiter)
+        public ITypeConfigurationExpression<T> CreateMap<T>(int length, byte[] delimiter)
         {
             return CreateMap<T>(length, defaultFiller, delimiter);
         }
 
-        public ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter)
+        public ITypeConfigurationExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter)
         {
             var typeMapper = new TypeMapper(length, filler, delimiter ?? EmptyDelimiter);
             mapperConfig.AddTypeMapper(profile, typeof(T), typeMapper);
-            return new TypeExpression<T>(this, typeMapper);
+            return new TypeConfigurationExpression<T>(this, typeMapper);
         }
 
         /// <summary>

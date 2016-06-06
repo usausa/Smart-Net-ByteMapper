@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
-    internal class TypeExpression<T> : ITypeExpression<T>
+    internal class TypeConfigurationExpression<T> : ITypeConfigurationExpression<T>
     {
         private readonly IDefaultSettings defaultSettings;
 
@@ -14,30 +14,30 @@
 
         private int lastOffset;
 
-        public TypeExpression(IDefaultSettings defaultSettings, TypeMapper typeMapper)
+        public TypeConfigurationExpression(IDefaultSettings defaultSettings, TypeMapper typeMapper)
         {
             this.defaultSettings = defaultSettings;
             this.typeMapper = typeMapper;
         }
 
-        public ITypeExpression<T> Filler(int length, byte value)
+        public ITypeConfigurationExpression<T> Filler(int length, byte value)
         {
             return Filler(lastOffset, length, value);
         }
 
-        public ITypeExpression<T> Filler(int offset, int length, byte value)
+        public ITypeConfigurationExpression<T> Filler(int offset, int length, byte value)
         {
             typeMapper.AddFiled(new FillerMapper(offset, length, value));
             lastOffset += length;
             return this;
         }
 
-        public ITypeExpression<T> Constant(byte[] value)
+        public ITypeConfigurationExpression<T> Constant(byte[] value)
         {
             return Constant(lastOffset, value);
         }
 
-        public ITypeExpression<T> Constant(int offset, byte[] value)
+        public ITypeConfigurationExpression<T> Constant(int offset, byte[] value)
         {
             if (value == null)
             {
@@ -49,12 +49,12 @@
             return this;
         }
 
-        public ITypeExpression<T> ForMember(string name, int length, Action<IMemberConfigurationExpression> config)
+        public ITypeConfigurationExpression<T> ForMember(string name, int length, Action<IMemberConfigurationExpression> config)
         {
             return ForMember(name, lastOffset, length, config);
         }
 
-        public ITypeExpression<T> ForMember(string name, int offset, int length, Action<IMemberConfigurationExpression> config)
+        public ITypeConfigurationExpression<T> ForMember(string name, int offset, int length, Action<IMemberConfigurationExpression> config)
         {
             if (config == null)
             {
@@ -90,32 +90,32 @@
             return this;
         }
 
-        public ITypeExpression<T> ForMember(string name, int length)
+        public ITypeConfigurationExpression<T> ForMember(string name, int length)
         {
             return ForMember(name, lastOffset, length, option => { });
         }
 
-        public ITypeExpression<T> ForMember(string name, int offset, int length)
+        public ITypeConfigurationExpression<T> ForMember(string name, int offset, int length)
         {
             return ForMember(name, offset, length, option => { });
         }
 
-        public ITypeExpression<T> ForMember(Expression<Func<T, object>> expr, int length, Action<IMemberConfigurationExpression> config)
+        public ITypeConfigurationExpression<T> ForMember(Expression<Func<T, object>> expr, int length, Action<IMemberConfigurationExpression> config)
         {
             return ForMember(ExpressionHelper.GetMemberName(expr), lastOffset, length, config);
         }
 
-        public ITypeExpression<T> ForMember(Expression<Func<T, object>> expr, int offset, int length, Action<IMemberConfigurationExpression> config)
+        public ITypeConfigurationExpression<T> ForMember(Expression<Func<T, object>> expr, int offset, int length, Action<IMemberConfigurationExpression> config)
         {
             return ForMember(ExpressionHelper.GetMemberName(expr), offset, length, config);
         }
 
-        public ITypeExpression<T> ForMember(Expression<Func<T, object>> expr, int length)
+        public ITypeConfigurationExpression<T> ForMember(Expression<Func<T, object>> expr, int length)
         {
             return ForMember(ExpressionHelper.GetMemberName(expr), lastOffset, length, option => { });
         }
 
-        public ITypeExpression<T> ForMember(Expression<Func<T, object>> expr, int offset, int length)
+        public ITypeConfigurationExpression<T> ForMember(Expression<Func<T, object>> expr, int offset, int length)
         {
             return ForMember(ExpressionHelper.GetMemberName(expr), offset, length, option => { });
         }
