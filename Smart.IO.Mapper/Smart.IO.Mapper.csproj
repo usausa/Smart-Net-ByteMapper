@@ -60,6 +60,7 @@
     <Compile Include="IO\Mapper\IMemberConfigurationExpression.cs" />
     <Compile Include="IO\Mapper\ITypeConfigurationExpression.cs" />
     <Compile Include="IO\Mapper\MapperConfigBuilder.cs" />
+    <Compile Include="IO\Mapper\MapperProfile.cs" />
     <Compile Include="IO\Mapper\Mappers\ConstantMapper.cs" />
     <Compile Include="IO\Mapper\Converters\DefaultConverter.cs" />
     <Compile Include="IO\Mapper\Configuration\ExpressionHelper.cs" />

@@ -11,7 +11,7 @@
     /// </summary>
     internal class MapperConfig : IMapperConfig
     {
-        private readonly Dictionary<Type, ITypeMapper> typeEntries = new Dictionary<Type, ITypeMapper>();
+        private readonly Dictionary<Tuple<string, Type>, ITypeMapper> typeEntries = new Dictionary<Tuple<string, Type>, ITypeMapper>();
 
         /// <summary>
         ///
@@ -21,22 +21,24 @@
         /// <summary>
         ///
         /// </summary>
+        /// <param name="profile"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public ITypeMapper FindTypeMapper(Type type)
+        public ITypeMapper FindTypeMapper(string profile, Type type)
         {
             ITypeMapper typeMapper;
-            return typeEntries.TryGetValue(type, out typeMapper) ? typeMapper : null;
+            return typeEntries.TryGetValue(Tuple.Create(profile ?? string.Empty, type), out typeMapper) ? typeMapper : null;
         }
 
         /// <summary>
         ///
         /// </summary>
+        /// <param name="profile"></param>
         /// <param name="type"></param>
         /// <param name="typeMapper"></param>
-        public void AddTypeMapper(Type type, ITypeMapper typeMapper)
+        public void AddTypeMapper(string profile, Type type, ITypeMapper typeMapper)
         {
-            typeEntries[type] = typeMapper;
+            typeEntries[Tuple.Create(profile ?? string.Empty, type)] = typeMapper;
         }
     }
 }

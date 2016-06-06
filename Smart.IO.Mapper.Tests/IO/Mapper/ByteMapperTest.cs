@@ -24,10 +24,10 @@
             public string Name { get; set; }
         }
 
-        protected class BasicProfile : IMapperProfile
+        protected class BasicProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -81,10 +81,10 @@
             public int? Value { get; set; }
         }
 
-        protected class NullableProfile : IMapperProfile
+        protected class NullableProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -137,10 +137,10 @@
             public DateTime? Value { get; set; }
         }
 
-        protected class NullValueProfile : IMapperProfile
+        protected class NullValueProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding);
@@ -175,11 +175,11 @@
             public float Value { get; set; }
         }
 
-        protected class FormatProfile : IMapperProfile
+        protected class FormatProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -212,11 +212,11 @@
             public int Value { get; set; }
         }
 
-        protected class ParseProfile : IMapperProfile
+        protected class ParseProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIParseProvider", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -261,11 +261,11 @@
             public EnumType Value { get; set; }
         }
 
-        protected class EnumProfile : IMapperProfile
+        protected class EnumProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -303,11 +303,11 @@
             public DateTime? Value2 { get; set; }
         }
 
-        protected class DateTimeProfile : IMapperProfile
+        protected class DateTimeProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)
@@ -347,11 +347,11 @@
             public bool? Value2 { get; set; }
         }
 
-        protected class BooleanProfile : IMapperProfile
+        protected class BooleanProfile : MapperProfile
         {
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:パブリック メソッドの引数の検証", Justification = "Ignore")]
             [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-            public void Configure(IMapperConfigurationExpresion config)
+            public override void Configure(IMapperConfigurationExpresion config)
             {
                 config
                     .DefaultEncording(SjisEncoding)

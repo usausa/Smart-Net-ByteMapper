@@ -7,15 +7,15 @@
     /// </summary>
     public class MapperConfigBuilder
     {
-        private readonly IMapperProfile profile;
+        private readonly IMapperProfile[] profiles;
 
         /// <summary>
         ///
         /// </summary>
-        /// <param name="profile"></param>
-        public MapperConfigBuilder(IMapperProfile profile)
+        /// <param name="profiles"></param>
+        public MapperConfigBuilder(params IMapperProfile[] profiles)
         {
-            this.profile = profile;
+            this.profiles = profiles;
         }
 
         /// <summary>
@@ -26,7 +26,10 @@
         {
             var mapperConfig = new MapperConfig();
 
-            profile.Configure(new MapperConfigurationExpression(mapperConfig));
+            foreach (var profile in profiles)
+            {
+                profile.Configure(new MapperConfigurationExpression(profile.Name, mapperConfig));
+            }
 
             return mapperConfig;
         }

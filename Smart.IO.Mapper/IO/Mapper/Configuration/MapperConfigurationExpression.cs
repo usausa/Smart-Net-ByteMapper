@@ -14,6 +14,8 @@
     {
         private static readonly byte[] EmptyDelimiter = new byte[0];
 
+        private readonly string profile;
+
         private readonly MapperConfig mapperConfig;
 
         private readonly Dictionary<Type, Padding> paddingOfType = new Dictionary<Type, Padding>();
@@ -47,9 +49,11 @@
         /// <summary>
         ///
         /// </summary>
+        /// <param name="profile"></param>
         /// <param name="mapperConfig"></param>
-        public MapperConfigurationExpression(MapperConfig mapperConfig)
+        public MapperConfigurationExpression(string profile, MapperConfig mapperConfig)
         {
+            this.profile = profile;
             this.mapperConfig = mapperConfig;
         }
 
@@ -252,7 +256,7 @@
         public ITypeExpression<T> CreateMap<T>(int length, byte filler, byte[] delimiter)
         {
             var typeMapper = new TypeMapper(length, filler, delimiter ?? EmptyDelimiter);
-            mapperConfig.AddTypeMapper(typeof(T), typeMapper);
+            mapperConfig.AddTypeMapper(profile, typeof(T), typeMapper);
             return new TypeExpression<T>(this, typeMapper);
         }
 

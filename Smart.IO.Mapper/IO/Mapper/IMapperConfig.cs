@@ -18,8 +18,9 @@
         /// <summary>
         ///
         /// </summary>
+        /// <param name="profile"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        ITypeMapper FindTypeMapper(Type type);
+        ITypeMapper FindTypeMapper(string profile, Type type);
     }
 }
