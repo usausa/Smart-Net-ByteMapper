@@ -67,7 +67,7 @@
             }
             catch (FormatException)
             {
-                return DefaultValue.Of(type);
+                return type.GetDefaultValue();
             }
         }
 

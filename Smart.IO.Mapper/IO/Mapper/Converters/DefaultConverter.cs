@@ -115,7 +115,7 @@
             }
             catch (FormatException)
             {
-                return valueType == null ? DefaultValue.Of(type) : null;
+                return valueType == null ? type.GetDefaultValue() : null;
             }
         }
 

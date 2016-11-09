@@ -33,6 +33,10 @@
     <RunCodeAnalysis>true</RunCodeAnalysis>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Smart, Version=0.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Usa.Smart.Core.0.5.1\lib\portable-net45+win8+wpa81\Smart.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,9 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArrayExtensions.cs" />
-    <Compile Include="DefaultValues.cs" />
-    <Compile Include="IO\FileHelper.cs" />
     <Compile Include="IO\Mapper\ByteMapper.cs" />
     <Compile Include="IO\Mapper\ByteMapperException.cs" />
     <Compile Include="IO\Mapper\Configuration\IDefaultSettings.cs" />
@@ -75,10 +76,6 @@
     <Compile Include="IO\Mapper\MemberConfigurationExpressionExtensions.cs" />
     <Compile Include="IO\Mapper\Padding.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\AccessorExtensions.cs" />
-    <Compile Include="Reflection\DelegateAccsessor.cs" />
-    <Compile Include="Reflection\DelegateMethodGenerator.cs" />
-    <Compile Include="Reflection\IAccessor.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -103,7 +103,7 @@
             }
 
             var value = isNullValue || ((size <= 0) && NullIfEmpty)
-                ? DefaultValue.Of(Accessor.Type)
+                ? Accessor.Type.GetDefaultValue()
                 : Converter.FromByte(Accessor.Type, encoding, buffer, start, size);
 
             Accessor.SetValue(target, value);
