@@ -38,8 +38,8 @@
                     .DefaultPadding(typeof(int), Padding.Left);
 
                 config.CreateMap<BasicEntity>(17)
-                    .ForMember(_ => _.Id, 5)
-                    .ForMember(_ => _.Name, 10);
+                    .ForMember(x => x.Id, 5)
+                    .ForMember(x => x.Name, 10);
             }
         }
 
@@ -92,7 +92,7 @@
                     .DefaultPadding(typeof(int), Padding.Left);
 
                 config.CreateMap<NullableEntity>(5)
-                    .ForMember(_ => _.Value, 5);
+                    .ForMember(x => x.Value, 5);
             }
         }
 
@@ -146,7 +146,7 @@
                     .DefaultEncording(SjisEncoding);
 
                 config.CreateMap<NullValueEntity>(8)
-                    .ForMember(_ => _.Value, 8, c => c.DateTime("yyyyMMdd", null).NullValue(SjisEncoding.GetBytes("--------")));
+                    .ForMember(x => x.Value, 8, c => c.DateTime("yyyyMMdd", null).NullValue(SjisEncoding.GetBytes("--------")));
             }
         }
 
@@ -187,7 +187,7 @@
                     .DefaultPadding(typeof(float), Padding.Left);
 
                 config.CreateMap<FormatEntity>(5)
-                    .ForMember(_ => _.Value, 5, c => c.Formatter("F2"));
+                    .ForMember(x => x.Value, 5, c => c.Formatter("F2"));
             }
         }
 
@@ -224,7 +224,7 @@
                     .DefaultPadding(typeof(int), Padding.Left);
 
                 config.CreateMap<ParseEntity>(6)
-                    .ForMember(_ => _.Value, 6, c => c.Formatter("#,0"));
+                    .ForMember(x => x.Value, 6, c => c.Formatter("#,0"));
             }
         }
 
@@ -272,7 +272,7 @@
                     .DefaultPadding(0x20);
 
                 config.CreateMap<EnumEntity>(1)
-                    .ForMember(_ => _.Value, 1);
+                    .ForMember(x => x.Value, 1);
             }
         }
 
@@ -314,8 +314,8 @@
                     .DefaultPadding(0x20);
 
                 config.CreateMap<DateTimeEntity>(28)
-                    .ForMember(_ => _.Value1, 14, c => c.DateTime("yyyyMMddHHmmss"))
-                    .ForMember(_ => _.Value2, 14, c => c.DateTime("yyyyMMddHHmmss"));
+                    .ForMember(x => x.Value1, 14, c => c.DateTime("yyyyMMddHHmmss"))
+                    .ForMember(x => x.Value2, 14, c => c.DateTime("yyyyMMddHHmmss"));
             }
         }
 
@@ -358,8 +358,8 @@
                     .DefaultPadding(0x20);
 
                 config.CreateMap<BooleanEntity>(2)
-                    .ForMember(_ => _.Value1, 1, c => c.Boolean((byte)'1', (byte)'0'))
-                    .ForMember(_ => _.Value2, 1, c => c.Boolean((byte)'1', (byte)'0'));
+                    .ForMember(x => x.Value1, 1, c => c.Boolean((byte)'1', (byte)'0'))
+                    .ForMember(x => x.Value2, 1, c => c.Boolean((byte)'1', (byte)'0'));
             }
         }
 

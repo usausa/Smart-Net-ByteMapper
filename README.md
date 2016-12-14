@@ -42,11 +42,11 @@ private class Profile : IMapperProfile
             .DefaultPadding(typeof(float), Padding.Left);
 
         config.CreateMap<Entity>(64)
-            .ForMember(_ => _.Id, 5)
-            .ForMember(_ => _.Name, 10)
-            .ForMember(_ => _.Date, 14, c => c.DateTime("yyyyMMddHHmmss"))
-            .ForMember(_ => _.Amount, 6, c => c.Padding(0x30))
-            .ForMember(_ => _.Length, 6, c => c.Formatter("F2"));
+            .ForMember(x => x.Id, 5)
+            .ForMember(x => x.Name, 10)
+            .ForMember(x => x.Date, 14, c => c.DateTime("yyyyMMddHHmmss"))
+            .ForMember(x => x.Amount, 6, c => c.Padding(0x30))
+            .ForMember(x => x.Length, 6, c => c.Formatter("F2"));
     }
 }
 
