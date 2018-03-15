@@ -2,5 +2,6 @@
 {
     public interface IMemberMapperFactory
     {
+        IMemberMapper Create(IMapperCreateContext context);
     }
 }
