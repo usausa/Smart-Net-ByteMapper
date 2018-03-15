@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper
 {
-    public interface IByteMapper
+    public interface ITypeMapper
     {
         T FromByte<T>(byte[] buffer)
             where T : new();
