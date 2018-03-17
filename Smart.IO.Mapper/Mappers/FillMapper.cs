@@ -1,17 +1,18 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
-    using System;
-
-    public sealed class ConstMapper : IMemberMapper
+    public sealed class FillMapper : IMemberMapper
     {
         private readonly int offset;
 
-        private readonly byte[] constant;
+        private readonly int length;
 
-        public ConstMapper(int offset, byte[] constant)
+        private readonly byte filler;
+
+        public FillMapper(int offset, int length, byte filler)
         {
             this.offset = offset;
-            this.constant = constant;
+            this.length = length;
+            this.filler = filler;
         }
 
         public void Read(byte[] buffer, object target)
@@ -20,7 +21,7 @@
 
         public void Write(byte[] buffer, object target)
         {
-            Buffer.BlockCopy(constant, 0, buffer, offset, constant.Length);
+            buffer.Fill(offset, length, filler);
         }
     }
 }
