@@ -2,6 +2,8 @@
 {
     public interface ITypeMapper
     {
+        // TODO サイズ、
+
         T FromByte<T>(byte[] buffer)
             where T : new();
 
