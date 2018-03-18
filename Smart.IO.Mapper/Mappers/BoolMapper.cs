@@ -1,6 +1,84 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
-    public sealed class BoolMapper
+    using System;
+
+    public sealed class BoolMapper : IMemberMapper
     {
+        private readonly int offset;
+
+        private readonly Func<object, object> getter;
+
+        private readonly Action<object, object> setter;
+
+        private readonly byte trueValue;
+
+        private readonly byte falseValue;
+
+        public BoolMapper(
+            int offset,
+            Func<object, object> getter,
+            Action<object, object> setter,
+            byte trueValue,
+            byte falseValue)
+        {
+            this.offset = offset;
+            this.getter = getter;
+            this.setter = setter;
+            this.trueValue = trueValue;
+            this.falseValue = falseValue;
+        }
+
+        public void Read(byte[] buffer, object target)
+        {
+            setter(target, buffer[offset] == trueValue);
+        }
+
+        public void Write(byte[] buffer, object target)
+        {
+            buffer[offset] = (bool)getter(target) ? trueValue : falseValue;
+        }
+    }
+
+    public sealed class NullableBoolMapper : IMemberMapper
+    {
+        private readonly int offset;
+
+        private readonly Func<object, object> getter;
+
+        private readonly Action<object, object> setter;
+
+        private readonly byte trueValue;
+
+        private readonly byte falseValue;
+
+        private readonly byte nullValue;
+
+        public NullableBoolMapper(
+            int offset,
+            Func<object, object> getter,
+            Action<object, object> setter,
+            byte trueValue,
+            byte falseValue,
+            byte nullValue)
+        {
+            this.offset = offset;
+            this.getter = getter;
+            this.setter = setter;
+            this.trueValue = trueValue;
+            this.falseValue = falseValue;
+            this.nullValue = nullValue;
+        }
+
+        public void Read(byte[] buffer, object target)
+        {
+            var b = buffer[offset];
+            setter(target, b == trueValue ? true : b == nullValue ? (bool?)null : false);
+        }
+
+        public void Write(byte[] buffer, object target)
+        {
+            var value = (bool?)getter(target);
+            buffer[offset] = value.HasValue ? (value.Value ? trueValue : falseValue) : nullValue;
+        }
     }
 }
