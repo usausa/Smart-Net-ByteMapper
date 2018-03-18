@@ -1,6 +1,5 @@
 ﻿namespace Smart.IO.Mapper
 {
-    using System;
     using System.Collections.Generic;
 
     using Smart.ComponentModel;
@@ -9,6 +8,6 @@
     {
         IComponentContainer ResolveComponents();
 
-        Dictionary<Type, object> ResolveParameters();
+        Dictionary<string, object> ResolveParameters();
     }
 }

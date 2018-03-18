@@ -9,7 +9,7 @@
     {
         private readonly ComponentConfig config = new ComponentConfig();
 
-        private readonly Dictionary<Type, object> parameters = new Dictionary<Type, object>();
+        private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
 
         public MapperBuilderConfig Configure(Action<ComponentConfig> action)
         {
@@ -25,7 +25,14 @@
 
         public MapperBuilderConfig AddParameter<T>(T parameter)
         {
-            parameters[typeof(T)] = parameter;
+            parameters[typeof(T).Name] = parameter;
+
+            return this;
+        }
+
+        public MapperBuilderConfig AddParameter<T>(string name, T parameter)
+        {
+            parameters[name] = parameter;
 
             return this;
         }
@@ -35,7 +42,7 @@
             return config.ToContainer();
         }
 
-        Dictionary<Type, object> IMapperBuilderConfig.ResolveParameters()
+        Dictionary<string, object> IMapperBuilderConfig.ResolveParameters()
         {
             return parameters;
         }
