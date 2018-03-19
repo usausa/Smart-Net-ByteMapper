@@ -1,14 +1,18 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System;
+
     public interface ITypeMapper
     {
-        // TODO サイズ、
+        Type TargetType { get; }
 
-        T FromByte<T>(byte[] buffer)
-            where T : new();
+        int Size { get; }
+    }
 
-        // TODO Factroy?
-        // TODO Stream read ?
-        // TODO Writer, bytes & stream ?
+    public interface ITypeMapper<in T> : ITypeMapper
+    {
+        void FromByte(byte[] buffer, T target);
+
+        void ToByte(byte[] buffer, T target);
     }
 }

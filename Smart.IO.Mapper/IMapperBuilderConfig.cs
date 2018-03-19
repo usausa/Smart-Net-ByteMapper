@@ -9,5 +9,7 @@
         IComponentContainer ResolveComponents();
 
         Dictionary<string, object> ResolveParameters();
+
+        MapperEntry[] ResolveEntries();
     }
 }
