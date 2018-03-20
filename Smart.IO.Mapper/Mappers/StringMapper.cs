@@ -43,15 +43,16 @@
             this.filler = filler;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            var start = offset;
+            var start = index + offset;
             var size = length;
             if (trim)
             {
                 if (padding == Padding.Left)
                 {
-                    while ((start < offset + length) && (buffer[start] == filler))
+                    var end = start + length;
+                    while ((start < end) && (buffer[start] == filler))
                     {
                         start++;
                         size--;
@@ -59,7 +60,7 @@
                 }
                 else
                 {
-                    while ((size > 0) && (buffer[offset + size - 1] == filler))
+                    while ((size > 0) && (buffer[start + size - 1] == filler))
                     {
                         size--;
                     }
@@ -70,27 +71,27 @@
             setter(target, value);
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
             var value = (string)getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, length, filler);
+                buffer.Fill(index + offset, length, filler);
             }
             else
             {
                 var bytes = encoding.GetBytes(value);
                 if (bytes.Length >= length)
                 {
-                    Buffer.BlockCopy(bytes, 0, buffer, offset, length);
+                    Buffer.BlockCopy(bytes, 0, buffer, index + offset, length);
                 }
                 else if (padding == Padding.Right)
                 {
-                    BytesHelper.CopyPadRight(buffer, offset, length, bytes, filler);
+                    BytesHelper.CopyPadRight(bytes, buffer, index + offset, length, filler);
                 }
                 else
                 {
-                    BytesHelper.CopyPadLeft(buffer, offset, length, bytes, filler);
+                    BytesHelper.CopyPadLeft(bytes, buffer, index + offset, length, filler);
                 }
             }
         }

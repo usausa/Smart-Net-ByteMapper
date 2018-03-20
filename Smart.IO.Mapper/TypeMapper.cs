@@ -21,7 +21,15 @@
         {
             for (var i = 0; i < mappers.Length; i++)
             {
-                mappers[i].Read(buffer, target);
+                mappers[i].Read(buffer, 0, target);
+            }
+        }
+
+        public void FromByte(byte[] buffer, int index, T target)
+        {
+            for (var i = 0; i < mappers.Length; i++)
+            {
+                mappers[i].Read(buffer, index, target);
             }
         }
 
@@ -29,7 +37,15 @@
         {
             for (var i = 0; i < mappers.Length; i++)
             {
-                mappers[i].Write(buffer, target);
+                mappers[i].Write(buffer, 0, target);
+            }
+        }
+
+        public void ToByte(byte[] buffer, int index, T target)
+        {
+            for (var i = 0; i < mappers.Length; i++)
+            {
+                mappers[i].Write(buffer, index, target);
             }
         }
     }

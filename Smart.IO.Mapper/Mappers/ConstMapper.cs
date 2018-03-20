@@ -14,13 +14,13 @@
             this.constant = constant;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            Buffer.BlockCopy(constant, 0, buffer, offset, constant.Length);
+            Buffer.BlockCopy(constant, 0, buffer, index + offset, constant.Length);
         }
     }
 }

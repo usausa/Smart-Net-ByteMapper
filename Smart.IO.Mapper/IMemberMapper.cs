@@ -2,8 +2,8 @@
 {
     public interface IMemberMapper
     {
-        void Read(byte[] buffer, object target);
+        void Read(byte[] buffer, int index, object target);
 
-        void Write(byte[] buffer, object target);
+        void Write(byte[] buffer, int index, object target);
     }
 }

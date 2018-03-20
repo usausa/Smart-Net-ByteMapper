@@ -28,14 +28,14 @@
             this.falseValue = falseValue;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            setter(target, buffer[offset] == trueValue);
+            setter(target, buffer[index + offset] == trueValue);
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            buffer[offset] = (bool)getter(target) ? trueValue : falseValue;
+            buffer[index + offset] = (bool)getter(target) ? trueValue : falseValue;
         }
     }
 
@@ -69,16 +69,16 @@
             this.nullValue = nullValue;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            var b = buffer[offset];
+            var b = buffer[index + offset];
             setter(target, b == trueValue ? true : b == nullValue ? (bool?)null : false);
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
             var value = (bool?)getter(target);
-            buffer[offset] = value.HasValue ? (value.Value ? trueValue : falseValue) : nullValue;
+            buffer[index + offset] = value.HasValue ? (value.Value ? trueValue : falseValue) : nullValue;
         }
     }
 }

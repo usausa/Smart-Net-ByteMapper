@@ -20,14 +20,14 @@
             this.setter = setter;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            setter(target, ByteOrder.GetLongBE(buffer, offset));
+            setter(target, ByteOrder.GetLongBE(buffer, index + offset));
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            ByteOrder.PutLongBE(buffer, offset, (long)getter(target));
+            ByteOrder.PutLongBE(buffer, index + offset, (long)getter(target));
         }
     }
 
@@ -49,14 +49,14 @@
             this.setter = setter;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            setter(target, ByteOrder.GetLongLE(buffer, offset));
+            setter(target, ByteOrder.GetLongLE(buffer, index + offset));
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            ByteOrder.PutLongLE(buffer, offset, (long)getter(target));
+            ByteOrder.PutLongLE(buffer, index + offset, (long)getter(target));
         }
     }
 }

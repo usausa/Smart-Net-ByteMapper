@@ -20,14 +20,14 @@
             this.setter = setter;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
-            setter(target, buffer[offset]);
+            setter(target, buffer[index + offset]);
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            buffer[offset] = (byte)getter(target);
+            buffer[index + offset] = (byte)getter(target);
         }
     }
 }

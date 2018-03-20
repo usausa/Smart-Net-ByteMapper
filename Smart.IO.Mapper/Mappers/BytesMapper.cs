@@ -30,29 +30,29 @@
             this.filler = filler;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
             var bytes = new byte[length];
-            Buffer.BlockCopy(buffer, offset, bytes, 0, length);
+            Buffer.BlockCopy(buffer, index + offset, bytes, 0, length);
             setter(target, bytes);
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
             var bytes = (byte[])getter(target);
             if (bytes == null)
             {
-                buffer.Fill(offset, length, filler);
+                buffer.Fill(index + offset, length, filler);
             }
             else
             {
                 if (bytes.Length >= length)
                 {
-                    Buffer.BlockCopy(bytes, 0, buffer, offset, length);
+                    Buffer.BlockCopy(bytes, 0, buffer, index + offset, length);
                 }
                 else
                 {
-                    BytesHelper.CopyPadRight(buffer, offset, length, bytes, filler);
+                    BytesHelper.CopyPadRight(bytes, buffer, index + offset, length, filler);
                 }
             }
         }

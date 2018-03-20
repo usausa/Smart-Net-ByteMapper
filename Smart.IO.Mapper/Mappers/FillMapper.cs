@@ -15,13 +15,13 @@
             this.filler = filler;
         }
 
-        public void Read(byte[] buffer, object target)
+        public void Read(byte[] buffer, int index, object target)
         {
         }
 
-        public void Write(byte[] buffer, object target)
+        public void Write(byte[] buffer, int index, object target)
         {
-            buffer.Fill(offset, length, filler);
+            buffer.Fill(index + offset, length, filler);
         }
     }
 }
