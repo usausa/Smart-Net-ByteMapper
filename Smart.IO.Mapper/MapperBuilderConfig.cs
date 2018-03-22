@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
 
     using Smart.ComponentModel;
@@ -21,6 +22,9 @@
 
             this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
             this.DefaultEncoding(Encoding.ASCII);
+            this.DefaultNumberStyle(NumberStyles.Integer);
+            this.DefaultNumberFormat(NumberFormatInfo.InvariantInfo);
+            this.DefaultDecimalStyle(NumberStyles.Number);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);
             this.DefaultNumberPadding(Padding.Left);

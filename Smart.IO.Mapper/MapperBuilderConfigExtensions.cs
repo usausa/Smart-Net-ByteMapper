@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System.Globalization;
     using System.Text;
 
     public static class MapperBuilderConfigExtensions
@@ -12,6 +13,21 @@
         public static MapperBuilderConfig DefaultEncoding(this MapperBuilderConfig config, Encoding value)
         {
             return config.AddParameter(DefaultParameter.Encoding, value);
+        }
+
+        public static MapperBuilderConfig DefaultNumberStyle(this MapperBuilderConfig config, NumberStyles value)
+        {
+            return config.AddParameter(DefaultParameter.NumberStyle, value);
+        }
+
+        public static MapperBuilderConfig DefaultNumberFormat(this MapperBuilderConfig config, NumberFormatInfo value)
+        {
+            return config.AddParameter(DefaultParameter.NumberFormat, value);
+        }
+
+        public static MapperBuilderConfig DefaultDecimalStyle(this MapperBuilderConfig config, NumberStyles value)
+        {
+            return config.AddParameter(DefaultParameter.DecimalStyle, value);
         }
 
         public static MapperBuilderConfig DefaultTrim(this MapperBuilderConfig config, bool value)

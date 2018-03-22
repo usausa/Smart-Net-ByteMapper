@@ -6,6 +6,12 @@
 
         public const string Encoding = nameof(Encoding);
 
+        public const string NumberStyle = nameof(NumberStyle);
+
+        public const string DecimalStyle = nameof(DecimalStyle);
+
+        public const string NumberFormat = nameof(NumberFormat);
+
         public const string Trim = nameof(Trim);
 
         public const string TextPadding = nameof(TextPadding);
