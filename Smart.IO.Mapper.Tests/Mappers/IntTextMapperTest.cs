@@ -74,6 +74,16 @@ namespace Smart.IO.Mapper.Mappers
             Assert.Equal(1, target.IntProperty);
         }
 
+        [Fact]
+        public void WriteValueIntToBuffer()
+        {
+            var buffer = new byte[Length];
+            var target = new Target { IntProperty = 1 };
+            intMapper.Write(buffer, 0, target);
+
+            Assert.Equal(ValueBytes, buffer);
+        }
+
         //--------------------------------------------------------------------------------
         // int?
         //--------------------------------------------------------------------------------
@@ -94,6 +104,16 @@ namespace Smart.IO.Mapper.Mappers
             nullableIntMapper.Read(ValueBytes, 0, target);
 
             Assert.Equal(1, target.NullableIntProperty);
+        }
+
+        [Fact]
+        public void WriteNullIntToBuffer()
+        {
+            var buffer = new byte[Length];
+            var target = new Target();
+            nullableIntMapper.Write(buffer, 0, target);
+
+            Assert.Equal(NullBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -127,6 +147,26 @@ namespace Smart.IO.Mapper.Mappers
             Assert.Equal((MyEnum)(-1), target.EnumProperty);
         }
 
+        [Fact]
+        public void WriteValueEnumToBuffer()
+        {
+            var buffer = new byte[Length];
+            var target = new Target { EnumProperty = MyEnum.One };
+            enumMapper.Write(buffer, 0, target);
+
+            Assert.Equal(ValueBytes, buffer);
+        }
+
+        [Fact]
+        public void WriteUndefinedEnumToBuffer()
+        {
+            var buffer = new byte[Length];
+            var target = new Target { EnumProperty = (MyEnum)(-1) };
+            enumMapper.Write(buffer, 0, target);
+
+            Assert.Equal(MinusBytes, buffer);
+        }
+
         //--------------------------------------------------------------------------------
         // enum?
         //--------------------------------------------------------------------------------
@@ -158,7 +198,15 @@ namespace Smart.IO.Mapper.Mappers
             Assert.Equal((MyEnum)(-1), target.NullableEnumProperty);
         }
 
-        // write 4+2?, out 2?
+        [Fact]
+        public void WriteNullEnumToBuffer()
+        {
+            var buffer = new byte[Length];
+            var target = new Target();
+            nullableEnumMapper.Write(buffer, 0, target);
+
+            Assert.Equal(NullBytes, buffer);
+        }
 
         //--------------------------------------------------------------------------------
         // helper
