@@ -45,55 +45,14 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var start = index + offset;
-            var size = length;
-            if (trim)
-            {
-                if (padding == Padding.Left)
-                {
-                    var end = start + length;
-                    while ((start < end) && (buffer[start] == filler))
-                    {
-                        start++;
-                        size--;
-                    }
-                }
-                else
-                {
-                    while ((size > 0) && (buffer[start + size - 1] == filler))
-                    {
-                        size--;
-                    }
-                }
-            }
-
-            var value = encoding.GetString(buffer, start, size);
+            var value = BytesHelper.ReadString(buffer, index + offset, length, encoding, trim, padding, filler);
             setter(target, value);
         }
 
         public void Write(byte[] buffer, int index, object target)
         {
             var value = (string)getter(target);
-            if (value == null)
-            {
-                buffer.Fill(index + offset, length, filler);
-            }
-            else
-            {
-                var bytes = encoding.GetBytes(value);
-                if (bytes.Length >= length)
-                {
-                    Buffer.BlockCopy(bytes, 0, buffer, index + offset, length);
-                }
-                else if (padding == Padding.Right)
-                {
-                    BytesHelper.CopyPadRight(bytes, buffer, index + offset, length, filler);
-                }
-                else
-                {
-                    BytesHelper.CopyPadLeft(bytes, buffer, index + offset, length, filler);
-                }
-            }
+            BytesHelper.WriteString(value, buffer, index + offset, length, encoding, padding, filler);
         }
     }
 }
