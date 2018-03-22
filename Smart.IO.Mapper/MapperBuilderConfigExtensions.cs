@@ -33,5 +33,15 @@
         {
             return config.AddParameter(DefaultParameter.Endian, value);
         }
+
+        public static MapperBuilderConfig DefaultTrue(this MapperBuilderConfig config, byte value)
+        {
+            return config.AddParameter(DefaultParameter.True, value);
+        }
+
+        public static MapperBuilderConfig DefaultFalse(this MapperBuilderConfig config, byte value)
+        {
+            return config.AddParameter(DefaultParameter.False, value);
+        }
     }
 }

@@ -25,6 +25,8 @@
             this.DefaultPadding(Padding.Right);
             this.DefaultFiller(0x20);
             this.DefaultEndian(Endian.Big);
+            this.DefaultTrue(0x31);
+            this.DefaultFalse(0x30);
         }
 
         public MapperBuilderConfig Configure(Action<ComponentConfig> action)

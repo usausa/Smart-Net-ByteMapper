@@ -13,5 +13,9 @@
         public const string Filler = nameof(Filler);
 
         public const string Endian = nameof(Endian);
+
+        public const string True = nameof(True);
+
+        public const string False = nameof(False);
     }
 }
