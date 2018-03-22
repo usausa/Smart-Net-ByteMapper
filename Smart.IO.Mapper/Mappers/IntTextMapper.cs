@@ -28,7 +28,9 @@
 
         private readonly NumberFormatInfo info;
 
-        private readonly Type type;
+        private readonly Type convertEnumType;
+
+        private readonly object defaultValue;
 
         public IntTextMapper(
             int offset,
@@ -53,7 +55,8 @@
             this.filler = filler;
             this.style = style;
             this.info = info;
-            this.type = type;
+            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            defaultValue = type.GetDefaultValue();
         }
 
         public void Read(byte[] buffer, int index, object target)
@@ -61,11 +64,11 @@
             var value = BytesHelper.ReadString(buffer, index + offset, length, encoding, trim, padding, filler);
             if ((value.Length > 0) && Int32.TryParse(value, style, info, out var result))
             {
-                setter(target, result);
+                setter(target, convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result);
             }
             else
             {
-                setter(target, type.GetDefaultValue());
+                setter(target, defaultValue);
             }
         }
 

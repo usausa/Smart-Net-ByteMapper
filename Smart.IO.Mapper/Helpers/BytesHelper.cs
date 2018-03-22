@@ -72,5 +72,19 @@
                 }
             }
         }
+
+        public static Type GetConvertEnumType(Type type)
+        {
+            if (type.IsNullableType())
+            {
+                var underlyingType = Nullable.GetUnderlyingType(type);
+                if (underlyingType.IsEnum)
+                {
+                    return underlyingType;
+                }
+            }
+
+            return null;
+        }
     }
 }
