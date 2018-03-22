@@ -8,9 +8,13 @@
 
         public const string Trim = nameof(Trim);
 
-        public const string Padding = nameof(Padding);
+        public const string TextPadding = nameof(TextPadding);
 
-        public const string Filler = nameof(Filler);
+        public const string NumberPadding = nameof(NumberPadding);
+
+        public const string TextFiller = nameof(TextFiller);
+
+        public const string NumberFiller = nameof(NumberFiller);
 
         public const string Endian = nameof(Endian);
 

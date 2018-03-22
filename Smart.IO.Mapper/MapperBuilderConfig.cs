@@ -22,8 +22,10 @@
             this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
             this.DefaultEncoding(Encoding.ASCII);
             this.DefaultTrim(true);
-            this.DefaultPadding(Padding.Right);
-            this.DefaultFiller(0x20);
+            this.DefaultTextPadding(Padding.Right);
+            this.DefaultNumberPadding(Padding.Left);
+            this.DefaultTextFiller(0x20);
+            this.DefaultNumberFiller(0x20);
             this.DefaultEndian(Endian.Big);
             this.DefaultTrue(0x31);
             this.DefaultFalse(0x30);

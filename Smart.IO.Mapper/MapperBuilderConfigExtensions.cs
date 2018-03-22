@@ -19,14 +19,24 @@
             return config.AddParameter(DefaultParameter.Trim, value);
         }
 
-        public static MapperBuilderConfig DefaultPadding(this MapperBuilderConfig config, Padding value)
+        public static MapperBuilderConfig DefaultTextPadding(this MapperBuilderConfig config, Padding value)
         {
-            return config.AddParameter(DefaultParameter.Padding, value);
+            return config.AddParameter(DefaultParameter.TextPadding, value);
         }
 
-        public static MapperBuilderConfig DefaultFiller(this MapperBuilderConfig config, byte value)
+        public static MapperBuilderConfig DefaultNumberPadding(this MapperBuilderConfig config, Padding value)
         {
-            return config.AddParameter(DefaultParameter.Filler, value);
+            return config.AddParameter(DefaultParameter.NumberPadding, value);
+        }
+
+        public static MapperBuilderConfig DefaultTextFiller(this MapperBuilderConfig config, byte value)
+        {
+            return config.AddParameter(DefaultParameter.TextFiller, value);
+        }
+
+        public static MapperBuilderConfig DefaultNumberFiller(this MapperBuilderConfig config, byte value)
+        {
+            return config.AddParameter(DefaultParameter.NumberFiller, value);
         }
 
         public static MapperBuilderConfig DefaultEndian(this MapperBuilderConfig config, Endian value)
