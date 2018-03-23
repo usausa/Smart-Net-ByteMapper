@@ -4,7 +4,9 @@
     {
         public const string Delimiter = nameof(Delimiter);
 
-        public const string Encoding = nameof(Encoding);
+        public const string TextEncoding = nameof(TextEncoding);
+
+        public const string NumberEncoding = nameof(NumberEncoding);
 
         public const string NumberFormat = nameof(NumberFormat);
 

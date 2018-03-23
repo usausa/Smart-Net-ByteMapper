@@ -10,9 +10,14 @@
             return config.AddParameter(DefaultParameter.Delimiter, value);
         }
 
-        public static MapperBuilderConfig DefaultEncoding(this MapperBuilderConfig config, Encoding value)
+        public static MapperBuilderConfig DefaultTextEncoding(this MapperBuilderConfig config, Encoding value)
         {
-            return config.AddParameter(DefaultParameter.Encoding, value);
+            return config.AddParameter(DefaultParameter.TextEncoding, value);
+        }
+
+        public static MapperBuilderConfig DefaultNumberEncoding(this MapperBuilderConfig config, Encoding value)
+        {
+            return config.AddParameter(DefaultParameter.NumberEncoding, value);
         }
 
         public static MapperBuilderConfig DefaultNumberFormat(this MapperBuilderConfig config, NumberFormatInfo value)
