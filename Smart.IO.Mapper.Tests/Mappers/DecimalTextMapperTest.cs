@@ -13,6 +13,8 @@
     {
         private const int Length = 21;
 
+        private const decimal Value = 1234567890.98m;
+
         private static readonly byte[] NullBytes = Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' '));
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("1234567890.98".PadLeft(Length, ' '));
@@ -64,14 +66,14 @@
             var target = new Target();
             decimalMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(1234567890.98m, target.DecimalProperty);
+            Assert.Equal(Value, target.DecimalProperty);
         }
 
         [Fact]
         public void WriteValueDecimalToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { DecimalProperty = 1234567890.98m };
+            var target = new Target { DecimalProperty = Value };
             decimalMapper.Write(buffer, 0, target);
 
             Assert.Equal(ValueBytes, buffer);
@@ -96,7 +98,7 @@
             var target = new Target();
             nullableDecimalMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(1234567890.98m, target.NullableDecimalProperty);
+            Assert.Equal(Value, target.NullableDecimalProperty);
         }
 
         [Fact]

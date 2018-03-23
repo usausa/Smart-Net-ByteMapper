@@ -4,14 +4,14 @@
     {
         private readonly int offset;
 
-        private readonly int length;
-
         private readonly byte filler;
+
+        public int Length { get; }
 
         public FillMapper(int offset, int length, byte filler)
         {
             this.offset = offset;
-            this.length = length;
+            Length = length;
             this.filler = filler;
         }
 
@@ -21,7 +21,7 @@
 
         public void Write(byte[] buffer, int index, object target)
         {
-            buffer.Fill(index + offset, length, filler);
+            buffer.Fill(index + offset, Length, filler);
         }
     }
 }

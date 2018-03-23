@@ -4,9 +4,7 @@
     using System.Globalization;
     using System.Text;
 
-    using Smart.IO.Mapper.Helpers;
-
-    public sealed class DecimalTextMapper : IMemberMapper
+    public sealed class DateTimeOffsetTextMapper : IMemberMapper
     {
         private readonly int offset;
 
@@ -16,41 +14,36 @@
 
         private readonly Encoding encoding;
 
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
         private readonly byte filler;
 
-        private readonly NumberStyles style;
+        private readonly string format;
 
-        private readonly NumberFormatInfo info;
+        private readonly DateTimeStyles style;
+
+        private readonly DateTimeFormatInfo info;
 
         private readonly object defaultValue;
 
         public int Length { get; }
 
-        public DecimalTextMapper(
+        public DateTimeOffsetTextMapper(
             int offset,
-            int length,
             Func<object, object> getter,
             Action<object, object> setter,
             Encoding encoding,
-            bool trim,
-            Padding padding,
             byte filler,
-            NumberStyles style,
-            NumberFormatInfo info,
+            string format,
+            DateTimeStyles style,
+            DateTimeFormatInfo info,
             Type type)
         {
             this.offset = offset;
-            Length = length;
+            Length = format.Length;
             this.getter = getter;
             this.setter = setter;
             this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
             this.filler = filler;
+            this.format = format;
             this.style = style;
             this.info = info;
             defaultValue = type.GetDefaultValue();
@@ -58,8 +51,8 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var value = BytesHelper.ReadString(buffer, index + offset, Length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Decimal.TryParse(value, style, info, out var result))
+            var value = encoding.GetString(buffer, index + offset, Length);
+            if ((value.Length > 0) && DateTimeOffset.TryParseExact(value, format, info, style, out var result))
             {
                 setter(target, result);
             }
@@ -78,7 +71,8 @@
             }
             else
             {
-                BytesHelper.WriteString(((decimal)value).ToString(info), buffer, index + offset, Length, encoding, padding, filler);
+                var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, info));
+                Buffer.BlockCopy(bytes, 0, buffer, offset + Length - bytes.Length, bytes.Length);
             }
         }
     }

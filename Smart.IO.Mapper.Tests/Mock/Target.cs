@@ -66,5 +66,11 @@
         public DateTime DateTimeProperty { get; set; }
 
         public DateTime? NullableDateTimeProperty { get; set; }
+
+        // DateTimeOffset
+
+        public DateTimeOffset DateTimeOffsetProperty { get; set; }
+
+        public DateTimeOffset? NullableDateTimeOffsetProperty { get; set; }
     }
 }

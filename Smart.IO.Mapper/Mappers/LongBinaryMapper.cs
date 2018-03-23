@@ -10,6 +10,8 @@
 
         private readonly Action<object, object> setter;
 
+        public int Length => 8;
+
         public BigEndianLongBinaryMapper(
             int offset,
             Func<object, object> getter,
@@ -38,6 +40,8 @@
         private readonly Func<object, object> getter;
 
         private readonly Action<object, object> setter;
+
+        public int Length => 8;
 
         public LittleEndianLongBinaryMapper(
             int offset,

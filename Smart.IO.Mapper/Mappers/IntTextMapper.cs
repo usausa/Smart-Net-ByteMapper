@@ -10,8 +10,6 @@
     {
         private readonly int offset;
 
-        private readonly int length;
-
         private readonly Func<object, object> getter;
 
         private readonly Action<object, object> setter;
@@ -32,6 +30,8 @@
 
         private readonly object defaultValue;
 
+        public int Length { get; }
+
         public IntTextMapper(
             int offset,
             int length,
@@ -46,7 +46,7 @@
             Type type)
         {
             this.offset = offset;
-            this.length = length;
+            Length = length;
             this.getter = getter;
             this.setter = setter;
             this.encoding = encoding;
@@ -61,7 +61,7 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var value = BytesHelper.ReadString(buffer, index + offset, length, encoding, trim, padding, filler);
+            var value = BytesHelper.ReadString(buffer, index + offset, Length, encoding, trim, padding, filler);
             if ((value.Length > 0) && Int32.TryParse(value, style, info, out var result))
             {
                 setter(target, convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result);
@@ -77,11 +77,11 @@
             var value = getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, length, filler);
+                buffer.Fill(offset, Length, filler);
             }
             else
             {
-                BytesHelper.WriteString(((int)value).ToString(info), buffer, index + offset, length, encoding, padding, filler);
+                BytesHelper.WriteString(((int)value).ToString(info), buffer, index + offset, Length, encoding, padding, filler);
             }
         }
     }

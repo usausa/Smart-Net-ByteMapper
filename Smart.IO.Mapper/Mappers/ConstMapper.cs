@@ -8,6 +8,8 @@
 
         private readonly byte[] constant;
 
+        public int Length => constant.Length;
+
         public ConstMapper(int offset, byte[] constant)
         {
             this.offset = offset;

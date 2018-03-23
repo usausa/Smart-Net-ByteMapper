@@ -12,13 +12,15 @@
 
     public class DateTimeTextMapperTest
     {
-        public const string Format = "yyyyMMddHHmmss";
+        private const string Format = "yyyyMMddHHmmss";
+
+        private static readonly DateTime Value = new DateTime(2000, 12, 31, 12, 34, 56);
 
         private static readonly byte[] NullBytes = Encoding.ASCII.GetBytes(string.Empty.PadLeft(Format.Length, ' '));
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("20001231123456".PadLeft(Format.Length, ' '));
 
-        private readonly DateTimeTextMapper decimalMapper;
+        private readonly DateTimeTextMapper dateTimeMapper;
 
         private readonly DateTimeTextMapper nullableDateTimeMapper;
 
@@ -26,7 +28,7 @@
         {
             var type = typeof(Target);
 
-            decimalMapper = CreateMapper(type.GetProperty(nameof(Target.DateTimeProperty)));
+            dateTimeMapper = CreateMapper(type.GetProperty(nameof(Target.DateTimeProperty)));
             nullableDateTimeMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDateTimeProperty)));
         }
 
@@ -52,7 +54,7 @@
         public void ReadEmptyToDateTimeIsDefault()
         {
             var target = new Target { DateTimeProperty = DateTime.Now };
-            decimalMapper.Read(NullBytes, 0, target);
+            dateTimeMapper.Read(NullBytes, 0, target);
 
             Assert.Equal(default, target.DateTimeProperty);
         }
@@ -61,17 +63,17 @@
         public void ReadValueToDateTime()
         {
             var target = new Target();
-            decimalMapper.Read(ValueBytes, 0, target);
+            dateTimeMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(new DateTime(2000, 12, 31, 12, 34, 56), target.DateTimeProperty);
+            Assert.Equal(Value, target.DateTimeProperty);
         }
 
         [Fact]
         public void WriteValueDateTimeToBuffer()
         {
             var buffer = new byte[Format.Length];
-            var target = new Target { DateTimeProperty = new DateTime(2000, 12, 31, 12, 34, 56) };
-            decimalMapper.Write(buffer, 0, target);
+            var target = new Target { DateTimeProperty = Value };
+            dateTimeMapper.Write(buffer, 0, target);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -95,7 +97,7 @@
             var target = new Target();
             nullableDateTimeMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(new DateTime(2000, 12, 31, 12, 34, 56), target.NullableDateTimeProperty);
+            Assert.Equal(Value, target.NullableDateTimeProperty);
         }
 
         [Fact]

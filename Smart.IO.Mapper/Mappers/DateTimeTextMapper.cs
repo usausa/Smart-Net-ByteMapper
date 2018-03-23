@@ -8,8 +8,6 @@
     {
         private readonly int offset;
 
-        private readonly int length;
-
         private readonly Func<object, object> getter;
 
         private readonly Action<object, object> setter;
@@ -26,6 +24,8 @@
 
         private readonly object defaultValue;
 
+        public int Length { get; }
+
         public DateTimeTextMapper(
             int offset,
             Func<object, object> getter,
@@ -38,7 +38,7 @@
             Type type)
         {
             this.offset = offset;
-            length = format.Length;
+            Length = format.Length;
             this.getter = getter;
             this.setter = setter;
             this.encoding = encoding;
@@ -51,7 +51,7 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var value = encoding.GetString(buffer, index + offset, length);
+            var value = encoding.GetString(buffer, index + offset, Length);
             if ((value.Length > 0) && DateTime.TryParseExact(value, format, info, style, out var result))
             {
                 setter(target, result);
@@ -67,12 +67,12 @@
             var value = getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, length, filler);
+                buffer.Fill(offset, Length, filler);
             }
             else
             {
                 var bytes = encoding.GetBytes(((DateTime)value).ToString(format, info));
-                Buffer.BlockCopy(bytes, 0, buffer, offset + length - bytes.Length, bytes.Length);
+                Buffer.BlockCopy(bytes, 0, buffer, offset + Length - bytes.Length, bytes.Length);
             }
         }
     }

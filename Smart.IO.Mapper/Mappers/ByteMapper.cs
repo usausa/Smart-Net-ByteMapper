@@ -10,6 +10,8 @@
 
         private readonly Action<object, object> setter;
 
+        public int Length => 1;
+
         public ByteMapper(
             int offset,
             Func<object, object> getter,

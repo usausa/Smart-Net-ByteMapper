@@ -8,13 +8,13 @@
     {
         private readonly int offset;
 
-        private readonly int length;
-
         private readonly Func<object, object> getter;
 
         private readonly Action<object, object> setter;
 
         private readonly byte filler;
+
+        public int Length { get; }
 
         public BytesMapper(
             int offset,
@@ -24,7 +24,7 @@
             byte filler)
         {
             this.offset = offset;
-            this.length = length;
+            Length = length;
             this.getter = getter;
             this.setter = setter;
             this.filler = filler;
@@ -32,8 +32,8 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var bytes = new byte[length];
-            Buffer.BlockCopy(buffer, index + offset, bytes, 0, length);
+            var bytes = new byte[Length];
+            Buffer.BlockCopy(buffer, index + offset, bytes, 0, Length);
             setter(target, bytes);
         }
 
@@ -42,17 +42,17 @@
             var bytes = (byte[])getter(target);
             if (bytes == null)
             {
-                buffer.Fill(index + offset, length, filler);
+                buffer.Fill(index + offset, Length, filler);
             }
             else
             {
-                if (bytes.Length >= length)
+                if (bytes.Length >= Length)
                 {
-                    Buffer.BlockCopy(bytes, 0, buffer, index + offset, length);
+                    Buffer.BlockCopy(bytes, 0, buffer, index + offset, Length);
                 }
                 else
                 {
-                    BytesHelper.CopyPadRight(bytes, buffer, index + offset, length, filler);
+                    BytesHelper.CopyPadRight(bytes, buffer, index + offset, Length, filler);
                 }
             }
         }

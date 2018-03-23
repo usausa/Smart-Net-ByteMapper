@@ -28,6 +28,8 @@
             this.falseValue = falseValue;
         }
 
+        public int Length => 1;
+
         public void Read(byte[] buffer, int index, object target)
         {
             setter(target, buffer[index + offset] == trueValue);
@@ -52,6 +54,8 @@
         private readonly byte falseValue;
 
         private readonly byte nullValue;
+
+        public int Length => 1;
 
         public NullableBoolMapper(
             int offset,

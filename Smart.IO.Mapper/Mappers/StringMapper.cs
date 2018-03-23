@@ -9,8 +9,6 @@
     {
         private readonly int offset;
 
-        private readonly int length;
-
         private readonly Func<object, object> getter;
 
         private readonly Action<object, object> setter;
@@ -23,6 +21,8 @@
 
         private readonly byte filler;
 
+        public int Length { get; }
+
         public StringMapper(
             int offset,
             int length,
@@ -34,7 +34,7 @@
             byte filler)
         {
             this.offset = offset;
-            this.length = length;
+            Length = length;
             this.getter = getter;
             this.setter = setter;
             this.encoding = encoding;
@@ -45,7 +45,7 @@
 
         public void Read(byte[] buffer, int index, object target)
         {
-            var value = BytesHelper.ReadString(buffer, index + offset, length, encoding, trim, padding, filler);
+            var value = BytesHelper.ReadString(buffer, index + offset, Length, encoding, trim, padding, filler);
             setter(target, value);
         }
 
@@ -54,11 +54,11 @@
             var value = (string)getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, length, filler);
+                buffer.Fill(offset, Length, filler);
             }
             else
             {
-                BytesHelper.WriteString(value, buffer, index + offset, length, encoding, padding, filler);
+                BytesHelper.WriteString(value, buffer, index + offset, Length, encoding, padding, filler);
             }
         }
     }
