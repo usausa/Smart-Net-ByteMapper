@@ -52,5 +52,11 @@
         public ShortEnum ShortEnumProperty { get; set; }
 
         public ShortEnum? NullableShortEnumProperty { get; set; }
+
+        // decimal
+
+        public decimal DecimalProperty { get; set; }
+
+        public decimal? NullableDecimalProperty { get; set; }
     }
 }
