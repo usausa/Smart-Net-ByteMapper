@@ -6,11 +6,15 @@
 
         public const string Encoding = nameof(Encoding);
 
+        public const string NumberFormat = nameof(NumberFormat);
+
         public const string NumberStyle = nameof(NumberStyle);
 
         public const string DecimalStyle = nameof(DecimalStyle);
 
-        public const string NumberFormat = nameof(NumberFormat);
+        public const string DateTimeFormat = nameof(DateTimeFormat);
+
+        public const string DateTimeStyle = nameof(DateTimeStyle);
 
         public const string Trim = nameof(Trim);
 

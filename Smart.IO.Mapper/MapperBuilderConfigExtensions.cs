@@ -15,19 +15,29 @@
             return config.AddParameter(DefaultParameter.Encoding, value);
         }
 
-        public static MapperBuilderConfig DefaultNumberStyle(this MapperBuilderConfig config, NumberStyles value)
-        {
-            return config.AddParameter(DefaultParameter.NumberStyle, value);
-        }
-
         public static MapperBuilderConfig DefaultNumberFormat(this MapperBuilderConfig config, NumberFormatInfo value)
         {
             return config.AddParameter(DefaultParameter.NumberFormat, value);
         }
 
+        public static MapperBuilderConfig DefaultNumberStyle(this MapperBuilderConfig config, NumberStyles value)
+        {
+            return config.AddParameter(DefaultParameter.NumberStyle, value);
+        }
+
         public static MapperBuilderConfig DefaultDecimalStyle(this MapperBuilderConfig config, NumberStyles value)
         {
             return config.AddParameter(DefaultParameter.DecimalStyle, value);
+        }
+
+        public static MapperBuilderConfig DefaultDateTimeFormat(this MapperBuilderConfig config, DateTimeFormatInfo value)
+        {
+            return config.AddParameter(DefaultParameter.DateTimeFormat, value);
+        }
+
+        public static MapperBuilderConfig DefaultDateTimeStyle(this MapperBuilderConfig config, DateTimeStyles value)
+        {
+            return config.AddParameter(DefaultParameter.DateTimeStyle, value);
         }
 
         public static MapperBuilderConfig DefaultTrim(this MapperBuilderConfig config, bool value)

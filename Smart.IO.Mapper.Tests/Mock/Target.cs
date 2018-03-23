@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Mock
 {
+    using System;
+
     public enum IntEnum
     {
         Zero,
@@ -58,5 +60,11 @@
         public decimal DecimalProperty { get; set; }
 
         public decimal? NullableDecimalProperty { get; set; }
+
+        // DateTime
+
+        public DateTime DateTimeProperty { get; set; }
+
+        public DateTime? NullableDateTimeProperty { get; set; }
     }
 }
