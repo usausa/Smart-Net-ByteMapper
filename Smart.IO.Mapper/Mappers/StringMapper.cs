@@ -52,7 +52,14 @@
         public void Write(byte[] buffer, int index, object target)
         {
             var value = (string)getter(target);
-            BytesHelper.WriteString(value, buffer, index + offset, length, encoding, padding, filler);
+            if (value == null)
+            {
+                buffer.Fill(offset, length, filler);
+            }
+            else
+            {
+                BytesHelper.WriteString(value, buffer, index + offset, length, encoding, padding, filler);
+            }
         }
     }
 }

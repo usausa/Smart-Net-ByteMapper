@@ -51,25 +51,18 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteString(string value, byte[] buffer, int offset, int length, Encoding encoding, Padding padding, byte filler)
         {
-            if (value == null)
+            var bytes = encoding.GetBytes(value);
+            if (bytes.Length >= length)
             {
-                buffer.Fill(offset, length, filler);
+                Buffer.BlockCopy(bytes, 0, buffer, offset, length);
+            }
+            else if (padding == Padding.Right)
+            {
+                CopyPadRight(bytes, buffer, offset, length, filler);
             }
             else
             {
-                var bytes = encoding.GetBytes(value);
-                if (bytes.Length >= length)
-                {
-                    Buffer.BlockCopy(bytes, 0, buffer, offset, length);
-                }
-                else if (padding == Padding.Right)
-                {
-                    CopyPadRight(bytes, buffer, offset, length, filler);
-                }
-                else
-                {
-                    CopyPadLeft(bytes, buffer, offset, length, filler);
-                }
+                CopyPadLeft(bytes, buffer, offset, length, filler);
             }
         }
 
