@@ -1,10 +1,13 @@
 ﻿namespace Smart.IO.Mapper
 {
     using System;
+    using System.Linq;
 
     public class TypeMapper<T> : ITypeMapper<T>
     {
-        private readonly IMemberMapper[] mappers;
+        private readonly IMemberMapper[] readableMappers;
+
+        private readonly IMemberMapper[] writableMappers;
 
         public Type TargetType { get; }
 
@@ -14,38 +17,39 @@
         {
             TargetType = targetType;
             Size = size;
-            this.mappers = mappers;
+            readableMappers = mappers.Where(x => x.CanRead).ToArray();
+            writableMappers = mappers.Where(x => x.CanWrite).ToArray();
         }
 
         public void FromByte(byte[] buffer, T target)
         {
-            for (var i = 0; i < mappers.Length; i++)
+            for (var i = 0; i < readableMappers.Length; i++)
             {
-                mappers[i].Read(buffer, 0, target);
+                readableMappers[i].Read(buffer, 0, target);
             }
         }
 
         public void FromByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < mappers.Length; i++)
+            for (var i = 0; i < readableMappers.Length; i++)
             {
-                mappers[i].Read(buffer, index, target);
+                readableMappers[i].Read(buffer, index, target);
             }
         }
 
         public void ToByte(byte[] buffer, T target)
         {
-            for (var i = 0; i < mappers.Length; i++)
+            for (var i = 0; i < writableMappers.Length; i++)
             {
-                mappers[i].Write(buffer, 0, target);
+                writableMappers[i].Write(buffer, 0, target);
             }
         }
 
         public void ToByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < mappers.Length; i++)
+            for (var i = 0; i < writableMappers.Length; i++)
             {
-                mappers[i].Write(buffer, index, target);
+                writableMappers[i].Write(buffer, index, target);
             }
         }
     }

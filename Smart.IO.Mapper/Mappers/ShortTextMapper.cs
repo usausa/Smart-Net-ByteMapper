@@ -32,6 +32,10 @@
 
         public int Length { get; }
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public ShortTextMapper(
             int offset,
             int length,

@@ -12,6 +12,10 @@
 
         public int Length => 8;
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public BigEndianLongBinaryMapper(
             int offset,
             Func<object, object> getter,
@@ -42,6 +46,10 @@
         private readonly Action<object, object> setter;
 
         public int Length => 8;
+
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
 
         public LittleEndianLongBinaryMapper(
             int offset,

@@ -10,6 +10,10 @@
 
         public int Length => constant.Length;
 
+        public bool CanRead => false;
+
+        public bool CanWrite => true;
+
         public ConstMapper(int offset, byte[] constant)
         {
             this.offset = offset;

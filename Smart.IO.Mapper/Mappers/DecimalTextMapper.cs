@@ -30,6 +30,10 @@
 
         public int Length { get; }
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public DecimalTextMapper(
             int offset,
             int length,

@@ -26,6 +26,10 @@
 
         public int Length { get; }
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public DateTimeTextMapper(
             int offset,
             Func<object, object> getter,

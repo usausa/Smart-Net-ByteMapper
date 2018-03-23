@@ -10,6 +10,6 @@
 
         Dictionary<string, object> ResolveParameters();
 
-        MapperEntry[] ResolveEntries();
+        MappingEntry[] ResolveMappings();
     }
 }

@@ -12,6 +12,10 @@
 
         public int Length => 1;
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public ByteMapper(
             int offset,
             Func<object, object> getter,

@@ -14,6 +14,12 @@
 
         private readonly byte falseValue;
 
+        public int Length => 1;
+
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public BoolMapper(
             int offset,
             Func<object, object> getter,
@@ -27,8 +33,6 @@
             this.trueValue = trueValue;
             this.falseValue = falseValue;
         }
-
-        public int Length => 1;
 
         public void Read(byte[] buffer, int index, object target)
         {
@@ -56,6 +60,10 @@
         private readonly byte nullValue;
 
         public int Length => 1;
+
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
 
         public NullableBoolMapper(
             int offset,

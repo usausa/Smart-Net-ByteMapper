@@ -32,6 +32,10 @@
 
         public int Length { get; }
 
+        public bool CanRead => getter != null;
+
+        public bool CanWrite => setter != null;
+
         public LongTextMapper(
             int offset,
             int length,

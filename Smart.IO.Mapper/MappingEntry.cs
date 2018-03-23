@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class MapperEntry
+    public class MappingEntry
     {
         public Type TargetType { get; }
 
@@ -10,7 +10,7 @@
 
         public IMemberMapperFactory[] Factories { get; }
 
-        public MapperEntry(Type targetType, string profile, IMemberMapperFactory[] factories)
+        public MappingEntry(Type targetType, string profile, IMemberMapperFactory[] factories)
         {
             TargetType = targetType;
             Profile = profile;
