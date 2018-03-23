@@ -10,7 +10,7 @@
 
     using Xunit;
 
-    public class DateTimeOffsetTextMapperTest
+    public class DateTimeOffsetConvertMapperTest
     {
         private const string Format = "yyyyMMddHHmmss";
 
@@ -20,11 +20,11 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("20001231123456".PadLeft(Format.Length, ' '));
 
-        private readonly DateTimeOffsetTextMapper decimalMapper;
+        private readonly DateTimeOffsetConvertMapper decimalMapper;
 
-        private readonly DateTimeOffsetTextMapper nullableDateTimeOffsetMapper;
+        private readonly DateTimeOffsetConvertMapper nullableDateTimeOffsetMapper;
 
-        public DateTimeOffsetTextMapperTest()
+        public DateTimeOffsetConvertMapperTest()
         {
             var type = typeof(Target);
 
@@ -32,9 +32,9 @@
             nullableDateTimeOffsetMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDateTimeOffsetProperty)));
         }
 
-        private static DateTimeOffsetTextMapper CreateMapper(PropertyInfo pi)
+        private static DateTimeOffsetConvertMapper CreateMapper(PropertyInfo pi)
         {
-            return new DateTimeOffsetTextMapper(
+            return new DateTimeOffsetConvertMapper(
                 0,
                 DelegateFactory.Default.CreateGetter(pi),
                 DelegateFactory.Default.CreateSetter(pi),

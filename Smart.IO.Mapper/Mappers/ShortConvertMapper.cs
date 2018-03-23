@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class ShortTextMapper : IMemberMapper
+    public sealed class ShortConvertMapper : IMemberMapper
     {
         private readonly int offset;
 
@@ -36,7 +36,7 @@
 
         public bool CanWrite => setter != null;
 
-        public ShortTextMapper(
+        public ShortConvertMapper(
             int offset,
             int length,
             Func<object, object> getter,

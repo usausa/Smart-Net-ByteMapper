@@ -17,13 +17,13 @@
 
         private byte[] intBinaryBuffer;
 
-        private StringMapper stringWide10Mapper;
+        private StringMapper stringW10Mapper;
 
-        private byte[] stringWide10Buffer;
+        private byte[] stringW10Buffer;
 
-        private IntTextMapper intText8Mapper;
+        private IntConvertMapper intConvert8Mapper;
 
-        private byte[] intText8Buffer;
+        private byte[] intConvert8Buffer;
 
         [GlobalSetup]
         public void Setup()
@@ -44,32 +44,32 @@
                 factory.CreateSetter(intBinaryPi));
             intBinaryBuffer = new byte[intBinaryMapper.Length];
 
-            var stringWide10Pi = type.GetProperty(nameof(Target.StringWide10));
-            stringWide10Mapper = new StringMapper(
+            var stringW10Pi = type.GetProperty(nameof(Target.StringW10));
+            stringW10Mapper = new StringMapper(
                 0,
                 20,
-                factory.CreateGetter(stringWide10Pi),
-                factory.CreateSetter(stringWide10Pi),
+                factory.CreateGetter(stringW10Pi),
+                factory.CreateSetter(stringW10Pi),
                 stringEncoding,
                 true,
                 Padding.Right,
                 0x20);
-            stringWide10Buffer = stringEncoding.GetBytes("あいうえお          ");
+            stringW10Buffer = stringEncoding.GetBytes("あいうえお          ");
 
-            var intText8Pi = type.GetProperty(nameof(Target.IntText8));
-            intText8Mapper = new IntTextMapper(
+            var intConvert8Pi = type.GetProperty(nameof(Target.Int8));
+            intConvert8Mapper = new IntConvertMapper(
                 0,
                 8,
-                factory.CreateGetter(intText8Pi),
-                factory.CreateSetter(intText8Pi),
+                factory.CreateGetter(intConvert8Pi),
+                factory.CreateSetter(intConvert8Pi),
                 numberEncoding,
                 true,
                 Padding.Left,
                 0x20,
                 NumberStyles.Integer,
                 NumberFormatInfo.InvariantInfo,
-                intText8Pi.PropertyType);
-            intText8Buffer = numberEncoding.GetBytes("  100000");
+                intConvert8Pi.PropertyType);
+            intConvert8Buffer = numberEncoding.GetBytes("  100000");
         }
 
         [Benchmark]
@@ -79,15 +79,15 @@
         }
 
         [Benchmark]
-        public void ReadStringWide10()
+        public void ReadStringW10()
         {
-            stringWide10Mapper.Read(stringWide10Buffer, 0, target);
+            stringW10Mapper.Read(stringW10Buffer, 0, target);
         }
 
         [Benchmark]
-        public void ReadIntText8()
+        public void ReadIntConvert8()
         {
-            intText8Mapper.Read(intText8Buffer, 0, target);
+            intConvert8Mapper.Read(intConvert8Buffer, 0, target);
         }
     }
 }

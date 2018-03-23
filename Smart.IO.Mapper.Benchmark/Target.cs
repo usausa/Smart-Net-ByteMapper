@@ -6,16 +6,16 @@
     {
         public int IntBinary { get; set; }
 
-        public string StringWide10 { get; set; }
+        public string StringW10 { get; set; }
 
-        public int IntText8 { get; set; }
+        public int Int8 { get; set; }
 
-        public long LongText16 { get; set; }
+        public long Long16 { get; set; }
 
-        public short ShortText4 { get; set; }
+        public short Short4 { get; set; }
 
-        public decimal DecimalText21 { get; set; }
+        public decimal Decimal21 { get; set; }
 
-        public DateTime DateTimeText14 { get; set; }
+        public DateTime DateTime14 { get; set; }
     }
 }

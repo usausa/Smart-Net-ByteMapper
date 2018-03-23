@@ -10,7 +10,7 @@
 
     using Xunit;
 
-    public class DateTimeTextMapperTest
+    public class DateTimeConvertMapperTest
     {
         private const string Format = "yyyyMMddHHmmss";
 
@@ -20,11 +20,11 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("20001231123456".PadLeft(Format.Length, ' '));
 
-        private readonly DateTimeTextMapper dateTimeMapper;
+        private readonly DateTimeConvertMapper dateTimeMapper;
 
-        private readonly DateTimeTextMapper nullableDateTimeMapper;
+        private readonly DateTimeConvertMapper nullableDateTimeMapper;
 
-        public DateTimeTextMapperTest()
+        public DateTimeConvertMapperTest()
         {
             var type = typeof(Target);
 
@@ -32,9 +32,9 @@
             nullableDateTimeMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDateTimeProperty)));
         }
 
-        private static DateTimeTextMapper CreateMapper(PropertyInfo pi)
+        private static DateTimeConvertMapper CreateMapper(PropertyInfo pi)
         {
-            return new DateTimeTextMapper(
+            return new DateTimeConvertMapper(
                 0,
                 DelegateFactory.Default.CreateGetter(pi),
                 DelegateFactory.Default.CreateSetter(pi),

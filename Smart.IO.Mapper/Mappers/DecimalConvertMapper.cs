@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class DecimalTextMapper : IMemberMapper
+    public sealed class DecimalConvertMapper : IMemberMapper
     {
         private readonly int offset;
 
@@ -34,7 +34,7 @@
 
         public bool CanWrite => setter != null;
 
-        public DecimalTextMapper(
+        public DecimalConvertMapper(
             int offset,
             int length,
             Func<object, object> getter,
