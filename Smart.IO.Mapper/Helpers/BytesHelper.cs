@@ -71,7 +71,7 @@
             if (type.IsNullableType())
             {
                 var underlyingType = Nullable.GetUnderlyingType(type);
-                if (underlyingType.IsEnum)
+                if ((underlyingType != null) && underlyingType.IsEnum)
                 {
                     return underlyingType;
                 }

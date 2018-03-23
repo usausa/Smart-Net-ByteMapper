@@ -21,9 +21,9 @@
 
         private byte[] stringW10Buffer;
 
-        private IntConvertMapper intConvert8Mapper;
+        private IntTextMapper intText8Mapper;
 
-        private byte[] intConvert8Buffer;
+        private byte[] intText8Buffer;
 
         [GlobalSetup]
         public void Setup()
@@ -56,20 +56,20 @@
                 0x20);
             stringW10Buffer = stringEncoding.GetBytes("あいうえお          ");
 
-            var intConvert8Pi = type.GetProperty(nameof(Target.Int8));
-            intConvert8Mapper = new IntConvertMapper(
+            var intText8Pi = type.GetProperty(nameof(Target.Int8));
+            intText8Mapper = new IntTextMapper(
                 0,
                 8,
-                factory.CreateGetter(intConvert8Pi),
-                factory.CreateSetter(intConvert8Pi),
+                factory.CreateGetter(intText8Pi),
+                factory.CreateSetter(intText8Pi),
                 numberEncoding,
                 true,
                 Padding.Left,
                 0x20,
                 NumberStyles.Integer,
                 NumberFormatInfo.InvariantInfo,
-                intConvert8Pi.PropertyType);
-            intConvert8Buffer = numberEncoding.GetBytes("  100000");
+                intText8Pi.PropertyType);
+            intText8Buffer = numberEncoding.GetBytes("  100000");
         }
 
         [Benchmark]
@@ -85,9 +85,9 @@
         }
 
         [Benchmark]
-        public void ReadIntConvert8()
+        public void ReadIntText8()
         {
-            intConvert8Mapper.Read(intConvert8Buffer, 0, target);
+            intText8Mapper.Read(intText8Buffer, 0, target);
         }
     }
 }

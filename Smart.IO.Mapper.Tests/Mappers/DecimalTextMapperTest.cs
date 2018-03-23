@@ -9,7 +9,7 @@
 
     using Xunit;
 
-    public class DecimalConvertMapperTest
+    public class DecimalTextMapperTest
     {
         private const int Length = 21;
 
@@ -19,11 +19,11 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("1234567890.98".PadLeft(Length, ' '));
 
-        private readonly DecimalConvertMapper decimalMapper;
+        private readonly DecimalTextMapper decimalMapper;
 
-        private readonly DecimalConvertMapper nullableDecimalMapper;
+        private readonly DecimalTextMapper nullableDecimalMapper;
 
-        public DecimalConvertMapperTest()
+        public DecimalTextMapperTest()
         {
             var type = typeof(Target);
 
@@ -31,9 +31,9 @@
             nullableDecimalMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDecimalProperty)));
         }
 
-        private static DecimalConvertMapper CreateMapper(PropertyInfo pi)
+        private static DecimalTextMapper CreateMapper(PropertyInfo pi)
         {
-            return new DecimalConvertMapper(
+            return new DecimalTextMapper(
                 0,
                 Length,
                 DelegateFactory.Default.CreateGetter(pi),

@@ -9,7 +9,7 @@ namespace Smart.IO.Mapper.Mappers
 
     using Xunit;
 
-    public class IntConvertMapperTest
+    public class IntTextMapperTest
     {
         private const int Length = 8;
 
@@ -19,15 +19,15 @@ namespace Smart.IO.Mapper.Mappers
 
         private static readonly byte[] MinusBytes = Encoding.ASCII.GetBytes("-1".PadLeft(Length, ' '));
 
-        private readonly IntConvertMapper intMapper;
+        private readonly IntTextMapper intMapper;
 
-        private readonly IntConvertMapper nullableIntMapper;
+        private readonly IntTextMapper nullableIntMapper;
 
-        private readonly IntConvertMapper enumMapper;
+        private readonly IntTextMapper enumMapper;
 
-        private readonly IntConvertMapper nullableEnumMapper;
+        private readonly IntTextMapper nullableEnumMapper;
 
-        public IntConvertMapperTest()
+        public IntTextMapperTest()
         {
             var type = typeof(Target);
 
@@ -37,9 +37,9 @@ namespace Smart.IO.Mapper.Mappers
             nullableEnumMapper = CreateMapper(type.GetProperty(nameof(Target.NullableIntEnumProperty)));
         }
 
-        private static IntConvertMapper CreateMapper(PropertyInfo pi)
+        private static IntTextMapper CreateMapper(PropertyInfo pi)
         {
-            return new IntConvertMapper(
+            return new IntTextMapper(
                 0,
                 Length,
                 DelegateFactory.Default.CreateGetter(pi),
