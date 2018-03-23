@@ -9,9 +9,9 @@ namespace Smart.IO.Mapper.Mappers
 
     using Xunit;
 
-    public class ShortTextMapperTest
+    public class IntTextMapperTest
     {
-        private const int Length = 4;
+        private const int Length = 8;
 
         private static readonly byte[] NullBytes = Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' '));
 
@@ -19,27 +19,27 @@ namespace Smart.IO.Mapper.Mappers
 
         private static readonly byte[] MinusBytes = Encoding.ASCII.GetBytes("-1".PadLeft(Length, ' '));
 
-        private readonly ShortTextMapper shortMapper;
+        private readonly IntTextMapper intMapper;
 
-        private readonly ShortTextMapper nullableShortMapper;
+        private readonly IntTextMapper nullableIntMapper;
 
-        private readonly ShortTextMapper enumMapper;
+        private readonly IntTextMapper enumMapper;
 
-        private readonly ShortTextMapper nullableEnumMapper;
+        private readonly IntTextMapper nullableEnumMapper;
 
-        public ShortTextMapperTest()
+        public IntTextMapperTest()
         {
             var type = typeof(Target);
 
-            shortMapper = CreateMapper(type.GetProperty(nameof(Target.ShortProperty)));
-            nullableShortMapper = CreateMapper(type.GetProperty(nameof(Target.NullableShortProperty)));
-            enumMapper = CreateMapper(type.GetProperty(nameof(Target.ShortEnumProperty)));
-            nullableEnumMapper = CreateMapper(type.GetProperty(nameof(Target.NullableShortEnumProperty)));
+            intMapper = CreateMapper(type.GetProperty(nameof(Target.IntProperty)));
+            nullableIntMapper = CreateMapper(type.GetProperty(nameof(Target.NullableIntProperty)));
+            enumMapper = CreateMapper(type.GetProperty(nameof(Target.IntEnumProperty)));
+            nullableEnumMapper = CreateMapper(type.GetProperty(nameof(Target.NullableIntEnumProperty)));
         }
 
-        private static ShortTextMapper CreateMapper(PropertyInfo pi)
+        private static IntTextMapper CreateMapper(PropertyInfo pi)
         {
-            return new ShortTextMapper(
+            return new IntTextMapper(
                 0,
                 Length,
                 DelegateFactory.Default.CreateGetter(pi),
@@ -54,65 +54,65 @@ namespace Smart.IO.Mapper.Mappers
         }
 
         //--------------------------------------------------------------------------------
-        // short
+        // int
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToShortIsDefault()
+        public void ReadEmptyToIntIsDefault()
         {
-            var target = new Target { ShortProperty = 1 };
-            shortMapper.Read(NullBytes, 0, target);
+            var target = new Target { IntProperty = 1 };
+            intMapper.Read(NullBytes, 0, target);
 
-            Assert.Equal((short)0, target.ShortProperty);
+            Assert.Equal(0, target.IntProperty);
         }
 
         [Fact]
-        public void ReadValueToShort()
+        public void ReadValueToInt()
         {
             var target = new Target();
-            shortMapper.Read(ValueBytes, 0, target);
+            intMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal((short)1, target.ShortProperty);
+            Assert.Equal(1, target.IntProperty);
         }
 
         [Fact]
-        public void WriteValueShortToBuffer()
+        public void WriteValueIntToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortProperty = 1 };
-            shortMapper.Write(buffer, 0, target);
+            var target = new Target { IntProperty = 1 };
+            intMapper.Write(buffer, 0, target);
 
             Assert.Equal(ValueBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
-        // short?
+        // int?
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableShortIsDefault()
+        public void ReadEmptyToNullableIntIsDefault()
         {
-            var target = new Target { NullableShortProperty = 1 };
-            nullableShortMapper.Read(NullBytes, 0, target);
+            var target = new Target { NullableIntProperty = 1 };
+            nullableIntMapper.Read(NullBytes, 0, target);
 
-            Assert.Null(target.NullableShortProperty);
+            Assert.Null(target.NullableIntProperty);
         }
 
         [Fact]
-        public void ReadValueToNullableShort()
+        public void ReadValueToNullableInt()
         {
             var target = new Target();
-            nullableShortMapper.Read(ValueBytes, 0, target);
+            nullableIntMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal((short)1, target.NullableShortProperty);
+            Assert.Equal(1, target.NullableIntProperty);
         }
 
         [Fact]
-        public void WriteNullShortToBuffer()
+        public void WriteNullIntToBuffer()
         {
             var buffer = new byte[Length];
             var target = new Target();
-            nullableShortMapper.Write(buffer, 0, target);
+            nullableIntMapper.Write(buffer, 0, target);
 
             Assert.Equal(NullBytes, buffer);
         }
@@ -124,10 +124,10 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToEnumIsDefault()
         {
-            var target = new Target { ShortEnumProperty = ShortEnum.One };
+            var target = new Target { IntEnumProperty = IntEnum.One };
             enumMapper.Read(NullBytes, 0, target);
 
-            Assert.Equal(ShortEnum.Zero, target.ShortEnumProperty);
+            Assert.Equal(IntEnum.Zero, target.IntEnumProperty);
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace Smart.IO.Mapper.Mappers
             var target = new Target();
             enumMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(ShortEnum.One, target.ShortEnumProperty);
+            Assert.Equal(IntEnum.One, target.IntEnumProperty);
         }
 
         [Fact]
@@ -145,14 +145,14 @@ namespace Smart.IO.Mapper.Mappers
             var target = new Target();
             enumMapper.Read(MinusBytes, 0, target);
 
-            Assert.Equal((ShortEnum)(-1), target.ShortEnumProperty);
+            Assert.Equal((IntEnum)(-1), target.IntEnumProperty);
         }
 
         [Fact]
         public void WriteValueEnumToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortEnumProperty = ShortEnum.One };
+            var target = new Target { IntEnumProperty = IntEnum.One };
             enumMapper.Write(buffer, 0, target);
 
             Assert.Equal(ValueBytes, buffer);
@@ -162,7 +162,7 @@ namespace Smart.IO.Mapper.Mappers
         public void WriteUndefinedEnumToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortEnumProperty = (ShortEnum)(-1) };
+            var target = new Target { IntEnumProperty = (IntEnum)(-1) };
             enumMapper.Write(buffer, 0, target);
 
             Assert.Equal(MinusBytes, buffer);
@@ -175,10 +175,10 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToNullableEnumIsDefault()
         {
-            var target = new Target { NullableShortEnumProperty = ShortEnum.One };
+            var target = new Target { NullableIntEnumProperty = IntEnum.One };
             nullableEnumMapper.Read(NullBytes, 0, target);
 
-            Assert.Null(target.NullableShortEnumProperty);
+            Assert.Null(target.NullableIntEnumProperty);
         }
 
         [Fact]
@@ -187,7 +187,7 @@ namespace Smart.IO.Mapper.Mappers
             var target = new Target();
             nullableEnumMapper.Read(ValueBytes, 0, target);
 
-            Assert.Equal(ShortEnum.One, target.NullableShortEnumProperty);
+            Assert.Equal(IntEnum.One, target.NullableIntEnumProperty);
         }
 
         [Fact]
@@ -196,7 +196,7 @@ namespace Smart.IO.Mapper.Mappers
             var target = new Target();
             nullableEnumMapper.Read(MinusBytes, 0, target);
 
-            Assert.Equal((ShortEnum)(-1), target.NullableShortEnumProperty);
+            Assert.Equal((IntEnum)(-1), target.NullableIntEnumProperty);
         }
 
         [Fact]
