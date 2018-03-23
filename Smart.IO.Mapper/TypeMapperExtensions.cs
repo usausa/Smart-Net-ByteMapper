@@ -10,64 +10,74 @@
         // FromByte
         //--------------------------------------------------------------------------------
 
-        public static T FromByte<T>(ITypeMapper<T> mapper, byte[] buffer)
+        public static void FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer, T target)
+        {
+            mapper.FromByte(buffer, 0, target);
+        }
+
+        public static T FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer)
             where T : new()
         {
-            if (buffer.Length < mapper.Size)
-            {
-                return default;
-            }
-
             var target = new T();
-            mapper.FromByte(buffer, target);
+            mapper.FromByte(buffer, 0, target);
             return target;
         }
 
-        public static T FromByte<T>(ITypeMapper<T> mapper, byte[] buffer, int index)
+        public static T FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer, int index)
             where T : new()
         {
-            if (buffer.Length < mapper.Size)
-            {
-                return default;
-            }
-
             var target = new T();
             mapper.FromByte(buffer, index, target);
             return target;
         }
 
-        public static IEnumerable<T> FromBytes<T>(ITypeMapper<T> mapper, IEnumerable<byte[]> source)
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start)
+            where T : new()
+        {
+            while (start + mapper.Size < buffer.Length)
+            {
+                var target = new T();
+                mapper.FromByte(buffer, start, target);
+                yield return target;
+
+                start += buffer.Length;
+            }
+        }
+
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start, Func<T> factory)
+        {
+            while (start + mapper.Size < buffer.Length)
+            {
+                var target = factory();
+                mapper.FromByte(buffer, start, target);
+                yield return target;
+
+                start += buffer.Length;
+            }
+        }
+
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, IEnumerable<byte[]> source)
             where T : new()
         {
             foreach (var buffer in source)
             {
-                if (buffer.Length < mapper.Size)
-                {
-                    continue;
-                }
-
                 var target = new T();
-                mapper.FromByte(buffer, target);
+                mapper.FromByte(buffer, 0, target);
                 yield return target;
             }
         }
 
-        public static IEnumerable<T> FromBytes<T>(ITypeMapper<T> mapper, IEnumerable<byte[]> source, Func<T> factory)
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, IEnumerable<byte[]> source, Func<T> factory)
         {
             foreach (var buffer in source)
             {
-                if (buffer.Length < mapper.Size)
-                {
-                    continue;
-                }
-
                 var target = factory();
-                mapper.FromByte(buffer, target);
+                mapper.FromByte(buffer, 0, target);
                 yield return target;
             }
         }
 
-        public static T FromByte<T>(ITypeMapper<T> mapper, Stream stream)
+        public static T FromStream<T>(this ITypeMapper<T> mapper, Stream stream)
             where T : new()
         {
             var buffer = new byte[mapper.Size];
@@ -77,52 +87,41 @@
             }
 
             var target = new T();
-            mapper.FromByte(buffer, target);
+            mapper.FromByte(buffer, 0, target);
             return target;
         }
 
-        public static T FromByte<T>(ITypeMapper<T> mapper, Stream stream, T target)
-            where T : new()
+        public static bool FromStream<T>(this ITypeMapper<T> mapper, Stream stream, T target)
         {
             var buffer = new byte[mapper.Size];
             if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
             {
-                return default;
+                return false;
             }
 
-            mapper.FromByte(buffer, target);
-            return target;
+            mapper.FromByte(buffer, 0, target);
+            return true;
         }
 
-        public static IEnumerable<T> FromBytes<T>(ITypeMapper<T> mapper, Stream stream)
+        public static IEnumerable<T> FromStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream)
             where T : new()
         {
             var buffer = new byte[mapper.Size];
             while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
             {
-                if (buffer.Length < mapper.Size)
-                {
-                    continue;
-                }
-
                 var target = new T();
-                mapper.FromByte(buffer, target);
+                mapper.FromByte(buffer, 0, target);
                 yield return target;
             }
         }
 
-        public static IEnumerable<T> FromBytes<T>(ITypeMapper<T> mapper, Stream stream, Func<T> factory)
+        public static IEnumerable<T> FromStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, Func<T> factory)
         {
             var buffer = new byte[mapper.Size];
             while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
             {
-                if (buffer.Length < mapper.Size)
-                {
-                    continue;
-                }
-
                 var target = factory();
-                mapper.FromByte(buffer, target);
+                mapper.FromByte(buffer, 0, target);
                 yield return target;
             }
         }
@@ -131,15 +130,63 @@
         // ToByte
         //--------------------------------------------------------------------------------
 
-        public static byte[] ToByte<T>(ITypeMapper<T> mapper, T target)
+        public static void ToByte<T>(this ITypeMapper<T> mapper, byte[] buffer, T target)
+        {
+            mapper.ToByte(buffer, 0, target);
+        }
+
+        public static byte[] ToByte<T>(this ITypeMapper<T> mapper, T target)
         {
             var buffer = new byte[mapper.Size];
-            mapper.FromByte(buffer, target);
+            mapper.ToByte(buffer, 0, target);
             return buffer;
         }
 
-        // TODO buffer skip (len ?, offset, ) 1?
-        // TODO IE<byte[]> 1
-        // TODO Stream write 1,n
+        public static byte[] ToByteMultiple<T>(this ITypeMapper<T> mapper, IEnumerable<T> source)
+        {
+            if (source is ICollection<T> collection)
+            {
+                var buffer = new byte[mapper.Size + collection.Count];
+                mapper.ToByteMultiple(buffer, 0, source);
+                return buffer;
+            }
+
+            using (var ms = new MemoryStream())
+            {
+                mapper.ToStreamMultiple(ms, source);
+                return ms.ToArray();
+            }
+        }
+
+        public static void ToByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, IEnumerable<T> source)
+        {
+            mapper.ToByteMultiple(buffer, 0, source);
+        }
+
+        public static void ToByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start, IEnumerable<T> source)
+        {
+            foreach (var target in source)
+            {
+                mapper.ToByte(buffer, start, target);
+                start += mapper.Size;
+            }
+        }
+
+        public static void ToStream<T>(this ITypeMapper<T> mapper, Stream stream, T target)
+        {
+            var buffer = new byte[mapper.Size];
+            mapper.ToByte(buffer, 0, target);
+            stream.Write(buffer, 0, buffer.Length);
+        }
+
+        public static void ToStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
+        {
+            var buffer = new byte[mapper.Size];
+            foreach (var target in source)
+            {
+                mapper.ToByte(buffer, 0, target);
+                stream.Write(buffer, 0, buffer.Length);
+            }
+        }
     }
 }
