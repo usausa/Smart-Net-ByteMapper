@@ -1,7 +1,15 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public sealed class MapAttribute
+    using System;
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class MapAttribute : Attribute
     {
-        // TODO size
+        public int Size { get; }
+
+        public MapAttribute(int size)
+        {
+            Size = size;
+        }
     }
 }

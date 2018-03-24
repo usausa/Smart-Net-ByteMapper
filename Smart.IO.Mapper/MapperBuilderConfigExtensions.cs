@@ -80,14 +80,14 @@
             return config.AddParameter(DefaultParameter.Endian, value);
         }
 
-        public static MapperBuilderConfig DefaultTrue(this MapperBuilderConfig config, byte value)
+        public static MapperBuilderConfig DefaultTrueValue(this MapperBuilderConfig config, byte value)
         {
-            return config.AddParameter(DefaultParameter.True, value);
+            return config.AddParameter(DefaultParameter.TrueValue, value);
         }
 
-        public static MapperBuilderConfig DefaultFalse(this MapperBuilderConfig config, byte value)
+        public static MapperBuilderConfig DefaultFalseValue(this MapperBuilderConfig config, byte value)
         {
-            return config.AddParameter(DefaultParameter.False, value);
+            return config.AddParameter(DefaultParameter.FalseValue, value);
         }
     }
 }

@@ -30,8 +30,8 @@
 
         public const string Endian = nameof(Endian);
 
-        public const string True = nameof(True);
+        public const string TrueValue = nameof(TrueValue);
 
-        public const string False = nameof(False);
+        public const string FalseValue = nameof(FalseValue);
     }
 }

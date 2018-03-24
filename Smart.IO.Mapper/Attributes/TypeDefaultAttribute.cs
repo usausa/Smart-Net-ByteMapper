@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public class MapDefaultAttribute
+    public class TypeDefaultAttribute
     {
     }
 }

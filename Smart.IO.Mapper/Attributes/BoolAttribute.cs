@@ -1,7 +1,19 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public class BoolBinaryAttribute
+    using System;
+
+    [AttributeUsage(AttributeTargets.Property)]
+    public sealed class BoolBinaryAttribute : Attribute
     {
-        // MEMO 0x00,0x01, 0x30,0x31でテキスト、バイナリ両方を扱う？、デフォルト設定値の導入
+        public int Offset { get; }
+
+        public byte? TrueValue { get; set; }
+
+        public byte? FalseValue { get; set; }
+
+        public BoolBinaryAttribute(int offset)
+        {
+            Offset = offset;
+        }
     }
 }

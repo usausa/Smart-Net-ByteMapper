@@ -34,8 +34,8 @@
             this.DefaultTextFiller(0x20);
             this.DefaultNumberFiller(0x20);
             this.DefaultEndian(Endian.Big);
-            this.DefaultTrue(0x31);
-            this.DefaultFalse(0x30);
+            this.DefaultTrueValue(0x31);
+            this.DefaultFalseValue(0x30);
         }
 
         public MapperBuilderConfig Configure(Action<ComponentConfig> action)
