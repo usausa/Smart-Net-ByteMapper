@@ -5,6 +5,11 @@
 
     public static class MapperBuilderConfigExtensions
     {
+        public static MapperBuilder ToMapperBuilder(this MapperBuilderConfig config)
+        {
+            return new MapperBuilder(config);
+        }
+
         public static MapperBuilderConfig DefaultDelimiter(this MapperBuilderConfig config, byte[] value)
         {
             return config.AddParameter(DefaultParameter.Delimiter, value);

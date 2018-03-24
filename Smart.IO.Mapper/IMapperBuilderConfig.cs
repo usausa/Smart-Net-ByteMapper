@@ -8,8 +8,8 @@
     {
         IComponentContainer ResolveComponents();
 
-        Dictionary<string, object> ResolveParameters();
+        IDictionary<string, object> ResolveParameters();
 
-        MappingEntry[] ResolveMappings();
+        IDictionary<MappingKey, MappingEntry> ResolveMappings();
     }
 }

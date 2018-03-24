@@ -14,7 +14,7 @@
 
         private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-        private readonly List<MappingEntry> mappings = new List<MappingEntry>();
+        private readonly Dictionary<MappingKey, MappingEntry> mappings = new Dictionary<MappingKey, MappingEntry>();
 
         public MapperBuilderConfig()
         {
@@ -64,15 +64,14 @@
             return this;
         }
 
-        public MapperBuilderConfig AddMapping<T>(IMemberMapperFactory[] factories)
+        public MapperBuilderConfig AddMapping(MappingEntry entry)
         {
-            // TODO タイプ自体のメタデータ？
-            return AddMapping<T>(string.Empty, factories);
+            return AddMapping(string.Empty, entry);
         }
 
-        public MapperBuilderConfig AddMapping<T>(string profile, IMemberMapperFactory[] factories)
+        public MapperBuilderConfig AddMapping(string profile, MappingEntry entry)
         {
-            mappings.Add(new MappingEntry(typeof(T), profile ?? string.Empty, factories));
+            mappings.Add(new MappingKey(entry.TargetType, profile ?? string.Empty), entry);
 
             return this;
         }
@@ -82,14 +81,14 @@
             return config.ToContainer();
         }
 
-        Dictionary<string, object> IMapperBuilderConfig.ResolveParameters()
+        IDictionary<string, object> IMapperBuilderConfig.ResolveParameters()
         {
             return new Dictionary<string, object>(parameters);
         }
 
-        MappingEntry[] IMapperBuilderConfig.ResolveMappings()
+        IDictionary<MappingKey, MappingEntry> IMapperBuilderConfig.ResolveMappings()
         {
-            return mappings.ToArray();
+            return new Dictionary<MappingKey, MappingEntry>(mappings);
         }
     }
 }
