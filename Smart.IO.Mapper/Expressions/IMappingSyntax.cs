@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Configs
+﻿namespace Smart.IO.Mapper.Expressions
 {
     public interface IMappingSyntax
     {
