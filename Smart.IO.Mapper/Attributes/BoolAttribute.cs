@@ -2,8 +2,7 @@
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class BoolBinaryAttribute : Attribute
+    public sealed class BoolBinaryAttribute : PropertyAttributeBase
     {
         public int Offset { get; }
 

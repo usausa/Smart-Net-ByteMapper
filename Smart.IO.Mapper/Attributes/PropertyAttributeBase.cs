@@ -3,7 +3,8 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class ArrayAttribute : Attribute
+    public abstract class PropertyAttributeBase : Attribute
     {
+        // TODO
     }
 }

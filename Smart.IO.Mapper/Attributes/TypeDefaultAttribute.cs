@@ -1,6 +1,18 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public class TypeDefaultAttribute
+    using System;
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
+    public class TypeDefaultAttribute : Attribute
     {
+        public string Key { get; }
+
+        public object Value { get; }
+
+        public TypeDefaultAttribute(string key, object value)
+        {
+            Key = key;
+            Value = value;
+        }
     }
 }

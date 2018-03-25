@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public class DateTimeTextAttribute
+    public sealed class DateTimeTextAttribute : PropertyAttributeBase
     {
     }
 }

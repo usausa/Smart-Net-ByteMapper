@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public class BinaryAttribute
+    public sealed class BinaryAttribute : PropertyAttributeBase
     {
     }
 }

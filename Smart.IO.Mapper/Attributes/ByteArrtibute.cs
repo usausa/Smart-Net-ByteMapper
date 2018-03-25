@@ -2,8 +2,7 @@
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class ByteArrtibute : Attribute
+    public sealed class ByteArrtibute : PropertyAttributeBase
     {
         public int Offset { get; }
 
