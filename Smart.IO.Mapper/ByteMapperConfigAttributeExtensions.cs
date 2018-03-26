@@ -3,14 +3,14 @@
     using System;
     using System.Collections.Generic;
 
-    public static class MapperBuilderConfigAttributeExtensions
+    public static class ByteMapperConfigAttributeExtensions
     {
-        public static MapperBuilderConfig Map<T>(this MapperBuilderConfig config)
+        public static ByteMapperConfig Map<T>(this ByteMapperConfig config)
         {
             return config.Map(typeof(T));
         }
 
-        public static MapperBuilderConfig Map(this MapperBuilderConfig config, Type type)
+        public static ByteMapperConfig Map(this ByteMapperConfig config, Type type)
         {
             if (type == null)
             {
@@ -24,7 +24,7 @@
             return config;
         }
 
-        public static MapperBuilderConfig Map(this MapperBuilderConfig config, IEnumerable<Type> types)
+        public static ByteMapperConfig Map(this ByteMapperConfig config, IEnumerable<Type> types)
         {
             if (types == null)
             {

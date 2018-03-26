@@ -8,7 +8,7 @@
     using Smart.ComponentModel;
     using Smart.Reflection;
 
-    public class MapperBuilderConfig : IMapperBuilderConfig
+    public class ByteMapperConfig : IByteMapperConfig
     {
         private readonly ComponentConfig config = new ComponentConfig();
 
@@ -16,7 +16,7 @@
 
         private readonly Dictionary<MappingKey, MappingEntry> mappings = new Dictionary<MappingKey, MappingEntry>();
 
-        public MapperBuilderConfig()
+        public ByteMapperConfig()
         {
             config.Add<IDelegateFactory>(DelegateFactory.Default);
 
@@ -38,7 +38,7 @@
             this.DefaultFalseValue(0x30);
         }
 
-        public MapperBuilderConfig Configure(Action<ComponentConfig> action)
+        public ByteMapperConfig Configure(Action<ComponentConfig> action)
         {
             if (action == null)
             {
@@ -50,43 +50,43 @@
             return this;
         }
 
-        public MapperBuilderConfig AddParameter<T>(T parameter)
+        public ByteMapperConfig AddParameter<T>(T parameter)
         {
             parameters[typeof(T).Name] = parameter;
 
             return this;
         }
 
-        public MapperBuilderConfig AddParameter<T>(string name, T parameter)
+        public ByteMapperConfig AddParameter<T>(string name, T parameter)
         {
             parameters[name] = parameter;
 
             return this;
         }
 
-        public MapperBuilderConfig AddMapping(MappingEntry entry)
+        public ByteMapperConfig AddMapping(MappingEntry entry)
         {
             return AddMapping(string.Empty, entry);
         }
 
-        public MapperBuilderConfig AddMapping(string profile, MappingEntry entry)
+        public ByteMapperConfig AddMapping(string profile, MappingEntry entry)
         {
             mappings.Add(new MappingKey(entry.TargetType, profile ?? string.Empty), entry);
 
             return this;
         }
 
-        IComponentContainer IMapperBuilderConfig.ResolveComponents()
+        IComponentContainer IByteMapperConfig.ResolveComponents()
         {
             return config.ToContainer();
         }
 
-        IDictionary<string, object> IMapperBuilderConfig.ResolveParameters()
+        IDictionary<string, object> IByteMapperConfig.ResolveParameters()
         {
             return new Dictionary<string, object>(parameters);
         }
 
-        IDictionary<MappingKey, MappingEntry> IMapperBuilderConfig.ResolveMappings()
+        IDictionary<MappingKey, MappingEntry> IByteMapperConfig.ResolveMappings()
         {
             return new Dictionary<MappingKey, MappingEntry>(mappings);
         }

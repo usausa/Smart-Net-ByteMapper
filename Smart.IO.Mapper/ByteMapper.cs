@@ -4,7 +4,7 @@
 
     using Smart.ComponentModel;
 
-    public class MapperBuilder
+    public class ByteMapper
     {
         private readonly IDictionary<string, object> parameters;
 
@@ -14,7 +14,7 @@
 
         public IComponentContainer Components { get; }
 
-        public MapperBuilder(IMapperBuilderConfig config)
+        public ByteMapper(IByteMapperConfig config)
         {
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
