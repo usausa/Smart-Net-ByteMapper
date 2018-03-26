@@ -1,12 +1,17 @@
-﻿using System;
-
-namespace SjisTest
+﻿namespace SjisTest
 {
-    class Program
+    using System.Diagnostics;
+    using System.Text;
+
+    public static class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var sjis = Encoding.GetEncoding(932);
+            var bytes = sjis.GetBytes("123456789");
+
+            Debug.WriteLine(SjisHelper.ParseInt(bytes, 0, bytes.Length));
         }
     }
 }
