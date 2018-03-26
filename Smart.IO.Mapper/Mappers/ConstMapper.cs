@@ -6,18 +6,18 @@
     {
         private readonly int offset;
 
-        private readonly byte[] constant;
+        private readonly byte[] content;
 
-        public int Length => constant.Length;
+        public int Length => content.Length;
 
         public bool CanRead => false;
 
         public bool CanWrite => true;
 
-        public ConstMapper(int offset, byte[] constant)
+        public ConstMapper(int offset, byte[] content)
         {
             this.offset = offset;
-            this.constant = constant;
+            this.content = content;
         }
 
         public void Read(byte[] buffer, int index, object target)
@@ -26,7 +26,7 @@
 
         public void Write(byte[] buffer, int index, object target)
         {
-            Buffer.BlockCopy(constant, 0, buffer, index + offset, constant.Length);
+            Buffer.BlockCopy(content, 0, buffer, index + offset, content.Length);
         }
     }
 }
