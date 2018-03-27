@@ -20,7 +20,7 @@
 
         private readonly DateTimeStyles style;
 
-        private readonly DateTimeFormatInfo info;
+        private readonly IFormatProvider provider;
 
         private readonly object defaultValue;
 
@@ -38,7 +38,7 @@
             byte filler,
             string format,
             DateTimeStyles style,
-            DateTimeFormatInfo info,
+            IFormatProvider provider,
             Type type)
         {
             this.offset = offset;
@@ -49,14 +49,14 @@
             this.filler = filler;
             this.format = format;
             this.style = style;
-            this.info = info;
+            this.provider = provider;
             defaultValue = type.GetDefaultValue();
         }
 
         public void Read(byte[] buffer, int index, object target)
         {
             var value = encoding.GetString(buffer, index + offset, Length);
-            if ((value.Length > 0) && DateTime.TryParseExact(value, format, info, style, out var result))
+            if ((value.Length > 0) && DateTime.TryParseExact(value, format, provider, style, out var result))
             {
                 setter(target, result);
             }
@@ -75,7 +75,7 @@
             }
             else
             {
-                var bytes = encoding.GetBytes(((DateTime)value).ToString(format, info));
+                var bytes = encoding.GetBytes(((DateTime)value).ToString(format, provider));
                 Buffer.BlockCopy(bytes, 0, buffer, offset + Length - bytes.Length, bytes.Length);
             }
         }

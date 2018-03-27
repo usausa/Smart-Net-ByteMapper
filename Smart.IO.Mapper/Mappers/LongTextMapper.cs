@@ -24,7 +24,7 @@
 
         private readonly NumberStyles style;
 
-        private readonly NumberFormatInfo info;
+        private readonly IFormatProvider provider;
 
         private readonly Type convertEnumType;
 
@@ -46,7 +46,7 @@
             Padding padding,
             byte filler,
             NumberStyles style,
-            NumberFormatInfo info,
+            NumberFormatInfo provider,
             Type type)
         {
             this.offset = offset;
@@ -58,7 +58,7 @@
             this.padding = padding;
             this.filler = filler;
             this.style = style;
-            this.info = info;
+            this.provider = provider;
             convertEnumType = BytesHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
@@ -66,7 +66,7 @@
         public void Read(byte[] buffer, int index, object target)
         {
             var value = BytesHelper.ReadString(buffer, index + offset, Length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Int64.TryParse(value, style, info, out var result))
+            if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
             {
                 setter(target, convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result);
             }
@@ -85,7 +85,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((long)value).ToString(info), buffer, index + offset, Length, encoding, padding, filler);
+                BytesHelper.WriteString(((long)value).ToString(provider), buffer, index + offset, Length, encoding, padding, filler);
             }
         }
     }
