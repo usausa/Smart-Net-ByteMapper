@@ -2,13 +2,11 @@
 {
     public sealed class BinaryAttribute : PropertyAttributeBase
     {
-        public int Offset { get; }
-
         public Endian Endian { get; set; }
 
         public BinaryAttribute(int offset)
+            : base(offset)
         {
-            Offset = offset;
         }
     }
 }

@@ -4,8 +4,6 @@
 
     public sealed class StringAttribute : PropertyAttributeBase
     {
-        public int Offset { get; }
-
         public int Length { get; set; }
 
         public Encoding Encoding { get; set; }
@@ -17,8 +15,8 @@
         public byte Filler { get; set; }
 
         public StringAttribute(int offset)
+            : base(offset)
         {
-            Offset = offset;
         }
     }
 }

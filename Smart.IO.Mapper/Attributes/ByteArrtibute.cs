@@ -4,11 +4,9 @@
 
     public sealed class ByteArrtibute : PropertyAttributeBase
     {
-        public int Offset { get; }
-
         public ByteArrtibute(int offset)
+            : base(offset)
         {
-            Offset = offset;
         }
     }
 }

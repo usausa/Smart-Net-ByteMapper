@@ -7,6 +7,8 @@
     {
         public int Size { get; }
 
+        public byte? Filler { get; set; }
+
         public byte[] Delimiter { get; set; }
 
         public MapAttribute(int size)
