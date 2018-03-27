@@ -2,11 +2,7 @@
 {
     using System;
     using System.Globalization;
-    using System.Reflection;
     using System.Text;
-
-    using Smart.IO.Mapper.Mock;
-    using Smart.Reflection;
 
     using Xunit;
 
@@ -20,30 +16,26 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("20001231123456".PadLeft(Format.Length, ' '));
 
-        private readonly DateTimeTextMapper dateTimeMapper;
+        private readonly DateTimeTextMapper decimalMapper;
 
         private readonly DateTimeTextMapper nullableDateTimeMapper;
 
         public DateTimeTextMapperTest()
         {
-            var type = typeof(Target);
-
-            dateTimeMapper = CreateMapper(type.GetProperty(nameof(Target.DateTimeProperty)));
-            nullableDateTimeMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDateTimeProperty)));
+            decimalMapper = CreateMapper(typeof(DateTime));
+            nullableDateTimeMapper = CreateMapper(typeof(DateTime?));
         }
 
-        private static DateTimeTextMapper CreateMapper(PropertyInfo pi)
+        private static DateTimeTextMapper CreateMapper(Type type)
         {
             return new DateTimeTextMapper(
-                0,
-                DelegateFactory.Default.CreateGetter(pi),
-                DelegateFactory.Default.CreateSetter(pi),
+                14,
                 Encoding.ASCII,
                 0x20,
                 Format,
                 DateTimeStyles.None,
                 DateTimeFormatInfo.InvariantInfo,
-                pi.PropertyType);
+                type);
         }
 
         //--------------------------------------------------------------------------------
@@ -53,27 +45,20 @@
         [Fact]
         public void ReadEmptyToDateTimeIsDefault()
         {
-            var target = new Target { DateTimeProperty = DateTime.Now };
-            dateTimeMapper.Read(NullBytes, 0, target);
-
-            Assert.Equal(default, target.DateTimeProperty);
+            Assert.Equal(default(DateTime), decimalMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToDateTime()
         {
-            var target = new Target();
-            dateTimeMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.DateTimeProperty);
+            Assert.Equal(Value, decimalMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueDateTimeToBuffer()
         {
             var buffer = new byte[Format.Length];
-            var target = new Target { DateTimeProperty = Value };
-            dateTimeMapper.Write(buffer, 0, target);
+            decimalMapper.Write(buffer, 0, Value);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -85,27 +70,20 @@
         [Fact]
         public void ReadEmptyToNullableDateTimeIsDefault()
         {
-            var target = new Target { NullableDateTimeProperty = DateTime.Now };
-            nullableDateTimeMapper.Read(NullBytes, 0, target);
-
-            Assert.Null(target.NullableDateTimeProperty);
+            Assert.Null(nullableDateTimeMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableDateTime()
         {
-            var target = new Target();
-            nullableDateTimeMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.NullableDateTimeProperty);
+            Assert.Equal(Value, nullableDateTimeMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullDateTimeToBuffer()
         {
             var buffer = new byte[Format.Length];
-            var target = new Target();
-            nullableDateTimeMapper.Write(buffer, 0, target);
+            nullableDateTimeMapper.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

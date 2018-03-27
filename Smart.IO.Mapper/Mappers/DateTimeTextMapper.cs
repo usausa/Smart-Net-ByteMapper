@@ -4,13 +4,11 @@
     using System.Globalization;
     using System.Text;
 
+    using Smart.IO.Mapper.Helpers;
+
     public sealed class DateTimeTextMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
+        private readonly int length;
 
         private readonly Encoding encoding;
 
@@ -20,63 +18,56 @@
 
         private readonly DateTimeStyles style;
 
-        private readonly IFormatProvider provider;
+        private readonly DateTimeFormatInfo info;
 
         private readonly object defaultValue;
 
-        public int Length { get; }
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
         public DateTimeTextMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter,
+            int length,
             Encoding encoding,
             byte filler,
             string format,
             DateTimeStyles style,
-            IFormatProvider provider,
+            DateTimeFormatInfo info,
             Type type)
         {
-            this.offset = offset;
-            Length = format.Length;
-            this.getter = getter;
-            this.setter = setter;
+            this.length = length;
             this.encoding = encoding;
             this.filler = filler;
             this.format = format;
             this.style = style;
-            this.provider = provider;
+            this.info = info;
             defaultValue = type.GetDefaultValue();
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public object Read(byte[] buffer, int index)
         {
-            var value = encoding.GetString(buffer, index + offset, Length);
-            if ((value.Length > 0) && DateTime.TryParseExact(value, format, provider, style, out var result))
+            var value = encoding.GetString(buffer, index, length);
+            if ((value.Length > 0) && DateTime.TryParseExact(value, format, info, style, out var result))
             {
-                setter(target, result);
+                return result;
             }
-            else
-            {
-                setter(target, defaultValue);
-            }
+
+            return defaultValue;
         }
 
-        public void Write(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            var value = getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
-                var bytes = encoding.GetBytes(((DateTime)value).ToString(format, provider));
-                Buffer.BlockCopy(bytes, 0, buffer, offset + Length - bytes.Length, bytes.Length);
+                var bytes = encoding.GetBytes(((DateTime)value).ToString(format, info));
+                if (bytes.Length >= length)
+                {
+                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
+                }
+                else
+                {
+                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
+                }
             }
         }
     }

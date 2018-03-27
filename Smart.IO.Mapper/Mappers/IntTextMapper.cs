@@ -8,11 +8,7 @@
 
     public sealed class IntTextMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
+        private readonly int length;
 
         private readonly Encoding encoding;
 
@@ -30,17 +26,8 @@
 
         private readonly object defaultValue;
 
-        public int Length { get; }
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
         public IntTextMapper(
-            int offset,
             int length,
-            Func<object, object> getter,
-            Action<object, object> setter,
             Encoding encoding,
             bool trim,
             Padding padding,
@@ -49,10 +36,7 @@
             IFormatProvider provider,
             Type type)
         {
-            this.offset = offset;
-            Length = length;
-            this.getter = getter;
-            this.setter = setter;
+            this.length = length;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
@@ -63,29 +47,26 @@
             defaultValue = type.GetDefaultValue();
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index + offset, Length, encoding, trim, padding, filler);
+            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
             if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
             {
-                setter(target, convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result);
+                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
-            else
-            {
-                setter(target, defaultValue);
-            }
+
+            return defaultValue;
         }
 
-        public void Write(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            var value = getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
-                BytesHelper.WriteString(((int)value).ToString(provider), buffer, index + offset, Length, encoding, padding, filler);
+                BytesHelper.WriteString(((int)value).ToString(provider), buffer, index, length, encoding, padding, filler);
             }
         }
     }

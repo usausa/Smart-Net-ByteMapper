@@ -1,11 +1,8 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
+    using System;
     using System.Globalization;
-    using System.Reflection;
     using System.Text;
-
-    using Smart.IO.Mapper.Mock;
-    using Smart.Reflection;
 
     using Xunit;
 
@@ -25,26 +22,21 @@
 
         public DecimalTextMapperTest()
         {
-            var type = typeof(Target);
-
-            decimalMapper = CreateMapper(type.GetProperty(nameof(Target.DecimalProperty)));
-            nullableDecimalMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDecimalProperty)));
+            decimalMapper = CreateMapper(typeof(decimal));
+            nullableDecimalMapper = CreateMapper(typeof(decimal?));
         }
 
-        private static DecimalTextMapper CreateMapper(PropertyInfo pi)
+        private static DecimalTextMapper CreateMapper(Type type)
         {
             return new DecimalTextMapper(
-                0,
                 Length,
-                DelegateFactory.Default.CreateGetter(pi),
-                DelegateFactory.Default.CreateSetter(pi),
                 Encoding.ASCII,
                 true,
                 Padding.Left,
                 0x20,
                 NumberStyles.Number,
                 NumberFormatInfo.InvariantInfo,
-                pi.PropertyType);
+                type);
         }
 
         //--------------------------------------------------------------------------------
@@ -54,27 +46,20 @@
         [Fact]
         public void ReadEmptyToDecimalIsDefault()
         {
-            var target = new Target { DecimalProperty = 1 };
-            decimalMapper.Read(NullBytes, 0, target);
-
-            Assert.Equal(0m, target.DecimalProperty);
+            Assert.Equal(0m, decimalMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToDecimal()
         {
-            var target = new Target();
-            decimalMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.DecimalProperty);
+            Assert.Equal(Value, decimalMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueDecimalToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { DecimalProperty = Value };
-            decimalMapper.Write(buffer, 0, target);
+            decimalMapper.Write(buffer, 0, Value);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -86,27 +71,20 @@
         [Fact]
         public void ReadEmptyToNullableDecimalIsDefault()
         {
-            var target = new Target { NullableDecimalProperty = 1 };
-            nullableDecimalMapper.Read(NullBytes, 0, target);
-
-            Assert.Null(target.NullableDecimalProperty);
+            Assert.Null(nullableDecimalMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableDecimal()
         {
-            var target = new Target();
-            nullableDecimalMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.NullableDecimalProperty);
+            Assert.Equal(Value, nullableDecimalMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullDecimalToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target();
-            nullableDecimalMapper.Write(buffer, 0, target);
+            nullableDecimalMapper.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

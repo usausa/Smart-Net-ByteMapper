@@ -10,6 +10,6 @@
 
         IDictionary<string, object> ResolveParameters();
 
-        IDictionary<MappingKey, MappingEntry> ResolveMappings();
+        IDictionary<MapKey, MapEntry> ResolveEntries();
     }
 }

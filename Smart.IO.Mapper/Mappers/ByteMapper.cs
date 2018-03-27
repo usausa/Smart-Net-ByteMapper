@@ -1,39 +1,15 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
-    using System;
-
     public sealed class ByteMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public int Length => 1;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public ByteMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter)
+        public object Read(byte[] buffer, int index)
         {
-            this.offset = offset;
-            this.getter = getter;
-            this.setter = setter;
+            return buffer[index];
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            setter(target, buffer[index + offset]);
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            buffer[index + offset] = (byte)getter(target);
+            buffer[index] = (byte)value;
         }
     }
 }

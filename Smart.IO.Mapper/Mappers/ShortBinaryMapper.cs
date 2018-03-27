@@ -4,71 +4,27 @@
 
     public sealed class BigEndianShortBinaryMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public int Length => 2;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public BigEndianShortBinaryMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter)
+        public object Read(byte[] buffer, int index)
         {
-            this.offset = offset;
-            this.getter = getter;
-            this.setter = setter;
+            return ByteOrder.GetShortBE(buffer, index);
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            setter(target, ByteOrder.GetShortBE(buffer, index + offset));
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            ByteOrder.PutShortBE(buffer, index + offset, (short)getter(target));
+            ByteOrder.PutShortBE(buffer, index, (short)value);
         }
     }
 
     public sealed class LittleEndianShortBinaryMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public int Length => 2;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public LittleEndianShortBinaryMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter)
+        public object Read(byte[] buffer, int index)
         {
-            this.offset = offset;
-            this.getter = getter;
-            this.setter = setter;
+            return ByteOrder.GetShortLE(buffer, index);
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            setter(target, ByteOrder.GetShortLE(buffer, index + offset));
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            ByteOrder.PutShortLE(buffer, index + offset, (short)getter(target));
+            ByteOrder.PutShortLE(buffer, index, (short)value);
         }
     }
 }

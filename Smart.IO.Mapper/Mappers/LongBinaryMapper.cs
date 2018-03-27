@@ -1,74 +1,28 @@
 ﻿namespace Smart.IO.Mapper.Mappers
 {
-    using System;
-
     public sealed class BigEndianLongBinaryMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public int Length => 8;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public BigEndianLongBinaryMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter)
+        public object Read(byte[] buffer, int index)
         {
-            this.offset = offset;
-            this.getter = getter;
-            this.setter = setter;
+            return ByteOrder.GetLongBE(buffer, index);
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            setter(target, ByteOrder.GetLongBE(buffer, index + offset));
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            ByteOrder.PutLongBE(buffer, index + offset, (long)getter(target));
+            ByteOrder.PutLongBE(buffer, index, (long)value);
         }
     }
 
     public sealed class LittleEndianLongBinaryMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public int Length => 8;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public LittleEndianLongBinaryMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter)
+        public object Read(byte[] buffer, int index)
         {
-            this.offset = offset;
-            this.getter = getter;
-            this.setter = setter;
+            return ByteOrder.GetLongLE(buffer, index);
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            setter(target, ByteOrder.GetLongLE(buffer, index + offset));
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            ByteOrder.PutLongLE(buffer, index + offset, (long)getter(target));
+            ByteOrder.PutLongLE(buffer, index, (long)value);
         }
     }
 }

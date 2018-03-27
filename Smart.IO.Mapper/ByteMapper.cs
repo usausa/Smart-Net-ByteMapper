@@ -8,7 +8,7 @@
     {
         private readonly IDictionary<string, object> parameters;
 
-        private readonly IDictionary<MappingKey, MappingEntry> mappings;
+        private readonly IDictionary<MapKey, MapEntry> entries;
 
         // TODO cache
 
@@ -18,7 +18,7 @@
         {
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
-            mappings = config.ResolveMappings();
+            entries = config.ResolveEntries();
         }
 
         public ITypeMapper<T> Create<T>()

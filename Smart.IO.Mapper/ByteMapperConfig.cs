@@ -14,7 +14,7 @@
 
         private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-        private readonly Dictionary<MappingKey, MappingEntry> mappings = new Dictionary<MappingKey, MappingEntry>();
+        private readonly Dictionary<MapKey, MapEntry> entries = new Dictionary<MapKey, MapEntry>();
 
         public ByteMapperConfig()
         {
@@ -64,14 +64,14 @@
             return this;
         }
 
-        public ByteMapperConfig AddMapping(MappingEntry entry)
+        public ByteMapperConfig AddMapEntry(MapEntry entry)
         {
-            return AddMapping(string.Empty, entry);
+            return AddMapEntry(string.Empty, entry);
         }
 
-        public ByteMapperConfig AddMapping(string profile, MappingEntry entry)
+        public ByteMapperConfig AddMapEntry(string profile, MapEntry entry)
         {
-            mappings.Add(new MappingKey(entry.TargetType, profile ?? string.Empty), entry);
+            entries.Add(new MapKey(entry.TargetType, profile ?? string.Empty), entry);
 
             return this;
         }
@@ -86,9 +86,9 @@
             return new Dictionary<string, object>(parameters);
         }
 
-        IDictionary<MappingKey, MappingEntry> IByteMapperConfig.ResolveMappings()
+        IDictionary<MapKey, MapEntry> IByteMapperConfig.ResolveEntries()
         {
-            return new Dictionary<MappingKey, MappingEntry>(mappings);
+            return new Dictionary<MapKey, MapEntry>(entries);
         }
     }
 }

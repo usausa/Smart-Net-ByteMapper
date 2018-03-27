@@ -1,11 +1,10 @@
 namespace Smart.IO.Mapper.Mappers
 {
+    using System;
     using System.Globalization;
-    using System.Reflection;
     using System.Text;
 
     using Smart.IO.Mapper.Mock;
-    using Smart.Reflection;
 
     using Xunit;
 
@@ -29,28 +28,23 @@ namespace Smart.IO.Mapper.Mappers
 
         public ShortTextMapperTest()
         {
-            var type = typeof(Target);
-
-            shortMapper = CreateMapper(type.GetProperty(nameof(Target.ShortProperty)));
-            nullableShortMapper = CreateMapper(type.GetProperty(nameof(Target.NullableShortProperty)));
-            enumMapper = CreateMapper(type.GetProperty(nameof(Target.ShortEnumProperty)));
-            nullableEnumMapper = CreateMapper(type.GetProperty(nameof(Target.NullableShortEnumProperty)));
+            shortMapper = CreateMapper(typeof(short));
+            nullableShortMapper = CreateMapper(typeof(short?));
+            enumMapper = CreateMapper(typeof(ShortEnum));
+            nullableEnumMapper = CreateMapper(typeof(ShortEnum?));
         }
 
-        private static ShortTextMapper CreateMapper(PropertyInfo pi)
+        private static ShortTextMapper CreateMapper(Type type)
         {
             return new ShortTextMapper(
-                0,
                 Length,
-                DelegateFactory.Default.CreateGetter(pi),
-                DelegateFactory.Default.CreateSetter(pi),
                 Encoding.ASCII,
                 true,
                 Padding.Left,
                 0x20,
                 NumberStyles.Integer,
                 NumberFormatInfo.InvariantInfo,
-                pi.PropertyType);
+                type);
         }
 
         //--------------------------------------------------------------------------------
@@ -60,27 +54,20 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToShortIsDefault()
         {
-            var target = new Target { ShortProperty = 1 };
-            shortMapper.Read(NullBytes, 0, target);
-
-            Assert.Equal((short)0, target.ShortProperty);
+            Assert.Equal((short)0, shortMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToShort()
         {
-            var target = new Target();
-            shortMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal((short)1, target.ShortProperty);
+            Assert.Equal((short)1, shortMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueShortToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortProperty = 1 };
-            shortMapper.Write(buffer, 0, target);
+            shortMapper.Write(buffer, 0, (short)1);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -92,27 +79,20 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToNullableShortIsDefault()
         {
-            var target = new Target { NullableShortProperty = 1 };
-            nullableShortMapper.Read(NullBytes, 0, target);
-
-            Assert.Null(target.NullableShortProperty);
+            Assert.Null(nullableShortMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableShort()
         {
-            var target = new Target();
-            nullableShortMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal((short)1, target.NullableShortProperty);
+            Assert.Equal((short)1, nullableShortMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullShortToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target();
-            nullableShortMapper.Write(buffer, 0, target);
+            nullableShortMapper.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }
@@ -124,36 +104,28 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToEnumIsDefault()
         {
-            var target = new Target { ShortEnumProperty = ShortEnum.One };
-            enumMapper.Read(NullBytes, 0, target);
-
-            Assert.Equal(ShortEnum.Zero, target.ShortEnumProperty);
+            Assert.Equal(ShortEnum.Zero, enumMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToEnum()
         {
-            var target = new Target();
-            enumMapper.Read(ValueBytes, 0, target);
+            var ret = enumMapper.Read(ValueBytes, 0);
 
-            Assert.Equal(ShortEnum.One, target.ShortEnumProperty);
+            Assert.Equal(ShortEnum.One, enumMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void ReadUndefinedValueToEnum()
         {
-            var target = new Target();
-            enumMapper.Read(MinusBytes, 0, target);
-
-            Assert.Equal((ShortEnum)(-1), target.ShortEnumProperty);
+            Assert.Equal((ShortEnum)(-1), enumMapper.Read(MinusBytes, 0));
         }
 
         [Fact]
         public void WriteValueEnumToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortEnumProperty = ShortEnum.One };
-            enumMapper.Write(buffer, 0, target);
+            enumMapper.Write(buffer, 0, ShortEnum.One);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -162,8 +134,7 @@ namespace Smart.IO.Mapper.Mappers
         public void WriteUndefinedEnumToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target { ShortEnumProperty = (ShortEnum)(-1) };
-            enumMapper.Write(buffer, 0, target);
+            enumMapper.Write(buffer, 0, (ShortEnum)(-1));
 
             Assert.Equal(MinusBytes, buffer);
         }
@@ -175,36 +146,26 @@ namespace Smart.IO.Mapper.Mappers
         [Fact]
         public void ReadEmptyToNullableEnumIsDefault()
         {
-            var target = new Target { NullableShortEnumProperty = ShortEnum.One };
-            nullableEnumMapper.Read(NullBytes, 0, target);
-
-            Assert.Null(target.NullableShortEnumProperty);
+            Assert.Null(nullableEnumMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableEnum()
         {
-            var target = new Target();
-            nullableEnumMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(ShortEnum.One, target.NullableShortEnumProperty);
+            Assert.Equal(ShortEnum.One, nullableEnumMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void ReadUndefinedValueToNullableEnum()
         {
-            var target = new Target();
-            nullableEnumMapper.Read(MinusBytes, 0, target);
-
-            Assert.Equal((ShortEnum)(-1), target.NullableShortEnumProperty);
+            Assert.Equal((ShortEnum)(-1), nullableEnumMapper.Read(MinusBytes, 0));
         }
 
         [Fact]
         public void WriteNullEnumToBuffer()
         {
             var buffer = new byte[Length];
-            var target = new Target();
-            nullableEnumMapper.Write(buffer, 0, target);
+            nullableEnumMapper.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

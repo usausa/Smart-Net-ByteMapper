@@ -2,13 +2,13 @@
 {
     using System;
 
-    public class MappingKey
+    public class MapKey
     {
         public Type Type { get; }
 
         public string Profile { get; }
 
-        public MappingKey(Type type, string profile)
+        public MapKey(Type type, string profile)
         {
             Type = type;
             Profile = profile;
@@ -16,7 +16,7 @@
 
         public override bool Equals(object obj)
         {
-            if (obj is MappingKey other)
+            if (obj is MapKey other)
             {
                 return Type == other.Type && Profile == other.Profile;
             }

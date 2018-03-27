@@ -3,37 +3,39 @@
     using System;
     using System.Linq;
 
+    using Smart.IO.Mapper.Mappings;
+
     public class TypeMapper<T> : ITypeMapper<T>
     {
-        private readonly IMemberMapper[] readableMappers;
+        private readonly IMapping[] readableMappings;
 
-        private readonly IMemberMapper[] writableMappers;
+        private readonly IMapping[] writableMappings;
 
         public Type TargetType { get; }
 
         public int Size { get; }
 
-        public TypeMapper(Type targetType, int size, IMemberMapper[] mappers)
+        public TypeMapper(Type targetType, int size, IMapping[] mappings)
         {
             TargetType = targetType;
             Size = size;
-            readableMappers = mappers.Where(x => x.CanRead).ToArray();
-            writableMappers = mappers.Where(x => x.CanWrite).ToArray();
+            readableMappings = mappings.Where(x => x.CanRead).ToArray();
+            writableMappings = mappings.Where(x => x.CanWrite).ToArray();
         }
 
         public void FromByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < readableMappers.Length; i++)
+            for (var i = 0; i < readableMappings.Length; i++)
             {
-                readableMappers[i].Read(buffer, index, target);
+                readableMappings[i].Read(buffer, index, target);
             }
         }
 
         public void ToByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < writableMappers.Length; i++)
+            for (var i = 0; i < writableMappings.Length; i++)
             {
-                writableMappers[i].Write(buffer, index, target);
+                writableMappings[i].Write(buffer, index, target);
             }
         }
     }

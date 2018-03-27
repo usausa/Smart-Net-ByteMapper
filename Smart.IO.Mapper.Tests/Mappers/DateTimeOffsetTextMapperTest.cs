@@ -2,11 +2,7 @@
 {
     using System;
     using System.Globalization;
-    using System.Reflection;
     using System.Text;
-
-    using Smart.IO.Mapper.Mock;
-    using Smart.Reflection;
 
     using Xunit;
 
@@ -26,24 +22,20 @@
 
         public DateTimeOffsetTextMapperTest()
         {
-            var type = typeof(Target);
-
-            decimalMapper = CreateMapper(type.GetProperty(nameof(Target.DateTimeOffsetProperty)));
-            nullableDateTimeOffsetMapper = CreateMapper(type.GetProperty(nameof(Target.NullableDateTimeOffsetProperty)));
+            decimalMapper = CreateMapper(typeof(DateTimeOffset));
+            nullableDateTimeOffsetMapper = CreateMapper(typeof(DateTimeOffset?));
         }
 
-        private static DateTimeOffsetTextMapper CreateMapper(PropertyInfo pi)
+        private static DateTimeOffsetTextMapper CreateMapper(Type type)
         {
             return new DateTimeOffsetTextMapper(
-                0,
-                DelegateFactory.Default.CreateGetter(pi),
-                DelegateFactory.Default.CreateSetter(pi),
+                14,
                 Encoding.ASCII,
                 0x20,
                 Format,
                 DateTimeStyles.None,
                 DateTimeFormatInfo.InvariantInfo,
-                pi.PropertyType);
+                type);
         }
 
         //--------------------------------------------------------------------------------
@@ -53,27 +45,20 @@
         [Fact]
         public void ReadEmptyToDateTimeOffsetIsDefault()
         {
-            var target = new Target { DateTimeOffsetProperty = DateTimeOffset.Now };
-            decimalMapper.Read(NullBytes, 0, target);
-
-            Assert.Equal(default, target.DateTimeOffsetProperty);
+            Assert.Equal(default(DateTimeOffset), decimalMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToDateTimeOffset()
         {
-            var target = new Target();
-            decimalMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.DateTimeOffsetProperty);
+            Assert.Equal(Value, decimalMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Format.Length];
-            var target = new Target { DateTimeOffsetProperty = Value };
-            decimalMapper.Write(buffer, 0, target);
+            decimalMapper.Write(buffer, 0, Value);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -85,27 +70,20 @@
         [Fact]
         public void ReadEmptyToNullableDateTimeOffsetIsDefault()
         {
-            var target = new Target { NullableDateTimeOffsetProperty = DateTimeOffset.Now };
-            nullableDateTimeOffsetMapper.Read(NullBytes, 0, target);
-
-            Assert.Null(target.NullableDateTimeOffsetProperty);
+            Assert.Null(nullableDateTimeOffsetMapper.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableDateTimeOffset()
         {
-            var target = new Target();
-            nullableDateTimeOffsetMapper.Read(ValueBytes, 0, target);
-
-            Assert.Equal(Value, target.NullableDateTimeOffsetProperty);
+            Assert.Equal(Value, nullableDateTimeOffsetMapper.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Format.Length];
-            var target = new Target();
-            nullableDateTimeOffsetMapper.Write(buffer, 0, target);
+            nullableDateTimeOffsetMapper.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

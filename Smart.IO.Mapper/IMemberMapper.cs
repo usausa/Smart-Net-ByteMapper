@@ -1,15 +1,12 @@
 ﻿namespace Smart.IO.Mapper
 {
+    // TODO 名称 ByteConverterにする？
     public interface IMemberMapper
     {
-        int Length { get; }
+        //int Length { get; }
 
-        bool CanRead { get; }
+        object Read(byte[] buffer, int index);
 
-        bool CanWrite { get; }
-
-        void Read(byte[] buffer, int index, object target);
-
-        void Write(byte[] buffer, int index, object target);
+        void Write(byte[] buffer, int index, object value);
     }
 }

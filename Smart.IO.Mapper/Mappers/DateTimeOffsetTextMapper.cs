@@ -4,13 +4,11 @@
     using System.Globalization;
     using System.Text;
 
+    using Smart.IO.Mapper.Helpers;
+
     public sealed class DateTimeOffsetTextMapper : IMemberMapper
     {
-        private readonly int offset;
-
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
+        private readonly int length;
 
         private readonly Encoding encoding;
 
@@ -24,16 +22,8 @@
 
         private readonly object defaultValue;
 
-        public int Length { get; }
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
         public DateTimeOffsetTextMapper(
-            int offset,
-            Func<object, object> getter,
-            Action<object, object> setter,
+            int length,
             Encoding encoding,
             byte filler,
             string format,
@@ -41,10 +31,7 @@
             DateTimeFormatInfo info,
             Type type)
         {
-            this.offset = offset;
-            Length = format.Length;
-            this.getter = getter;
-            this.setter = setter;
+            this.length = length;
             this.encoding = encoding;
             this.filler = filler;
             this.format = format;
@@ -53,30 +40,34 @@
             defaultValue = type.GetDefaultValue();
         }
 
-        public void Read(byte[] buffer, int index, object target)
+        public object Read(byte[] buffer, int index)
         {
-            var value = encoding.GetString(buffer, index + offset, Length);
+            var value = encoding.GetString(buffer, index, length);
             if ((value.Length > 0) && DateTimeOffset.TryParseExact(value, format, info, style, out var result))
             {
-                setter(target, result);
+                return result;
             }
-            else
-            {
-                setter(target, defaultValue);
-            }
+
+            return defaultValue;
         }
 
-        public void Write(byte[] buffer, int index, object target)
+        public void Write(byte[] buffer, int index, object value)
         {
-            var value = getter(target);
             if (value == null)
             {
-                buffer.Fill(offset, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
                 var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, info));
-                Buffer.BlockCopy(bytes, 0, buffer, offset + Length - bytes.Length, bytes.Length);
+                if (bytes.Length >= length)
+                {
+                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
+                }
+                else
+                {
+                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
+                }
             }
         }
     }

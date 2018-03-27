@@ -3,7 +3,7 @@
     using System;
     using System.Collections.Generic;
 
-    public class MappingEntry
+    public class MapEntry
     {
         public Type TargetType { get; }
 
@@ -13,7 +13,7 @@
 
         public IMemberMapperFactory[] Factories { get; }
 
-        public MappingEntry(Type targetType, int size, IDictionary<string, object> parameters, IMemberMapperFactory[] factories)
+        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMemberMapperFactory[] factories)
         {
             TargetType = targetType;
             Size = size;
