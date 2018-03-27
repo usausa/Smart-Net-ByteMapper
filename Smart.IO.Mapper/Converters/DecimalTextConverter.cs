@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class ShortTextMapper : IMemberMapper
+    public sealed class DecimalTextConverter : IByteConverter
     {
         private readonly int length;
 
@@ -20,20 +20,18 @@
 
         private readonly NumberStyles style;
 
-        private readonly IFormatProvider provider;
-
-        private readonly Type convertEnumType;
+        private readonly NumberFormatInfo info;
 
         private readonly object defaultValue;
 
-        public ShortTextMapper(
+        public DecimalTextConverter(
             int length,
             Encoding encoding,
             bool trim,
             Padding padding,
             byte filler,
             NumberStyles style,
-            NumberFormatInfo provider,
+            NumberFormatInfo info,
             Type type)
         {
             this.length = length;
@@ -42,17 +40,16 @@
             this.padding = padding;
             this.filler = filler;
             this.style = style;
-            this.provider = provider;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            this.info = info;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
             var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
+            if ((value.Length > 0) && Decimal.TryParse(value, style, info, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return result;
             }
 
             return defaultValue;
@@ -66,7 +63,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((short)value).ToString(provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString(((decimal)value).ToString(info), buffer, index, length, encoding, padding, filler);
             }
         }
     }

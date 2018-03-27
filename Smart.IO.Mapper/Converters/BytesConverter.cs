@@ -1,18 +1,16 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class BytesMapper : IMemberMapper
+    public sealed class BytesConverter : IByteConverter
     {
         private readonly int length;
 
         private readonly byte filler;
 
-        public BytesMapper(
-            int length,
-            byte filler)
+        public BytesConverter(int length, byte filler)
         {
             this.length = length;
             this.filler = filler;

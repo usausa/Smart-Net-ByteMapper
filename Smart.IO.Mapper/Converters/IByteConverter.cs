@@ -1,7 +1,6 @@
-﻿namespace Smart.IO.Mapper
+﻿namespace Smart.IO.Mapper.Converters
 {
-    // TODO 名称 ByteConverterにする？
-    public interface IMemberMapper
+    public interface IByteConverter
     {
         //int Length { get; }
 

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class DecimalTextMapperTest
+    public class DecimalTextConverterTest
     {
         private const int Length = 21;
 
@@ -16,19 +16,19 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("1234567890.98".PadLeft(Length, ' '));
 
-        private readonly DecimalTextMapper decimalMapper;
+        private readonly DecimalTextConverter decimalConverter;
 
-        private readonly DecimalTextMapper nullableDecimalMapper;
+        private readonly DecimalTextConverter nullableDecimalConverter;
 
-        public DecimalTextMapperTest()
+        public DecimalTextConverterTest()
         {
-            decimalMapper = CreateMapper(typeof(decimal));
-            nullableDecimalMapper = CreateMapper(typeof(decimal?));
+            decimalConverter = CreateConverter(typeof(decimal));
+            nullableDecimalConverter = CreateConverter(typeof(decimal?));
         }
 
-        private static DecimalTextMapper CreateMapper(Type type)
+        private static DecimalTextConverter CreateConverter(Type type)
         {
-            return new DecimalTextMapper(
+            return new DecimalTextConverter(
                 Length,
                 Encoding.ASCII,
                 true,
@@ -46,20 +46,20 @@
         [Fact]
         public void ReadEmptyToDecimalIsDefault()
         {
-            Assert.Equal(0m, decimalMapper.Read(NullBytes, 0));
+            Assert.Equal(0m, decimalConverter.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToDecimal()
         {
-            Assert.Equal(Value, decimalMapper.Read(ValueBytes, 0));
+            Assert.Equal(Value, decimalConverter.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueDecimalToBuffer()
         {
             var buffer = new byte[Length];
-            decimalMapper.Write(buffer, 0, Value);
+            decimalConverter.Write(buffer, 0, Value);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -71,20 +71,20 @@
         [Fact]
         public void ReadEmptyToNullableDecimalIsDefault()
         {
-            Assert.Null(nullableDecimalMapper.Read(NullBytes, 0));
+            Assert.Null(nullableDecimalConverter.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableDecimal()
         {
-            Assert.Equal(Value, nullableDecimalMapper.Read(ValueBytes, 0));
+            Assert.Equal(Value, nullableDecimalConverter.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullDecimalToBuffer()
         {
             var buffer = new byte[Length];
-            nullableDecimalMapper.Write(buffer, 0, null);
+            nullableDecimalConverter.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

@@ -1,8 +1,10 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using Smart.IO.Mapper.Converters;
+
     // TODO MappingのFactory？
     public interface IMemberMapperFactory
     {
-        IMemberMapper Create(IMapperCreateContext context);
+        IByteConverter Create(IMapperCreateContext context);
     }
 }

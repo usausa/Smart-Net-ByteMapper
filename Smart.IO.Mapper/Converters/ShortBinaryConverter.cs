@@ -1,8 +1,8 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
 
-    public sealed class BigEndianShortBinaryMapper : IMemberMapper
+    public sealed class BigEndianShortBinaryConverter : IByteConverter
     {
         public object Read(byte[] buffer, int index)
         {
@@ -15,7 +15,7 @@
         }
     }
 
-    public sealed class LittleEndianShortBinaryMapper : IMemberMapper
+    public sealed class LittleEndianShortBinaryConverter : IByteConverter
     {
         public object Read(byte[] buffer, int index)
         {

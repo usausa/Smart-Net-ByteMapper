@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class LongTextMapper : IMemberMapper
+    public sealed class ShortTextConverter : IByteConverter
     {
         private readonly int length;
 
@@ -26,7 +26,7 @@
 
         private readonly object defaultValue;
 
-        public LongTextMapper(
+        public ShortTextConverter(
             int length,
             Encoding encoding,
             bool trim,
@@ -50,14 +50,12 @@
         public object Read(byte[] buffer, int index)
         {
             var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
+            if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
-            else
-            {
-                return defaultValue;
-            }
+
+            return defaultValue;
         }
 
         public void Write(byte[] buffer, int index, object value)
@@ -68,7 +66,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((long)value).ToString(provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString(((short)value).ToString(provider), buffer, index, length, encoding, padding, filler);
             }
         }
     }

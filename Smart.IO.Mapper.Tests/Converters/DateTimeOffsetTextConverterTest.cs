@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class DateTimeOffsetTextMapperTest
+    public class DateTimeOffsetTextConverterTest
     {
         private const string Format = "yyyyMMddHHmmss";
 
@@ -16,19 +16,19 @@
 
         private static readonly byte[] ValueBytes = Encoding.ASCII.GetBytes("20001231123456".PadLeft(Format.Length, ' '));
 
-        private readonly DateTimeOffsetTextMapper decimalMapper;
+        private readonly DateTimeOffsetTextConverter decimalConverter;
 
-        private readonly DateTimeOffsetTextMapper nullableDateTimeOffsetMapper;
+        private readonly DateTimeOffsetTextConverter nullableDateTimeOffsetConverter;
 
-        public DateTimeOffsetTextMapperTest()
+        public DateTimeOffsetTextConverterTest()
         {
-            decimalMapper = CreateMapper(typeof(DateTimeOffset));
-            nullableDateTimeOffsetMapper = CreateMapper(typeof(DateTimeOffset?));
+            decimalConverter = CreateConverter(typeof(DateTimeOffset));
+            nullableDateTimeOffsetConverter = CreateConverter(typeof(DateTimeOffset?));
         }
 
-        private static DateTimeOffsetTextMapper CreateMapper(Type type)
+        private static DateTimeOffsetTextConverter CreateConverter(Type type)
         {
-            return new DateTimeOffsetTextMapper(
+            return new DateTimeOffsetTextConverter(
                 14,
                 Encoding.ASCII,
                 0x20,
@@ -45,20 +45,20 @@
         [Fact]
         public void ReadEmptyToDateTimeOffsetIsDefault()
         {
-            Assert.Equal(default(DateTimeOffset), decimalMapper.Read(NullBytes, 0));
+            Assert.Equal(default(DateTimeOffset), decimalConverter.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToDateTimeOffset()
         {
-            Assert.Equal(Value, decimalMapper.Read(ValueBytes, 0));
+            Assert.Equal(Value, decimalConverter.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteValueDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Format.Length];
-            decimalMapper.Write(buffer, 0, Value);
+            decimalConverter.Write(buffer, 0, Value);
 
             Assert.Equal(ValueBytes, buffer);
         }
@@ -70,20 +70,20 @@
         [Fact]
         public void ReadEmptyToNullableDateTimeOffsetIsDefault()
         {
-            Assert.Null(nullableDateTimeOffsetMapper.Read(NullBytes, 0));
+            Assert.Null(nullableDateTimeOffsetConverter.Read(NullBytes, 0));
         }
 
         [Fact]
         public void ReadValueToNullableDateTimeOffset()
         {
-            Assert.Equal(Value, nullableDateTimeOffsetMapper.Read(ValueBytes, 0));
+            Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes, 0));
         }
 
         [Fact]
         public void WriteNullDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Format.Length];
-            nullableDateTimeOffsetMapper.Write(buffer, 0, null);
+            nullableDateTimeOffsetConverter.Write(buffer, 0, null);
 
             Assert.Equal(NullBytes, buffer);
         }

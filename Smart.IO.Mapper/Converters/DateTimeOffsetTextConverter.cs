@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,39 +6,35 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class DecimalTextMapper : IMemberMapper
+    public sealed class DateTimeOffsetTextConverter : IByteConverter
     {
         private readonly int length;
 
         private readonly Encoding encoding;
 
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
         private readonly byte filler;
 
-        private readonly NumberStyles style;
+        private readonly string format;
 
-        private readonly NumberFormatInfo info;
+        private readonly DateTimeStyles style;
+
+        private readonly DateTimeFormatInfo info;
 
         private readonly object defaultValue;
 
-        public DecimalTextMapper(
+        public DateTimeOffsetTextConverter(
             int length,
             Encoding encoding,
-            bool trim,
-            Padding padding,
             byte filler,
-            NumberStyles style,
-            NumberFormatInfo info,
+            string format,
+            DateTimeStyles style,
+            DateTimeFormatInfo info,
             Type type)
         {
             this.length = length;
             this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
             this.filler = filler;
+            this.format = format;
             this.style = style;
             this.info = info;
             defaultValue = type.GetDefaultValue();
@@ -46,8 +42,8 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Decimal.TryParse(value, style, info, out var result))
+            var value = encoding.GetString(buffer, index, length);
+            if ((value.Length > 0) && DateTimeOffset.TryParseExact(value, format, info, style, out var result))
             {
                 return result;
             }
@@ -63,7 +59,15 @@
             }
             else
             {
-                BytesHelper.WriteString(((decimal)value).ToString(info), buffer, index, length, encoding, padding, filler);
+                var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, info));
+                if (bytes.Length >= length)
+                {
+                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
+                }
+                else
+                {
+                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
+                }
             }
         }
     }

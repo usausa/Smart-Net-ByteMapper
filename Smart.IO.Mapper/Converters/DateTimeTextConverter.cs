@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System;
     using System.Globalization;
@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class DateTimeOffsetTextMapper : IMemberMapper
+    public sealed class DateTimeTextConverter : IByteConverter
     {
         private readonly int length;
 
@@ -22,7 +22,7 @@
 
         private readonly object defaultValue;
 
-        public DateTimeOffsetTextMapper(
+        public DateTimeTextConverter(
             int length,
             Encoding encoding,
             byte filler,
@@ -43,7 +43,7 @@
         public object Read(byte[] buffer, int index)
         {
             var value = encoding.GetString(buffer, index, length);
-            if ((value.Length > 0) && DateTimeOffset.TryParseExact(value, format, info, style, out var result))
+            if ((value.Length > 0) && DateTime.TryParseExact(value, format, info, style, out var result))
             {
                 return result;
             }
@@ -59,7 +59,7 @@
             }
             else
             {
-                var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, info));
+                var bytes = encoding.GetBytes(((DateTime)value).ToString(format, info));
                 if (bytes.Length >= length)
                 {
                     Buffer.BlockCopy(bytes, 0, buffer, index, length);

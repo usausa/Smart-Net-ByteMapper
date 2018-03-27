@@ -1,10 +1,10 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
     using System.Text;
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class StringMapper : IMemberMapper
+    public sealed class StringConverter : IByteConverter
     {
         private readonly int length;
 
@@ -16,7 +16,7 @@
 
         private readonly byte filler;
 
-        public StringMapper(
+        public StringConverter(
             int length,
             Encoding encoding,
             bool trim,

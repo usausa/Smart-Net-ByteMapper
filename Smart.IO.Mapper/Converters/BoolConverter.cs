@@ -1,12 +1,12 @@
-﻿namespace Smart.IO.Mapper.Mappers
+﻿namespace Smart.IO.Mapper.Converters
 {
-    public sealed class BoolMapper : IMemberMapper
+    public sealed class BoolConverter : IByteConverter
     {
         private readonly byte trueValue;
 
         private readonly byte falseValue;
 
-        public BoolMapper(byte trueValue, byte falseValue)
+        public BoolConverter(byte trueValue, byte falseValue)
         {
             this.trueValue = trueValue;
             this.falseValue = falseValue;
@@ -23,7 +23,7 @@
         }
     }
 
-    public sealed class NullableBoolMapper : IMemberMapper
+    public sealed class NullableBoolConverter : IByteConverter
     {
         private readonly byte trueValue;
 
@@ -31,7 +31,7 @@
 
         private readonly byte nullValue;
 
-        public NullableBoolMapper(byte trueValue, byte falseValue, byte nullValue)
+        public NullableBoolConverter(byte trueValue, byte falseValue, byte nullValue)
         {
             this.trueValue = trueValue;
             this.falseValue = falseValue;

@@ -5,20 +5,21 @@
 
     using BenchmarkDotNet.Attributes;
 
-    using Smart.IO.Mapper.Mappers;
+    using Smart.IO.Mapper;
+    using Smart.IO.Mapper.Converters;
 
     [Config(typeof(BenchmarkConfig))]
     public class Benchmark
     {
-        private BigEndianIntBinaryMapper intBinaryMapper;
+        private BigEndianIntBinaryConverter intBinaryConverter;
 
         private byte[] intBinaryBuffer;
 
-        private StringMapper stringW10Mapper;
+        private StringConverter stringW10Converter;
 
         private byte[] stringW10Buffer;
 
-        private IntTextMapper intText8Mapper;
+        private IntTextConverter intText8Converter;
 
         private byte[] intText8Buffer;
 
@@ -30,10 +31,10 @@
             var numberEncoding = Encoding.ASCII;
             var stringEncoding = Encoding.GetEncoding(932);
 
-            intBinaryMapper = new BigEndianIntBinaryMapper();
+            intBinaryConverter = new BigEndianIntBinaryConverter();
             intBinaryBuffer = new byte[sizeof(int)];
 
-            stringW10Mapper = new StringMapper(
+            stringW10Converter = new StringConverter(
                 20,
                 stringEncoding,
                 true,
@@ -41,7 +42,7 @@
                 0x20);
             stringW10Buffer = stringEncoding.GetBytes("あいうえお          ");
 
-            intText8Mapper = new IntTextMapper(
+            intText8Converter = new IntTextConverter(
                 8,
                 numberEncoding,
                 true,
@@ -56,19 +57,19 @@
         [Benchmark]
         public void ReadIntBinary()
         {
-            intBinaryMapper.Read(intBinaryBuffer, 0);
+            intBinaryConverter.Read(intBinaryBuffer, 0);
         }
 
         [Benchmark]
         public void ReadStringW10()
         {
-            stringW10Mapper.Read(stringW10Buffer, 0);
+            stringW10Converter.Read(stringW10Buffer, 0);
         }
 
         [Benchmark]
         public void ReadIntText8()
         {
-            intText8Mapper.Read(intText8Buffer, 0);
+            intText8Converter.Read(intText8Buffer, 0);
         }
     }
 }
