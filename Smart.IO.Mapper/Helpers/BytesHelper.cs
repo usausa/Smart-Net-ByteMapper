@@ -69,7 +69,7 @@
         public static Type GetConvertEnumType(Type type)
         {
             var targetType = type.IsNullableType() ? Nullable.GetUnderlyingType(type) : type;
-            return targetType.IsEnum ? targetType : null;
+            return (targetType?.IsEnum ?? false) ? targetType : null;
         }
     }
 }

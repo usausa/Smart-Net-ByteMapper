@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System;
-
     public sealed class BoolBinaryAttribute : PropertyAttributeBase
     {
         public byte? TrueValue { get; set; }
