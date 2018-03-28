@@ -2,14 +2,12 @@
 {
     using Smart.IO.Mapper.Mappings;
 
-    public interface IMappingAttribute
+    public interface IMappingAttribute : IMappingFactory
     {
         string[] Profiles { get; }
 
         int Offset { get; }
 
         // TODO Length?
-
-        IMappingFactory BuildFactory();
     }
 }

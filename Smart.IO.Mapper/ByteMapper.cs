@@ -58,26 +58,5 @@
                 entry.Size,
                 mappings);
         }
-
-        private class MappingCreateContext : IMappingCreateContext
-        {
-            private readonly IDictionary<string, object> globalParameters;
-
-            private readonly IDictionary<string, object> typeParameters;
-
-            private IComponentContainer Components { get; }
-
-            public MappingCreateContext(
-                IDictionary<string, object> globalParameters,
-                IDictionary<string, object> typeParameters,
-                IComponentContainer components)
-            {
-                this.globalParameters = globalParameters;
-                this.typeParameters = typeParameters;
-                Components = components;
-            }
-
-            // TODO
-        }
     }
 }

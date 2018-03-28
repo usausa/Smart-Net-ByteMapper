@@ -31,6 +31,7 @@
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);
             this.DefaultNumberPadding(Padding.Left);
+            this.DefaultFiller(0x20);
             this.DefaultTextFiller(0x20);
             this.DefaultNumberFiller(0x20);
             this.DefaultEndian(Endian.Big);

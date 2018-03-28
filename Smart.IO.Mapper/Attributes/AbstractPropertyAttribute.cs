@@ -19,7 +19,7 @@
 
         public abstract bool Match(PropertyInfo pi);
 
-        public IMappingFactory BuildFactory()
+        public IMapping Create(IMappingCreateContext context)
         {
             throw new NotImplementedException();
         }

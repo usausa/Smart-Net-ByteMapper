@@ -16,6 +16,6 @@
             Offset = offset;
         }
 
-        public abstract IMappingFactory BuildFactory();
+        public abstract IMapping Create(IMappingCreateContext context);
     }
 }

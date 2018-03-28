@@ -13,9 +13,12 @@
         {
         }
 
-        public override IMappingFactory BuildFactory()
+        public override IMapping Create(IMappingCreateContext context)
         {
-            throw new System.NotImplementedException();
+            return new FillMapping(
+                Offset,
+                Length,
+                Filler ?? context.GetParameterOr<byte>(DefaultParameter.Filler, 0x00));
         }
     }
 }

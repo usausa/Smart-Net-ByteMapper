@@ -11,9 +11,9 @@
         {
         }
 
-        public override IMappingFactory BuildFactory()
+        public override IMapping Create(IMappingCreateContext context)
         {
-            throw new System.NotImplementedException();
+            return new ConstMapping(Offset, Content);
         }
     }
 }

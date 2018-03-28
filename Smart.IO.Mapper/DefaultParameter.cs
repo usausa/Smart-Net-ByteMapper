@@ -24,6 +24,8 @@
 
         public const string NumberPadding = nameof(NumberPadding);
 
+        public const string Filler = nameof(Filler);
+
         public const string TextFiller = nameof(TextFiller);
 
         public const string NumberFiller = nameof(NumberFiller);

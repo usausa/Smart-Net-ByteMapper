@@ -65,6 +65,11 @@
             return config.AddParameter(DefaultParameter.NumberPadding, value);
         }
 
+        public static ByteMapperConfig DefaultFiller(this ByteMapperConfig config, byte value)
+        {
+            return config.AddParameter(DefaultParameter.Filler, value);
+        }
+
         public static ByteMapperConfig DefaultTextFiller(this ByteMapperConfig config, byte value)
         {
             return config.AddParameter(DefaultParameter.TextFiller, value);
