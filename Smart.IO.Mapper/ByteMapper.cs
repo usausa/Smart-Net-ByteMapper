@@ -27,7 +27,7 @@
 
         public ITypeMapper<T> Create<T>()
         {
-            return Create<T>(string.Empty);
+            return Create<T>(Profile.Default);
         }
 
         public ITypeMapper<T> Create<T>(string profile)

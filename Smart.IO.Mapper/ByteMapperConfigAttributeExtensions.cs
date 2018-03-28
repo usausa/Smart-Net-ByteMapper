@@ -9,8 +9,6 @@
 
     public static class ByteMapperConfigAttributeExtensions
     {
-        private static readonly string[] DefaultProfiles = { string.Empty };
-
         public static ByteMapperConfig Map<T>(this ByteMapperConfig config)
         {
             return config.Map(typeof(T));
@@ -86,6 +84,7 @@
             // TODO profileの指定方法を明示的にかえるか？
             // TODO 存在しないprofileのチェックも！
             var profiles = mapAttribute.Profiles;
+
             //var profiles = DefaultProfiles
             //    .Concat(mapAttribute.FillProfiles ?? Empty<string>.Array)
             //    .Concat(typeAttributes

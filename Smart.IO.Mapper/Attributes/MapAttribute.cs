@@ -7,9 +7,9 @@
     {
         public int Size { get; }
 
-        public string[] Profiles { get; set; } = { string.Empty };
+        public string[] Profiles { get; set; } = { Profile.Default };
 
-        public string[] FillProfiles { get; set; } = { string.Empty };
+        public string[] FillProfiles { get; set; } = { Profile.Default };
 
         public MapAttribute(int size)
         {

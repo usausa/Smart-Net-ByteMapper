@@ -67,12 +67,12 @@
 
         public ByteMapperConfig AddMapEntry(MapEntry entry)
         {
-            return AddMapEntry(string.Empty, entry);
+            return AddMapEntry(Profile.Default, entry);
         }
 
         public ByteMapperConfig AddMapEntry(string profile, MapEntry entry)
         {
-            entries.Add(new MapKey(entry.TargetType, profile ?? string.Empty), entry);
+            entries.Add(new MapKey(entry.TargetType, profile ?? Profile.Default), entry);
 
             return this;
         }
