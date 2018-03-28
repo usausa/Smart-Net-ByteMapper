@@ -2,6 +2,8 @@
 {
     public sealed class ByteConverter : IByteConverter
     {
+        public int Length => 1;
+
         public object Read(byte[] buffer, int index)
         {
             return buffer[index];

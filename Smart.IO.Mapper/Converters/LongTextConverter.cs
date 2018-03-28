@@ -8,8 +8,6 @@
 
     public sealed class LongTextConverter : IByteConverter
     {
-        private readonly int length;
-
         private readonly Encoding encoding;
 
         private readonly bool trim;
@@ -26,6 +24,8 @@
 
         private readonly object defaultValue;
 
+        public int Length { get; }
+
         public LongTextConverter(
             int length,
             Encoding encoding,
@@ -33,10 +33,10 @@
             Padding padding,
             byte filler,
             NumberStyles style,
-            NumberFormatInfo provider,
+            IFormatProvider provider,
             Type type)
         {
-            this.length = length;
+            Length = length;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
@@ -49,26 +49,24 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var value = BytesHelper.ReadString(buffer, index, Length, encoding, trim, padding, filler);
             if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
-            else
-            {
-                return defaultValue;
-            }
+
+            return defaultValue;
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
-                buffer.Fill(index, length, filler);
+                buffer.Fill(index, Length, filler);
             }
             else
             {
-                BytesHelper.WriteString(((long)value).ToString(provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString(((long)value).ToString(provider), buffer, index, Length, encoding, padding, filler);
             }
         }
     }

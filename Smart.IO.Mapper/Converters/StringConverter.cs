@@ -6,8 +6,6 @@
 
     public sealed class StringConverter : IByteConverter
     {
-        private readonly int length;
-
         private readonly Encoding encoding;
 
         private readonly bool trim;
@@ -16,6 +14,8 @@
 
         private readonly byte filler;
 
+        public int Length { get; }
+
         public StringConverter(
             int length,
             Encoding encoding,
@@ -23,7 +23,7 @@
             Padding padding,
             byte filler)
         {
-            this.length = length;
+            Length = length;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
@@ -32,18 +32,18 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            return BytesHelper.ReadString(buffer, index, Length, encoding, trim, padding, filler);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
-                buffer.Fill(index, length, filler);
+                buffer.Fill(index, Length, filler);
             }
             else
             {
-                BytesHelper.WriteString((string)value, buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString((string)value, buffer, index, Length, encoding, padding, filler);
             }
         }
     }

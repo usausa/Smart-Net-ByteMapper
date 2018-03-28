@@ -8,8 +8,6 @@
 
     public sealed class DecimalTextConverter : IByteConverter
     {
-        private readonly int length;
-
         private readonly Encoding encoding;
 
         private readonly bool trim;
@@ -20,9 +18,11 @@
 
         private readonly NumberStyles style;
 
-        private readonly NumberFormatInfo info;
+        private readonly IFormatProvider provider;
 
         private readonly object defaultValue;
+
+        public int Length { get; }
 
         public DecimalTextConverter(
             int length,
@@ -31,23 +31,23 @@
             Padding padding,
             byte filler,
             NumberStyles style,
-            NumberFormatInfo info,
+            IFormatProvider provider,
             Type type)
         {
-            this.length = length;
+            Length = length;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
             this.filler = filler;
             this.style = style;
-            this.info = info;
+            this.provider = provider;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
-            if ((value.Length > 0) && Decimal.TryParse(value, style, info, out var result))
+            var value = BytesHelper.ReadString(buffer, index, Length, encoding, trim, padding, filler);
+            if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
             {
                 return result;
             }
@@ -59,11 +59,11 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, length, filler);
+                buffer.Fill(index, Length, filler);
             }
             else
             {
-                BytesHelper.WriteString(((decimal)value).ToString(info), buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString(((decimal)value).ToString(provider), buffer, index, Length, encoding, padding, filler);
             }
         }
     }

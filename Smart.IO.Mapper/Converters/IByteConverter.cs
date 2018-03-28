@@ -2,7 +2,7 @@
 {
     public interface IByteConverter
     {
-        //int Length { get; }
+        int Length { get; }
 
         object Read(byte[] buffer, int index);
 
