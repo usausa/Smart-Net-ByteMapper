@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System;
+
     using Smart.IO.Mapper.Mappings;
 
     public sealed class ConstAttribute : AbstractTypeMappingAttribute
@@ -11,7 +13,7 @@
         {
         }
 
-        public override IMapping CreateMapping(IMappingCreateContext context)
+        public override IMapping CreateMapping(IMappingCreateContext context, Type type)
         {
             return new ConstMapping(Offset, Content);
         }

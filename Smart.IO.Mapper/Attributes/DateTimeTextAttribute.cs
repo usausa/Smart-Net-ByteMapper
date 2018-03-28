@@ -5,6 +5,8 @@
     using System.Reflection;
     using System.Text;
 
+    using Smart.IO.Mapper.Converters;
+
     public sealed class DateTimeTextAttribute : AbstractPropertyAttribute
     {
         public Encoding Encoding { get; set; }
@@ -26,6 +28,11 @@
         {
             return pi.PropertyType == typeof(DateTime) ||
                    pi.PropertyType == typeof(DateTimeOffset);
+        }
+
+        protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

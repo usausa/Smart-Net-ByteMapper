@@ -5,6 +5,8 @@
     using System.Reflection;
     using System.Text;
 
+    using Smart.IO.Mapper.Converters;
+
     public sealed class NumberTextAttribute : AbstractPropertyAttribute
     {
         public int Length { get; set; }
@@ -32,6 +34,11 @@
                    pi.PropertyType == typeof(long) ||
                    pi.PropertyType == typeof(short) ||
                    pi.PropertyType == typeof(decimal);
+        }
+
+        protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

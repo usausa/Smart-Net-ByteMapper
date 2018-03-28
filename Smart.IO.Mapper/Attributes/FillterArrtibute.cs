@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System;
     using Smart.IO.Mapper.Mappings;
 
     public sealed class FillterArrtibute : AbstractTypeMappingAttribute
@@ -13,7 +14,7 @@
         {
         }
 
-        public override IMapping CreateMapping(IMappingCreateContext context)
+        public override IMapping CreateMapping(IMappingCreateContext context, Type type)
         {
             return new FillMapping(
                 Offset,

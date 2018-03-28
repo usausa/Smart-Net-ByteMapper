@@ -3,7 +3,9 @@
     using System;
     using System.Reflection;
 
+    using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Mappings;
+    using Smart.Reflection;
 
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class AbstractPropertyAttribute : Attribute, IPropertyMappingAttribute
@@ -19,9 +21,17 @@
 
         public abstract bool Match(PropertyInfo pi);
 
-        public IMapping CreateMapping(IMappingCreateContext context)
+        public IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi)
         {
-            throw new NotImplementedException();
+            var delegateFactory = context.Components.Get<IDelegateFactory>();
+
+            return new MemberMapping(
+                Offset,
+                CreateConverter(context, pi),
+                delegateFactory.CreateGetter(pi),
+                delegateFactory.CreateSetter(pi));
         }
+
+        protected abstract IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi);
     }
 }

@@ -5,7 +5,7 @@
     using Smart.IO.Mapper.Mappings;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
-    public abstract class AbstractTypeMappingAttribute : Attribute, IMappingAttribute
+    public abstract class AbstractTypeMappingAttribute : Attribute, ITypeMappingAttribute
     {
         public string[] Profiles { get; set; }
 
@@ -16,6 +16,6 @@
             Offset = offset;
         }
 
-        public abstract IMapping CreateMapping(IMappingCreateContext context);
+        public abstract IMapping CreateMapping(IMappingCreateContext context, Type type);
     }
 }
