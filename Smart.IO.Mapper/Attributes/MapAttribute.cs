@@ -7,7 +7,7 @@
     {
         public int Size { get; }
 
-        public bool FillDefault { get; set; } = true;
+        public string[] FillProfiles { get; set; } = { string.Empty };
 
         public MapAttribute(int size)
         {

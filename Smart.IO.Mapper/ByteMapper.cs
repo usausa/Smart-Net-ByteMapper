@@ -1,8 +1,12 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System;
     using System.Collections.Generic;
+    using System.Linq;
 
+    using Smart.Collections.Concurrent;
     using Smart.ComponentModel;
+    using Smart.IO.Mapper.Mappings;
 
     public class ByteMapper
     {
@@ -10,7 +14,7 @@
 
         private readonly IDictionary<MapKey, MapEntry> entries;
 
-        // TODO cache
+        private readonly ThreadsafeTypeHashArrayMap<object> cache = new ThreadsafeTypeHashArrayMap<object>();
 
         public IComponentContainer Components { get; }
 
@@ -23,8 +27,57 @@
 
         public ITypeMapper<T> Create<T>()
         {
+            return Create<T>(string.Empty);
+        }
+
+        public ITypeMapper<T> Create<T>(string profile)
+        {
+            var targetType = typeof(T);
+
+            if (cache.TryGetValue(targetType, out var mapper))
+            {
+                mapper = cache.AddIfNotExist(targetType, x => CreateMapper<T>(x, profile));
+            }
+
+            return (ITypeMapper<T>)mapper;
+        }
+
+        private ITypeMapper<T> CreateMapper<T>(Type type, string profile)
+        {
+            if (!entries.TryGetValue(new MapKey(type, profile), out var entry))
+            {
+                throw new InvalidOperationException($"Mapper entry is not exist. type=[{type.FullName}], profile=[{profile}]");
+            }
+
+            var mappings = entry.Factories
+                .Select(x => x.Create(new MappingCreateContext(parameters, entry.Parameters, Components)))
+                .ToArray();
+
+            return new TypeMapper<T>(
+                type,
+                entry.Size,
+                mappings);
+        }
+
+        private class MappingCreateContext : IMappingCreateContext
+        {
+            private readonly IDictionary<string, object> globalParameters;
+
+            private readonly IDictionary<string, object> typeParameters;
+
+            private IComponentContainer Components { get; }
+
+            public MappingCreateContext(
+                IDictionary<string, object> globalParameters,
+                IDictionary<string, object> typeParameters,
+                IComponentContainer components)
+            {
+                this.globalParameters = globalParameters;
+                this.typeParameters = typeParameters;
+                Components = components;
+            }
+
             // TODO
-            return null;
         }
     }
 }

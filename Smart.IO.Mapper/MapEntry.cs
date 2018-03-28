@@ -3,6 +3,8 @@
     using System;
     using System.Collections.Generic;
 
+    using Smart.IO.Mapper.Mappings;
+
     public class MapEntry
     {
         public Type TargetType { get; }
@@ -11,9 +13,9 @@
 
         public IDictionary<string, object> Parameters { get; }
 
-        public IMemberMapperFactory[] Factories { get; }
+        public IMappingFactory[] Factories { get; }
 
-        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMemberMapperFactory[] factories)
+        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMappingFactory[] factories)
         {
             TargetType = targetType;
             Size = size;

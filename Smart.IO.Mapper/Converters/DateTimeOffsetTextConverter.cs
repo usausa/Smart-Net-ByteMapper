@@ -8,6 +8,8 @@
 
     public sealed class DateTimeOffsetTextConverter : IByteConverter
     {
+        private readonly int length;
+
         private readonly Encoding encoding;
 
         private readonly byte filler;
@@ -20,8 +22,6 @@
 
         private readonly object defaultValue;
 
-        public int Length { get; }
-
         public DateTimeOffsetTextConverter(
             int length,
             Encoding encoding,
@@ -31,7 +31,7 @@
             IFormatProvider provider,
             Type type)
         {
-            Length = length;
+            this.length = length;
             this.encoding = encoding;
             this.filler = filler;
             this.format = format;
@@ -42,7 +42,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = encoding.GetString(buffer, index, Length);
+            var value = encoding.GetString(buffer, index, length);
             if ((value.Length > 0) && DateTimeOffset.TryParseExact(value, format, provider, style, out var result))
             {
                 return result;
@@ -55,18 +55,18 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
                 var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider));
-                if (bytes.Length >= Length)
+                if (bytes.Length >= length)
                 {
-                    Buffer.BlockCopy(bytes, 0, buffer, index, Length);
+                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
                 }
                 else
                 {
-                    BytesHelper.CopyPadRight(bytes, buffer, index, Length, filler);
+                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
                 }
             }
         }

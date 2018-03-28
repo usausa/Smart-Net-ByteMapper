@@ -6,16 +6,17 @@
     {
         private readonly int count;
 
+        private readonly int elementSize;
+
         private readonly Func<int, Array> allocator;
 
         private readonly IByteConverter elementConverter;
 
-        public int Length => elementConverter.Length * count;
-
-        public ArrayConverter(int count, Func<int, Array> allocator, IByteConverter elementConverter)
+        public ArrayConverter(Func<int, Array> allocator, int count, int elementSize, IByteConverter elementConverter)
         {
-            this.count = count;
             this.allocator = allocator;
+            this.count = count;
+            this.elementSize = elementSize;
             this.elementConverter = elementConverter;
         }
 
@@ -26,7 +27,7 @@
             for (var i = 0; i < count; i++)
             {
                 array.SetValue(elementConverter.Read(buffer, index), i);
-                index += elementConverter.Length;
+                index += elementSize;
             }
 
             return array;
@@ -39,7 +40,7 @@
             for (var i = 0; i < count; i++)
             {
                 elementConverter.Write(buffer, index, array.GetValue(i));
-                index += elementConverter.Length;
+                index += elementSize;
             }
         }
     }

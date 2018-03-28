@@ -3,7 +3,7 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Property)]
-    public abstract class PropertyAttributeBase : Attribute
+    public abstract class PropertyAttributeBase : Attribute, IPropertyAttribute
     {
         public int Offset { get; }
 
@@ -13,7 +13,5 @@
         {
             Offset = offset;
         }
-
-        // TODO
     }
 }

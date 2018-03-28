@@ -6,8 +6,6 @@
 
         private readonly byte falseValue;
 
-        public int Length => 1;
-
         public BoolConverter(byte trueValue, byte falseValue)
         {
             this.trueValue = trueValue;
@@ -32,8 +30,6 @@
         private readonly byte falseValue;
 
         private readonly byte nullValue;
-
-        public int Length => 1;
 
         public NullableBoolConverter(byte trueValue, byte falseValue, byte nullValue)
         {

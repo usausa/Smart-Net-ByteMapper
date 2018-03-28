@@ -6,20 +6,20 @@
 
     public sealed class BytesConverter : IByteConverter
     {
-        private readonly byte filler;
+        private readonly int length;
 
-        public int Length { get; }
+        private readonly byte filler;
 
         public BytesConverter(int length, byte filler)
         {
-            Length = length;
+            this.length = length;
             this.filler = filler;
         }
 
         public object Read(byte[] buffer, int index)
         {
-            var bytes = new byte[Length];
-            Buffer.BlockCopy(buffer, index, bytes, 0, Length);
+            var bytes = new byte[length];
+            Buffer.BlockCopy(buffer, index, bytes, 0, length);
             return bytes;
         }
 
@@ -27,18 +27,18 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
                 var bytes = (byte[])value;
-                if (bytes.Length >= Length)
+                if (bytes.Length >= length)
                 {
-                    Buffer.BlockCopy(bytes, 0, buffer, index, Length);
+                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
                 }
                 else
                 {
-                    BytesHelper.CopyPadRight(bytes, buffer, index, Length, filler);
+                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
                 }
             }
         }

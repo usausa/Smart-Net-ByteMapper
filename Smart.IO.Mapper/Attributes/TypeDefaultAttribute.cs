@@ -3,7 +3,7 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
-    public class TypeDefaultAttribute : Attribute
+    public class TypeDefaultAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key { get; }
 
