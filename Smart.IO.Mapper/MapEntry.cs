@@ -13,14 +13,14 @@
 
         public IDictionary<string, object> Parameters { get; }
 
-        public IMappingFactory[] Factories { get; }
+        public IMappingFactory Factory { get; }
 
-        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMappingFactory[] factories)
+        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMappingFactory factory)
         {
             TargetType = targetType;
             Size = size;
             Parameters = parameters;
-            Factories = factories;
+            Factory = factory;
         }
     }
 }

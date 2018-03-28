@@ -4,6 +4,6 @@
 
     public interface IMappingFactory
     {
-        IMapping Create(IMappingCreateContext context);
+        IMapping[] Create(IMappingCreateContext context);
     }
 }

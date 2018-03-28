@@ -49,14 +49,10 @@
                 throw new InvalidOperationException($"Mapper entry is not exist. type=[{type.FullName}], profile=[{profile}]");
             }
 
-            var mappings = entry.Factories
-                .Select(x => x.Create(new MappingCreateContext(parameters, entry.Parameters, Components)))
-                .ToArray();
-
             return new TypeMapper<T>(
                 type,
                 entry.Size,
-                mappings);
+                entry.Factory.Create(new MappingCreateContext(parameters, entry.Parameters, Components)));
         }
     }
 }

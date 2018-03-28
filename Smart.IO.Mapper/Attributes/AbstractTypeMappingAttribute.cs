@@ -16,6 +16,6 @@
             Offset = offset;
         }
 
-        public abstract IMapping Create(IMappingCreateContext context);
+        public abstract IMapping CreateMapping(IMappingCreateContext context);
     }
 }

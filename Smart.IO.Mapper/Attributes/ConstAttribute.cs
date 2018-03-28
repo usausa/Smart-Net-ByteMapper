@@ -11,7 +11,7 @@
         {
         }
 
-        public override IMapping Create(IMappingCreateContext context)
+        public override IMapping CreateMapping(IMappingCreateContext context)
         {
             return new ConstMapping(Offset, Content);
         }
