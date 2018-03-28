@@ -1,8 +1,9 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System.Reflection;
     using System.Text;
 
-    public sealed class StringAttribute : PropertyAttributeBase
+    public sealed class StringAttribute : AbstractPropertyAttribute
     {
         public int Length { get; set; }
 
@@ -17,6 +18,11 @@
         public StringAttribute(int offset)
             : base(offset)
         {
+        }
+
+        public override bool Match(PropertyInfo pi)
+        {
+            return pi.PropertyType == typeof(string);
         }
     }
 }

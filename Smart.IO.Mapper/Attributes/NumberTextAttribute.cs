@@ -2,9 +2,10 @@
 {
     using System;
     using System.Globalization;
+    using System.Reflection;
     using System.Text;
 
-    public sealed class NumberTextAttribute : PropertyAttributeBase
+    public sealed class NumberTextAttribute : AbstractPropertyAttribute
     {
         public int Length { get; set; }
 
@@ -23,6 +24,14 @@
         public NumberTextAttribute(int offset)
             : base(offset)
         {
+        }
+
+        public override bool Match(PropertyInfo pi)
+        {
+            return pi.PropertyType == typeof(int) ||
+                   pi.PropertyType == typeof(long) ||
+                   pi.PropertyType == typeof(short) ||
+                   pi.PropertyType == typeof(decimal);
         }
     }
 }

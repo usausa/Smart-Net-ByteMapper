@@ -2,9 +2,10 @@
 {
     using System;
     using System.Globalization;
+    using System.Reflection;
     using System.Text;
 
-    public sealed class DateTimeTextAttribute : PropertyAttributeBase
+    public sealed class DateTimeTextAttribute : AbstractPropertyAttribute
     {
         public Encoding Encoding { get; set; }
 
@@ -19,6 +20,12 @@
         public DateTimeTextAttribute(int offset)
             : base(offset)
         {
+        }
+
+        public override bool Match(PropertyInfo pi)
+        {
+            return pi.PropertyType == typeof(DateTime) ||
+                   pi.PropertyType == typeof(DateTimeOffset);
         }
     }
 }
