@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System.Reflection;
+    using System;
 
     using Smart.IO.Mapper.Converters;
 
@@ -13,19 +13,19 @@
         {
         }
 
-        public override int CalcSize(PropertyInfo pi)
+        public override int CalcSize(Type type)
         {
-            if (pi.PropertyType == typeof(int))
+            if (type == typeof(int))
             {
                 return 4;
             }
 
-            if (pi.PropertyType == typeof(long))
+            if (type == typeof(long))
             {
                 return 8;
             }
 
-            if (pi.PropertyType == typeof(int))
+            if (type == typeof(int))
             {
                 return 2;
             }
@@ -33,36 +33,32 @@
             return 0;
         }
 
-        protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
+        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
             var endian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
 
-            if (pi.PropertyType == typeof(int))
+            if (type == typeof(int))
             {
                 return endian == Mapper.Endian.Big
                     ? (IByteConverter)new BigEndianIntBinaryConverter()
                     : new LittleEndianIntBinaryConverter();
             }
 
-            if (pi.PropertyType == typeof(long))
+            if (type == typeof(long))
             {
                 return endian == Mapper.Endian.Big
                     ? (IByteConverter)new BigEndianLongBinaryConverter()
                     : new LittleEndianLongBinaryConverter();
             }
 
-            if (pi.PropertyType == typeof(short))
+            if (type == typeof(short))
             {
                 return endian == Mapper.Endian.Big
                     ? (IByteConverter)new BigEndianShortBinaryConverter()
                     : new LittleEndianShortBinaryConverter();
             }
 
-            throw new ByteMapperException(
-                "Attribute does not match property. " +
-                $"type=[{pi.DeclaringType.FullName}], " +
-                $"property=[{pi.Name}], " +
-                $"attribute=[{GetType().FullName}]");
+            return null;
         }
     }
 }

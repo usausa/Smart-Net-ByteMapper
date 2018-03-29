@@ -5,8 +5,10 @@
     using System.Linq;
     using System.Reflection;
 
-    using Smart.Collections.Generic;
     using Smart.IO.Mapper.Attributes;
+    using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Mappings;
+    using Smart.Reflection;
 
     public static class ByteMapperConfigAttributeExtensions
     {
@@ -65,83 +67,112 @@
                 .Select(x => new
                 {
                     Property = x,
-                    Attributes = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().ToArray(),
-                    ArrayAttributes = x.GetCustomAttributes<ArrayAttribute>().ToArray()
+                    Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
+                    ArrayAttribute = x.GetCustomAttribute<ArrayAttribute>()
                 })
+                .Where(x => x.Attribute != null)
                 .ToList();
-
-            // Validation
-            foreach (var entry in typeAttributes
-                .SelectMany(attr => attr.Profiles.EmptyIfNull()
-                    .Select(profile => new { Attribute = attr, Profile = profile })))
-            {
-                if (!mapAttribute.Profiles.Contains(entry.Profile))
-                {
-                    throw new ByteMapperException(
-                        "Profile not exists in MapAttribute. " +
-                        $"type=[{type.FullName}], " +
-                        $"attribute=[{entry.Attribute.GetType().FullName}], " +
-                        $"profile=[{entry.Profile}]");
-                }
-            }
-
-            foreach (var entry in members
-                .SelectMany(x => x.Attributes
-                    .SelectMany(attr => attr.Profiles.EmptyIfNull()
-                        .Select(profile => new { x.Property, Attribute = (Attribute)attr, Profile = profile })))
-                .Concat(members
-                    .SelectMany(x => x.ArrayAttributes
-                        .SelectMany(attr => attr.Profiles.EmptyIfNull()
-                            .Select(profile => new { x.Property, Attribute = (Attribute)attr, Profile = profile })))))
-            {
-                if (!mapAttribute.Profiles.Contains(entry.Profile))
-                {
-                    throw new ByteMapperException(
-                        "Profile not exists in MapAttribute. " +
-                        $"type=[{type.FullName}], " +
-                        $"property=[{entry.Property.Name}], " +
-                        $"attribute=[{entry.Attribute.GetType().FullName}], " +
-                        $"profile=[{entry.Profile}]");
-                }
-            }
 
             var parameters = type.GetCustomAttributes()
                 .OfType<ITypeDefaultAttribute>()
                 .ToDictionary(x => x.Key, x => x.Value);
 
-            foreach (var profile in mapAttribute.Profiles)
-            {
-                var entry = new MapEntry(
-                    type,
-                    mapAttribute.Size,
-                    parameters,
-                    context =>
-                    {
-                        var typeMappings = typeAttributes
-                            .Where(x => MatchProfile(x.Profiles, profile))
-                            .Select(x => new { x.Offset, Size = x.CalcSize(type), Mapping = x.CreateMapping(context, type) });
+            var entry = new MapEntry(
+                type,
+                mapAttribute.Size,
+                parameters,
+                context =>
+                {
+                    var typeEntries = typeAttributes
+                        .Select(x => new
+                        {
+                            x.Offset,
+                            Size = x.CalcSize(type),
+                            Mapping = x.CreateMapping(context, type)
+                        });
 
-                        //var propertyMappings
+                    var propertyEntries = members
+                        .Select(x =>
+                        {
+                            var delegateFactory = context.Components.Get<IDelegateFactory>();
 
-                        // TODO.OrderBy(x => x.Attribute.Offset)
-                        // TODO Array 優先？,計算に必要)
-                        // TODO 重なり、範囲チェック 遅延評価が必要？
-                        // TODO (Fillの追加
-                        // TODO (Terminatorの追加 実際の評価は最後？
-                        // TODO 改行もわかるのはランタイム、＝全体もわかるのはランタイム！？
+                            if (x.ArrayAttribute != null)
+                            {
+                                if (!x.Property.PropertyType.IsArray)
+                                {
+                                    throw new ByteMapperException(
+                                        "Attribute does not match property. " +
+                                        $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                        $"property=[{x.Property.Name}], " +
+                                        $"attribute=[{typeof(ArrayAttribute).FullName}]");
+                                }
 
-                        return null;
-                    });
+                                var elementType = x.Property.PropertyType.GetElementType();
+                                var elementSize = x.Attribute.CalcSize(elementType);
 
-                config.AddMapEntry(profile, entry);
-            }
-        }
+                                var converter = x.Attribute.CreateConverter(context, elementType);
+                                if (converter == null)
+                                {
+                                    throw new ByteMapperException(
+                                        "Attribute does not match property. " +
+                                        $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                        $"property=[{x.Property.Name}], " +
+                                        $"attribute=[{x.Attribute.GetType().FullName}]");
+                                }
 
-        private static bool MatchProfile(string[] profiles, string profile)
-        {
-            return profiles == null ||
-                   profiles.Length == 0 ||
-                   profiles.Contains(profile);
+                                return new
+                                {
+                                    x.Attribute.Offset,
+                                    Size = elementSize * x.ArrayAttribute.Count,
+                                    Mapping = new MemberMapping(
+                                        x.Attribute.Offset,
+                                        new ArrayConverter(
+                                            delegateFactory.CreateArrayAllocator(elementType),
+                                            x.ArrayAttribute.Count,
+                                            elementSize,
+                                            converter),
+                                        delegateFactory.CreateGetter(x.Property),
+                                        delegateFactory.CreateSetter(x.Property))
+                                };
+                            }
+                            else
+                            {
+                                var converter = x.Attribute.CreateConverter(context, x.Property.PropertyType);
+                                if (converter == null)
+                                {
+                                    throw new ByteMapperException(
+                                        "Attribute does not match property. " +
+                                        $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                        $"property=[{x.Property.Name}], " +
+                                        $"attribute=[{x.Attribute.GetType().FullName}]");
+                                }
+
+                                return new
+                                {
+                                    x.Attribute.Offset,
+                                    Size = x.Attribute.CalcSize(x.Property.PropertyType),
+                                    Mapping = new MemberMapping(
+                                        x.Attribute.Offset,
+                                        converter,
+                                        delegateFactory.CreateGetter(x.Property),
+                                        delegateFactory.CreateSetter(x.Property))
+                                };
+                            }
+                        });
+
+                    // TODO (Terminatorの追加 実際の評価は最後？
+
+                    // TODO.OrderBy(x => x.Attribute.Offset)
+
+                    // TODO 重なり、範囲チェック 遅延評価が必要？
+                    // TODO (Fillの追加
+
+                    // TODO マージ＆OrderBy(x => x.Attribute.Offset)
+
+                    return null;
+                });
+
+            config.AddMapEntry(Profile.Default, entry);
         }
     }
 }

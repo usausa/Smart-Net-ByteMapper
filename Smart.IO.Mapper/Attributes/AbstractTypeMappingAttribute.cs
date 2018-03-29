@@ -7,8 +7,6 @@
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
     public abstract class AbstractTypeMappingAttribute : Attribute, ITypeMappingAttribute
     {
-        public string[] Profiles { get; set; }
-
         public int Offset { get; }
 
         protected AbstractTypeMappingAttribute(int offset)

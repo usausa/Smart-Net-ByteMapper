@@ -2,11 +2,9 @@
 {
     using System;
 
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Property)]
     public sealed class ArrayAttribute : Attribute
     {
-        public string[] Profiles { get; set; }
-
         public int Count { get; }
 
         public ArrayAttribute(int count)

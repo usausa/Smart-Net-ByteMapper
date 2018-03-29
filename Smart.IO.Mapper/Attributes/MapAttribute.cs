@@ -7,11 +7,9 @@
     {
         public int Size { get; }
 
-        public string[] Profiles { get; set; } = { Profile.Default };
+        public bool AutoFiller { get; set; } = true;
 
-        public string[] FillTargets { get; set; } = { Profile.Default };
-
-        public string[] DelimitterTargets { get; set; } = { Profile.Default };
+        public bool AutoDelimitter { get; set; } = true;
 
         public MapAttribute(int size)
         {

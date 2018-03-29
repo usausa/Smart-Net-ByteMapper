@@ -1,13 +1,15 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System.Reflection;
+    using System;
 
-    using Smart.IO.Mapper.Mappings;
+    using Smart.IO.Mapper.Converters;
 
-    public interface IPropertyMappingAttribute : IMappingAttribute
+    public interface IPropertyMappingAttribute
     {
-        int CalcSize(PropertyInfo pi);
+        int Offset { get; }
 
-        IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi);
+        int CalcSize(Type type);
+
+        IByteConverter CreateConverter(IMappingCreateContext context, Type type);
     }
 }

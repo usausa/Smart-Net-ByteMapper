@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System.Reflection;
+    using System;
 
     using Smart.IO.Mapper.Converters;
 
@@ -13,23 +13,19 @@
         {
         }
 
-        public override int CalcSize(PropertyInfo pi)
+        public override int CalcSize(Type type)
         {
             return 1;
         }
 
-        protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
+        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
-            if (pi.PropertyType == typeof(byte))
+            if (type == typeof(byte))
             {
                 return Converter;
             }
 
-            throw new ByteMapperException(
-                "Attribute does not match property. " +
-                $"type=[{pi.DeclaringType.FullName}], " +
-                $"property=[{pi.Name}], " +
-                $"attribute=[{GetType().FullName}]");
+            return null;
         }
     }
 }

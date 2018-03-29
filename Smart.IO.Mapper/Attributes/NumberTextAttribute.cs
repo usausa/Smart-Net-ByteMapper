@@ -2,7 +2,6 @@
 {
     using System;
     using System.Globalization;
-    using System.Reflection;
     using System.Text;
 
     using Smart.IO.Mapper.Converters;
@@ -28,12 +27,12 @@
         {
         }
 
-        public override int CalcSize(PropertyInfo pi)
+        public override int CalcSize(Type type)
         {
             return Length;
         }
 
-        protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
+        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
             var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding);
             var trim = Trim ?? context.GetParameter<bool>(Parameter.Trim);
@@ -41,35 +40,31 @@
             var filler = Filler ?? context.GetParameter<byte>(Parameter.NumberFiller);
             var provider = Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider);
 
-            if ((pi.PropertyType == typeof(int)) || (pi.PropertyType == typeof(int?)))
+            if ((type == typeof(int)) || (type == typeof(int?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new IntTextConverter(Length, encoding, trim, padding, filler, style, provider, pi.PropertyType);
+                return new IntTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
             }
 
-            if ((pi.PropertyType == typeof(long)) || (pi.PropertyType == typeof(long?)))
+            if ((type == typeof(long)) || (type == typeof(long?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new LongTextConverter(Length, encoding, trim, padding, filler, style, provider, pi.PropertyType);
+                return new LongTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
             }
 
-            if ((pi.PropertyType == typeof(short)) || (pi.PropertyType == typeof(short?)))
+            if ((type == typeof(short)) || (type == typeof(short?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new ShortTextConverter(Length, encoding, trim, padding, filler, style, provider, pi.PropertyType);
+                return new ShortTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
             }
 
-            if ((pi.PropertyType == typeof(decimal)) || (pi.PropertyType == typeof(decimal?)))
+            if ((type == typeof(decimal)) || (type == typeof(decimal?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle);
-                return new DecimalTextConverter(Length, encoding, trim, padding, filler, style, provider, pi.PropertyType);
+                return new DecimalTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
             }
 
-            throw new ByteMapperException(
-                "Attribute does not match property. " +
-                $"type=[{pi.DeclaringType.FullName}], " +
-                $"property=[{pi.Name}], " +
-                $"attribute=[{GetType().FullName}]");
+            return null;
         }
     }
 }
