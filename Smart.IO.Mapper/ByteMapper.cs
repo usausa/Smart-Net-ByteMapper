@@ -52,7 +52,7 @@
             return new TypeMapper<T>(
                 type,
                 entry.Size,
-                entry.Factory.Create(new MappingCreateContext(parameters, entry.Parameters, Components)));
+                entry.Factory(new MappingCreateContext(parameters, entry.Parameters, Components)));
         }
     }
 }

@@ -13,9 +13,9 @@
 
         public IDictionary<string, object> Parameters { get; }
 
-        public IMappingFactory Factory { get; }
+        public Func<IMappingCreateContext, IMapping[]> Factory { get; }
 
-        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, IMappingFactory factory)
+        public MapEntry(Type targetType, int size, IDictionary<string, object> parameters, Func<IMappingCreateContext, IMapping[]> factory)
         {
             TargetType = targetType;
             Size = size;

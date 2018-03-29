@@ -9,7 +9,9 @@
 
         public string[] Profiles { get; set; } = { Profile.Default };
 
-        public string[] FillProfiles { get; set; } = { Profile.Default };
+        public string[] FillTargets { get; set; } = { Profile.Default };
+
+        public string[] DelimitterTargets { get; set; } = { Profile.Default };
 
         public MapAttribute(int size)
         {

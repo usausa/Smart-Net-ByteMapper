@@ -56,23 +56,21 @@
 
         private static void MapInternal(ByteMapperConfig config, Type type, MapAttribute mapAttribute)
         {
+            var typeAttributes = type.GetCustomAttributes()
+                .OfType<ITypeMappingAttribute>()
+                .ToList();
+
             var members = type.GetProperties()
                 .Select(x => new
                 {
                     Property = x,
-                    Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
-                    ArrayAttribute = x.GetCustomAttribute<ArrayAttribute>()
+                    Attributes = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().ToArray(),
+                    ArrayAttributes = x.GetCustomAttributes<ArrayAttribute>().ToArray()
                 })
                 .ToList();
 
-            var typeAttributes = type.GetCustomAttributes()
-                .OfType<IMappingAttribute>()
-                .ToList();
-
-            // TODO profileの指定方法を明示的にかえるか？
+            // TODO 事前検証
             // TODO 存在しないprofileのチェックも！
-            var profiles = mapAttribute.Profiles;
-
             //var profiles = DefaultProfiles
             //    .Concat(mapAttribute.FillProfiles ?? Empty<string>.Array)
             //    .Concat(typeAttributes
@@ -84,21 +82,23 @@
                 .OfType<ITypeDefaultAttribute>()
                 .ToDictionary(x => x.Key, x => x.Value);
 
-            // TODO.OrderBy(x => x.Attribute.Offset)
-            // TODO Array 優先？,計算に必要)
-            // TODO 重なり、範囲チェック 遅延評価が必要？
-            // TODO (Fillの追加
-            // TODO (Terminatorの追加 実際の評価は最後？
-            // TODO 改行もわかるのはランタイム、＝全体もわかるのはランタイム！？
-
-            // TODO propを渡して！ FactoryのFuncを返す？
-            foreach (var profile in profiles)
+            foreach (var profile in mapAttribute.Profiles)
             {
                 var entry = new MapEntry(
                     type,
                     mapAttribute.Size,
                     parameters,
-                    null);  // TODO ここも遅延評価にして?
+                    context =>
+                    {
+                        // TODO.OrderBy(x => x.Attribute.Offset)
+                        // TODO Array 優先？,計算に必要)
+                        // TODO 重なり、範囲チェック 遅延評価が必要？
+                        // TODO (Fillの追加
+                        // TODO (Terminatorの追加 実際の評価は最後？
+                        // TODO 改行もわかるのはランタイム、＝全体もわかるのはランタイム！？
+
+                        return null;
+                    });
 
                 config.AddMapEntry(profile, entry);
             }

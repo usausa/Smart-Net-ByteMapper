@@ -7,7 +7,7 @@
     using Smart.IO.Mapper.Mappings;
     using Smart.Reflection;
 
-    [AttributeUsage(AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
     public abstract class AbstractPropertyAttribute : Attribute, IPropertyMappingAttribute
     {
         public string[] Profiles { get; set; }
