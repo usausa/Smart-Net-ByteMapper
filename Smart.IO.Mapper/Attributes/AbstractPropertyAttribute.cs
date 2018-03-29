@@ -19,8 +19,6 @@
             Offset = offset;
         }
 
-        public abstract bool Match(PropertyInfo pi);
-
         public IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi)
         {
             var delegateFactory = context.Components.Get<IDelegateFactory>();

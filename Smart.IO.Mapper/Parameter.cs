@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper
 {
-    public static class DefaultParameter
+    public static class Parameter
     {
         public const string Delimiter = nameof(Delimiter);
 
@@ -8,13 +8,15 @@
 
         public const string NumberEncoding = nameof(NumberEncoding);
 
-        public const string NumberFormat = nameof(NumberFormat);
+        public const string DateTimeEncoding = nameof(DateTimeEncoding);
+
+        public const string NumberProvider = nameof(NumberProvider);
 
         public const string NumberStyle = nameof(NumberStyle);
 
         public const string DecimalStyle = nameof(DecimalStyle);
 
-        public const string DateTimeFormat = nameof(DateTimeFormat);
+        public const string DateTimeProvider = nameof(DateTimeProvider);
 
         public const string DateTimeStyle = nameof(DateTimeStyle);
 

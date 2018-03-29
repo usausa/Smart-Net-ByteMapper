@@ -19,7 +19,7 @@
             return new FillMapping(
                 Offset,
                 Length,
-                Filler ?? context.GetParameterOr<byte>(DefaultParameter.Filler, 0x00));
+                Filler ?? context.GetParameter<byte>(Parameter.Filler));
         }
     }
 }

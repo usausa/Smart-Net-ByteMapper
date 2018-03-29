@@ -8,6 +8,6 @@
 
         bool TryGetParameter<T>(string key, out T value);
 
-        T GetParameterOr<T>(string key, T defaultValue);
+        T GetParameter<T>(string key);
     }
 }

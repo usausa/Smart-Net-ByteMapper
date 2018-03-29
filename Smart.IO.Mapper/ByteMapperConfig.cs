@@ -23,10 +23,11 @@
             this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
             this.DefaultTextEncoding(Encoding.ASCII);
             this.DefaultNumberEncoding(Encoding.ASCII);
-            this.DefaultNumberFormat(NumberFormatInfo.InvariantInfo);
+            this.DefaultDateTimeEncoding(Encoding.ASCII);
+            this.DefaultNumberProvider(NumberFormatInfo.InvariantInfo);
             this.DefaultNumberStyle(NumberStyles.Integer);
             this.DefaultDecimalStyle(NumberStyles.Number);
-            this.DefaultDateTimeFormat(DateTimeFormatInfo.InvariantInfo);
+            this.DefaultDateTimeProvider(DateTimeFormatInfo.InvariantInfo);
             this.DefaultDateTimeStyle(DateTimeStyles.None);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);

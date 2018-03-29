@@ -6,8 +6,6 @@
 
     public interface IPropertyMappingAttribute : IMappingAttribute
     {
-        bool Match(PropertyInfo pi);
-
         IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi);
     }
 }

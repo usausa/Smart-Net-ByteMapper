@@ -65,18 +65,6 @@
                 })
                 .ToList();
 
-            foreach (var member in members)
-            {
-                if (!member.Attribute.Match(member.Property))
-                {
-                    throw new InvalidOperationException(
-                        "Property attribute unmatch. " +
-                        $"type=[{type.FullName}], " +
-                        $"property=[{member.Property.Name}], " +
-                        $"attribute=[{member.Attribute.GetType().FullName}]");
-                }
-            }
-
             var typeAttributes = type.GetCustomAttributes()
                 .OfType<IMappingAttribute>()
                 .ToList();

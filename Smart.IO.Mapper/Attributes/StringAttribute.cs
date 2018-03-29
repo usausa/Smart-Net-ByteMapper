@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System;
     using System.Reflection;
     using System.Text;
 
@@ -22,14 +23,27 @@
         {
         }
 
-        public override bool Match(PropertyInfo pi)
-        {
-            return pi.PropertyType == typeof(string);
-        }
-
         protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
         {
-            throw new System.NotImplementedException();
+            if (pi.PropertyType == typeof(string))
+            {
+                var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.TextEncoding);
+                var trim = Trim ?? context.GetParameter<bool>(Parameter.Trim);
+                var padding = Padding ?? context.GetParameter<Padding>(Parameter.TextPadding);
+                var filler = Filler ?? context.GetParameter<byte>(Parameter.TextFiller);
+                return new StringConverter(
+                    Length,
+                    encoding,
+                    trim,
+                    padding,
+                    filler);
+            }
+
+            throw new InvalidOperationException(
+                "Attribute does not match property. " +
+                $"type=[{pi.DeclaringType.FullName}], " +
+                $"property=[{pi.Name}], " +
+                $"attribute=[{GetType().FullName}]");
         }
     }
 }

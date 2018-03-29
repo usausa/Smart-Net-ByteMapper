@@ -42,7 +42,7 @@
             return false;
         }
 
-        public T GetParameterOr<T>(string key, T defaultValue)
+        public T GetParameter<T>(string key)
         {
             if (typeParameters.TryGetValue(key, out var obj) &&
                 (obj?.GetType() == typeof(T)))
@@ -56,7 +56,7 @@
                 return (T)obj;
             }
 
-            return defaultValue;
+            throw new KeyNotFoundException($"Parameter not found. key=[{key}]");
         }
     }
 }
