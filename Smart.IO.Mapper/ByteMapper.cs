@@ -32,7 +32,7 @@
         {
             var targetType = typeof(T);
 
-            if (cache.TryGetValue(targetType, out var mapper))
+            if (!cache.TryGetValue(targetType, out var mapper))
             {
                 mapper = cache.AddIfNotExist(targetType, x => CreateMapper<T>(x, profile));
             }
