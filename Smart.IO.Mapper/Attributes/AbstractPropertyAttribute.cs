@@ -19,6 +19,8 @@
             Offset = offset;
         }
 
+        public abstract int CalcSize(PropertyInfo pi);
+
         public IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi)
         {
             var delegateFactory = context.Components.Get<IDelegateFactory>();

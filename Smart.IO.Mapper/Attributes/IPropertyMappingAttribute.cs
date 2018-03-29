@@ -6,6 +6,8 @@
 
     public interface IPropertyMappingAttribute : IMappingAttribute
     {
+        int CalcSize(PropertyInfo pi);
+
         IMapping CreateMapping(IMappingCreateContext context, PropertyInfo pi);
     }
 }

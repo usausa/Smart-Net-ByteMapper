@@ -26,6 +26,11 @@
         {
         }
 
+        public override int CalcSize(PropertyInfo pi)
+        {
+            return Length;
+        }
+
         protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
         {
             var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeEncoding);
@@ -43,7 +48,7 @@
                 return new DateTimeOffsetTextConverter(Length, encoding, filler, Format, style, provider, pi.PropertyType);
             }
 
-            throw new InvalidOperationException(
+            throw new ByteMapperException(
                 "Attribute does not match property. " +
                 $"type=[{pi.DeclaringType.FullName}], " +
                 $"property=[{pi.Name}], " +

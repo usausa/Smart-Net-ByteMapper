@@ -16,6 +16,8 @@
             Offset = offset;
         }
 
+        public abstract int CalcSize(Type type);
+
         public abstract IMapping CreateMapping(IMappingCreateContext context, Type type);
     }
 }

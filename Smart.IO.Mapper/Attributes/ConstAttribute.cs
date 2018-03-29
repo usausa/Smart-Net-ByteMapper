@@ -13,6 +13,11 @@
         {
         }
 
+        public override int CalcSize(Type type)
+        {
+            return Content.Length;
+        }
+
         public override IMapping CreateMapping(IMappingCreateContext context, Type type)
         {
             return new ConstMapping(Offset, Content);

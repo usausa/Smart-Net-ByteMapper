@@ -2,11 +2,9 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     using Smart.Collections.Concurrent;
     using Smart.ComponentModel;
-    using Smart.IO.Mapper.Mappings;
 
     public class ByteMapper
     {
@@ -46,7 +44,7 @@
         {
             if (!entries.TryGetValue(new MapKey(type, profile), out var entry))
             {
-                throw new InvalidOperationException($"Mapper entry is not exist. type=[{type.FullName}], profile=[{profile}]");
+                throw new ByteMapperException($"Mapper entry is not exist. type=[{type.FullName}], profile=[{profile}]");
             }
 
             return new TypeMapper<T>(

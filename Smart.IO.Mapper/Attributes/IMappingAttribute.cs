@@ -5,7 +5,5 @@
         string[] Profiles { get; }
 
         int Offset { get; }
-
-        // TODO Length?
     }
 }

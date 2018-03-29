@@ -1,6 +1,5 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System;
     using System.Reflection;
 
     using Smart.IO.Mapper.Converters;
@@ -12,6 +11,26 @@
         public BinaryAttribute(int offset)
             : base(offset)
         {
+        }
+
+        public override int CalcSize(PropertyInfo pi)
+        {
+            if (pi.PropertyType == typeof(int))
+            {
+                return 4;
+            }
+
+            if (pi.PropertyType == typeof(long))
+            {
+                return 8;
+            }
+
+            if (pi.PropertyType == typeof(int))
+            {
+                return 2;
+            }
+
+            return 0;
         }
 
         protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
@@ -39,7 +58,7 @@
                     : new LittleEndianShortBinaryConverter();
             }
 
-            throw new InvalidOperationException(
+            throw new ByteMapperException(
                 "Attribute does not match property. " +
                 $"type=[{pi.DeclaringType.FullName}], " +
                 $"property=[{pi.Name}], " +

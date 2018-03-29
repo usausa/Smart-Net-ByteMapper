@@ -28,6 +28,11 @@
         {
         }
 
+        public override int CalcSize(PropertyInfo pi)
+        {
+            return Length;
+        }
+
         protected override IByteConverter CreateConverter(IMappingCreateContext context, PropertyInfo pi)
         {
             var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding);
@@ -60,7 +65,7 @@
                 return new DecimalTextConverter(Length, encoding, trim, padding, filler, style, provider, pi.PropertyType);
             }
 
-            throw new InvalidOperationException(
+            throw new ByteMapperException(
                 "Attribute does not match property. " +
                 $"type=[{pi.DeclaringType.FullName}], " +
                 $"property=[{pi.Name}], " +

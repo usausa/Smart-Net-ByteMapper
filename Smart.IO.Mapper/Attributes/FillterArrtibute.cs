@@ -15,6 +15,11 @@
         {
         }
 
+        public override int CalcSize(Type type)
+        {
+            return Length;
+        }
+
         public override IMapping CreateMapping(IMappingCreateContext context, Type type)
         {
             return new FillMapping(

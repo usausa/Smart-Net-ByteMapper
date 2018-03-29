@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Reflection;
 
+    using Smart.Collections.Generic;
     using Smart.IO.Mapper.Attributes;
 
     public static class ByteMapperConfigAttributeExtensions
@@ -69,14 +70,40 @@
                 })
                 .ToList();
 
-            // TODO 事前検証
-            // TODO 存在しないprofileのチェックも！
-            //var profiles = DefaultProfiles
-            //    .Concat(mapAttribute.FillProfiles ?? Empty<string>.Array)
-            //    .Concat(typeAttributes
-            //        .Concat(members.Select(x => x.Attribute))
-            //        .SelectMany(x => x.Profiles ?? Empty<string>.Array))
-            //    .Distinct();
+            // Validation
+            foreach (var entry in typeAttributes
+                .SelectMany(attr => attr.Profiles.EmptyIfNull()
+                    .Select(profile => new { Attribute = attr, Profile = profile })))
+            {
+                if (!mapAttribute.Profiles.Contains(entry.Profile))
+                {
+                    throw new ByteMapperException(
+                        "Profile not exists in MapAttribute. " +
+                        $"type=[{type.FullName}], " +
+                        $"attribute=[{entry.Attribute.GetType().FullName}], " +
+                        $"profile=[{entry.Profile}]");
+                }
+            }
+
+            foreach (var entry in members
+                .SelectMany(x => x.Attributes
+                    .SelectMany(attr => attr.Profiles.EmptyIfNull()
+                        .Select(profile => new { x.Property, Attribute = (Attribute)attr, Profile = profile })))
+                .Concat(members
+                    .SelectMany(x => x.ArrayAttributes
+                        .SelectMany(attr => attr.Profiles.EmptyIfNull()
+                            .Select(profile => new { x.Property, Attribute = (Attribute)attr, Profile = profile })))))
+            {
+                if (!mapAttribute.Profiles.Contains(entry.Profile))
+                {
+                    throw new ByteMapperException(
+                        "Profile not exists in MapAttribute. " +
+                        $"type=[{type.FullName}], " +
+                        $"property=[{entry.Property.Name}], " +
+                        $"attribute=[{entry.Attribute.GetType().FullName}], " +
+                        $"profile=[{entry.Profile}]");
+                }
+            }
 
             var parameters = type.GetCustomAttributes()
                 .OfType<ITypeDefaultAttribute>()
@@ -90,6 +117,12 @@
                     parameters,
                     context =>
                     {
+                        var typeMappings = typeAttributes
+                            .Where(x => MatchProfile(x.Profiles, profile))
+                            .Select(x => new { x.Offset, Size = x.CalcSize(type), Mapping = x.CreateMapping(context, type) });
+
+                        //var propertyMappings
+
                         // TODO.OrderBy(x => x.Attribute.Offset)
                         // TODO Array 優先？,計算に必要)
                         // TODO 重なり、範囲チェック 遅延評価が必要？
@@ -102,6 +135,13 @@
 
                 config.AddMapEntry(profile, entry);
             }
+        }
+
+        private static bool MatchProfile(string[] profiles, string profile)
+        {
+            return profiles == null ||
+                   profiles.Length == 0 ||
+                   profiles.Contains(profile);
         }
     }
 }

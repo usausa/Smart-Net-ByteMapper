@@ -56,7 +56,7 @@
                 return (T)obj;
             }
 
-            throw new KeyNotFoundException($"Parameter not found. key=[{key}]");
+            throw new ByteMapperException($"Parameter not found. key=[{key}]");
         }
     }
 }

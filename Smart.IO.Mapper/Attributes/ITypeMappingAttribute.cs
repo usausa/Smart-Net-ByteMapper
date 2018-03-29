@@ -6,6 +6,8 @@
 
     public interface ITypeMappingAttribute : IMappingAttribute
     {
+        int CalcSize(Type type);
+
         IMapping CreateMapping(IMappingCreateContext context, Type type);
     }
 }
