@@ -4,13 +4,13 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class BoolBinaryAttribute : AbstractPropertyAttribute
+    public sealed class BoolAttribute : AbstractPropertyAttribute
     {
         public byte? TrueValue { get; set; }
 
         public byte? FalseValue { get; set; }
 
-        public BoolBinaryAttribute(int offset)
+        public BoolAttribute(int offset)
             : base(offset)
         {
         }
