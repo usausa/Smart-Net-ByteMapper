@@ -22,26 +22,6 @@
             Components = components;
         }
 
-        public bool TryGetParameter<T>(string key, out T value)
-        {
-            if (typeParameters.TryGetValue(key, out var obj) &&
-                typeof(T).IsAssignableFrom(obj?.GetType()))
-            {
-                value = (T)obj;
-                return true;
-            }
-
-            if (globalParameters.TryGetValue(key, out obj) &&
-                typeof(T).IsAssignableFrom(obj?.GetType()))
-            {
-                value = (T)obj;
-                return true;
-            }
-
-            value = default;
-            return false;
-        }
-
         public T GetParameter<T>(string key)
         {
             if (typeParameters.TryGetValue(key, out var obj) &&

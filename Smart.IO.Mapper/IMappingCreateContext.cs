@@ -6,8 +6,6 @@
     {
         IComponentContainer Components { get; }
 
-        bool TryGetParameter<T>(string key, out T value);
-
         T GetParameter<T>(string key);
     }
 }
