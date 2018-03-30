@@ -15,7 +15,7 @@
         private readonly BigEndianShortBinaryConverter converter = new BigEndianShortBinaryConverter();
 
         [Fact]
-        public void ReadValueToBigEndianShortBinary()
+        public void ReadToBigEndianShortBinary()
         {
             Assert.Equal(Value, (short)converter.Read(ValueBytes, Offset));
         }

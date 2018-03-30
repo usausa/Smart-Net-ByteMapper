@@ -15,7 +15,7 @@
         private readonly BigEndianLongBinaryConverter converter = new BigEndianLongBinaryConverter();
 
         [Fact]
-        public void ReadValueToBigEndianLongBinary()
+        public void ReadToBigEndianLongBinary()
         {
             Assert.Equal(Value, (long)converter.Read(ValueBytes, Offset));
         }

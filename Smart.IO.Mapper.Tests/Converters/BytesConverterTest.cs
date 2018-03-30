@@ -20,7 +20,7 @@
 
         private static readonly byte[] ShortValueBytes;
 
-        private static readonly byte[] NullBytes;
+        private static readonly byte[] EmptyBytes;
 
         private readonly BytesConverter converter;
 
@@ -28,7 +28,7 @@
         {
             ValueBytes = TestBytes.Offset(Offset, Value);
             ShortValueBytes = TestBytes.Offset(Offset, ShortValue.Combine(new byte[Length - ShortValue.Length]));
-            NullBytes = TestBytes.Offset(Offset, new byte[Length]);
+            EmptyBytes = TestBytes.Offset(Offset, new byte[Length]);
         }
 
         public BytesConverterTest()
@@ -41,44 +41,30 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadValueToBytes()
+        public void ReadToBytes()
         {
             Assert.Equal(Value, converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueBytesToBuffer()
+        public void WriteBytesToBuffer()
         {
             var buffer = new byte[Length + Offset];
+
+            // Value
             converter.Write(buffer, Offset, Value);
-
             Assert.Equal(ValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteNullBytesToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Null
             converter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
 
-            Assert.Equal(NullBytes, buffer);
-        }
-
-        [Fact]
-        public void WriteShortValueBytesToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Short
             converter.Write(buffer, Offset, ShortValue);
-
             Assert.Equal(ShortValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteOberflowValueBytesToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Overflow
             converter.Write(buffer, Offset, OverflowValue);
-
             Assert.Equal(ValueBytes, buffer);
         }
     }

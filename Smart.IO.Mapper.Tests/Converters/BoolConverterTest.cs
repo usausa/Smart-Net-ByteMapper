@@ -30,38 +30,29 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadTrueValueToBool()
+        public void ReadToBool()
         {
+            // True
             Assert.True((bool)converter.Read(TrueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadFalseValueToBool()
-        {
+            // False
             Assert.False((bool)converter.Read(FalseBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadUnknownValueToBoolIsFalse()
-        {
+            // Unknown
             Assert.False((bool)converter.Read(UnknownBytes, Offset));
         }
 
         [Fact]
-        public void WriteTrueBoolToBuffer()
+        public void WriteToBuffer()
         {
             var buffer = new byte[1 + Offset];
+
+            // True
             converter.Write(buffer, Offset, true);
-
             Assert.Equal(TrueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteFalseBoolToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
+            // False
             converter.Write(buffer, Offset, false);
-
             Assert.Equal(FalseBytes, buffer);
         }
     }

@@ -14,7 +14,7 @@ namespace Smart.IO.Mapper.Converters
 
         private const int Length = 10;
 
-        private static readonly byte[] NullBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
+        private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("1".PadLeft(Length, ' ')));
 
@@ -54,23 +54,22 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToLongIsDefault()
+        public void ReadToLong()
         {
-            Assert.Equal(0L, longConverter.Read(NullBytes, Offset));
-        }
+            // Default
+            Assert.Equal(0L, longConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToLong()
-        {
+            // Value
             Assert.Equal(1L, longConverter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueLongToBuffer()
+        public void WriteLongToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            longConverter.Write(buffer, Offset, 1L);
 
+            // Value
+            longConverter.Write(buffer, Offset, 1L);
             Assert.Equal(ValueBytes, buffer);
         }
 
@@ -79,14 +78,12 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableLongIsDefault()
+        public void ReadToNullableLong()
         {
-            Assert.Null(nullableLongConverter.Read(NullBytes, Offset));
-        }
+            // Null
+            Assert.Null(nullableLongConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToNullableLong()
-        {
+            // Value
             Assert.Equal(1L, nullableLongConverter.Read(ValueBytes, Offset));
         }
 
@@ -94,9 +91,10 @@ namespace Smart.IO.Mapper.Converters
         public void WriteNullLongToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            nullableLongConverter.Write(buffer, Offset, null);
 
-            Assert.Equal(NullBytes, buffer);
+            // Null
+            nullableLongConverter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -104,38 +102,29 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToEnumIsDefault()
+        public void ReadToLongEnum()
         {
-            Assert.Equal(LongEnum.Zero, enumConverter.Read(NullBytes, Offset));
-        }
+            // Default
+            Assert.Equal(LongEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToEnum()
-        {
+            // Value
             Assert.Equal(LongEnum.One, enumConverter.Read(ValueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadUndefinedValueToEnum()
-        {
+            // Undefined
             Assert.Equal((LongEnum)(-1L), enumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueEnumToBuffer()
+        public void WriteLongEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
+
+            // Value
             enumConverter.Write(buffer, Offset, LongEnum.One);
-
             Assert.Equal(ValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteUndefinedEnumToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Undefined
             enumConverter.Write(buffer, Offset, (LongEnum)(-1));
-
             Assert.Equal(MinusBytes, buffer);
         }
 
@@ -144,30 +133,26 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableEnumIsDefault()
+        public void ReadToNullableLongEnum()
         {
-            Assert.Null(nullableEnumConverter.Read(NullBytes, Offset));
-        }
+            // Null
+            Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToNullableEnum()
-        {
+            // Value
             Assert.Equal(LongEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadUndefinedValueToNullableEnum()
-        {
+            // Undefined
             Assert.Equal((LongEnum)(-1L), nullableEnumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteNullEnumToBuffer()
+        public void WriteNullableLongEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            nullableEnumConverter.Write(buffer, Offset, null);
 
-            Assert.Equal(NullBytes, buffer);
+            // Null
+            nullableEnumConverter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
         }
     }
 }

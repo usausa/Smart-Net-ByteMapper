@@ -15,7 +15,7 @@
         private readonly LittleEndianLongBinaryConverter converter = new LittleEndianLongBinaryConverter();
 
         [Fact]
-        public void ReadValueToLittleEndianLongBinary()
+        public void ReadToLittleEndianLongBinary()
         {
             Assert.Equal(Value, (long)converter.Read(ValueBytes, Offset));
         }

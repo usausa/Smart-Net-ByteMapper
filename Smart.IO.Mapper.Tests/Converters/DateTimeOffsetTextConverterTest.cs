@@ -16,15 +16,15 @@
 
         private const string Format = "yyyyMMddHHmmss";
 
-        private const string Format2 = "yyyyMMdd";
+        private const string ShortFormat = "yyyyMMdd";
 
         private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56));
 
-        private static readonly byte[] NullBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
+        private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456".PadRight(Length, ' ')));
 
-        private static readonly byte[] Value2Bytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
+        private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
 
         private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx".PadRight(Length, ' ')));
 
@@ -32,13 +32,13 @@
 
         private readonly DateTimeOffsetTextConverter nullableDateTimeOffsetConverter;
 
-        private readonly DateTimeOffsetTextConverter decimalConverter2;
+        private readonly DateTimeOffsetTextConverter shortDecimalConverter;
 
         public DateTimeOffsetTextConverterTest()
         {
             decimalConverter = CreateConverter(typeof(DateTimeOffset), Format);
             nullableDateTimeOffsetConverter = CreateConverter(typeof(DateTimeOffset?), Format);
-            decimalConverter2 = CreateConverter(typeof(DateTimeOffset), Format2);
+            shortDecimalConverter = CreateConverter(typeof(DateTimeOffset), ShortFormat);
         }
 
         private static DateTimeOffsetTextConverter CreateConverter(Type type, string format)
@@ -58,39 +58,30 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToDateTimeOffsetIsDefault()
+        public void ReadToDateTimeOffset()
         {
-            Assert.Equal(default(DateTimeOffset), decimalConverter.Read(NullBytes, Offset));
-        }
+            // Default
+            Assert.Equal(default(DateTimeOffset), decimalConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadInvalidToDateTimeOffsetIsDefault()
-        {
+            // Invalid
             Assert.Equal(default(DateTimeOffset), decimalConverter.Read(InvalidBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadValueToDateTimeOffset()
-        {
+            // Value
             Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueDateTimeOffsetToBuffer()
+        public void WriteDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Length + Offset];
+
+            // Value
             decimalConverter.Write(buffer, Offset, Value);
-
             Assert.Equal(ValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteValueDateTimeOffsetToBufferWithPadding()
-        {
-            var buffer = new byte[Length + Offset];
-            decimalConverter2.Write(buffer, Offset, Value);
-
-            Assert.Equal(Value2Bytes, buffer);
+            // Short
+            shortDecimalConverter.Write(buffer, Offset, Value);
+            Assert.Equal(ShortBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -98,20 +89,15 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableDateTimeOffsetIsDefault()
+        public void ReadToNullableDateTimeOffset()
         {
-            Assert.Null(nullableDateTimeOffsetConverter.Read(NullBytes, Offset));
-        }
+            // Null
+            Assert.Null(nullableDateTimeOffsetConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadInvalidToNullableDateTimeOffsetIsDefault()
-        {
+            // Invalid
             Assert.Null(nullableDateTimeOffsetConverter.Read(InvalidBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadValueToNullableDateTimeOffset()
-        {
+            // Value
             Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes, Offset));
         }
 
@@ -119,9 +105,10 @@
         public void WriteNullDateTimeOffsetToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            nullableDateTimeOffsetConverter.Write(buffer, Offset, null);
 
-            Assert.Equal(NullBytes, buffer);
+            // Null
+            nullableDateTimeOffsetConverter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
         }
     }
 }

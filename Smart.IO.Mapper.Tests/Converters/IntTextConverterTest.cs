@@ -14,7 +14,7 @@ namespace Smart.IO.Mapper.Converters
 
         private const int Length = 8;
 
-        private static readonly byte[] NullBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
+        private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("1".PadLeft(Length, ' ')));
 
@@ -54,23 +54,22 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToIntIsDefault()
+        public void ReadToInt()
         {
-            Assert.Equal(0, intConverter.Read(NullBytes, Offset));
-        }
+            // Default
+            Assert.Equal(0, intConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToInt()
-        {
+            // Value
             Assert.Equal(1, intConverter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueIntToBuffer()
+        public void WriteIntToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            intConverter.Write(buffer, Offset, 1);
 
+            // Value
+            intConverter.Write(buffer, Offset, 1);
             Assert.Equal(ValueBytes, buffer);
         }
 
@@ -79,14 +78,12 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableIntIsDefault()
+        public void ReadToNullableInt()
         {
-            Assert.Null(nullableIntConverter.Read(NullBytes, Offset));
-        }
+            // Null
+            Assert.Null(nullableIntConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToNullableInt()
-        {
+            // Value
             Assert.Equal(1, nullableIntConverter.Read(ValueBytes, Offset));
         }
 
@@ -94,9 +91,10 @@ namespace Smart.IO.Mapper.Converters
         public void WriteNullIntToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            nullableIntConverter.Write(buffer, Offset, null);
 
-            Assert.Equal(NullBytes, buffer);
+            // Null
+            nullableIntConverter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -104,38 +102,29 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToEnumIsDefault()
+        public void ReadToIntEnum()
         {
-            Assert.Equal(IntEnum.Zero, enumConverter.Read(NullBytes, Offset));
-        }
+            // Default
+            Assert.Equal(IntEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToEnum()
-        {
+            // Value
             Assert.Equal(IntEnum.One, enumConverter.Read(ValueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadUndefinedValueToEnum()
-        {
+            // Undefined
             Assert.Equal((IntEnum)(-1), enumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueEnumToBuffer()
+        public void WriteIntEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
+
+            // Value
             enumConverter.Write(buffer, Offset, IntEnum.One);
-
             Assert.Equal(ValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteUndefinedEnumToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Undefined
             enumConverter.Write(buffer, Offset, (IntEnum)(-1));
-
             Assert.Equal(MinusBytes, buffer);
         }
 
@@ -144,30 +133,26 @@ namespace Smart.IO.Mapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToNullableEnumIsDefault()
+        public void ReadToNullableIntEnum()
         {
-            Assert.Null(nullableEnumConverter.Read(NullBytes, Offset));
-        }
+            // Null
+            Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
 
-        [Fact]
-        public void ReadValueToNullableEnum()
-        {
+            // Value
             Assert.Equal(IntEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadUndefinedValueToNullableEnum()
-        {
+            // Undefined
             Assert.Equal((IntEnum)(-1), nullableEnumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteNullEnumToBuffer()
+        public void WriteNullableIntEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
-            nullableEnumConverter.Write(buffer, Offset, null);
 
-            Assert.Equal(NullBytes, buffer);
+            // Null
+            nullableEnumConverter.Write(buffer, Offset, null);
+            Assert.Equal(EmptyBytes, buffer);
         }
     }
 }

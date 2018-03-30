@@ -22,23 +22,25 @@
 
         private static readonly byte[] OverflowBytes;
 
+        private static readonly Encoding Encoding;
+
         private readonly StringConverter converter;
 
         static StringConverterTest()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
-            var enc = Encoding.GetEncoding(932);
+            Encoding = Encoding.GetEncoding(932);
 
-            EmptyBytes = TestBytes.Offset(Offset, enc.GetBytes(string.Empty.PadRight(Length, ' ')));
-            ValueBytes = TestBytes.Offset(Offset, enc.GetBytes(Value.PadRight(Length - (enc.GetByteCount(Value) - Value.Length), ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, enc.GetBytes(OverflowValue.Substring(0, Length)));
+            EmptyBytes = TestBytes.Offset(Offset, Encoding.GetBytes(string.Empty.PadRight(Length, ' ')));
+            ValueBytes = TestBytes.Offset(Offset, Encoding.GetBytes(Value.PadRight(Length - (Encoding.GetByteCount(Value) - Value.Length), ' ')));
+            OverflowBytes = TestBytes.Offset(Offset, Encoding.GetBytes(OverflowValue.Substring(0, Length)));
         }
 
         public StringConverterTest()
         {
             converter = new StringConverter(
                 Length,
-                Encoding.GetEncoding(932),
+                Encoding,
                 true,
                 Padding.Right,
                 0x20);
@@ -49,41 +51,30 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadEmptyToStringIsEmpty()
+        public void ReadToString()
         {
+            // Empty
             Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadValueToString()
-        {
+            // Value
             Assert.Equal(Value, converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteValueStringToBuffer()
+        public void WriteStringToBuffer()
         {
             var buffer = new byte[Length + Offset];
+
+            // Value
             converter.Write(buffer, Offset, Value);
-
             Assert.Equal(ValueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteNullStringToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Null
             converter.Write(buffer, Offset, null);
-
             Assert.Equal(EmptyBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteOverflowValueStringToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
+            // Overflow
             converter.Write(buffer, Offset, OverflowValue);
-
             Assert.Equal(OverflowBytes, buffer);
         }
     }

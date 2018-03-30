@@ -15,7 +15,7 @@
         private readonly ByteConverter converter = new ByteConverter();
 
         [Fact]
-        public void ReadValueToByte()
+        public void ReadToByte()
         {
             Assert.Equal(Value, (byte)converter.Read(ValueBytes, Offset));
         }

@@ -15,7 +15,7 @@
         private readonly LittleEndianShortBinaryConverter converter = new LittleEndianShortBinaryConverter();
 
         [Fact]
-        public void ReadValueToLittleEndianShortBinary()
+        public void ReadToLittleEndianShortBinary()
         {
             Assert.Equal(Value, (short)converter.Read(ValueBytes, Offset));
         }

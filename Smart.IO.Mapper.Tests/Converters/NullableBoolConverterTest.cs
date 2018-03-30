@@ -8,11 +8,11 @@
     {
         private const int Offset = 1;
 
-        private static readonly byte TrueByte = 0x31;
+        private const byte TrueByte = 0x31;
 
-        private static readonly byte FalseByte = 0x30;
+        private const byte FalseByte = 0x30;
 
-        private static readonly byte NullByte = 0x00;
+        private const byte NullByte = 0x00;
 
         private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
 
@@ -32,47 +32,33 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadTrueValueToNullableBool()
+        public void ReadToNullableBool()
         {
+            // True
             Assert.True((bool?)converter.Read(TrueBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadFalseValueToNullableBool()
-        {
+            // False
             Assert.False((bool?)converter.Read(FalseBytes, Offset));
-        }
 
-        [Fact]
-        public void ReadNullValueToNullableBoolIsNull()
-        {
+            // Null
             Assert.Null(converter.Read(NullBytes, Offset));
         }
 
         [Fact]
-        public void WriteTrueNullableBoolToBuffer()
+        public void WriteNullableBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
+
+            // True
             converter.Write(buffer, Offset, true);
-
             Assert.Equal(TrueBytes, buffer);
-        }
 
-        [Fact]
-        public void WriteFalseNullableBoolToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
+            // False
             converter.Write(buffer, Offset, false);
-
             Assert.Equal(FalseBytes, buffer);
-        }
 
-        [Fact]
-        public void WritNullNullableBoolToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
+            // Null
             converter.Write(buffer, Offset, null);
-
             Assert.Equal(NullBytes, buffer);
         }
     }
