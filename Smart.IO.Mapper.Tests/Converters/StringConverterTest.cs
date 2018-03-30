@@ -14,9 +14,13 @@
 
         private const string Value = "1aあ";
 
+        private const string OverflowValue = "12345678901";
+
         private static readonly byte[] EmptyBytes;
 
         private static readonly byte[] ValueBytes;
+
+        private static readonly byte[] OverflowBytes;
 
         private readonly StringConverter converter;
 
@@ -27,6 +31,7 @@
 
             EmptyBytes = TestBytes.Offset(Offset, enc.GetBytes(string.Empty.PadRight(Length, ' ')));
             ValueBytes = TestBytes.Offset(Offset, enc.GetBytes(Value.PadRight(Length - (enc.GetByteCount(Value) - Value.Length), ' ')));
+            OverflowBytes = TestBytes.Offset(Offset, enc.GetBytes(OverflowValue.Substring(0, Length)));
         }
 
         public StringConverterTest()
@@ -71,6 +76,15 @@
             converter.Write(buffer, Offset, null);
 
             Assert.Equal(EmptyBytes, buffer);
+        }
+
+        [Fact]
+        public void WriteOverflowValueStringToBuffer()
+        {
+            var buffer = new byte[Length + Offset];
+            converter.Write(buffer, Offset, OverflowValue);
+
+            Assert.Equal(OverflowBytes, buffer);
         }
     }
 }
