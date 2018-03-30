@@ -25,6 +25,10 @@
             boolConverter = new BoolConverter(TrueByte, FalseByte);
         }
 
+        //--------------------------------------------------------------------------------
+        // bool
+        //--------------------------------------------------------------------------------
+
         [Fact]
         public void ReadTrueValueToBool()
         {
@@ -43,6 +47,22 @@
             Assert.False((bool)boolConverter.Read(UnknownBytes, Offset));
         }
 
-        // TODO nullable
+        [Fact]
+        public void WriteTrueBoolToBuffer()
+        {
+            var buffer = new byte[1 + Offset];
+            boolConverter.Write(buffer, Offset, true);
+
+            Assert.Equal(TrueBytes, buffer);
+        }
+
+        [Fact]
+        public void WriteFalseBoolToBuffer()
+        {
+            var buffer = new byte[1 + Offset];
+            boolConverter.Write(buffer, Offset, false);
+
+            Assert.Equal(FalseBytes, buffer);
+        }
     }
 }
