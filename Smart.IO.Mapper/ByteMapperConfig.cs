@@ -52,13 +52,6 @@
             return this;
         }
 
-        public ByteMapperConfig AddParameter<T>(T parameter)
-        {
-            parameters[typeof(T).Name] = parameter;
-
-            return this;
-        }
-
         public ByteMapperConfig AddParameter<T>(string name, T parameter)
         {
             parameters[name] = parameter;
