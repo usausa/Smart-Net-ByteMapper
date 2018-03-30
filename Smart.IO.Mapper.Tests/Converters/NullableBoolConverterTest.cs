@@ -20,11 +20,11 @@
 
         private static readonly byte[] NullBytes = TestBytes.Offset(Offset, new[] { NullByte });
 
-        private readonly NullableBoolConverter nullableBoolConverter;
+        private readonly NullableBoolConverter converter;
 
         public NullableBoolConverterTest()
         {
-            nullableBoolConverter = new NullableBoolConverter(TrueByte, FalseByte, NullByte);
+            converter = new NullableBoolConverter(TrueByte, FalseByte, NullByte);
         }
 
         //--------------------------------------------------------------------------------
@@ -34,26 +34,26 @@
         [Fact]
         public void ReadTrueValueToNullableBool()
         {
-            Assert.True((bool?)nullableBoolConverter.Read(TrueBytes, Offset));
+            Assert.True((bool?)converter.Read(TrueBytes, Offset));
         }
 
         [Fact]
         public void ReadFalseValueToNullableBool()
         {
-            Assert.False((bool?)nullableBoolConverter.Read(FalseBytes, Offset));
+            Assert.False((bool?)converter.Read(FalseBytes, Offset));
         }
 
         [Fact]
         public void ReadNullValueToNullableBoolIsNull()
         {
-            Assert.Null(nullableBoolConverter.Read(NullBytes, Offset));
+            Assert.Null(converter.Read(NullBytes, Offset));
         }
 
         [Fact]
         public void WriteTrueNullableBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
-            nullableBoolConverter.Write(buffer, Offset, true);
+            converter.Write(buffer, Offset, true);
 
             Assert.Equal(TrueBytes, buffer);
         }
@@ -62,7 +62,7 @@
         public void WriteFalseNullableBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
-            nullableBoolConverter.Write(buffer, Offset, false);
+            converter.Write(buffer, Offset, false);
 
             Assert.Equal(FalseBytes, buffer);
         }
@@ -71,7 +71,7 @@
         public void WritNullNullableBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
-            nullableBoolConverter.Write(buffer, Offset, null);
+            converter.Write(buffer, Offset, null);
 
             Assert.Equal(NullBytes, buffer);
         }

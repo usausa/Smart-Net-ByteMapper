@@ -2,8 +2,6 @@
 {
     public sealed class BigEndianShortBinaryConverter : IByteConverter
     {
-        public int Length => 2;
-
         public object Read(byte[] buffer, int index)
         {
             return ByteOrder.GetShortBE(buffer, index);
@@ -17,8 +15,6 @@
 
     public sealed class LittleEndianShortBinaryConverter : IByteConverter
     {
-        public int Length => 2;
-
         public object Read(byte[] buffer, int index)
         {
             return ByteOrder.GetShortLE(buffer, index);

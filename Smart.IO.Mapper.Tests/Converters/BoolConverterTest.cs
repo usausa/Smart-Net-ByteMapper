@@ -18,11 +18,11 @@
 
         private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, new byte[] { 0x00 });
 
-        private readonly BoolConverter boolConverter;
+        private readonly BoolConverter converter;
 
         public BoolConverterTest()
         {
-            boolConverter = new BoolConverter(TrueByte, FalseByte);
+            converter = new BoolConverter(TrueByte, FalseByte);
         }
 
         //--------------------------------------------------------------------------------
@@ -32,26 +32,26 @@
         [Fact]
         public void ReadTrueValueToBool()
         {
-            Assert.True((bool)boolConverter.Read(TrueBytes, Offset));
+            Assert.True((bool)converter.Read(TrueBytes, Offset));
         }
 
         [Fact]
         public void ReadFalseValueToBool()
         {
-            Assert.False((bool)boolConverter.Read(FalseBytes, Offset));
+            Assert.False((bool)converter.Read(FalseBytes, Offset));
         }
 
         [Fact]
         public void ReadUnknownValueToBoolIsFalse()
         {
-            Assert.False((bool)boolConverter.Read(UnknownBytes, Offset));
+            Assert.False((bool)converter.Read(UnknownBytes, Offset));
         }
 
         [Fact]
         public void WriteTrueBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
-            boolConverter.Write(buffer, Offset, true);
+            converter.Write(buffer, Offset, true);
 
             Assert.Equal(TrueBytes, buffer);
         }
@@ -60,7 +60,7 @@
         public void WriteFalseBoolToBuffer()
         {
             var buffer = new byte[1 + Offset];
-            boolConverter.Write(buffer, Offset, false);
+            converter.Write(buffer, Offset, false);
 
             Assert.Equal(FalseBytes, buffer);
         }
