@@ -6,11 +6,29 @@
 
     public sealed class BoolAttribute : AbstractPropertyAttribute
     {
-        public byte? TrueValue { get; set; }
+        private byte? trueValue;
 
-        public byte? FalseValue { get; set; }
+        private byte? falseValue;
 
-        public byte? NullValue { get; set; }
+        private byte? nullValue;
+
+        public byte TrueValue
+        {
+            get => throw new NotSupportedException();
+            set => trueValue = value;
+        }
+
+        public byte FalseValue
+        {
+            get => throw new NotSupportedException();
+            set => falseValue = value;
+        }
+
+        public byte NullValue
+        {
+            get => throw new NotSupportedException();
+            set => nullValue = value;
+        }
 
         public BoolAttribute(int offset)
             : base(offset)
@@ -26,17 +44,17 @@
         {
             if (type == typeof(bool))
             {
-                var trueValue = TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue);
-                var falseValue = FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue);
-                return new BoolConverter(trueValue, falseValue);
+                return new BoolConverter(
+                    trueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
+                    falseValue ?? context.GetParameter<byte>(Parameter.FalseValue));
             }
 
             if (type == typeof(bool?))
             {
-                var trueValue = TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue);
-                var falseValue = FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue);
-                var nullValue = NullValue ?? context.GetParameter<byte>(Parameter.Filler);
-                return new NullableBoolConverter(trueValue, falseValue, nullValue);
+                return new NullableBoolConverter(
+                    trueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
+                    falseValue ?? context.GetParameter<byte>(Parameter.FalseValue),
+                    nullValue ?? context.GetParameter<byte>(Parameter.Filler));
             }
 
             return null;

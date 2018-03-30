@@ -122,8 +122,11 @@
                     if (mapAttribute.AutoDelimitter)
                     {
                         var delimiter = context.GetParameter<byte[]>(Parameter.Delimiter);
-                        var offset = mapAttribute.Size - delimiter.Length;
-                        list.Add(new MappingEntry(offset, delimiter.Length, new ConstMapping(offset, delimiter)));
+                        if ((delimiter != null) && (delimiter.Length > 0))
+                        {
+                            var offset = mapAttribute.Size - delimiter.Length;
+                            list.Add(new MappingEntry(offset, delimiter.Length, new ConstMapping(offset, delimiter)));
+                        }
                     }
 
                     list.Sort(Comparer);
