@@ -8,6 +8,8 @@
 
     public sealed class ShortTextConverter : IByteConverter
     {
+        private readonly int length;
+
         private readonly Encoding encoding;
 
         private readonly bool trim;
@@ -24,8 +26,6 @@
 
         private readonly object defaultValue;
 
-        public int Length { get; }
-
         public ShortTextConverter(
             int length,
             Encoding encoding,
@@ -36,7 +36,7 @@
             IFormatProvider provider,
             Type type)
         {
-            Length = length;
+            this.length = length;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
@@ -49,7 +49,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, Length, encoding, trim, padding, filler);
+            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
             if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -62,11 +62,11 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, Length, filler);
+                buffer.Fill(index, length, filler);
             }
             else
             {
-                BytesHelper.WriteString(((short)value).ToString(provider), buffer, index, Length, encoding, padding, filler);
+                BytesHelper.WriteString(((short)value).ToString(provider), buffer, index, length, encoding, padding, filler);
             }
         }
     }

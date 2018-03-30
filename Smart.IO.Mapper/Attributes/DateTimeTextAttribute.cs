@@ -8,7 +8,7 @@
 
     public sealed class DateTimeTextAttribute : AbstractPropertyAttribute
     {
-        public int Length { get; }
+        private readonly int length;
 
         public Encoding Encoding { get; set; }
 
@@ -23,12 +23,12 @@
         public DateTimeTextAttribute(int offset, int length)
             : base(offset)
         {
-            Length = length;
+            this.length = length;
         }
 
         public override int CalcSize(Type type)
         {
-            return Length;
+            return length;
         }
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
@@ -40,12 +40,12 @@
 
             if ((type == typeof(DateTime)) || (type == typeof(DateTime?)))
             {
-                return new DateTimeTextConverter(Length, encoding, filler, Format, style, provider, type);
+                return new DateTimeTextConverter(length, encoding, filler, Format, style, provider, type);
             }
 
             if ((type == typeof(DateTimeOffset)) || (type == typeof(DateTime?)))
             {
-                return new DateTimeOffsetTextConverter(Length, encoding, filler, Format, style, provider, type);
+                return new DateTimeOffsetTextConverter(length, encoding, filler, Format, style, provider, type);
             }
 
             return null;

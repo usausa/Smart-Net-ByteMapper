@@ -8,7 +8,7 @@
 
     public sealed class NumberTextAttribute : AbstractPropertyAttribute
     {
-        public int Length { get; }
+        private readonly int length;
 
         public Encoding Encoding { get; set; }
 
@@ -25,12 +25,12 @@
         public NumberTextAttribute(int offset, int length)
             : base(offset)
         {
-            Length = length;
+            this.length = length;
         }
 
         public override int CalcSize(Type type)
         {
-            return Length;
+            return length;
         }
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
@@ -44,25 +44,25 @@
             if ((type == typeof(int)) || (type == typeof(int?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new IntTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
+                return new IntTextConverter(length, encoding, trim, padding, filler, style, provider, type);
             }
 
             if ((type == typeof(long)) || (type == typeof(long?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new LongTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
+                return new LongTextConverter(length, encoding, trim, padding, filler, style, provider, type);
             }
 
             if ((type == typeof(short)) || (type == typeof(short?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new ShortTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
+                return new ShortTextConverter(length, encoding, trim, padding, filler, style, provider, type);
             }
 
             if ((type == typeof(decimal)) || (type == typeof(decimal?)))
             {
                 var style = Style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle);
-                return new DecimalTextConverter(Length, encoding, trim, padding, filler, style, provider, type);
+                return new DecimalTextConverter(length, encoding, trim, padding, filler, style, provider, type);
             }
 
             return null;

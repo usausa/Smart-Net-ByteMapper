@@ -7,7 +7,7 @@
 
     public sealed class StringAttribute : AbstractPropertyAttribute
     {
-        public int Length { get; }
+        private readonly int length;
 
         public Encoding Encoding { get; set; }
 
@@ -20,12 +20,12 @@
         public StringAttribute(int offset, int length)
             : base(offset)
         {
-            Length = length;
+            this.length = length;
         }
 
         public override int CalcSize(Type type)
         {
-            return Length;
+            return length;
         }
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
@@ -37,7 +37,7 @@
                 var padding = Padding ?? context.GetParameter<Padding>(Parameter.TextPadding);
                 var filler = Filler ?? context.GetParameter<byte>(Parameter.TextFiller);
                 return new StringConverter(
-                    Length,
+                    length,
                     encoding,
                     trim,
                     padding,
