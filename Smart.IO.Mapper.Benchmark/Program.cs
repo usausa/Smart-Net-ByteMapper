@@ -1,12 +1,14 @@
 ﻿namespace Smart.IO.Mapper.Benchmark
 {
+    using System.Reflection;
+
     using BenchmarkDotNet.Running;
 
     public static class Program
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Benchmark>();
+            BenchmarkSwitcher.FromAssembly(typeof(Program).GetTypeInfo().Assembly).Run(args);
         }
     }
 }

@@ -9,7 +9,7 @@
     using Smart.IO.Mapper.Converters;
 
     [Config(typeof(BenchmarkConfig))]
-    public class Benchmark
+    public class ConverterBenchmark
     {
         private BigEndianIntBinaryConverter intBinaryConverter;
 

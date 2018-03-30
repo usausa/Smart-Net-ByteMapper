@@ -6,13 +6,14 @@
 
     public sealed class FillterArrtibute : AbstractTypeMappingAttribute
     {
-        public int Length { get; set; }
+        public int Length { get; }
 
         public byte? Filler { get; set; }
 
-        public FillterArrtibute(int offset)
+        public FillterArrtibute(int offset, int length)
             : base(offset)
         {
+            Length = length;
         }
 
         public override int CalcSize(Type type)

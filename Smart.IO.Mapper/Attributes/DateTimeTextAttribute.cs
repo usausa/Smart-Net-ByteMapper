@@ -8,7 +8,7 @@
 
     public sealed class DateTimeTextAttribute : AbstractPropertyAttribute
     {
-        public int Length { get; set; }
+        public int Length { get; }
 
         public Encoding Encoding { get; set; }
 
@@ -20,9 +20,10 @@
 
         public IFormatProvider Provider { get; set; }
 
-        public DateTimeTextAttribute(int offset)
+        public DateTimeTextAttribute(int offset, int length)
             : base(offset)
         {
+            Length = length;
         }
 
         public override int CalcSize(Type type)
