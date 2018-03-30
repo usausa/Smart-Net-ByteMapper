@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Smart.IO.Mapper.Mock;
+
     using Xunit;
 
     public class BoolAttributeTest
@@ -70,7 +72,7 @@
             Assert.Throws<NotSupportedException>(() => attribute.FalseValue);
             Assert.Throws<NotSupportedException>(() => attribute.NullValue);
 
-            Assert.Null(attribute.CreateConverter(null, typeof(object)));
+            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

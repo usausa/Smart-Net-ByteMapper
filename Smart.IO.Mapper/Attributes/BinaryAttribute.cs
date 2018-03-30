@@ -18,7 +18,13 @@
 
         private static readonly IByteConverter LittleEndianShortBinaryConverter = new LittleEndianShortBinaryConverter();
 
-        public Endian? Endian { get; set; }
+        private Endian? endian;
+
+        public Endian Endian
+        {
+            get => throw new NotSupportedException();
+            set => endian = value;
+        }
 
         public BinaryAttribute(int offset)
             : base(offset)
@@ -37,7 +43,7 @@
                 return 8;
             }
 
-            if (type == typeof(int))
+            if (type == typeof(short))
             {
                 return 2;
             }
@@ -47,21 +53,21 @@
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
-            var endian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            var targetEndian = endian ?? context.GetParameter<Endian>(Parameter.Endian);
 
             if (type == typeof(int))
             {
-                return endian == Mapper.Endian.Big ? BigEndianIntBinaryConverter : LittleEndianIntBinaryConverter;
+                return targetEndian == Endian.Big ? BigEndianIntBinaryConverter : LittleEndianIntBinaryConverter;
             }
 
             if (type == typeof(long))
             {
-                return endian == Mapper.Endian.Big ? BigEndianLongBinaryConverter : LittleEndianLongBinaryConverter;
+                return targetEndian == Endian.Big ? BigEndianLongBinaryConverter : LittleEndianLongBinaryConverter;
             }
 
             if (type == typeof(short))
             {
-                return endian == Mapper.Endian.Big ? BigEndianShortBinaryConverter : LittleEndianShortBinaryConverter;
+                return targetEndian == Endian.Big ? BigEndianShortBinaryConverter : LittleEndianShortBinaryConverter;
             }
 
             return null;
