@@ -22,9 +22,10 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<BinaryAttributeObject>();
 
-            var buffer = new byte[28];
+            var buffer = new byte[29];
             var obj = new BinaryAttributeObject
             {
+                ByteValue = 1,
                 BigEndianIntValue = 1,
                 LittleEndianIntValue = 1,
                 BigEndianLongValue = 1,
@@ -39,6 +40,7 @@
             Assert.Equal(
                 new byte[]
                 {
+                    0x01,
                     0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
@@ -56,6 +58,7 @@
 
             mapper.FromByte(buffer, 0, obj);
 
+            Assert.Equal(2, obj.ByteValue);
             Assert.Equal(2, obj.BigEndianIntValue);
             Assert.Equal(2, obj.LittleEndianIntValue);
             Assert.Equal(2, obj.BigEndianLongValue);
@@ -83,25 +86,28 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(28)]
+        [Map(29)]
         internal class BinaryAttributeObject
         {
             [Binary(0)]
+            public byte ByteValue { get; set; }
+
+            [Binary(1)]
             public int BigEndianIntValue { get; set; }
 
-            [Binary(4, Endian = Endian.Little)]
+            [Binary(5, Endian = Endian.Little)]
             public int LittleEndianIntValue { get; set; }
 
-            [Binary(8)]
+            [Binary(9)]
             public long BigEndianLongValue { get; set; }
 
-            [Binary(16, Endian = Endian.Little)]
+            [Binary(17, Endian = Endian.Little)]
             public long LittleEndianLongValue { get; set; }
 
-            [Binary(24)]
+            [Binary(25)]
             public short BigEndianShortValue { get; set; }
 
-            [Binary(26, Endian = Endian.Little)]
+            [Binary(27, Endian = Endian.Little)]
             public short LittleEndianShortValue { get; set; }
         }
     }
