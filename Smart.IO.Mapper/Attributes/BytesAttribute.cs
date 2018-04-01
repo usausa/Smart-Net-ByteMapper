@@ -8,7 +8,13 @@
     {
         private readonly int length;
 
-        public byte? Filler { get; set; }
+        private byte? filler;
+
+        public byte Filler
+        {
+            get => throw new NotSupportedException();
+            set => filler = value;
+        }
 
         public BytesAttribute(int offset, int length)
             : base(offset)
@@ -27,7 +33,7 @@
             {
                 return new BytesConverter(
                     length,
-                    Filler ?? context.GetParameter<byte>(Parameter.TextFiller));
+                    filler ?? context.GetParameter<byte>(Parameter.TextFiller));
             }
 
             return null;
