@@ -1,20 +1,13 @@
-﻿namespace Smart.IO.Mapper
+﻿namespace Smart.IO.Mapper.Mappings
 {
     using System;
 
     using Smart.Functional;
-    using Smart.IO.Mapper.Mappings;
 
     using Xunit;
 
     public class CoverageFixTest
     {
-        [Fact]
-        public void TypeMapperNotExists()
-        {
-            Assert.Throws<ByteMapperException>(() => new ByteMapperConfig().ToByteMapper().Create<object>());
-        }
-
         [Fact]
         public void UnreadableMapping()
         {
