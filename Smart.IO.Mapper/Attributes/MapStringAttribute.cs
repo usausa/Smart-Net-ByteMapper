@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class StringAttribute : AbstractPropertyAttribute
+    public sealed class MapStringAttribute : AbstractPropertyAttribute
     {
         private readonly int length;
 
@@ -34,7 +34,7 @@
             set => filler = value;
         }
 
-        public StringAttribute(int offset, int length)
+        public MapStringAttribute(int offset, int length)
             : base(offset)
         {
             this.length = length;

@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class BoolAttribute : AbstractPropertyAttribute
+    public sealed class MapBoolAttribute : AbstractPropertyAttribute
     {
         private byte? trueValue;
 
@@ -30,7 +30,7 @@
             set => nullValue = value;
         }
 
-        public BoolAttribute(int offset)
+        public MapBoolAttribute(int offset)
             : base(offset)
         {
         }

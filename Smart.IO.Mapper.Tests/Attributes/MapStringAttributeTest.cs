@@ -7,7 +7,7 @@
 
     using Xunit;
 
-    public class StringAttributeTest
+    public class MapStringAttributeTest
     {
         private const byte Filler = 0x20;
 
@@ -52,7 +52,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new StringAttribute(0, 0);
+            var attribute = new MapStringAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Trim);
             Assert.Throws<NotSupportedException>(() => attribute.Padding);
@@ -68,10 +68,10 @@
         [Map(8)]
         internal class StringAttributeObject
         {
-            [String(0, 4)]
+            [MapString(0, 4)]
             public string StringValue { get; set; }
 
-            [String(4, 4, Encoding = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
+            [MapString(4, 4, Encoding = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
             public string CustomStringValue { get; set; }
         }
     }

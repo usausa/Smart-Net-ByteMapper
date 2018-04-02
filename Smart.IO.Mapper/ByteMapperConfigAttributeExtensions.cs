@@ -106,7 +106,7 @@
         private static void MapInternal(ByteMapperConfig config, string profile, bool validate, Type type, MapAttribute mapAttribute)
         {
             var parameters = type.GetCustomAttributes()
-                .OfType<ITypeDefaultAttribute>()
+                .OfType<IOptionParameterAttribute>()
                 .ToDictionary(x => x.Key, x => x.Value);
 
             var entry = new MapEntry(
@@ -191,7 +191,7 @@
                 {
                     Property = x,
                     Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
-                    ArrayAttribute = x.GetCustomAttribute<ArrayAttribute>()
+                    ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
                 })
                 .Where(x => x.Attribute != null)
                 .Select(x =>
@@ -206,7 +206,7 @@
                                 "Attribute does not match property. " +
                                 $"type=[{x.Property.DeclaringType?.FullName}], " +
                                 $"property=[{x.Property.Name}], " +
-                                $"attribute=[{typeof(ArrayAttribute).FullName}]");
+                                $"attribute=[{typeof(MapArrayAttribute).FullName}]");
                         }
 
                         var elementType = x.Property.PropertyType.GetElementType();

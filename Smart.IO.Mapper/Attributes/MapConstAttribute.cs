@@ -4,23 +4,24 @@
 
     using Smart.IO.Mapper.Mappings;
 
-    public sealed class ConstAttribute : AbstractTypeMappingAttribute
+    public sealed class MapConstAttribute : AbstractTypeMappingAttribute
     {
-        public byte[] Content { get; set; }
+        private readonly byte[] content;
 
-        public ConstAttribute(int offset)
+        public MapConstAttribute(int offset, byte[] content)
             : base(offset)
         {
+            this.content = content;
         }
 
         public override int CalcSize(Type type)
         {
-            return Content.Length;
+            return content.Length;
         }
 
         public override IMapping CreateMapping(IMappingCreateContext context, Type type)
         {
-            return new ConstMapping(Offset, Content);
+            return new ConstMapping(Offset, content);
         }
     }
 }

@@ -5,7 +5,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class NumberTextAttribute : AbstractPropertyAttribute
+    public sealed class MapNumberTextAttribute : AbstractPropertyAttribute
     {
         private readonly int length;
 
@@ -46,7 +46,7 @@
         // TODO
         public IFormatProvider Provider { get; set; }
 
-        public NumberTextAttribute(int offset, int length)
+        public MapNumberTextAttribute(int offset, int length)
             : base(offset)
         {
             this.length = length;

@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class BinaryAttributeTest
+    public class MapBinaryAttributeTest
     {
         //--------------------------------------------------------------------------------
         // Attribute
@@ -22,10 +22,9 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<BinaryAttributeObject>();
 
-            var buffer = new byte[29];
+            var buffer = new byte[28];
             var obj = new BinaryAttributeObject
             {
-                ByteValue = 1,
                 BigEndianIntValue = 1,
                 LittleEndianIntValue = 1,
                 BigEndianLongValue = 1,
@@ -40,7 +39,6 @@
             Assert.Equal(
                 new byte[]
                 {
-                    0x01,
                     0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
@@ -58,7 +56,6 @@
 
             mapper.FromByte(buffer, 0, obj);
 
-            Assert.Equal(2, obj.ByteValue);
             Assert.Equal(2, obj.BigEndianIntValue);
             Assert.Equal(2, obj.LittleEndianIntValue);
             Assert.Equal(2, obj.BigEndianLongValue);
@@ -74,7 +71,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new BinaryAttribute(0);
+            var attribute = new MapBinaryAttribute(0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Endian);
 
@@ -86,28 +83,25 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(29)]
+        [Map(28)]
         internal class BinaryAttributeObject
         {
-            [Binary(0)]
-            public byte ByteValue { get; set; }
-
-            [Binary(1)]
+            [MapBinary(0)]
             public int BigEndianIntValue { get; set; }
 
-            [Binary(5, Endian = Endian.Little)]
+            [MapBinary(4, Endian = Endian.Little)]
             public int LittleEndianIntValue { get; set; }
 
-            [Binary(9)]
+            [MapBinary(8)]
             public long BigEndianLongValue { get; set; }
 
-            [Binary(17, Endian = Endian.Little)]
+            [MapBinary(16, Endian = Endian.Little)]
             public long LittleEndianLongValue { get; set; }
 
-            [Binary(25)]
+            [MapBinary(24)]
             public short BigEndianShortValue { get; set; }
 
-            [Binary(27, Endian = Endian.Little)]
+            [MapBinary(26, Endian = Endian.Little)]
             public short LittleEndianShortValue { get; set; }
         }
     }

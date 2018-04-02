@@ -3,11 +3,11 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Property)]
-    public sealed class ArrayAttribute : Attribute
+    public sealed class MapArrayAttribute : Attribute
     {
         public int Count { get; }
 
-        public ArrayAttribute(int count)
+        public MapArrayAttribute(int count)
         {
             Count = count;
         }

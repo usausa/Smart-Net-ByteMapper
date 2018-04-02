@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class BoolAttributeTest
+    public class MapBoolAttributeTest
     {
         private const byte Filler = 0x00;
 
@@ -66,7 +66,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new BoolAttribute(0);
+            var attribute = new MapBoolAttribute(0);
 
             Assert.Throws<NotSupportedException>(() => attribute.TrueValue);
             Assert.Throws<NotSupportedException>(() => attribute.FalseValue);
@@ -82,16 +82,16 @@
         [Map(4)]
         internal class BoolAttributeObject
         {
-            [Bool(0)]
+            [MapBool(0)]
             public bool BoolValue { get; set; }
 
-            [Bool(1)]
+            [MapBool(1)]
             public bool? NullableBoolValue { get; set; }
 
-            [Bool(2, TrueValue = Yes, FalseValue = No)]
+            [MapBool(2, TrueValue = Yes, FalseValue = No)]
             public bool CustomBoolValue { get; set; }
 
-            [Bool(3, TrueValue = Yes, FalseValue = No, NullValue = Filler)]
+            [MapBool(3, TrueValue = Yes, FalseValue = No, NullValue = Filler)]
             public bool? CustomNullableBoolValue { get; set; }
         }
     }

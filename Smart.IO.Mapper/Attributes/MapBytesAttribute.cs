@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class BytesAttribute : AbstractPropertyAttribute
+    public sealed class MapBytesAttribute : AbstractPropertyAttribute
     {
         private readonly int length;
 
@@ -16,7 +16,7 @@
             set => filler = value;
         }
 
-        public BytesAttribute(int offset, int length)
+        public MapBytesAttribute(int offset, int length)
             : base(offset)
         {
             this.length = length;

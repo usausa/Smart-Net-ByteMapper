@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class BinaryAttribute : AbstractPropertyAttribute
+    public sealed class MapBinaryAttribute : AbstractPropertyAttribute
     {
         private static readonly IByteConverter ByteConverter = new ByteConverter();
 
@@ -28,7 +28,7 @@
             set => endian = value;
         }
 
-        public BinaryAttribute(int offset)
+        public MapBinaryAttribute(int offset)
             : base(offset)
         {
         }

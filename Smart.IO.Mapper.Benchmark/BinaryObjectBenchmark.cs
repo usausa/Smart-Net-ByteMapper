@@ -50,34 +50,34 @@
         [Map(40, AutoDelimitter = false, AutoFiller = false)]
         public class BinaryObject
         {
-            [Binary(0)]
+            [MapBinary(0)]
             public int Value0 { get; set; }
 
-            [Binary(4)]
+            [MapBinary(4)]
             public int Value1 { get; set; }
 
-            [Binary(8)]
+            [MapBinary(8)]
             public int Value2 { get; set; }
 
-            [Binary(12)]
+            [MapBinary(12)]
             public int Value3 { get; set; }
 
-            [Binary(16)]
+            [MapBinary(16)]
             public int Value4 { get; set; }
 
-            [Binary(20)]
+            [MapBinary(20)]
             public int Value5 { get; set; }
 
-            [Binary(24)]
+            [MapBinary(24)]
             public int Value6 { get; set; }
 
-            [Binary(28)]
+            [MapBinary(28)]
             public int Value7 { get; set; }
 
-            [Binary(32)]
+            [MapBinary(32)]
             public int Value8 { get; set; }
 
-            [Binary(36)]
+            [MapBinary(36)]
             public int Value9 { get; set; }
         }
     }

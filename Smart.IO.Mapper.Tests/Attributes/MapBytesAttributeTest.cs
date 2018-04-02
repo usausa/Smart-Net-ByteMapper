@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class BytesAttributeTest
+    public class MapBytesAttributeTest
     {
         //--------------------------------------------------------------------------------
         // Attribute
@@ -51,7 +51,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new BytesAttribute(0, 0);
+            var attribute = new MapBytesAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
 
@@ -65,10 +65,10 @@
         [Map(8)]
         internal class BytesAttributeObject
         {
-            [Bytes(0, 4)]
+            [MapBytes(0, 4)]
             public byte[] BytesValue { get; set; }
 
-            [Bytes(4, 4, Filler = 0x30)]
+            [MapBytes(4, 4, Filler = 0x30)]
             public byte[] CustomBytesValue { get; set; }
         }
     }
