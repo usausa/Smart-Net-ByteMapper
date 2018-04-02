@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    public interface ITypeParameterAttribute
+    public interface ITypeDefaultAttribute
     {
         string Key { get; }
 

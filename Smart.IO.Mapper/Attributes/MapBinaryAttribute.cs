@@ -6,8 +6,6 @@
 
     public sealed class MapBinaryAttribute : AbstractPropertyAttribute
     {
-        private static readonly IByteConverter ByteConverter = new ByteConverter();
-
         private static readonly IByteConverter BigEndianIntBinaryConverter = new BigEndianIntBinaryConverter();
 
         private static readonly IByteConverter LittleEndianIntBinaryConverter = new LittleEndianIntBinaryConverter();
@@ -35,11 +33,6 @@
 
         public override int CalcSize(Type type)
         {
-            if (type == typeof(byte))
-            {
-                return 1;
-            }
-
             if (type == typeof(int))
             {
                 return 4;
@@ -60,11 +53,6 @@
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
-            if (type == typeof(byte))
-            {
-                return ByteConverter;
-            }
-
             var targetEndian = endian ?? context.GetParameter<Endian>(Parameter.Endian);
 
             if (type == typeof(int))

@@ -3,13 +3,13 @@
     using System;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
-    public class TypeParameterAttribute : Attribute, ITypeParameterAttribute
+    public class TypeDefaultAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key { get; }
 
         public object Value { get; }
 
-        public TypeParameterAttribute(string key, object value)
+        public TypeDefaultAttribute(string key, object value)
         {
             Key = key;
             Value = value;
