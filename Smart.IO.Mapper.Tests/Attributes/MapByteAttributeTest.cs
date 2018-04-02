@@ -19,7 +19,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<ByteAttributeObject>();
 
-            var buffer = new byte[1];
+            var buffer = new byte[mapper.Size];
             var obj = new ByteAttributeObject
             {
                 ByteValue = 1,

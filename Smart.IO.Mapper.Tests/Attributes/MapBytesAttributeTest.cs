@@ -22,7 +22,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<BytesAttributeObject>();
 
-            var buffer = new byte[8];
+            var buffer = new byte[mapper.Size];
             var obj = new BytesAttributeObject
             {
                 BytesValue = new byte[] { 0x01, 0x02, 0x03, 0x04 }

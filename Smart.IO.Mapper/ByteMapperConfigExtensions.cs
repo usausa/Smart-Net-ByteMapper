@@ -2,6 +2,7 @@
 {
     using System;
     using System.Globalization;
+    using System.Text;
 
     public static class ByteMapperConfigExtensions
     {
@@ -15,7 +16,7 @@
             return config.AddParameter(Parameter.Delimiter, value);
         }
 
-        public static ByteMapperConfig DefaultEncoding(this ByteMapperConfig config, string value)
+        public static ByteMapperConfig DefaultEncoding(this ByteMapperConfig config, Encoding value)
         {
             return config.AddParameter(Parameter.Encoding, value);
         }

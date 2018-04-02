@@ -18,7 +18,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<ConstAttributeObject>();
 
-            var buffer = new byte[4];
+            var buffer = new byte[mapper.Size];
             var obj = new ConstAttributeObject();
 
             // Write

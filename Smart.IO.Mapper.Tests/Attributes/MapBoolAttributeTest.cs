@@ -34,7 +34,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<BoolAttributeObject>();
 
-            var buffer = new byte[4];
+            var buffer = new byte[mapper.Size];
             var obj = new BoolAttributeObject();
 
             // Write

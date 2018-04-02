@@ -8,13 +8,35 @@
     {
         private readonly int length;
 
+        private int? codePage;
+
+        private string encodingName;
+
         private bool? trim;
 
         private Padding? padding;
 
         private byte? filler;
 
-        public string Encoding { get; set; }
+        public int CodePage
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                codePage = value;
+                encodingName = null;
+            }
+        }
+
+        public string EncodingName
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                encodingName = value;
+                codePage = null;
+            }
+        }
 
         public bool Trim
         {
@@ -51,7 +73,7 @@
             {
                 return new StringConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
                     filler ?? context.GetParameter<byte>(Parameter.TextFiller));

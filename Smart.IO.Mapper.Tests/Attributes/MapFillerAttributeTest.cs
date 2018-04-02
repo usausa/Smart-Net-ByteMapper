@@ -20,7 +20,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<FillerAttributeObject>();
 
-            var buffer = new byte[6];
+            var buffer = new byte[mapper.Size];
             var obj = new FillerAttributeObject();
 
             // Write

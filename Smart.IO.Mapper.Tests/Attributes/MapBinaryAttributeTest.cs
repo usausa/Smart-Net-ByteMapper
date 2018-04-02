@@ -22,7 +22,7 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<BinaryAttributeObject>();
 
-            var buffer = new byte[28];
+            var buffer = new byte[mapper.Size];
             var obj = new BinaryAttributeObject
             {
                 BigEndianIntValue = 1,

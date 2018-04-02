@@ -23,7 +23,7 @@
             var byteMapper = new ByteMapperConfig()
                 .MapByAttribute<StringAttributeObject>()
                 .DefaultDelimiter(null)
-                .DefaultEncoding("ASCII")
+                .DefaultEncoding(Encoding.ASCII)
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(Filler)
@@ -71,7 +71,7 @@
             [MapString(0, 4)]
             public string StringValue { get; set; }
 
-            [MapString(4, 4, Encoding = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
+            [MapString(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
             public string CustomStringValue { get; set; }
         }
     }

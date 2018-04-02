@@ -21,7 +21,7 @@
             config.Add<IDelegateFactory>(DelegateFactory.Default);
 
             this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
-            this.DefaultEncoding(nameof(Encoding.ASCII));
+            this.DefaultEncoding(Encoding.ASCII);
             this.DefaultCulture(CultureInfo.CurrentCulture);
             this.DefaultNumberStyle(NumberStyles.Integer);
             this.DefaultDecimalStyle(NumberStyles.Number);
