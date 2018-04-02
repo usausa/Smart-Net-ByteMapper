@@ -2,7 +2,6 @@
 {
     using System;
     using System.Globalization;
-    using System.Text;
 
     using Smart.IO.Mapper.Converters;
 
@@ -10,16 +9,41 @@
     {
         private readonly int length;
 
-        public Encoding Encoding { get; set; }
+        private bool? trim;
 
-        public bool? Trim { get; set; }
+        private Padding? padding;
 
-        public Padding? Padding { get; set; }
+        private byte? filler;
 
-        public byte? Filler { get; set; }
+        private NumberStyles? style;
 
-        public NumberStyles? Style { get; set; }
+        public string Encoding { get; set; }
 
+        public bool Trim
+        {
+            get => throw new NotSupportedException();
+            set => trim = value;
+        }
+
+        public Padding Padding
+        {
+            get => throw new NotSupportedException();
+            set => padding = value;
+        }
+
+        public byte Filler
+        {
+            get => throw new NotSupportedException();
+            set => filler = value;
+        }
+
+        public NumberStyles Style
+        {
+            get => throw new NotSupportedException();
+            set => style = value;
+        }
+
+        // TODO
         public IFormatProvider Provider { get; set; }
 
         public NumberTextAttribute(int offset, int length)
@@ -35,34 +59,56 @@
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
-            var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding);
-            var trim = Trim ?? context.GetParameter<bool>(Parameter.Trim);
-            var padding = Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding);
-            var filler = Filler ?? context.GetParameter<byte>(Parameter.NumberFiller);
-            var provider = Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider);
-
             if ((type == typeof(int)) || (type == typeof(int?)))
             {
-                var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new IntTextConverter(length, encoding, trim, padding, filler, style, provider, type);
+                return new IntTextConverter(
+                    length,
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    trim ?? context.GetParameter<bool>(Parameter.Trim),
+                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    type);
             }
 
             if ((type == typeof(long)) || (type == typeof(long?)))
             {
-                var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new LongTextConverter(length, encoding, trim, padding, filler, style, provider, type);
+                return new LongTextConverter(
+                    length,
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    trim ?? context.GetParameter<bool>(Parameter.Trim),
+                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    type);
             }
 
             if ((type == typeof(short)) || (type == typeof(short?)))
             {
-                var style = Style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle);
-                return new ShortTextConverter(length, encoding, trim, padding, filler, style, provider, type);
+                return new ShortTextConverter(
+                    length,
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    trim ?? context.GetParameter<bool>(Parameter.Trim),
+                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    type);
             }
 
             if ((type == typeof(decimal)) || (type == typeof(decimal?)))
             {
-                var style = Style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle);
-                return new DecimalTextConverter(length, encoding, trim, padding, filler, style, provider, type);
+                return new ShortTextConverter(
+                    length,
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    trim ?? context.GetParameter<bool>(Parameter.Trim),
+                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    type);
             }
 
             return null;

@@ -1,7 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-    using System.Text;
 
     using Smart.IO.Mapper.Converters;
 
