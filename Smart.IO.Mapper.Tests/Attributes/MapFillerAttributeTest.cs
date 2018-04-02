@@ -1,41 +1,32 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using Smart.IO.Mapper.Mock;
+    using System;
 
     using Xunit;
 
-    public class MapByteAttributeTest
+    public class MapFillerAttributeTest
     {
         //--------------------------------------------------------------------------------
         // Attribute
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByByteAttribute()
+        public void MapByFillerAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<ByteAttributeObject>()
+                .MapByAttribute<FillerAttributeObject>()
                 .DefaultDelimiter(null)
+                .DefaultFiller(0x20)
                 .ToByteMapper();
-            var mapper = byteMapper.Create<ByteAttributeObject>();
+            var mapper = byteMapper.Create<FillerAttributeObject>();
 
-            var buffer = new byte[1];
-            var obj = new ByteAttributeObject
-            {
-                ByteValue = 1,
-            };
+            var buffer = new byte[6];
+            var obj = new FillerAttributeObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(new byte[] { 0x01 }, buffer);
-
-            // Read
-            buffer[0] = 0x02;
-
-            mapper.FromByte(buffer, 0, obj);
-
-            Assert.Equal(2, obj.ByteValue);
+            Assert.Equal(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x30, 0x30 }, buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -45,20 +36,20 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new MapByteAttribute(0);
+            var attribute = new MapFillerAttribute(0, 0);
 
-            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
+            Assert.Throws<NotSupportedException>(() => attribute.Filler);
         }
 
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(1)]
-        internal class ByteAttributeObject
+        [Map(6, AutoFiller = true)]
+        [MapFiller(0, 2)]
+        [MapFiller(4, 2, Filler = 0x30)]
+        internal class FillerAttributeObject
         {
-            [MapByte(0)]
-            public byte ByteValue { get; set; }
         }
     }
 }

@@ -4,13 +4,19 @@
 
     using Smart.IO.Mapper.Mappings;
 
-    public sealed class MapFillterArrtibute : AbstractTypeMappingAttribute
+    public sealed class MapFillerAttribute : AbstractTypeMappingAttribute
     {
         private readonly int length;
 
-        public byte? Filler { get; set; }
+        private byte? filler;
 
-        public MapFillterArrtibute(int offset, int length)
+        public byte Filler
+        {
+            get => throw new NotSupportedException();
+            set => filler = value;
+        }
+
+        public MapFillerAttribute(int offset, int length)
             : base(offset)
         {
             this.length = length;
@@ -26,7 +32,7 @@
             return new FillMapping(
                 Offset,
                 length,
-                Filler ?? context.GetParameter<byte>(Parameter.Filler));
+                filler ?? context.GetParameter<byte>(Parameter.Filler));
         }
     }
 }
