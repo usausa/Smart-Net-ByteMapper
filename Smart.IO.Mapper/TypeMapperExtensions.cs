@@ -31,10 +31,16 @@
             return target;
         }
 
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer)
+            where T : new()
+        {
+            return mapper.FromByteMultiple(buffer, 0);
+        }
+
         public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start)
             where T : new()
         {
-            while (start + mapper.Size < buffer.Length)
+            while (start + mapper.Size <= buffer.Length)
             {
                 var target = new T();
                 mapper.FromByte(buffer, start, target);
@@ -44,9 +50,14 @@
             }
         }
 
+        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, Func<T> factory)
+        {
+            return mapper.FromByteMultiple(buffer, 0, factory);
+        }
+
         public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start, Func<T> factory)
         {
-            while (start + mapper.Size < buffer.Length)
+            while (start + mapper.Size <= buffer.Length)
             {
                 var target = factory();
                 mapper.FromByte(buffer, start, target);
