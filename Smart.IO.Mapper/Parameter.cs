@@ -4,19 +4,13 @@
     {
         public const string Delimiter = nameof(Delimiter);
 
-        public const string TextEncoding = nameof(TextEncoding);
+        public const string Encoding = nameof(Encoding);
 
-        public const string NumberEncoding = nameof(NumberEncoding);
-
-        public const string DateTimeEncoding = nameof(DateTimeEncoding);
-
-        public const string NumberProvider = nameof(NumberProvider);
+        public const string Culture = nameof(Culture);
 
         public const string NumberStyle = nameof(NumberStyle);
 
         public const string DecimalStyle = nameof(DecimalStyle);
-
-        public const string DateTimeProvider = nameof(DateTimeProvider);
 
         public const string DateTimeStyle = nameof(DateTimeStyle);
 

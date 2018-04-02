@@ -21,13 +21,10 @@
             config.Add<IDelegateFactory>(DelegateFactory.Default);
 
             this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
-            this.DefaultTextEncoding(nameof(Encoding.ASCII));
-            this.DefaultNumberEncoding(nameof(Encoding.ASCII));
-            this.DefaultDateTimeEncoding(nameof(Encoding.ASCII));
-            this.DefaultNumberProvider(NumberFormatInfo.InvariantInfo);
+            this.DefaultEncoding(nameof(Encoding.ASCII));
+            this.DefaultCulture(CultureInfo.CurrentCulture);
             this.DefaultNumberStyle(NumberStyles.Integer);
             this.DefaultDecimalStyle(NumberStyles.Number);
-            this.DefaultDateTimeProvider(DateTimeFormatInfo.InvariantInfo);
             this.DefaultDateTimeStyle(DateTimeStyles.None);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);

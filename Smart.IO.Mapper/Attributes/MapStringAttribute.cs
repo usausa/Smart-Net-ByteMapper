@@ -51,7 +51,7 @@
             {
                 return new StringConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
                     filler ?? context.GetParameter<byte>(Parameter.TextFiller));

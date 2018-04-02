@@ -106,7 +106,7 @@
         private static void MapInternal(ByteMapperConfig config, string profile, bool validate, Type type, MapAttribute mapAttribute)
         {
             var parameters = type.GetCustomAttributes()
-                .OfType<IOptionParameterAttribute>()
+                .OfType<ITypeParameterAttribute>()
                 .ToDictionary(x => x.Key, x => x.Value);
 
             var entry = new MapEntry(

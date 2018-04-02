@@ -1,7 +1,7 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System;
     using System.Globalization;
-    using System.Text;
 
     public static class ByteMapperConfigExtensions
     {
@@ -15,24 +15,14 @@
             return config.AddParameter(Parameter.Delimiter, value);
         }
 
-        public static ByteMapperConfig DefaultTextEncoding(this ByteMapperConfig config, string value)
+        public static ByteMapperConfig DefaultEncoding(this ByteMapperConfig config, string value)
         {
-            return config.AddParameter(Parameter.TextEncoding, value);
+            return config.AddParameter(Parameter.Encoding, value);
         }
 
-        public static ByteMapperConfig DefaultNumberEncoding(this ByteMapperConfig config, string value)
+        public static ByteMapperConfig DefaultCulture(this ByteMapperConfig config, IFormatProvider value)
         {
-            return config.AddParameter(Parameter.NumberEncoding, value);
-        }
-
-        public static ByteMapperConfig DefaultDateTimeEncoding(this ByteMapperConfig config, string value)
-        {
-            return config.AddParameter(Parameter.DateTimeEncoding, value);
-        }
-
-        public static ByteMapperConfig DefaultNumberProvider(this ByteMapperConfig config, NumberFormatInfo value)
-        {
-            return config.AddParameter(Parameter.NumberProvider, value);
+            return config.AddParameter(Parameter.Culture, value);
         }
 
         public static ByteMapperConfig DefaultNumberStyle(this ByteMapperConfig config, NumberStyles value)
@@ -43,11 +33,6 @@
         public static ByteMapperConfig DefaultDecimalStyle(this ByteMapperConfig config, NumberStyles value)
         {
             return config.AddParameter(Parameter.DecimalStyle, value);
-        }
-
-        public static ByteMapperConfig DefaultDateTimeProvider(this ByteMapperConfig config, DateTimeFormatInfo value)
-        {
-            return config.AddParameter(Parameter.DateTimeProvider, value);
         }
 
         public static ByteMapperConfig DefaultDateTimeStyle(this ByteMapperConfig config, DateTimeStyles value)

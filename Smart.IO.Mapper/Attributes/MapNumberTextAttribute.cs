@@ -63,12 +63,12 @@
             {
                 return new IntTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
                     type);
             }
 
@@ -76,12 +76,12 @@
             {
                 return new LongTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
                     type);
             }
 
@@ -89,12 +89,12 @@
             {
                 return new ShortTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
                     type);
             }
 
@@ -102,12 +102,12 @@
             {
                 return new ShortTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberProvider),
+                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
                     type);
             }
 
