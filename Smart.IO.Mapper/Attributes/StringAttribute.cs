@@ -9,13 +9,31 @@
     {
         private readonly int length;
 
-        public Encoding Encoding { get; set; }
+        private bool? trim;
 
-        public bool? Trim { get; set; }
+        private Padding? padding;
 
-        public Padding? Padding { get; set; }
+        private byte? filler;
 
-        public byte? Filler { get; set; }
+        public string Encoding { get; set; }
+
+        public bool Trim
+        {
+            get => throw new NotSupportedException();
+            set => trim = value;
+        }
+
+        public Padding Padding
+        {
+            get => throw new NotSupportedException();
+            set => padding = value;
+        }
+
+        public byte Filler
+        {
+            get => throw new NotSupportedException();
+            set => filler = value;
+        }
 
         public StringAttribute(int offset, int length)
             : base(offset)
@@ -32,16 +50,12 @@
         {
             if (type == typeof(string))
             {
-                var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.TextEncoding);
-                var trim = Trim ?? context.GetParameter<bool>(Parameter.Trim);
-                var padding = Padding ?? context.GetParameter<Padding>(Parameter.TextPadding);
-                var filler = Filler ?? context.GetParameter<byte>(Parameter.TextFiller);
                 return new StringConverter(
                     length,
-                    encoding,
-                    trim,
-                    padding,
-                    filler);
+                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.TextEncoding)),
+                    trim ?? context.GetParameter<bool>(Parameter.Trim),
+                    padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
+                    filler ?? context.GetParameter<byte>(Parameter.TextFiller));
             }
 
             return null;

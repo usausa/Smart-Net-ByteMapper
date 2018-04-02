@@ -15,17 +15,17 @@
             return config.AddParameter(Parameter.Delimiter, value);
         }
 
-        public static ByteMapperConfig DefaultTextEncoding(this ByteMapperConfig config, Encoding value)
+        public static ByteMapperConfig DefaultTextEncoding(this ByteMapperConfig config, string value)
         {
             return config.AddParameter(Parameter.TextEncoding, value);
         }
 
-        public static ByteMapperConfig DefaultNumberEncoding(this ByteMapperConfig config, Encoding value)
+        public static ByteMapperConfig DefaultNumberEncoding(this ByteMapperConfig config, string value)
         {
             return config.AddParameter(Parameter.NumberEncoding, value);
         }
 
-        public static ByteMapperConfig DefaultDateTimeEncoding(this ByteMapperConfig config, Encoding value)
+        public static ByteMapperConfig DefaultDateTimeEncoding(this ByteMapperConfig config, string value)
         {
             return config.AddParameter(Parameter.DateTimeEncoding, value);
         }
