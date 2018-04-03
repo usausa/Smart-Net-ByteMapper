@@ -30,19 +30,20 @@
                 .ToByteMapper();
             var mapper = byteMapper.Create<StringAttributeObject>();
 
-            var buffer = new byte[8];
+            var buffer = new byte[10];
             var obj = new StringAttributeObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(new[] { Filler, Filler, Filler, Filler, Filler2, Filler2, Filler2, Filler2 }, buffer);
+            Assert.Equal(new[] { Filler, Filler, Filler, Filler, Filler2, Filler2, Filler2, Filler2, Filler2, Filler2 }, buffer);
 
             // Read
-            mapper.FromByte(Encoding.ASCII.GetBytes("12  AB__"), 0, obj);
+            mapper.FromByte(Encoding.ASCII.GetBytes("12  AB__*_"), 0, obj);
 
             Assert.Equal("12", obj.StringValue);
             Assert.Equal("AB__", obj.CustomStringValue);
+            Assert.Equal("*", obj.CustomStringValue2);
         }
 
         //--------------------------------------------------------------------------------
@@ -54,6 +55,8 @@
         {
             var attribute = new MapStringAttribute(0, 0);
 
+            Assert.Throws<NotSupportedException>(() => attribute.CodePage);
+            Assert.Throws<NotSupportedException>(() => attribute.EncodingName);
             Assert.Throws<NotSupportedException>(() => attribute.Trim);
             Assert.Throws<NotSupportedException>(() => attribute.Padding);
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
@@ -65,7 +68,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(8)]
+        [Map(10)]
         internal class StringAttributeObject
         {
             [MapString(0, 4)]
@@ -73,6 +76,9 @@
 
             [MapString(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
             public string CustomStringValue { get; set; }
+
+            [MapString(8, 2, CodePage = 20127, Filler = Filler2)]
+            public string CustomStringValue2 { get; set; }
         }
     }
 }

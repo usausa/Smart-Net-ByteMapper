@@ -7,7 +7,6 @@
 
     using Smart.Collections.Generic;
     using Smart.IO.Mapper.Attributes;
-    using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Mappings;
     using Smart.Reflection;
 
@@ -224,12 +223,12 @@
 
                         return new MappingEntry(
                             x.Attribute.Offset,
-                            elementSize * x.ArrayAttribute.Count,
+                            x.ArrayAttribute.CalcSize(elementSize),
                             new MemberMapping(
                                 x.Attribute.Offset,
-                                new ArrayConverter(
+                                x.ArrayAttribute.CreateArrayConverter(
+                                    context,
                                     delegateFactory.CreateArrayAllocator(elementType),
-                                    x.ArrayAttribute.Count,
                                     elementSize,
                                     converter),
                                 delegateFactory.CreateGetter(x.Property),

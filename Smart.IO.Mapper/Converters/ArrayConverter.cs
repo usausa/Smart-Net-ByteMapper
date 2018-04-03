@@ -6,16 +6,19 @@
     {
         private readonly int count;
 
+        private readonly byte filler;
+
         private readonly int elementSize;
 
         private readonly Func<int, Array> allocator;
 
         private readonly IByteConverter elementConverter;
 
-        public ArrayConverter(Func<int, Array> allocator, int count, int elementSize, IByteConverter elementConverter)
+        public ArrayConverter(Func<int, Array> allocator, int count, byte filler, int elementSize, IByteConverter elementConverter)
         {
             this.allocator = allocator;
             this.count = count;
+            this.filler = filler;
             this.elementSize = elementSize;
             this.elementConverter = elementConverter;
         }
@@ -35,12 +38,19 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            var array = (Array)value;
-
-            for (var i = 0; i < count; i++)
+            if (value == null)
             {
-                elementConverter.Write(buffer, index, array.GetValue(i));
-                index += elementSize;
+                buffer.Fill(index, count * elementSize, filler);
+            }
+            else
+            {
+                var array = (Array)value;
+
+                for (var i = 0; i < count; i++)
+                {
+                    elementConverter.Write(buffer, index, array.GetValue(i));
+                    index += elementSize;
+                }
             }
         }
     }

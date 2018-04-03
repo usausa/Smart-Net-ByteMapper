@@ -33,7 +33,7 @@
             {
                 return new BytesConverter(
                     length,
-                    filler ?? context.GetParameter<byte>(Parameter.TextFiller));
+                    filler ?? context.GetParameter<byte>(Parameter.Filler));
             }
 
             return null;
