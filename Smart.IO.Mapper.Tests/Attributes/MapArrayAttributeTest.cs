@@ -14,10 +14,10 @@
         public void MapByArrayAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<ArrayAttributeObject>()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x00)
                 .DefaultEndian(Endian.Big)
+                .MapByAttribute<ArrayAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ArrayAttributeObject>();
 

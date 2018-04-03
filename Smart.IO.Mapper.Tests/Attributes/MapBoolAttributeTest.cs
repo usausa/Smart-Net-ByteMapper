@@ -26,11 +26,11 @@
         public void MapByBoolAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<BoolAttributeObject>()
                 .DefaultDelimiter(null)
                 .DefaultFiller(Filler)
                 .DefaultTrueValue(True)
                 .DefaultFalseValue(False)
+                .MapByAttribute<BoolAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<BoolAttributeObject>();
 

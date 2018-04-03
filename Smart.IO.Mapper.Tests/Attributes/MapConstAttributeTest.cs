@@ -14,10 +14,10 @@
         public void MapByConstAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<ConstAttributeObject>()
                 .DefaultDelimiter(new byte[] { 0x0d, 0x0a })
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultEndian(Endian.Big)
+                .MapByAttribute<ConstAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ConstAttributeObject>();
 

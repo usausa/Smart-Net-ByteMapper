@@ -18,13 +18,13 @@
         public void MapByDateTimeTextAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<DateTimeTextAttributeObject>()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultCulture(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeStyle(DateTimeStyles.None)
+                .MapByAttribute<DateTimeTextAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<DateTimeTextAttributeObject>();
 

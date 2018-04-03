@@ -14,8 +14,8 @@
         public void MapByByteAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<ByteAttributeObject>()
                 .DefaultDelimiter(null)
+                .MapByAttribute<ByteAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ByteAttributeObject>();
 

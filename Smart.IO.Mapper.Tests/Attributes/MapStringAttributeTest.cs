@@ -17,12 +17,12 @@
         public void MapByStringAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<StringAttributeObject>()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
+                .MapByAttribute<StringAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<StringAttributeObject>();
 

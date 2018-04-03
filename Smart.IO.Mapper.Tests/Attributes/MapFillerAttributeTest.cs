@@ -15,10 +15,10 @@
         public void MapByFillerAttribute()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<FillerAttributeObject>()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultFiller(0x20)
+                .MapByAttribute<FillerAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<FillerAttributeObject>();
 
