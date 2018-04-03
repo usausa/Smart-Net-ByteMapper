@@ -100,7 +100,7 @@
             Assert.NotNull(new ByteMapperConfig()
                 .MapByAttribute<SimpleObject>(null)
                 .ToByteMapper()
-                .Create<SimpleObject>(Profile.Default));
+                .Create<SimpleObject>());
         }
 
         //--------------------------------------------------------------------------------
