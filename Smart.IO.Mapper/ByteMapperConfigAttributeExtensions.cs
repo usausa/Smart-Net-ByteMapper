@@ -14,40 +14,40 @@
     {
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config)
         {
-            return config.MapByAttribute(Profile.Default, typeof(T));
+            return config.MapByAttribute(typeof(T), Profile.Default, true);
         }
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, string profile)
         {
-            return config.MapByAttribute(profile, true, typeof(T));
+            return config.MapByAttribute(typeof(T), profile, true);
         }
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, bool validate)
         {
-            return config.MapByAttribute(Profile.Default, validate, typeof(T));
+            return config.MapByAttribute(typeof(T), Profile.Default, validate);
         }
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, string profile, bool validate)
         {
-            return config.MapByAttribute(profile, validate, typeof(T));
+            return config.MapByAttribute(typeof(T), profile, validate);
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type)
         {
-            return config.MapByAttribute(Profile.Default, true, type);
+            return config.MapByAttribute(type, Profile.Default, true);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, string profile, Type type)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, string profile)
         {
-            return config.MapByAttribute(profile, true, type);
+            return config.MapByAttribute(type, profile, true);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, bool validate, Type type)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, bool validate)
         {
-            return config.MapByAttribute(Profile.Default, validate, type);
+            return config.MapByAttribute(type, Profile.Default, validate);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, string profile, bool validate, Type type)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, string profile, bool validate)
         {
             if (type == null)
             {
@@ -67,20 +67,20 @@
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types)
         {
-            return MapByAttribute(config, Profile.Default, true, types);
+            return MapByAttribute(config, types, Profile.Default, true);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, string profile, IEnumerable<Type> types)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile)
         {
-            return MapByAttribute(config, profile, true, types);
+            return MapByAttribute(config, types, profile, true);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, bool validate, IEnumerable<Type> types)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, bool validate)
         {
-            return MapByAttribute(config, Profile.Default, validate, types);
+            return MapByAttribute(config, types, Profile.Default, validate);
         }
 
-        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, string profile, bool validate, IEnumerable<Type> types)
+        public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile, bool validate)
         {
             if (types == null)
             {
@@ -88,6 +88,7 @@
             }
 
             var targets = types
+                .Where(x => x != null)
                 .Select(x => new
                 {
                     Type = x,
