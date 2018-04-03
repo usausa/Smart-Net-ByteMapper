@@ -157,7 +157,7 @@
         {
             if (source is ICollection<T> collection)
             {
-                var buffer = new byte[mapper.Size + collection.Count];
+                var buffer = new byte[mapper.Size * collection.Count];
                 mapper.ToByteMultiple(buffer, 0, source);
                 return buffer;
             }

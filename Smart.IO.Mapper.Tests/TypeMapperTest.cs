@@ -1,5 +1,8 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System.IO;
+    using System.Linq;
+
     using Smart.IO.Mapper.Attributes;
 
     using Xunit;
@@ -11,7 +14,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void FromByteVariations()
+        public void FromByteCall()
         {
             var mapper = CreateTypeMapper<TargetObject>();
             var buffer = new byte[mapper.Size];
@@ -37,7 +40,61 @@
             // Mutliple index factory
             Assert.Single(mapper.FromByteMultiple(buffer, 0, () => new TargetObject()));
 
-            // TODO
+            // Multiple IEnumerable
+            Assert.Single(mapper.FromByteMultiple(Enumerable.Repeat(buffer, 1)));
+
+            // Multiple IEnumerable factory
+            Assert.Single(mapper.FromByteMultiple(Enumerable.Repeat(buffer, 1), () => new TargetObject()));
+
+            // Stream create
+            Assert.NotNull(mapper.FromStream(new MemoryStream(buffer)));
+
+            // Stream create can't read
+            Assert.Null(mapper.FromStream(new MemoryStream()));
+
+            // Stream
+            Assert.True(mapper.FromStream(new MemoryStream(buffer), new TargetObject()));
+
+            // Stream can't read
+            Assert.False(mapper.FromStream(new MemoryStream(), new TargetObject()));
+
+            // Stream Multiple
+            Assert.Single(mapper.FromStreamMultiple(new MemoryStream(buffer)));
+
+            // Stream Multiple factory
+            Assert.Single(mapper.FromStreamMultiple(new MemoryStream(buffer), () => new TargetObject()));
+        }
+
+        [Fact]
+        public void ToByteCall()
+        {
+            var mapper = CreateTypeMapper<TargetObject>();
+            var buffer = new byte[mapper.Size];
+
+            // Default index
+            mapper.ToByte(buffer, new TargetObject());
+
+            // With allocate
+            Assert.Equal(mapper.Size, mapper.ToByte(new TargetObject()).Length);
+
+            // Multiple collection
+            Assert.Equal(mapper.Size, mapper.ToByteMultiple(new[] { new TargetObject() }).Length);
+
+            // Multiple not collection
+            Assert.Equal(mapper.Size, mapper.ToByteMultiple(Enumerable.Repeat(new TargetObject(), 1)).Length);
+
+            // Multiple
+            mapper.ToByteMultiple(buffer, Enumerable.Repeat(new TargetObject(), 1));
+
+            // Stream
+            var ms = new MemoryStream();
+            mapper.ToStream(ms, new TargetObject());
+            Assert.Equal(mapper.Size, ms.Length);
+
+            // Stream Multiple
+            ms = new MemoryStream();
+            mapper.ToStreamMultiple(ms, Enumerable.Repeat(new TargetObject(), 1));
+            Assert.Equal(mapper.Size, ms.Length);
         }
 
         //--------------------------------------------------------------------------------
