@@ -9,10 +9,6 @@
 
     public class MapStringAttributeTest
     {
-        private const byte Filler = 0x20;
-
-        private const byte Filler2 = (byte)'_';
-
         //--------------------------------------------------------------------------------
         // Attribute
         //--------------------------------------------------------------------------------
@@ -26,17 +22,17 @@
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
-                .DefaultTextFiller(Filler)
+                .DefaultTextFiller(0x20)
                 .ToByteMapper();
             var mapper = byteMapper.Create<StringAttributeObject>();
 
-            var buffer = new byte[10];
+            var buffer = new byte[mapper.Size];
             var obj = new StringAttributeObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(new[] { Filler, Filler, Filler, Filler, Filler2, Filler2, Filler2, Filler2, Filler2, Filler2 }, buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes("    ______"), buffer);
 
             // Read
             mapper.FromByte(Encoding.ASCII.GetBytes("12  AB__*_"), 0, obj);
@@ -74,10 +70,10 @@
             [MapString(0, 4)]
             public string StringValue { get; set; }
 
-            [MapString(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = Filler2)]
+            [MapString(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = (byte)'_')]
             public string CustomStringValue { get; set; }
 
-            [MapString(8, 2, CodePage = 20127, Filler = Filler2)]
+            [MapString(8, 2, CodePage = 20127, Filler = (byte)'_')]
             public string CustomStringValue2 { get; set; }
         }
     }

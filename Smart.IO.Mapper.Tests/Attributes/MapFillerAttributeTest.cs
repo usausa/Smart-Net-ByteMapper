@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
+    using System.Text;
 
     using Xunit;
 
@@ -16,6 +17,7 @@
             var byteMapper = new ByteMapperConfig()
                 .MapByAttribute<FillerAttributeObject>()
                 .DefaultDelimiter(null)
+                .DefaultEncoding(Encoding.ASCII)
                 .DefaultFiller(0x20)
                 .ToByteMapper();
             var mapper = byteMapper.Create<FillerAttributeObject>();
@@ -26,7 +28,7 @@
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(new byte[] { 0x20, 0x20, 0x20, 0x20, 0x30, 0x30 }, buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes("    00"), buffer);
         }
 
         //--------------------------------------------------------------------------------

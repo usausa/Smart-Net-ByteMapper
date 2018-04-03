@@ -9,6 +9,10 @@
     {
         private readonly int length;
 
+        private int? codePage;
+
+        private string encodingName;
+
         private bool? trim;
 
         private Padding? padding;
@@ -17,7 +21,27 @@
 
         private NumberStyles? style;
 
-        public string Encoding { get; set; }
+        private Culture? culture;
+
+        public int CodePage
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                codePage = value;
+                encodingName = null;
+            }
+        }
+
+        public string EncodingName
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                encodingName = value;
+                codePage = null;
+            }
+        }
 
         public bool Trim
         {
@@ -43,8 +67,11 @@
             set => style = value;
         }
 
-        // TODO
-        public IFormatProvider Provider { get; set; }
+        public Culture Culture
+        {
+            get => throw new NotSupportedException();
+            set => culture = value;
+        }
 
         public MapNumberTextAttribute(int offset, int length)
             : base(offset)
@@ -63,12 +90,12 @@
             {
                 return new IntTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
+                    AttributeParameterHelper.GetProvider(context, culture),
                     type);
             }
 
@@ -76,12 +103,12 @@
             {
                 return new LongTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
+                    AttributeParameterHelper.GetProvider(context, culture),
                     type);
             }
 
@@ -89,25 +116,25 @@
             {
                 return new ShortTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
+                    AttributeParameterHelper.GetProvider(context, culture),
                     type);
             }
 
             if ((type == typeof(decimal)) || (type == typeof(decimal?)))
             {
-                return new ShortTextConverter(
+                return new DecimalTextConverter(
                     length,
-                    System.Text.Encoding.GetEncoding(Encoding ?? context.GetParameter<string>(Parameter.Encoding)),
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     trim ?? context.GetParameter<bool>(Parameter.Trim),
                     padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                     filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
                     style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle),
-                    Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture),
+                    AttributeParameterHelper.GetProvider(context, culture),
                     type);
             }
 

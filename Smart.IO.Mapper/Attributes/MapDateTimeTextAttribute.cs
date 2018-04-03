@@ -2,7 +2,6 @@
 {
     using System;
     using System.Globalization;
-    using System.Text;
 
     using Smart.IO.Mapper.Converters;
 
@@ -10,15 +9,55 @@
     {
         private readonly int length;
 
-        public Encoding Encoding { get; set; }
+        private int? codePage;
 
-        public byte? Filler { get; set; }
+        private string encodingName;
+
+        private byte? filler;
+
+        private DateTimeStyles? style;
+
+        private Culture? culture;
+
+        public int CodePage
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                codePage = value;
+                encodingName = null;
+            }
+        }
+
+        public string EncodingName
+        {
+            get => throw new NotSupportedException();
+            set
+            {
+                encodingName = value;
+                codePage = null;
+            }
+        }
+
+        public byte Filler
+        {
+            get => throw new NotSupportedException();
+            set => filler = value;
+        }
 
         public string Format { get; set; }
 
-        public DateTimeStyles? Style { get; set; }
+        public DateTimeStyles Style
+        {
+            get => throw new NotSupportedException();
+            set => style = value;
+        }
 
-        public IFormatProvider Provider { get; set; }
+        public Culture Culture
+        {
+            get => throw new NotSupportedException();
+            set => culture = value;
+        }
 
         public MapDateTimeTextAttribute(int offset, int length)
             : base(offset)
@@ -33,19 +72,28 @@
 
         public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
         {
-            var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding);
-            var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
-            var style = Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle);
-            var provider = Provider ?? context.GetParameter<IFormatProvider>(Parameter.Culture);
-
             if ((type == typeof(DateTime)) || (type == typeof(DateTime?)))
             {
-                return new DateTimeTextConverter(length, encoding, filler, Format, style, provider, type);
+                return new DateTimeTextConverter(
+                    length,
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
+                    filler ?? context.GetParameter<byte>(Parameter.Filler),
+                    Format,
+                    style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
+                    AttributeParameterHelper.GetProvider(context, culture),
+                    type);
             }
 
             if ((type == typeof(DateTimeOffset)) || (type == typeof(DateTime?)))
             {
-                return new DateTimeOffsetTextConverter(length, encoding, filler, Format, style, provider, type);
+                return new DateTimeOffsetTextConverter(
+                    length,
+                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
+                    filler ?? context.GetParameter<byte>(Parameter.Filler),
+                    Format,
+                    style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
+                    AttributeParameterHelper.GetProvider(context, culture),
+                    type);
             }
 
             return null;

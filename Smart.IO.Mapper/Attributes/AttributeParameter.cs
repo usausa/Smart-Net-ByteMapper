@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
+    using System.Globalization;
     using System.Text;
 
     public static class AttributeParameter
@@ -27,6 +28,22 @@
             }
 
             return context.GetParameter<Encoding>(Parameter.Encoding);
+        }
+
+        public static IFormatProvider GetProvider(IMappingCreateContext context, Culture? culture)
+        {
+            if (culture.HasValue)
+            {
+                switch (culture.Value)
+                {
+                case Culture.Current:
+                    return CultureInfo.CurrentCulture;
+                case Culture.Invaliant:
+                    return CultureInfo.InvariantCulture;
+                }
+            }
+
+            return context.GetParameter<IFormatProvider>(Parameter.Culture);
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System.Text;
+
     using Xunit;
 
     public class MapConstAttributeTest
@@ -13,7 +15,8 @@
         {
             var byteMapper = new ByteMapperConfig()
                 .MapByAttribute<ConstAttributeObject>()
-                .DefaultDelimiter(new byte[] { 0x0a, 0x0d })
+                .DefaultDelimiter(new byte[] { 0x0d, 0x0a })
+                .DefaultEncoding(Encoding.ASCII)
                 .DefaultEndian(Endian.Big)
                 .ToByteMapper();
             var mapper = byteMapper.Create<ConstAttributeObject>();
@@ -24,7 +27,7 @@
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(new byte[] { 0x31, 0x32, 0x0a, 0x0d }, buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes("12\r\n"), buffer);
         }
 
         //--------------------------------------------------------------------------------
