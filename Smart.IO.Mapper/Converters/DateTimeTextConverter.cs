@@ -43,7 +43,7 @@
         public object Read(byte[] buffer, int index)
         {
             var value = encoding.GetString(buffer, index, length);
-            if ((value.Length > 0) && DateTime.TryParseExact(value, format, provider, style, out var result))
+            if (DateTime.TryParseExact(value, format, provider, style, out var result))
             {
                 return result;
             }

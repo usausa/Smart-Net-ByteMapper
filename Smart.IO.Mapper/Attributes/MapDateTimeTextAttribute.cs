@@ -9,6 +9,8 @@
     {
         private readonly int length;
 
+        private readonly string format;
+
         private int? codePage;
 
         private string encodingName;
@@ -45,8 +47,6 @@
             set => filler = value;
         }
 
-        public string Format { get; set; }
-
         public DateTimeStyles Style
         {
             get => throw new NotSupportedException();
@@ -59,10 +59,11 @@
             set => culture = value;
         }
 
-        public MapDateTimeTextAttribute(int offset, int length)
+        public MapDateTimeTextAttribute(int offset, int length, string format)
             : base(offset)
         {
             this.length = length;
+            this.format = format;
         }
 
         public override int CalcSize(Type type)
@@ -78,19 +79,19 @@
                     length,
                     AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     filler ?? context.GetParameter<byte>(Parameter.Filler),
-                    Format,
+                    format,
                     style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                     AttributeParameterHelper.GetProvider(context, culture),
                     type);
             }
 
-            if ((type == typeof(DateTimeOffset)) || (type == typeof(DateTime?)))
+            if ((type == typeof(DateTimeOffset)) || (type == typeof(DateTimeOffset?)))
             {
                 return new DateTimeOffsetTextConverter(
                     length,
                     AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
                     filler ?? context.GetParameter<byte>(Parameter.Filler),
-                    Format,
+                    format,
                     style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                     AttributeParameterHelper.GetProvider(context, culture),
                     type);
