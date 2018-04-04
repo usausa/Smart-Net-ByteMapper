@@ -2,7 +2,9 @@
 {
     using System;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapBoolAttribute : AbstractPropertyAttribute
     {
@@ -40,21 +42,21 @@
             return 1;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(bool))
             {
                 return new BoolConverter(
-                    trueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
-                    falseValue ?? context.GetParameter<byte>(Parameter.FalseValue));
+                    trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
+                    falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue));
             }
 
             if (type == typeof(bool?))
             {
                 return new NullableBoolConverter(
-                    trueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
-                    falseValue ?? context.GetParameter<byte>(Parameter.FalseValue),
-                    nullValue ?? context.GetParameter<byte>(Parameter.Filler));
+                    trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
+                    falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue),
+                    nullValue ?? parameters.GetParameter<byte>(Parameter.Filler));
             }
 
             return null;

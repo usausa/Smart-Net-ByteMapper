@@ -3,7 +3,9 @@
     using System;
     using System.Globalization;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapNumberTextAttribute : AbstractPropertyAttribute
     {
@@ -84,18 +86,18 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if ((type == typeof(int)) || (type == typeof(int?)))
             {
                 return new IntTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
-                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
+                    padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? parameters.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? parameters.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 
@@ -103,12 +105,12 @@
             {
                 return new LongTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
-                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
+                    padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? parameters.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? parameters.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 
@@ -116,12 +118,12 @@
             {
                 return new ShortTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
-                    style ?? context.GetParameter<NumberStyles>(Parameter.NumberStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
+                    padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? parameters.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? parameters.GetParameter<NumberStyles>(Parameter.NumberStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 
@@ -129,12 +131,12 @@
             {
                 return new DecimalTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                    filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
-                    style ?? context.GetParameter<NumberStyles>(Parameter.DecimalStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
+                    padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
+                    filler ?? parameters.GetParameter<byte>(Parameter.NumberFiller),
+                    style ?? parameters.GetParameter<NumberStyles>(Parameter.DecimalStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 

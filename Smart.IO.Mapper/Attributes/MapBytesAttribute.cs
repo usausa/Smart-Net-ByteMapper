@@ -1,8 +1,9 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapBytesAttribute : AbstractPropertyAttribute
     {
@@ -27,13 +28,13 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(byte[]))
             {
                 return new BytesConverter(
                     length,
-                    filler ?? context.GetParameter<byte>(Parameter.Filler));
+                    filler ?? parameters.GetParameter<byte>(Parameter.Filler));
             }
 
             return null;

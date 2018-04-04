@@ -1,8 +1,9 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-    using System.Globalization;
     using System.Text;
+
+    using Smart.IO.Mapper.Helpers;
 
     public static class AttributeParameter
     {
@@ -15,7 +16,7 @@
 
     public static class AttributeParameterHelper
     {
-        public static Encoding GetEncoding(IMappingCreateContext context, int? codePage, string encodingName)
+        public static Encoding GetEncoding(IMappingParameter parameters, int? codePage, string encodingName)
         {
             if (codePage.HasValue)
             {
@@ -27,23 +28,17 @@
                 return Encoding.GetEncoding(encodingName);
             }
 
-            return context.GetParameter<Encoding>(Parameter.Encoding);
+            return parameters.GetParameter<Encoding>(Parameter.Encoding);
         }
 
-        public static IFormatProvider GetProvider(IMappingCreateContext context, Culture? culture)
+        public static IFormatProvider GetProvider(IMappingParameter parameters, Culture? culture)
         {
             if (culture.HasValue)
             {
-                switch (culture.Value)
-                {
-                case Culture.Current:
-                    return CultureInfo.CurrentCulture;
-                case Culture.Invaliant:
-                    return CultureInfo.InvariantCulture;
-                }
+                return culture.Value.ToCultureInfo();
             }
 
-            return context.GetParameter<IFormatProvider>(Parameter.Culture);
+            return parameters.GetParameter<IFormatProvider>(Parameter.Culture);
         }
     }
 }

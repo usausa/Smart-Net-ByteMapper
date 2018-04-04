@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using Smart.IO.Mapper.Mock;
-
     using Xunit;
 
     public class MapByteAttributeTest
@@ -47,7 +45,7 @@
         {
             var attribute = new MapByteAttribute(0);
 
-            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
+            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

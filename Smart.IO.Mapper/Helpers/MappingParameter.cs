@@ -1,25 +1,19 @@
-﻿namespace Smart.IO.Mapper
+﻿namespace Smart.IO.Mapper.Helpers
 {
     using System.Collections.Generic;
 
-    using Smart.ComponentModel;
-
-    public class MappingCreateContext : IMappingCreateContext
+    public class MappingParameter : IMappingParameter
     {
         private readonly IDictionary<string, object> globalParameters;
 
         private readonly IDictionary<string, object> typeParameters;
 
-        public IComponentContainer Components { get; }
-
-        public MappingCreateContext(
+        public MappingParameter(
             IDictionary<string, object> globalParameters,
-            IDictionary<string, object> typeParameters,
-            IComponentContainer components)
+            IDictionary<string, object> typeParameters)
         {
             this.globalParameters = globalParameters;
             this.typeParameters = typeParameters;
-            Components = components;
         }
 
         public T GetParameter<T>(string key)

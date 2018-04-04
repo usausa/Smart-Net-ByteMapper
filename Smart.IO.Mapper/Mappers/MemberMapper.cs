@@ -1,10 +1,10 @@
-﻿namespace Smart.IO.Mapper.Mappings
+﻿namespace Smart.IO.Mapper.Mappers
 {
     using System;
 
     using Smart.IO.Mapper.Converters;
 
-    public sealed class MemberMapping : IMapping
+    public sealed class MemberMapper : IMapper
     {
         private readonly int offset;
 
@@ -18,7 +18,7 @@
 
         public bool CanWrite => setter != null;
 
-        public MemberMapping(
+        public MemberMapper(
             int offset,
             IByteConverter converter,
             Func<object, object> getter,

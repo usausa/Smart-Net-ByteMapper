@@ -2,7 +2,9 @@
 {
     using System;
 
-    using Smart.IO.Mapper.Mappings;
+    using Smart.ComponentModel;
+    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Mappers;
 
     public sealed class MapFillerAttribute : AbstractTypeMappingAttribute
     {
@@ -27,12 +29,12 @@
             return length;
         }
 
-        public override IMapping CreateMapping(IMappingCreateContext context, Type type)
+        public override IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            return new FillMapping(
+            return new FillMapper(
                 Offset,
                 length,
-                filler ?? context.GetParameter<byte>(Parameter.Filler));
+                filler ?? parameters.GetParameter<byte>(Parameter.Filler));
         }
     }
 }

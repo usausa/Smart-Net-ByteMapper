@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
-    public interface IMappingSyntax
+    public static class MapMemberExpressionExtensions
     {
     }
 }

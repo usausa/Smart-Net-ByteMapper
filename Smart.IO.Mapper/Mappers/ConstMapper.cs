@@ -1,8 +1,8 @@
-﻿namespace Smart.IO.Mapper.Mappings
+﻿namespace Smart.IO.Mapper.Mappers
 {
     using System;
 
-    public sealed class ConstMapping : IMapping
+    public sealed class ConstMapper : IMapper
     {
         private readonly int offset;
 
@@ -12,7 +12,7 @@
 
         public bool CanWrite => true;
 
-        public ConstMapping(int offset, byte[] content)
+        public ConstMapper(int offset, byte[] content)
         {
             this.offset = offset;
             this.content = content;

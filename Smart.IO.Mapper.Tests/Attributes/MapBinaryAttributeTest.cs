@@ -76,7 +76,7 @@
             Assert.Throws<NotSupportedException>(() => attribute.Endian);
 
             Assert.Equal(0, attribute.CalcSize(typeof(object)));
-            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
+            Assert.Null(attribute.CreateConverter(null, new MockMappingParametercs(), typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

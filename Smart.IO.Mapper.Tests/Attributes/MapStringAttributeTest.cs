@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.IO.Mapper.Mock;
-
     using Xunit;
 
     public class MapStringAttributeTest
@@ -57,7 +55,7 @@
             Assert.Throws<NotSupportedException>(() => attribute.Padding);
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
 
-            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
+            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

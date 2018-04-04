@@ -2,7 +2,9 @@
 {
     using System;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapByteAttribute : AbstractPropertyAttribute
     {
@@ -18,7 +20,7 @@
             return 1;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(byte))
             {

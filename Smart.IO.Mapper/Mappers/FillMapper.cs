@@ -1,8 +1,8 @@
-﻿namespace Smart.IO.Mapper.Mappings
+﻿namespace Smart.IO.Mapper.Mappers
 {
     using System;
 
-    public sealed class FillMapping : IMapping
+    public sealed class FillMapper : IMapper
     {
         private readonly int offset;
 
@@ -14,7 +14,7 @@
 
         public bool CanWrite => true;
 
-        public FillMapping(int offset, int length, byte filler)
+        public FillMapper(int offset, int length, byte filler)
         {
             this.offset = offset;
             this.length = length;

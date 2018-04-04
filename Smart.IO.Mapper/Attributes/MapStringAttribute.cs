@@ -2,7 +2,9 @@
 {
     using System;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapStringAttribute : AbstractPropertyAttribute
     {
@@ -67,16 +69,16 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(string))
             {
                 return new StringConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
-                    filler ?? context.GetParameter<byte>(Parameter.TextFiller));
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
+                    padding ?? parameters.GetParameter<Padding>(Parameter.TextPadding),
+                    filler ?? parameters.GetParameter<byte>(Parameter.TextFiller));
             }
 
             return null;

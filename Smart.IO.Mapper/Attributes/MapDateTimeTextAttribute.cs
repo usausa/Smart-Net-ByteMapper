@@ -3,7 +3,9 @@
     using System;
     using System.Globalization;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapDateTimeTextAttribute : AbstractPropertyAttribute
     {
@@ -71,17 +73,17 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if ((type == typeof(DateTime)) || (type == typeof(DateTime?)))
             {
                 return new DateTimeTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    filler ?? context.GetParameter<byte>(Parameter.Filler),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    filler ?? parameters.GetParameter<byte>(Parameter.Filler),
                     format,
-                    style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 
@@ -89,11 +91,11 @@
             {
                 return new DateTimeOffsetTextConverter(
                     length,
-                    AttributeParameterHelper.GetEncoding(context, codePage, encodingName),
-                    filler ?? context.GetParameter<byte>(Parameter.Filler),
+                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
+                    filler ?? parameters.GetParameter<byte>(Parameter.Filler),
                     format,
-                    style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
-                    AttributeParameterHelper.GetProvider(context, culture),
+                    style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
+                    AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
             }
 

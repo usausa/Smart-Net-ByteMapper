@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Smart.IO.Mapper.Mock;
-
     using Xunit;
 
     public class MapBytesAttributeTest
@@ -55,7 +53,7 @@
 
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
 
-            Assert.Null(attribute.CreateConverter(new MockMappingCreateContext(), typeof(object)));
+            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

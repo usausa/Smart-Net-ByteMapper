@@ -2,7 +2,9 @@
 {
     using System;
 
-    using Smart.IO.Mapper.Mappings;
+    using Smart.ComponentModel;
+    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Mappers;
 
     public sealed class MapConstAttribute : AbstractTypeMappingAttribute
     {
@@ -19,9 +21,9 @@
             return content.Length;
         }
 
-        public override IMapping CreateMapping(IMappingCreateContext context, Type type)
+        public override IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            return new ConstMapping(Offset, content);
+            return new ConstMapper(Offset, content);
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Smart.IO.Mapper.Mappings
+﻿namespace Smart.IO.Mapper.Mappers
 {
-    public interface IMapping
+    public interface IMapper
     {
         bool CanRead { get; }
 

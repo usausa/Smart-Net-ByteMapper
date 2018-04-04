@@ -6,15 +6,17 @@
     using System.Reflection;
 
     using Smart.Collections.Generic;
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Attributes;
-    using Smart.IO.Mapper.Mappings;
+    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
     public static class ByteMapperConfigAttributeExtensions
     {
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config)
         {
-            return config.MapByAttribute(typeof(T), Profile.Default, true);
+            return config.MapByAttribute(typeof(T), null, true);
         }
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, string profile)
@@ -24,7 +26,7 @@
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, bool validate)
         {
-            return config.MapByAttribute(typeof(T), Profile.Default, validate);
+            return config.MapByAttribute(typeof(T), null, validate);
         }
 
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config, string profile, bool validate)
@@ -34,7 +36,7 @@
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type)
         {
-            return config.MapByAttribute(type, Profile.Default, true);
+            return config.MapByAttribute(type, null, true);
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, string profile)
@@ -44,7 +46,7 @@
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, bool validate)
         {
-            return config.MapByAttribute(type, Profile.Default, validate);
+            return config.MapByAttribute(type, null, validate);
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, Type type, string profile, bool validate)
@@ -60,14 +62,14 @@
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
 
-            MapInternal(config, profile, validate, type, mapAttribute);
+            config.AddMapping(new AttributeMapping(type, mapAttribute, profile, validate));
 
             return config;
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types)
         {
-            return MapByAttribute(config, types, Profile.Default, true);
+            return MapByAttribute(config, types, null, true);
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile)
@@ -77,7 +79,7 @@
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, bool validate)
         {
-            return MapByAttribute(config, types, Profile.Default, validate);
+            return MapByAttribute(config, types, null, validate);
         }
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile, bool validate)
@@ -97,183 +99,196 @@
                 .Where(x => x.Attribute != null);
             foreach (var pair in targets)
             {
-                MapInternal(config, profile, validate, pair.Type, pair.Attribute);
+                config.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile, validate));
             }
 
             return config;
         }
 
-        private static void MapInternal(ByteMapperConfig config, string profile, bool validate, Type type, MapAttribute mapAttribute)
+        internal class AttributeMapping : IMapping
         {
-            var parameters = type.GetCustomAttributes()
-                .OfType<ITypeDefaultAttribute>()
-                .ToDictionary(x => x.Key, x => x.Value);
+            private readonly MapAttribute mapAttribute;
 
-            var entry = new MapEntry(
-                type,
-                mapAttribute.Size,
-                parameters,
-                context =>
+            private readonly bool validate;
+
+            public Type Type { get; }
+
+            public string Profile { get; }
+
+            public int Size => mapAttribute.Size;
+
+            public AttributeMapping(Type type, MapAttribute mapAttribute, string profile, bool validate)
+            {
+                Type = type;
+                this.mapAttribute = mapAttribute;
+                Profile = profile;
+                this.validate = validate;
+            }
+
+            public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
+            {
+                var mappingParameter = new MappingParameter(
+                    parameters,
+                    Type.GetCustomAttributes().OfType<ITypeDefaultAttribute>().ToDictionary(x => x.Key, x => x.Value));
+
+                var list = new List<MappingEntry>();
+                list.AddRange(CreateTypeEntries(components, mappingParameter));
+                list.AddRange(CreateMemberEntries(components, mappingParameter));
+
+                if (mapAttribute.AutoDelimitter)
                 {
-                    var list = new List<MappingEntry>();
-                    list.AddRange(CreateTypeEntries(context, type));
-                    list.AddRange(CreateMemberEntries(context, type));
-
-                    if (mapAttribute.AutoDelimitter)
+                    var delimiter = mappingParameter.GetParameter<byte[]>(Parameter.Delimiter);
+                    if ((delimiter != null) && (delimiter.Length > 0))
                     {
-                        var delimiter = context.GetParameter<byte[]>(Parameter.Delimiter);
-                        if ((delimiter != null) && (delimiter.Length > 0))
-                        {
-                            var offset = mapAttribute.Size - delimiter.Length;
-                            list.Add(new MappingEntry(offset, delimiter.Length, new ConstMapping(offset, delimiter)));
-                        }
+                        var offset = mapAttribute.Size - delimiter.Length;
+                        list.Add(new MappingEntry(offset, delimiter.Length, new ConstMapper(offset, delimiter)));
+                    }
+                }
+
+                list.Sort(Comparer);
+
+                var filler = default(byte?);
+                var fillers = new List<MappingEntry>();
+                for (var i = 0; i < list.Count; i++)
+                {
+                    var end = list[i].Offset + list[i].Size;
+                    var next = i < list.Count - 1 ? list[i + 1].Offset : mapAttribute.Size;
+
+                    if (validate && (end > next))
+                    {
+                        throw new ByteMapperException(
+                            "Range overlap. " +
+                            $"type=[{Type.FullName}], " +
+                            $"range=[{list[i].Offset}..{end}], " +
+                            $"next=[{next}]");
                     }
 
-                    list.Sort(Comparer);
-
-                    var filler = default(byte?);
-                    var fillers = new List<MappingEntry>();
-                    for (var i = 0; i < list.Count; i++)
+                    if (mapAttribute.AutoFiller && (end < next))
                     {
-                        var end = list[i].Offset + list[i].Size;
-                        var next = i < list.Count - 1 ? list[i + 1].Offset : mapAttribute.Size;
-
-                        if (validate && (end > next))
+                        if (!filler.HasValue)
                         {
-                            throw new ByteMapperException(
-                                "Range overlap. " +
-                                $"type=[{type.FullName}], " +
-                                $"range=[{list[i].Offset}..{end}], " +
-                                $"next=[{next}]");
+                            filler = mappingParameter.GetParameter<byte>(Parameter.Filler);
                         }
 
-                        if (mapAttribute.AutoFiller && (end < next))
+                        var length = next - end;
+                        fillers.Add(new MappingEntry(
+                            end,
+                            length,
+                            new FillMapper(end, length, filler.Value)));
+                    }
+                }
+
+                if (fillers.Count > 0)
+                {
+                    list.AddRange(fillers);
+                    list.Sort(Comparer);
+                }
+
+                return list.Select(x => x.Mapper).ToArray();
+            }
+
+            private IEnumerable<MappingEntry> CreateTypeEntries(IComponentContainer components, IMappingParameter parameters)
+            {
+                return Type.GetCustomAttributes()
+                    .OfType<ITypeMappingAttribute>()
+                    .Select(x => new MappingEntry(
+                        x.Offset,
+                        x.CalcSize(Type),
+                        x.CreateMapper(components, parameters, Type)));
+            }
+
+            private IEnumerable<MappingEntry> CreateMemberEntries(IComponentContainer components, IMappingParameter parameters)
+            {
+                return Type.GetProperties()
+                    .Select(x => new
+                    {
+                        Property = x,
+                        Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
+                        ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
+                    })
+                    .Where(x => x.Attribute != null)
+                    .Select(x =>
+                    {
+                        var delegateFactory = components.Get<IDelegateFactory>();
+
+                        if (x.ArrayAttribute != null)
                         {
-                            if (!filler.HasValue)
+                            if (!x.Property.PropertyType.IsArray)
                             {
-                                filler = context.GetParameter<byte>(Parameter.Filler);
+                                throw new ByteMapperException(
+                                    "Attribute does not match property. " +
+                                    $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                    $"property=[{x.Property.Name}], " +
+                                    $"attribute=[{typeof(MapArrayAttribute).FullName}]");
                             }
 
-                            var length = next - end;
-                            fillers.Add(new MappingEntry(
-                                end,
-                                length,
-                                new FillMapping(end, length, filler.Value)));
-                        }
-                    }
+                            var elementType = x.Property.PropertyType.GetElementType();
+                            var elementSize = x.Attribute.CalcSize(elementType);
 
-                    if (fillers.Count > 0)
-                    {
-                        list.AddRange(fillers);
-                        list.Sort(Comparer);
-                    }
+                            var converter = x.Attribute.CreateConverter(components, parameters, elementType);
+                            if (converter == null)
+                            {
+                                throw new ByteMapperException(
+                                    "Attribute does not match property. " +
+                                    $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                    $"property=[{x.Property.Name}], " +
+                                    $"attribute=[{x.Attribute.GetType().FullName}]");
+                            }
 
-                    return list.Select(x => x.Mapping).ToArray();
-                });
-
-            config.AddMapEntry(profile ?? Profile.Default, entry);
-        }
-
-        private static IEnumerable<MappingEntry> CreateTypeEntries(IMappingCreateContext context, Type type)
-        {
-            return type.GetCustomAttributes()
-                .OfType<ITypeMappingAttribute>()
-                .Select(x => new MappingEntry(
-                    x.Offset,
-                    x.CalcSize(type),
-                    x.CreateMapping(context, type)));
-        }
-
-        private static IEnumerable<MappingEntry> CreateMemberEntries(IMappingCreateContext context, Type type)
-        {
-            return type.GetProperties()
-                .Select(x => new
-                {
-                    Property = x,
-                    Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
-                    ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
-                })
-                .Where(x => x.Attribute != null)
-                .Select(x =>
-                {
-                    var delegateFactory = context.Components.Get<IDelegateFactory>();
-
-                    if (x.ArrayAttribute != null)
-                    {
-                        if (!x.Property.PropertyType.IsArray)
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{typeof(MapArrayAttribute).FullName}]");
-                        }
-
-                        var elementType = x.Property.PropertyType.GetElementType();
-                        var elementSize = x.Attribute.CalcSize(elementType);
-
-                        var converter = x.Attribute.CreateConverter(context, elementType);
-                        if (converter == null)
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{x.Attribute.GetType().FullName}]");
-                        }
-
-                        return new MappingEntry(
-                            x.Attribute.Offset,
-                            x.ArrayAttribute.CalcSize(elementSize),
-                            new MemberMapping(
+                            return new MappingEntry(
                                 x.Attribute.Offset,
-                                x.ArrayAttribute.CreateArrayConverter(
-                                    context,
-                                    delegateFactory.CreateArrayAllocator(elementType),
-                                    elementSize,
-                                    converter),
-                                delegateFactory.CreateGetter(x.Property),
-                                delegateFactory.CreateSetter(x.Property)));
-                    }
-                    else
-                    {
-                        var converter = x.Attribute.CreateConverter(context, x.Property.PropertyType);
-                        if (converter == null)
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{x.Attribute.GetType().FullName}]");
+                                x.ArrayAttribute.CalcSize(elementSize),
+                                new MemberMapper(
+                                    x.Attribute.Offset,
+                                    x.ArrayAttribute.CreateArrayConverter(
+                                        components,
+                                        parameters,
+                                        delegateFactory.CreateArrayAllocator(elementType),
+                                        elementSize,
+                                        converter),
+                                    delegateFactory.CreateGetter(x.Property),
+                                    delegateFactory.CreateSetter(x.Property)));
                         }
+                        else
+                        {
+                            var converter = x.Attribute.CreateConverter(components, parameters, x.Property.PropertyType);
+                            if (converter == null)
+                            {
+                                throw new ByteMapperException(
+                                    "Attribute does not match property. " +
+                                    $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                    $"property=[{x.Property.Name}], " +
+                                    $"attribute=[{x.Attribute.GetType().FullName}]");
+                            }
 
-                        return new MappingEntry(
-                            x.Attribute.Offset,
-                            x.Attribute.CalcSize(x.Property.PropertyType),
-                            new MemberMapping(
+                            return new MappingEntry(
                                 x.Attribute.Offset,
-                                converter,
-                                delegateFactory.CreateGetter(x.Property),
-                                delegateFactory.CreateSetter(x.Property)));
-                    }
-                });
-        }
+                                x.Attribute.CalcSize(x.Property.PropertyType),
+                                new MemberMapper(
+                                    x.Attribute.Offset,
+                                    converter,
+                                    delegateFactory.CreateGetter(x.Property),
+                                    delegateFactory.CreateSetter(x.Property)));
+                        }
+                    });
+            }
 
-        private static readonly IComparer<MappingEntry> Comparer = Comparers.Delegate<MappingEntry>((x, y) => x.Offset - y.Offset);
+            private static readonly IComparer<MappingEntry> Comparer = Comparers.Delegate<MappingEntry>((x, y) => x.Offset - y.Offset);
 
-        internal class MappingEntry
-        {
-            public int Offset { get; }
-
-            public int Size { get; }
-
-            public IMapping Mapping { get; }
-
-            public MappingEntry(int offset, int size, IMapping mapping)
+            internal class MappingEntry
             {
-                Offset = offset;
-                Size = size;
-                Mapping = mapping;
+                public int Offset { get; }
+
+                public int Size { get; }
+
+                public IMapper Mapper { get; }
+
+                public MappingEntry(int offset, int size, IMapper mapper)
+                {
+                    Offset = offset;
+                    Size = size;
+                    Mapper = mapper;
+                }
             }
         }
     }

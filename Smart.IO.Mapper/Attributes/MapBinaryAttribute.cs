@@ -2,7 +2,9 @@
 {
     using System;
 
+    using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
+    using Smart.IO.Mapper.Helpers;
 
     public sealed class MapBinaryAttribute : AbstractPropertyAttribute
     {
@@ -51,9 +53,9 @@
             return 0;
         }
 
-        public override IByteConverter CreateConverter(IMappingCreateContext context, Type type)
+        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            var targetEndian = endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            var targetEndian = endian ?? parameters.GetParameter<Endian>(Parameter.Endian);
 
             if (type == typeof(int))
             {
