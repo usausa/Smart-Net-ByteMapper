@@ -6,7 +6,7 @@
     using Smart.ComponentModel;
     using Smart.IO.Mapper.Mappers;
 
-    public class MapBuilder<T> : IMapTypeSyntax<T>, IMapping
+    public class MapBuilder<T> : ITypeSyntax<T>, IMapping
     {
         public Type Type { get; }
 
