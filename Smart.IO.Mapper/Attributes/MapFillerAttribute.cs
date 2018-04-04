@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public sealed class MapFillerAttribute : AbstractTypeMappingAttribute
+    public sealed class MapFillerAttribute : AbstractMapTypeAttribute
     {
         private readonly int length;
 

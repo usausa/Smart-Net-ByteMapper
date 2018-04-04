@@ -7,11 +7,11 @@
     using Smart.IO.Mapper.Mappers;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
-    public abstract class AbstractTypeMappingAttribute : Attribute, ITypeMappingAttribute
+    public abstract class AbstractMapTypeAttribute : Attribute, IMapTypeAttribute
     {
         public int Offset { get; }
 
-        protected AbstractTypeMappingAttribute(int offset)
+        protected AbstractMapTypeAttribute(int offset)
         {
             Offset = offset;
         }

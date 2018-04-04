@@ -96,7 +96,7 @@
         private IEnumerable<MapperPosition> CreateTypeEntries(IComponentContainer components, IMappingParameter parameters)
         {
             return Type.GetCustomAttributes()
-                .OfType<ITypeMappingAttribute>()
+                .OfType<IMapTypeAttribute>()
                 .Select(x => new MapperPosition(
                     x.Offset,
                     x.CalcSize(Type),
@@ -109,7 +109,7 @@
                 .Select(x => new
                 {
                     Property = x,
-                    Attribute = x.GetCustomAttributes().OfType<IPropertyMappingAttribute>().FirstOrDefault(),
+                    Attribute = x.GetCustomAttributes().OfType<IMapPropertyAttribute>().FirstOrDefault(),
                     ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
                 })
                 .Where(x => x.Attribute != null)

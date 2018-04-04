@@ -5,7 +5,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapBytesAttribute : AbstractPropertyAttribute
+    public sealed class MapBytesAttribute : AbstractMapPropertyAttribute
     {
         private readonly int length;
 

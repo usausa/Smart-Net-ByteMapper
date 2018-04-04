@@ -7,7 +7,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapNumberTextAttribute : AbstractPropertyAttribute
+    public sealed class MapNumberTextAttribute : AbstractMapPropertyAttribute
     {
         private readonly int length;
 

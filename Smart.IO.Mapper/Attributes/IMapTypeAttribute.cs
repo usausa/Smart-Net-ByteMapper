@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public interface ITypeMappingAttribute
+    public interface IMapTypeAttribute
     {
         int Offset { get; }
 

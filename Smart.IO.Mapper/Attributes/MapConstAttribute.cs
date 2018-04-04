@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public sealed class MapConstAttribute : AbstractTypeMappingAttribute
+    public sealed class MapConstAttribute : AbstractMapTypeAttribute
     {
         private readonly byte[] content;
 
