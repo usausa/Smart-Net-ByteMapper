@@ -8,7 +8,7 @@
 
         ITypeConfigSyntax<T> UseDelimitter(bool value);
 
-        // TODO param byte[]指定のdelimitter
+        ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter);
 
         ITypeConfigSyntax<T> AddMapper(ITypeMapFactory factory);
 

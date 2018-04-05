@@ -9,6 +9,10 @@
 
     public static class ByteMapperConfigAttributeExtensions
     {
+        //--------------------------------------------------------------------------------
+        // Single
+        //--------------------------------------------------------------------------------
+
         public static ByteMapperConfig MapByAttribute<T>(this ByteMapperConfig config)
         {
             return config.MapByAttribute(typeof(T), null, true);
@@ -61,6 +65,10 @@
 
             return config;
         }
+
+        //--------------------------------------------------------------------------------
+        // Multi
+        //--------------------------------------------------------------------------------
 
         public static ByteMapperConfig MapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types)
         {

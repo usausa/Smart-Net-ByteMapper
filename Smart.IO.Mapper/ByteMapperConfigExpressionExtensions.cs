@@ -5,6 +5,10 @@
 
     public static class ByteMapperConfigExpressionExtensions
     {
+        //--------------------------------------------------------------------------------
+        // ByteMapperConfig
+        //--------------------------------------------------------------------------------
+
         public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config)
         {
             var builder = new MapBuilder<T>(typeof(T));
@@ -37,28 +41,53 @@
             return config;
         }
 
-        // TODO for TypeMap
+        //--------------------------------------------------------------------------------
+        // Type
+        //--------------------------------------------------------------------------------
 
         // Const
+
+        public static ITypeConfigSyntax<T> Const<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
+        {
+            syntax.AddMapper(new ConstMapBuilder(content));
+            return syntax;
+        }
+
+        public static ITypeConfigSyntax<T> Const<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
+        {
+            syntax.AddMapper(offset, new ConstMapBuilder(content));
+            return syntax;
+        }
+
         // Filler
 
-        // TODO expressionが必要か？、引数のバージョンで済まないか？
-
-        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax)
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length)
         {
-            // TODO
-            //var builder = new FillerMapBuilder(length);
-            //syntax.AddMapper()
+            syntax.AddMapper(new FillerMapBuilder(length));
             return syntax;
         }
 
-        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset)
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length, byte filler)
         {
-            // TODO
-            //var builder = new FillerMapBuilder(length);
-            //syntax.AddMapper()
+            syntax.AddMapper(new FillerMapBuilder(length));
             return syntax;
         }
+
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length)
+        {
+            syntax.AddMapper(offset, new FillerMapBuilder(length));
+            return syntax;
+        }
+
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length, byte filler)
+        {
+            syntax.AddMapper(offset, new FillerMapBuilder(length, filler));
+            return syntax;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Property
+        //--------------------------------------------------------------------------------
 
         // TODO for PropetyMap/Property
 

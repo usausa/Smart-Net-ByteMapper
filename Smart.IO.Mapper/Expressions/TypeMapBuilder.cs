@@ -37,6 +37,11 @@
             return this;
         }
 
+        public ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter)
+        {
+            throw new NotImplementedException();
+        }
+
         public ITypeConfigSyntax<T> AddMapper(ITypeMapFactory factory)
         {
             throw new NotImplementedException();
