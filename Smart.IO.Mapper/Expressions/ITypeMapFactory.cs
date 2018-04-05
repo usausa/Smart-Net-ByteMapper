@@ -10,6 +10,6 @@
     {
         int CalcSize(Type type);
 
-        IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type);
+        IMapper CreateMapper(int offset, IComponentContainer components, IMappingParameter parameters, Type type);
     }
 }

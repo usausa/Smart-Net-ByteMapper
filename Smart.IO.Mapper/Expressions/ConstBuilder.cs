@@ -20,9 +20,9 @@
             return content.Length;
         }
 
-        public IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
+        public IMapper CreateMapper(int offset, IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            throw new NotImplementedException();
+            return new ConstMapper(offset, content);
         }
     }
 }

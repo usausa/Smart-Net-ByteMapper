@@ -12,7 +12,7 @@
             return builder;
         }
 
-        public static ITypeConfigSyntax MapByExpression(this ByteMapperConfig config, Type type)
+        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type)
         {
             // TODO ?
             var builder = new MapBuilder<object>(type);
@@ -28,7 +28,7 @@
             return config;
         }
 
-        public static IByteMapperConfig MapByExpression(this ByteMapperConfig config, Type type, Action<ITypeConfigSyntax> action)
+        public static IByteMapperConfig MapByExpression(this ByteMapperConfig config, Type type, Action<ITypeConfigSyntax<object>> action)
         {
             // TODO ?
             var builder = new MapBuilder<object>(type);
@@ -41,6 +41,24 @@
 
         // Const
         // Filler
+
+        // TODO expressionが必要か？、引数のバージョンで済まないか？
+
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax)
+        {
+            // TODO
+            //var builder = new FillerMapBuilder(length);
+            //syntax.AddMapper()
+            return syntax;
+        }
+
+        public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset)
+        {
+            // TODO
+            //var builder = new FillerMapBuilder(length);
+            //syntax.AddMapper()
+            return syntax;
+        }
 
         // TODO for PropetyMap/Property
 
