@@ -6,12 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IBytesSyntax
-    {
-        // TODO
-    }
-
-    public sealed class BytesMapBuilder : IPropertyMapFactory, IBytesSyntax
+    public sealed class BytesMapBuilder : IPropertyMapFactory
     {
         public int Offset { get; set; } // TODO
 

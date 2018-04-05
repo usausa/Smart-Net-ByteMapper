@@ -6,12 +6,7 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public interface IConstSyntax
-    {
-        // TODO
-    }
-
-    public sealed class ConstMapBuilder : ITypeMapFactory, IConstSyntax
+    public sealed class ConstMapBuilder : ITypeMapFactory
     {
         // TODO
         public int Offset { get; set; }
