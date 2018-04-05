@@ -6,12 +6,12 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IBinarySyntax
+    public interface IMapDateTimeSyntax
     {
         // TODO
     }
 
-    internal sealed class BinaryMapBuilder : IPropertyMapFactory, IBinarySyntax
+    internal sealed class MapDateTimeExpression : IMemberMapFactory, IMapDateTimeSyntax
     {
         public int CalcSize(Type type)
         {

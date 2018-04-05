@@ -6,7 +6,12 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    internal sealed class BytesMapBuilder : IPropertyMapFactory
+    public interface IMapBinarySyntax
+    {
+        // TODO
+    }
+
+    internal sealed class MapBinaryExpression : IMemberMapFactory, IMapBinarySyntax
     {
         public int CalcSize(Type type)
         {
@@ -17,5 +22,7 @@
         {
             throw new NotImplementedException();
         }
+
+        // TODO
     }
 }

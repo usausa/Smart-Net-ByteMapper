@@ -6,18 +6,18 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    internal sealed class FillerMapBuilder : ITypeMapFactory
+    internal sealed class MapFillerExpression : ITypeMapFactory
     {
         private readonly int length;
 
         private readonly byte? filler;
 
-        public FillerMapBuilder(int length)
+        public MapFillerExpression(int length)
         {
             this.length = length;
         }
 
-        public FillerMapBuilder(int length, byte filler)
+        public MapFillerExpression(int length, byte filler)
         {
             this.length = length;
             this.filler = filler;

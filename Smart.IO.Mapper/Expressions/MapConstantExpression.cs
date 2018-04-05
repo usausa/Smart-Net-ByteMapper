@@ -6,11 +6,11 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    internal sealed class ConstMapBuilder : ITypeMapFactory
+    internal sealed class MapConstantExpression : ITypeMapFactory
     {
         private readonly byte[] content;
 
-        public ConstMapBuilder(byte[] content)
+        public MapConstantExpression(byte[] content)
         {
             this.content = content;
         }
@@ -22,7 +22,7 @@
 
         public IMapper CreateMapper(int offset, IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            return new ConstMapper(offset, content);
+            return new ConstantMapper(offset, content);
         }
     }
 }

@@ -47,7 +47,7 @@
                 if ((delimiter != null) && (delimiter.Length > 0))
                 {
                     var offset = mapAttribute.Size - delimiter.Length;
-                    list.Add(new MapperPosition(offset, delimiter.Length, new ConstMapper(offset, delimiter)));
+                    list.Add(new MapperPosition(offset, delimiter.Length, new ConstantMapper(offset, delimiter)));
                 }
             }
 
@@ -109,7 +109,7 @@
                 .Select(x => new
                 {
                     Property = x,
-                    Attribute = x.GetCustomAttributes().OfType<IMapPropertyAttribute>().FirstOrDefault(),
+                    Attribute = x.GetCustomAttributes().OfType<IMapMemberAttribute>().FirstOrDefault(),
                     ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
                 })
                 .Where(x => x.Attribute != null)

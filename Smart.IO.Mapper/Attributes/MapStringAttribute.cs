@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapStringAttribute : AbstractMapPropertyAttribute
+    public sealed class MapStringAttribute : AbstractMapMemberAttribute
     {
         private readonly int length;
 

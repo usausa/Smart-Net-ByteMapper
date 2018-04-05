@@ -4,7 +4,7 @@
 
     using Xunit;
 
-    public class MapConstAttributeTest
+    public class MapConstantAttributeTest
     {
         //--------------------------------------------------------------------------------
         // Attribute
@@ -35,7 +35,7 @@
         //--------------------------------------------------------------------------------
 
         [Map(4, AutoDelimitter = true)]
-        [MapConst(0, new byte[] { 0x31, 0x32 })]
+        [MapConstant(0, new byte[] { 0x31, 0x32 })]
         internal class ConstAttributeObject
         {
         }

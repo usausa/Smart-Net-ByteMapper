@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapBinaryAttribute : AbstractMapPropertyAttribute
+    public sealed class MapBinaryAttribute : AbstractMapMemberAttribute
     {
         private static readonly IByteConverter BigEndianIntBinaryConverter = new BigEndianIntBinaryConverter();
 

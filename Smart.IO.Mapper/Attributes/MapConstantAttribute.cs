@@ -6,11 +6,11 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public sealed class MapConstAttribute : AbstractMapTypeAttribute
+    public sealed class MapConstantAttribute : AbstractMapTypeAttribute
     {
         private readonly byte[] content;
 
-        public MapConstAttribute(int offset, byte[] content)
+        public MapConstantAttribute(int offset, byte[] content)
             : base(offset)
         {
             this.content = content;
@@ -23,7 +23,7 @@
 
         public override IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            return new ConstMapper(Offset, content);
+            return new ConstantMapper(Offset, content);
         }
     }
 }

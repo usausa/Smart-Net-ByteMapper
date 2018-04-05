@@ -7,11 +7,11 @@
     using Smart.IO.Mapper.Helpers;
 
     [AttributeUsage(AttributeTargets.Property)]
-    public abstract class AbstractMapPropertyAttribute : Attribute, IMapPropertyAttribute
+    public abstract class AbstractMapMemberAttribute : Attribute, IMapMemberAttribute
     {
         public int Offset { get; }
 
-        protected AbstractMapPropertyAttribute(int offset)
+        protected AbstractMapMemberAttribute(int offset)
         {
             Offset = offset;
         }

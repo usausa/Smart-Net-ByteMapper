@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapByteAttribute : AbstractMapPropertyAttribute
+    public sealed class MapByteAttribute : AbstractMapMemberAttribute
     {
         private static readonly IByteConverter ByteConverter = new ByteConverter();
 

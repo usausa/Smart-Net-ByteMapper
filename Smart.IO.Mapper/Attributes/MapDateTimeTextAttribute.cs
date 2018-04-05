@@ -7,7 +7,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapDateTimeTextAttribute : AbstractMapPropertyAttribute
+    public sealed class MapDateTimeTextAttribute : AbstractMapMemberAttribute
     {
         private readonly int length;
 

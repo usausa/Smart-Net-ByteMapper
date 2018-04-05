@@ -2,7 +2,7 @@
 {
     using System;
 
-    public sealed class ConstMapper : IMapper
+    public sealed class ConstantMapper : IMapper
     {
         private readonly int offset;
 
@@ -12,7 +12,7 @@
 
         public bool CanWrite => true;
 
-        public ConstMapper(int offset, byte[] content)
+        public ConstantMapper(int offset, byte[] content)
         {
             this.offset = offset;
             this.content = content;

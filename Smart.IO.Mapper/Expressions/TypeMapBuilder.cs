@@ -2,13 +2,19 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq.Expressions;
 
     using Smart.ComponentModel;
     using Smart.IO.Mapper.Mappers;
 
     internal class MapBuilder<T> : ITypeConfigSyntax<T>, IMapping
     {
+        private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
+
         // TODO lastOffset max
+
+        // TODO list1
+        // TODO list2
 
         private bool useFiller = true;
 
@@ -25,6 +31,16 @@
             Type = type;
         }
 
+        // Type default
+
+        public ITypeConfigSyntax<T> AddTypeDefault(string key, object value)
+        {
+            parameters[key] = value;
+            return this;
+        }
+
+        // Type setting
+
         public ITypeConfigSyntax<T> UseFiller(bool value)
         {
             useFiller = value;
@@ -37,10 +53,7 @@
             return this;
         }
 
-        public ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter)
-        {
-            throw new NotImplementedException();
-        }
+        // Mapper
 
         public ITypeConfigSyntax<T> AddMapper(ITypeMapFactory factory)
         {
@@ -52,9 +65,34 @@
             throw new NotImplementedException();
         }
 
+        // ForMember
+
+        public ITypeConfigSyntax<T> ForMember(string name, Action<IMemberMapConfigSyntax> config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberMapConfigSyntax> config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberMapConfigSyntax> config)
+        {
+            throw new NotImplementedException();
+        }
+
+        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberMapConfigSyntax> config)
+        {
+            throw new NotImplementedException();
+        }
+
         public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
             throw new NotImplementedException();
         }
+
+        // TODO Entry
+        // TODO Entry
     }
 }

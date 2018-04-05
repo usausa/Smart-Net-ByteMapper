@@ -6,12 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IDateTimeSyntax
-    {
-        // TODO
-    }
-
-    internal sealed class DateTimeMapBuilder : IPropertyMapFactory, IDateTimeSyntax
+    internal sealed class MapByteExpression : IMemberMapFactory
     {
         public int CalcSize(Type type)
         {
@@ -22,7 +17,5 @@
         {
             throw new NotImplementedException();
         }
-
-        // TODO
     }
 }

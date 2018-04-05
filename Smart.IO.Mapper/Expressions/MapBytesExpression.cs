@@ -6,23 +6,18 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface INumberSyntax
+    internal sealed class MapBytesExpression : IMemberMapFactory
     {
-        // TODO
-    }
+        private static readonly IByteConverter ByteConverter = new ByteConverter();
 
-    internal sealed class NumberMapBuilder : IPropertyMapFactory, INumberSyntax
-    {
         public int CalcSize(Type type)
         {
-            throw new NotImplementedException();
+            return 1;
         }
 
         public IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            throw new NotImplementedException();
+            return ByteConverter;
         }
-
-        // TODO
     }
 }

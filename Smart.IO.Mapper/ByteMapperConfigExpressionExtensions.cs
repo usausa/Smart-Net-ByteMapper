@@ -45,17 +45,37 @@
         // Type
         //--------------------------------------------------------------------------------
 
+        // TODO    //ITypeConfigSyntax<T> UseFiller(byte value);
+        // TODO    //ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter);
+
+        //    //public ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter)
+        //    //{
+        //    //    if ((delimitter != null) && (delimitter.Length > 0))
+        //    //    {
+        //    //        useDelimitter = true;
+        //    //        parameters[Parameter.Delimiter] = delimitter;
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        useDelimitter = false;
+        //    //    }
+
+        //    //    return this;
+        //    //}
+
+        // TODO Default
+
         // Const
 
-        public static ITypeConfigSyntax<T> Const<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
         {
-            syntax.AddMapper(new ConstMapBuilder(content));
+            syntax.AddMapper(new MapConstantExpression(content));
             return syntax;
         }
 
-        public static ITypeConfigSyntax<T> Const<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
         {
-            syntax.AddMapper(offset, new ConstMapBuilder(content));
+            syntax.AddMapper(offset, new MapConstantExpression(content));
             return syntax;
         }
 
@@ -63,33 +83,33 @@
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length)
         {
-            syntax.AddMapper(new FillerMapBuilder(length));
+            syntax.AddMapper(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length, byte filler)
         {
-            syntax.AddMapper(new FillerMapBuilder(length));
+            syntax.AddMapper(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length)
         {
-            syntax.AddMapper(offset, new FillerMapBuilder(length));
+            syntax.AddMapper(offset, new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length, byte filler)
         {
-            syntax.AddMapper(offset, new FillerMapBuilder(length, filler));
+            syntax.AddMapper(offset, new MapFillerExpression(length, filler));
             return syntax;
         }
 
         //--------------------------------------------------------------------------------
-        // Property
+        // Member
         //--------------------------------------------------------------------------------
 
-        // TODO for PropetyMap/Property
+        // TODO for MemberMap/Member
 
         // Array
         // Binary

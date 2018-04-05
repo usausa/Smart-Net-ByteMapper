@@ -6,14 +6,12 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IArraySyntax
+    public interface IMapBoolSyntax
     {
-        IArraySyntax Count(int count);
-
-        // TODO Property
+        // TODO
     }
 
-    internal sealed class ArrayMapBuilder : IPropertyMapFactory, IArraySyntax, IPropertyMapConfigSyntax
+    internal sealed class MapBoolExpression : IMemberMapFactory, IMapBoolSyntax
     {
         public int CalcSize(Type type)
         {
@@ -25,10 +23,6 @@
             throw new NotImplementedException();
         }
 
-        public IArraySyntax Count(int count)
-        {
-            // TODO
-            return this;
-        }
+        // TODO
     }
 }

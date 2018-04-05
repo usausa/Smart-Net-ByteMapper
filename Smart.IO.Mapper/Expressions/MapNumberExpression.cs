@@ -6,12 +6,12 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IBoolSyntax
+    public interface IMapNumberSyntax
     {
         // TODO
     }
 
-    internal sealed class BoolMapBuilder : IPropertyMapFactory, IBoolSyntax
+    internal sealed class MapNumberExpression : IMemberMapFactory, IMapNumberSyntax
     {
         public int CalcSize(Type type)
         {

@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapBoolAttribute : AbstractMapPropertyAttribute
+    public sealed class MapBoolAttribute : AbstractMapMemberAttribute
     {
         private byte? trueValue;
 

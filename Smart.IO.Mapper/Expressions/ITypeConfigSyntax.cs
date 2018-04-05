@@ -1,19 +1,34 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
+    using System;
+    using System.Linq.Expressions;
+
     public interface ITypeConfigSyntax<T>
     {
-        // TODO 汎用データ、いくつかはTypedで！、ここはExtensionで？
+        // Type default
+
+        ITypeConfigSyntax<T> AddTypeDefault(string key, object value);
+
+        // Type setting
 
         ITypeConfigSyntax<T> UseFiller(bool value);
 
         ITypeConfigSyntax<T> UseDelimitter(bool value);
 
-        ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter);
+        // Mapper
 
         ITypeConfigSyntax<T> AddMapper(ITypeMapFactory factory);
 
         ITypeConfigSyntax<T> AddMapper(int offset, ITypeMapFactory factory);
 
-        // TODO ForMember
+        // ForMember
+
+        ITypeConfigSyntax<T> ForMember(string name, Action<IMemberMapConfigSyntax> config);
+
+        ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberMapConfigSyntax> config);
+
+        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberMapConfigSyntax> config);
+
+        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberMapConfigSyntax> config);
     }
 }
