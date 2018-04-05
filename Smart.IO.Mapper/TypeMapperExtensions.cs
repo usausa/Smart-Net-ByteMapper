@@ -15,41 +15,6 @@
             mapper.FromByte(buffer, 0, target);
         }
 
-        public static T FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer)
-            where T : new()
-        {
-            var target = new T();
-            mapper.FromByte(buffer, 0, target);
-            return target;
-        }
-
-        public static T FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer, int index)
-            where T : new()
-        {
-            var target = new T();
-            mapper.FromByte(buffer, index, target);
-            return target;
-        }
-
-        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer)
-            where T : new()
-        {
-            return mapper.FromByteMultiple(buffer, 0);
-        }
-
-        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, int start)
-            where T : new()
-        {
-            while (start + mapper.Size <= buffer.Length)
-            {
-                var target = new T();
-                mapper.FromByte(buffer, start, target);
-                yield return target;
-
-                start += buffer.Length;
-            }
-        }
-
         public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, Func<T> factory)
         {
             return mapper.FromByteMultiple(buffer, 0, factory);
@@ -67,17 +32,6 @@
             }
         }
 
-        public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, IEnumerable<byte[]> source)
-            where T : new()
-        {
-            foreach (var buffer in source)
-            {
-                var target = new T();
-                mapper.FromByte(buffer, 0, target);
-                yield return target;
-            }
-        }
-
         public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, IEnumerable<byte[]> source, Func<T> factory)
         {
             foreach (var buffer in source)
@@ -86,20 +40,6 @@
                 mapper.FromByte(buffer, 0, target);
                 yield return target;
             }
-        }
-
-        public static T FromStream<T>(this ITypeMapper<T> mapper, Stream stream)
-            where T : new()
-        {
-            var buffer = new byte[mapper.Size];
-            if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
-            {
-                return default;
-            }
-
-            var target = new T();
-            mapper.FromByte(buffer, 0, target);
-            return target;
         }
 
         public static bool FromStream<T>(this ITypeMapper<T> mapper, Stream stream, T target)
@@ -112,18 +52,6 @@
 
             mapper.FromByte(buffer, 0, target);
             return true;
-        }
-
-        public static IEnumerable<T> FromStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream)
-            where T : new()
-        {
-            var buffer = new byte[mapper.Size];
-            while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
-            {
-                var target = new T();
-                mapper.FromByte(buffer, 0, target);
-                yield return target;
-            }
         }
 
         public static IEnumerable<T> FromStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, Func<T> factory)

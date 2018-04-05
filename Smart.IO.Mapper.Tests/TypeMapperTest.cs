@@ -22,44 +22,20 @@
             // Default index
             mapper.FromByte(buffer, new TargetObject());
 
-            // With create
-            Assert.NotNull(mapper.FromByte(buffer));
-
-            // With create index
-            Assert.NotNull(mapper.FromByte(buffer, 0));
-
-            // Mutliple
-            Assert.Single(mapper.FromByteMultiple(buffer));
-
-            // Mutliple index
-            Assert.Single(mapper.FromByteMultiple(buffer, 0));
-
             // Mutliple factory
             Assert.Single(mapper.FromByteMultiple(buffer, () => new TargetObject()));
 
             // Mutliple index factory
             Assert.Single(mapper.FromByteMultiple(buffer, 0, () => new TargetObject()));
 
-            // Multiple IEnumerable
-            Assert.Single(mapper.FromByteMultiple(Enumerable.Repeat(buffer, 1)));
-
             // Multiple IEnumerable factory
             Assert.Single(mapper.FromByteMultiple(Enumerable.Repeat(buffer, 1), () => new TargetObject()));
-
-            // Stream create
-            Assert.NotNull(mapper.FromStream(new MemoryStream(buffer)));
-
-            // Stream create can't read
-            Assert.Null(mapper.FromStream(new MemoryStream()));
 
             // Stream
             Assert.True(mapper.FromStream(new MemoryStream(buffer), new TargetObject()));
 
             // Stream can't read
             Assert.False(mapper.FromStream(new MemoryStream(), new TargetObject()));
-
-            // Stream Multiple
-            Assert.Single(mapper.FromStreamMultiple(new MemoryStream(buffer)));
 
             // Stream Multiple factory
             Assert.Single(mapper.FromStreamMultiple(new MemoryStream(buffer), () => new TargetObject()));

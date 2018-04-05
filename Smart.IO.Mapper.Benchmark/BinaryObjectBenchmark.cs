@@ -30,12 +30,6 @@
         }
 
         [Benchmark]
-        public BinaryObject ReadBinaryObjectWithNew()
-        {
-            return mapper.FromByte(buffer);
-        }
-
-        [Benchmark]
         public void WriteBinaryObject()
         {
             mapper.ToByte(buffer, obj);
