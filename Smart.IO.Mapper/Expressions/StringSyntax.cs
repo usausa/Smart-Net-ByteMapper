@@ -11,10 +11,8 @@
         // TODO
     }
 
-    public sealed class StringMapBuilder : IPropertyMapFactory, IStringSyntax
+    internal sealed class StringMapBuilder : IPropertyMapFactory, IStringSyntax
     {
-        public int Offset { get; set; } // TODO
-
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -25,11 +23,6 @@
             throw new NotImplementedException();
         }
 
-        // TODO
-    }
-
-    public static class StringMapExtensions
-    {
         // TODO
     }
 }

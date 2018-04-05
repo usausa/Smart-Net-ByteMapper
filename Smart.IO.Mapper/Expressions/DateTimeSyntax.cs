@@ -11,10 +11,8 @@
         // TODO
     }
 
-    public sealed class DateTimeMapBuilder : IPropertyMapFactory, IDateTimeSyntax
+    internal sealed class DateTimeMapBuilder : IPropertyMapFactory, IDateTimeSyntax
     {
-        public int Offset { get; set; } // TODO
-
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -25,11 +23,6 @@
             throw new NotImplementedException();
         }
 
-        // TODO
-    }
-
-    public static class DateTimeMapExtensions
-    {
         // TODO
     }
 }

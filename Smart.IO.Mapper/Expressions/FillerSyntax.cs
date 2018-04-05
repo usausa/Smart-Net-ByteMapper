@@ -11,10 +11,8 @@
         // TODO
     }
 
-    public sealed class FillerMapBuilder : ITypeMapFactory, IFillerSyntax
+    internal sealed class FillerMapBuilder : ITypeMapFactory, IFillerSyntax
     {
-        public int Offset { get; set; } // TODO
-
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -25,11 +23,6 @@
             throw new NotImplementedException();
         }
 
-        // TODO
-    }
-
-    public static class FillerMapExtensions
-    {
         // TODO
     }
 }

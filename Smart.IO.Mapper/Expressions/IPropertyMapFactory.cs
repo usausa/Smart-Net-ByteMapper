@@ -8,8 +8,6 @@
 
     public interface IPropertyMapFactory
     {
-        int Offset { get; }
-
         int CalcSize(Type type);
 
         IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);

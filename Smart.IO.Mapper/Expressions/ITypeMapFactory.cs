@@ -8,8 +8,6 @@
 
     public interface ITypeMapFactory
     {
-        int Offset { get; }
-
         int CalcSize(Type type);
 
         IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type);

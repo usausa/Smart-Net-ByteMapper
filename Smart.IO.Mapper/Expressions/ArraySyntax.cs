@@ -13,10 +13,8 @@
         // TODO Property
     }
 
-    public sealed class ArrayMapBuilder : IPropertyMapFactory, IArraySyntax, IPropertyMapSyntax
+    internal sealed class ArrayMapBuilder : IPropertyMapFactory, IArraySyntax, IPropertyMapConfigSyntax
     {
-        public int Offset { get; set; } // TODO
-
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -32,10 +30,5 @@
             // TODO
             return this;
         }
-    }
-
-    public static class ArrayMapExtensions
-    {
-        // TODO
     }
 }

@@ -11,10 +11,8 @@
         // TODO
     }
 
-    public sealed class ByteMapBuilder : IPropertyMapFactory, IByteSyntax
+    internal sealed class ByteMapBuilder : IPropertyMapFactory, IByteSyntax
     {
-        public int Offset { get; set; } // TODO
-
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -24,10 +22,5 @@
         {
             throw new NotImplementedException();
         }
-    }
-
-    public static class ByteMapExtensions
-    {
-        // TODO
     }
 }

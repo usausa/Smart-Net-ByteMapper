@@ -6,24 +6,23 @@
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
 
-    public sealed class ConstMapBuilder : ITypeMapFactory
+    internal sealed class ConstMapBuilder : ITypeMapFactory
     {
-        // TODO
-        public int Offset { get; set; }
+        private readonly byte[] content;
+
+        public ConstMapBuilder(byte[] content)
+        {
+            this.content = content;
+        }
 
         public int CalcSize(Type type)
         {
-            throw new NotImplementedException();
+            return content.Length;
         }
 
         public IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             throw new NotImplementedException();
         }
-    }
-
-    public static class ConstMapExtensions
-    {
-        // TODO
     }
 }
