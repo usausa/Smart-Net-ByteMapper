@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class DateTimeOffsetTextConverter : IMapConverter
+    internal sealed class DateTimeOffsetTextConverter : IMapConverter
     {
         private readonly int length;
 

@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class IntTextConverter : IMapConverter
+    internal sealed class IntTextConverter : IMapConverter
     {
         private readonly int length;
 

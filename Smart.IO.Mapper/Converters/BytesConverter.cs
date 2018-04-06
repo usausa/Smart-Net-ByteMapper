@@ -4,13 +4,13 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapsConverter : IMapConverter
+    internal sealed class BytesConverter : IMapConverter
     {
         private readonly int length;
 
         private readonly byte filler;
 
-        public MapsConverter(int length, byte filler)
+        public BytesConverter(int length, byte filler)
         {
             this.length = length;
             this.filler = filler;

@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class ArrayConverter : IMapConverter
+    internal class ArrayConverter : IMapConverter
     {
         private readonly int count;
 

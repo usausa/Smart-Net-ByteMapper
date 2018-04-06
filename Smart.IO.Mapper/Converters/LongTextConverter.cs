@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class LongTextConverter : IMapConverter
+    internal sealed class LongTextConverter : IMapConverter
     {
         private readonly int length;
 

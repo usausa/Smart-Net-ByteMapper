@@ -32,7 +32,7 @@
         {
             if (type == typeof(byte[]))
             {
-                return new MapsConverter(
+                return new BytesConverter(
                     length,
                     filler ?? parameters.GetParameter<byte>(Parameter.Filler));
             }

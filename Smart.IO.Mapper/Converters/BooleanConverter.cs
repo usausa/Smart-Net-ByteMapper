@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Converters
 {
-    public sealed class BooleanConverter : IMapConverter
+    internal sealed class BooleanConverter : IMapConverter
     {
         private readonly byte trueValue;
 
@@ -23,7 +23,7 @@
         }
     }
 
-    public sealed class NullableBooleanConverter : IMapConverter
+    internal sealed class NullableBooleanConverter : IMapConverter
     {
         private readonly byte trueValue;
 
