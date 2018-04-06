@@ -7,7 +7,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IMapStringSyntax
+    public interface IMapTextSyntax
     {
         IMapDateTimeSyntax Encoding(Encoding value);
 
@@ -18,7 +18,7 @@
         IMapDateTimeSyntax Filler(byte value);
     }
 
-    internal sealed class MapStringExpression : IMemberMapFactory, IMapStringSyntax
+    internal sealed class MapTextExpression : IMemberMapFactory, IMapTextSyntax
     {
         public IMapDateTimeSyntax Encoding(Encoding value)
         {

@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapStringAttribute : AbstractMapMemberAttribute
+    public sealed class MapTextAttribute : AbstractMapMemberAttribute
     {
         private readonly int length;
 
@@ -58,7 +58,7 @@
             set => filler = value;
         }
 
-        public MapStringAttribute(int offset, int length)
+        public MapTextAttribute(int offset, int length)
             : base(offset)
         {
             this.length = length;
@@ -73,7 +73,7 @@
         {
             if (type == typeof(string))
             {
-                return new StringConverter(
+                return new TextConverter(
                     length,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     trim ?? parameters.GetParameter<bool>(Parameter.Trim),

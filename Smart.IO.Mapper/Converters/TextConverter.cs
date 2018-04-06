@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class StringConverter : IByteConverter
+    public sealed class TextConverter : IByteConverter
     {
         private readonly Encoding encoding;
 
@@ -16,7 +16,7 @@
 
         public int Length { get; }
 
-        public StringConverter(
+        public TextConverter(
             int length,
             Encoding encoding,
             bool trim,

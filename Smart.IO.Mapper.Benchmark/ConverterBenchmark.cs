@@ -15,7 +15,7 @@
 
         private byte[] intBinaryBuffer;
 
-        private StringConverter stringW10Converter;
+        private TextConverter stringW10Converter;
 
         private byte[] stringW10Buffer;
 
@@ -34,7 +34,7 @@
             intBinaryConverter = new BigEndianIntBinaryConverter();
             intBinaryBuffer = new byte[sizeof(int)];
 
-            stringW10Converter = new StringConverter(
+            stringW10Converter = new TextConverter(
                 20,
                 stringEncoding,
                 true,

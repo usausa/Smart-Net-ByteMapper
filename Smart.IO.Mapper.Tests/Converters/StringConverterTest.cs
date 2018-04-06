@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class StringConverterTest
+    public class TextConverterTest
     {
         private const int Offset = 1;
 
@@ -24,9 +24,9 @@
 
         private static readonly Encoding Encoding;
 
-        private readonly StringConverter converter;
+        private readonly TextConverter converter;
 
-        static StringConverterTest()
+        static TextConverterTest()
         {
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             Encoding = Encoding.GetEncoding(932);
@@ -36,9 +36,9 @@
             OverflowBytes = TestBytes.Offset(Offset, Encoding.GetBytes(OverflowValue.Substring(0, Length)));
         }
 
-        public StringConverterTest()
+        public TextConverterTest()
         {
-            converter = new StringConverter(
+            converter = new TextConverter(
                 Length,
                 Encoding,
                 true,
@@ -51,7 +51,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToString()
+        public void ReadToText()
         {
             // Empty
             Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
@@ -61,7 +61,7 @@
         }
 
         [Fact]
-        public void WriteStringToBuffer()
+        public void WriteTextToBuffer()
         {
             var buffer = new byte[Length + Offset];
 

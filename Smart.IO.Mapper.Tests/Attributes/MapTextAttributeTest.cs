@@ -5,7 +5,7 @@
 
     using Xunit;
 
-    public class MapStringAttributeTest
+    public class MapTextAttributeTest
     {
         //--------------------------------------------------------------------------------
         // Attribute
@@ -20,12 +20,12 @@
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
-                .CreateMapByAttribute<StringAttributeObject>()
+                .CreateMapByAttribute<TextAttributeObject>()
                 .ToByteMapper();
-            var mapper = byteMapper.Create<StringAttributeObject>();
+            var mapper = byteMapper.Create<TextAttributeObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new StringAttributeObject();
+            var obj = new TextAttributeObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
@@ -47,7 +47,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new MapStringAttribute(0, 0);
+            var attribute = new MapTextAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.CodePage);
             Assert.Throws<NotSupportedException>(() => attribute.EncodingName);
@@ -63,15 +63,15 @@
         //--------------------------------------------------------------------------------
 
         [Map(10)]
-        internal class StringAttributeObject
+        internal class TextAttributeObject
         {
-            [MapString(0, 4)]
+            [MapText(0, 4)]
             public string StringValue { get; set; }
 
-            [MapString(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = (byte)'_')]
+            [MapText(4, 4, EncodingName = "ASCII", Trim = false, Padding = Padding.Right, Filler = (byte)'_')]
             public string CustomStringValue { get; set; }
 
-            [MapString(8, 2, CodePage = 20127, Filler = (byte)'_')]
+            [MapText(8, 2, CodePage = 20127, Filler = (byte)'_')]
             public string CustomStringValue2 { get; set; }
         }
     }

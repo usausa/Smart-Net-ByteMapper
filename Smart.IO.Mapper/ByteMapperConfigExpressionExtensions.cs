@@ -184,9 +184,9 @@
 
         // String
 
-        public static IMapStringSyntax String(this IMemberMapConfigSyntax syntax, int length)
+        public static IMapTextSyntax Text(this IMemberMapConfigSyntax syntax, int length)
         {
-            var expression = new MapStringExpression();
+            var expression = new MapTextExpression();
             syntax.Map(expression);
             return expression;
         }
