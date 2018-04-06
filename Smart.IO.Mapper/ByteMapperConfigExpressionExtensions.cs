@@ -1,6 +1,8 @@
 ﻿namespace Smart.IO.Mapper
 {
     using System;
+    using System.Globalization;
+    using System.Text;
 
     using Smart.IO.Mapper.Expressions;
 
@@ -40,23 +42,96 @@
 
         // Default
 
-        // TODO    //ITypeConfigSyntax<T> UseFiller(byte value);
-        // TODO    //ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter);
+        public static ITypeConfigSyntax<T> TypeDelimiter<T>(this ITypeConfigSyntax<T> syntax, byte[] value)
+        {
+            return syntax.TypeDefault(Parameter.Delimiter, value);
+        }
 
-        //    //public ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter)
-        //    //{
-        //    //    if ((delimitter != null) && (delimitter.Length > 0))
-        //    //    {
-        //    //        useDelimitter = true;
-        //    //        parameters[Parameter.Delimiter] = delimitter;
-        //    //    }
-        //    //    else
-        //    //    {
-        //    //        useDelimitter = false;
-        //    //    }
+        public static ITypeConfigSyntax<T> TypeEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        {
+            return syntax.TypeDefault(Parameter.Encoding, value);
+        }
 
-        //    //    return this;
-        //    //}
+        public static ITypeConfigSyntax<T> TypeCulture<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        {
+            return syntax.TypeDefault(Parameter.Culture, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
+        {
+            return syntax.TypeDefault(Parameter.NumberStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDecimalStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
+        {
+            return syntax.TypeDefault(Parameter.DecimalStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeStyle<T>(this ITypeConfigSyntax<T> syntax, DateTimeStyles value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeTrim<T>(this ITypeConfigSyntax<T> syntax, bool value)
+        {
+            return syntax.TypeDefault(Parameter.Trim, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeTextPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
+        {
+            return syntax.TypeDefault(Parameter.TextPadding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
+        {
+            return syntax.TypeDefault(Parameter.NumberPadding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.Filler, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.TextFiller, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.NumberFiller, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeEndian<T>(this ITypeConfigSyntax<T> syntax, Endian value)
+        {
+            return syntax.TypeDefault(Parameter.Endian, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.TrueValue, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeFalseValue<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.FalseValue, value);
+        }
+
+        // Type
+
+        public static ITypeConfigSyntax<T> UseDelimitter<T>(this ITypeConfigSyntax<T> syntax, byte[] value)
+        {
+            if ((value != null) && (value.Length > 0))
+            {
+                syntax.UseDelimitter(true).TypeDelimiter(value);
+            }
+            else
+            {
+                syntax.UseDelimitter(false).TypeDelimiter(null);
+            }
+
+            return syntax;
+        }
 
         // Const
 

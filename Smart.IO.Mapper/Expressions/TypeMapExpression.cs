@@ -16,7 +16,7 @@
 
         private readonly List<MemberMapEntry> memberMapEntries = new List<MemberMapEntry>();
 
-        private bool useFiller = true;
+        private bool autoFiller = true;
 
         private bool useDelimitter = true;
 
@@ -45,9 +45,9 @@
 
         // Type setting
 
-        public ITypeConfigSyntax<T> UseFiller(bool value)
+        public ITypeConfigSyntax<T> AutoFiller(bool value)
         {
-            useFiller = value;
+            autoFiller = value;
             return this;
         }
 
