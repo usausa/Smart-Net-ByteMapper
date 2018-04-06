@@ -6,22 +6,28 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public interface IMapArraySyntax
+    public interface IMapBooleanSyntax
     {
-        IMapArraySyntax Count(int count);
+        IMapBooleanSyntax True(byte value);
 
-        // TODO Member
+        IMapBooleanSyntax False(byte value);
+
+        IMapBooleanSyntax Null(byte value);
     }
 
-    internal sealed class MapArrayExpression : IMemberMapFactory, IMapArraySyntax, IMemberMapConfigSyntax
+    internal sealed class MapBooleanExpression : IMemberMapFactory, IMapBooleanSyntax
     {
-        public IMapArraySyntax Count(int count)
+        public IMapBooleanSyntax True(byte value)
         {
-            // TODO
-            return this;
+            throw new NotImplementedException();
         }
 
-        public void SetMemberMapFactory(IMemberMapFactory factory)
+        public IMapBooleanSyntax False(byte value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapBooleanSyntax Null(byte value)
         {
             throw new NotImplementedException();
         }

@@ -9,36 +9,28 @@
         // ByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config)
+        public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config, int size)
         {
-            var builder = new MapBuilder<T>(typeof(T));
-            config.AddMapping(builder);
-            return builder;
+            return config.MapByExpression<T>(size, null);
         }
 
-        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type)
+        public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config, int size, string profile)
         {
-            // TODO ?
-            var builder = new MapBuilder<object>(type);
-            config.AddMapping(builder);
-            return builder;
+            var expression = new TypeMapExpression<T>(typeof(T), profile, size);
+            config.AddMapping(expression);
+            return expression;
         }
 
-        public static IByteMapperConfig MapByExpression<T>(this ByteMapperConfig config, Action<ITypeConfigSyntax<T>> action)
+        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type, int size)
         {
-            var builder = new MapBuilder<T>(typeof(T));
-            action(builder);
-            config.AddMapping(builder);
-            return config;
+            return config.MapByExpression(type, size, null);
         }
 
-        public static IByteMapperConfig MapByExpression(this ByteMapperConfig config, Type type, Action<ITypeConfigSyntax<object>> action)
+        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
         {
-            // TODO ?
-            var builder = new MapBuilder<object>(type);
-            action(builder);
-            config.AddMapping(builder);
-            return config;
+            var expression = new TypeMapExpression<object>(type, profile, size);
+            config.AddMapping(expression);
+            return expression;
         }
 
         //--------------------------------------------------------------------------------
@@ -69,13 +61,13 @@
 
         public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
         {
-            syntax.AddMapper(new MapConstantExpression(content));
+            syntax.AddTypeMapFactory(new MapConstantExpression(content));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
         {
-            syntax.AddMapper(offset, new MapConstantExpression(content));
+            syntax.AddTypeMapFactory(offset, new MapConstantExpression(content));
             return syntax;
         }
 
@@ -83,25 +75,25 @@
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length)
         {
-            syntax.AddMapper(new MapFillerExpression(length));
+            syntax.AddTypeMapFactory(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length, byte filler)
         {
-            syntax.AddMapper(new MapFillerExpression(length));
+            syntax.AddTypeMapFactory(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length)
         {
-            syntax.AddMapper(offset, new MapFillerExpression(length));
+            syntax.AddTypeMapFactory(offset, new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length, byte filler)
         {
-            syntax.AddMapper(offset, new MapFillerExpression(length, filler));
+            syntax.AddTypeMapFactory(offset, new MapFillerExpression(length, filler));
             return syntax;
         }
 
@@ -109,11 +101,31 @@
         // Member
         //--------------------------------------------------------------------------------
 
-        // TODO for MemberMap/Member
-
-        // Array
         // Binary
-        // Bool
+
+        public static void Binary(this IMemberMapConfigSyntax syntax)
+        {
+            syntax.SetMemberMapFactory(new MapBinaryExpression(null));
+        }
+
+        public static void Binary(this IMemberMapConfigSyntax syntax, Endian endian)
+        {
+            syntax.SetMemberMapFactory(new MapBinaryExpression(endian));
+        }
+
+        // Boolean
+
+        public static IMapBooleanSyntax Boolean(this IMemberMapConfigSyntax syntax)
+        {
+            var expression = new MapBooleanExpression();
+            syntax.SetMemberMapFactory(expression);
+            return expression;
+        }
+
+        // 2
+        // 3
+
+        // TODO for MemberMap/Member
         // Byte
         // Bytes
         // DateTime

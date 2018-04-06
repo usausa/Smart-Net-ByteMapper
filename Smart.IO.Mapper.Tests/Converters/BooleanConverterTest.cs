@@ -4,7 +4,7 @@
 
     using Xunit;
 
-    public class NullableBoolConverterTest
+    public class BooleanConverterTest
     {
         private const int Offset = 1;
 
@@ -12,19 +12,17 @@
 
         private const byte FalseByte = 0x30;
 
-        private const byte NullByte = 0x00;
-
         private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
 
         private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
 
-        private static readonly byte[] NullBytes = TestBytes.Offset(Offset, new[] { NullByte });
+        private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, new byte[] { 0x00 });
 
-        private readonly NullableBoolConverter converter;
+        private readonly BooleanConverter converter;
 
-        public NullableBoolConverterTest()
+        public BooleanConverterTest()
         {
-            converter = new NullableBoolConverter(TrueByte, FalseByte, NullByte);
+            converter = new BooleanConverter(TrueByte, FalseByte);
         }
 
         //--------------------------------------------------------------------------------
@@ -32,20 +30,20 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToNullableBool()
+        public void ReadToBoolean()
         {
             // True
-            Assert.True((bool?)converter.Read(TrueBytes, Offset));
+            Assert.True((bool)converter.Read(TrueBytes, Offset));
 
             // False
-            Assert.False((bool?)converter.Read(FalseBytes, Offset));
+            Assert.False((bool)converter.Read(FalseBytes, Offset));
 
-            // Null
-            Assert.Null(converter.Read(NullBytes, Offset));
+            // Unknown
+            Assert.False((bool)converter.Read(UnknownBytes, Offset));
         }
 
         [Fact]
-        public void WriteNullableBoolToBuffer()
+        public void WriteBooleanToBuffer()
         {
             var buffer = new byte[1 + Offset];
 
@@ -56,10 +54,6 @@
             // False
             converter.Write(buffer, Offset, false);
             Assert.Equal(FalseBytes, buffer);
-
-            // Null
-            converter.Write(buffer, Offset, null);
-            Assert.Equal(NullBytes, buffer);
         }
     }
 }

@@ -7,7 +7,7 @@
     {
         // Type default
 
-        ITypeConfigSyntax<T> AddTypeDefault(string key, object value);
+        ITypeConfigSyntax<T> TypeDefault(string key, object value);
 
         // Type setting
 
@@ -17,18 +17,18 @@
 
         // Mapper
 
-        ITypeConfigSyntax<T> AddMapper(ITypeMapFactory factory);
+        ITypeConfigSyntax<T> AddTypeMapFactory(ITypeMapFactory factory);
 
-        ITypeConfigSyntax<T> AddMapper(int offset, ITypeMapFactory factory);
+        ITypeConfigSyntax<T> AddTypeMapFactory(int offset, ITypeMapFactory factory);
 
         // ForMember
 
-        ITypeConfigSyntax<T> ForMember(string name, Action<IMemberMapConfigSyntax> config);
+        ITypeConfigSyntax<T> ForMember(string name, Action<IMemberConfigSyntax> config);
 
-        ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberMapConfigSyntax> config);
+        ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberConfigSyntax> config);
 
-        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberMapConfigSyntax> config);
+        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberConfigSyntax> config);
 
-        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberMapConfigSyntax> config);
+        ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberConfigSyntax> config);
     }
 }

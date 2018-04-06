@@ -4,7 +4,7 @@
 
     using Xunit;
 
-    public class MapBoolAttributeTest
+    public class MapBooleanAttributeTest
     {
         private const byte Filler = 0x00;
 
@@ -21,19 +21,19 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByBoolAttribute()
+        public void MapByBooleanAttribute()
         {
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(Filler)
                 .DefaultTrueValue(True)
                 .DefaultFalseValue(False)
-                .MapByAttribute<BoolAttributeObject>()
+                .MapByAttribute<BooleanAttributeObject>()
                 .ToByteMapper();
-            var mapper = byteMapper.Create<BoolAttributeObject>();
+            var mapper = byteMapper.Create<BooleanAttributeObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new BoolAttributeObject();
+            var obj = new BooleanAttributeObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
@@ -43,18 +43,18 @@
             // Read
             mapper.FromByte(new[] { True, True, Yes, Yes }, 0, obj);
 
-            Assert.True(obj.BoolValue);
-            Assert.True(obj.NullableBoolValue);
-            Assert.True(obj.CustomBoolValue);
-            Assert.True(obj.CustomNullableBoolValue);
+            Assert.True(obj.BooleanValue);
+            Assert.True(obj.NullableBooleanValue);
+            Assert.True(obj.CustomBooleanValue);
+            Assert.True(obj.CustomNullableBooleanValue);
 
             // Read default
             mapper.FromByte(new[] { Filler, Filler, Filler, Filler }, 0, obj);
 
-            Assert.False(obj.BoolValue);
-            Assert.Null(obj.NullableBoolValue);
-            Assert.False(obj.CustomBoolValue);
-            Assert.Null(obj.CustomNullableBoolValue);
+            Assert.False(obj.BooleanValue);
+            Assert.Null(obj.NullableBooleanValue);
+            Assert.False(obj.CustomBooleanValue);
+            Assert.Null(obj.CustomNullableBooleanValue);
         }
 
         //--------------------------------------------------------------------------------
@@ -64,7 +64,7 @@
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new MapBoolAttribute(0);
+            var attribute = new MapBooleanAttribute(0);
 
             Assert.Throws<NotSupportedException>(() => attribute.TrueValue);
             Assert.Throws<NotSupportedException>(() => attribute.FalseValue);
@@ -78,19 +78,19 @@
         //--------------------------------------------------------------------------------
 
         [Map(4)]
-        internal class BoolAttributeObject
+        internal class BooleanAttributeObject
         {
-            [MapBool(0)]
-            public bool BoolValue { get; set; }
+            [MapBoolean(0)]
+            public bool BooleanValue { get; set; }
 
-            [MapBool(1)]
-            public bool? NullableBoolValue { get; set; }
+            [MapBoolean(1)]
+            public bool? NullableBooleanValue { get; set; }
 
-            [MapBool(2, TrueValue = Yes, FalseValue = No)]
-            public bool CustomBoolValue { get; set; }
+            [MapBoolean(2, TrueValue = Yes, FalseValue = No)]
+            public bool CustomBooleanValue { get; set; }
 
-            [MapBool(3, TrueValue = Yes, FalseValue = No, NullValue = Filler)]
-            public bool? CustomNullableBoolValue { get; set; }
+            [MapBoolean(3, TrueValue = Yes, FalseValue = No, NullValue = Filler)]
+            public bool? CustomNullableBooleanValue { get; set; }
         }
     }
 }

@@ -2,5 +2,6 @@
 {
     public interface IMemberMapConfigSyntax
     {
+        void SetMemberMapFactory(IMemberMapFactory factory);
     }
 }

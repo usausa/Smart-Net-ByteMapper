@@ -6,7 +6,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class MapBoolAttribute : AbstractMapMemberAttribute
+    public sealed class MapBooleanAttribute : AbstractMapMemberAttribute
     {
         private byte? trueValue;
 
@@ -32,7 +32,7 @@
             set => nullValue = value;
         }
 
-        public MapBoolAttribute(int offset)
+        public MapBooleanAttribute(int offset)
             : base(offset)
         {
         }
@@ -46,14 +46,14 @@
         {
             if (type == typeof(bool))
             {
-                return new BoolConverter(
+                return new BooleanConverter(
                     trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
                     falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue));
             }
 
             if (type == typeof(bool?))
             {
-                return new NullableBoolConverter(
+                return new NullableBooleanConverter(
                     trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
                     falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue),
                     nullValue ?? parameters.GetParameter<byte>(Parameter.Filler));
