@@ -79,9 +79,9 @@
             {
                 return new DateTimeTextConverter(
                     length,
+                    format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     filler ?? parameters.GetParameter<byte>(Parameter.Filler),
-                    format,
                     style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                     AttributeParameterHelper.GetProvider(parameters, culture),
                     type);
@@ -91,9 +91,9 @@
             {
                 return new DateTimeOffsetTextConverter(
                     length,
+                    format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     filler ?? parameters.GetParameter<byte>(Parameter.Filler),
-                    format,
                     style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                     AttributeParameterHelper.GetProvider(parameters, culture),
                     type);

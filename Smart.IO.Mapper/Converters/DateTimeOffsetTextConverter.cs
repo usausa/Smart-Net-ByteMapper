@@ -10,11 +10,11 @@
     {
         private readonly int length;
 
+        private readonly string format;
+
         private readonly Encoding encoding;
 
         private readonly byte filler;
-
-        private readonly string format;
 
         private readonly DateTimeStyles style;
 
@@ -24,17 +24,17 @@
 
         public DateTimeOffsetTextConverter(
             int length,
+            string format,
             Encoding encoding,
             byte filler,
-            string format,
             DateTimeStyles style,
             IFormatProvider provider,
             Type type)
         {
             this.length = length;
+            this.format = format;
             this.encoding = encoding;
             this.filler = filler;
-            this.format = format;
             this.style = style;
             this.provider = provider;
             defaultValue = type.GetDefaultValue();

@@ -96,7 +96,7 @@
         private ITypeMapper<T> CreateTypeMapper<T>()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<TargetObject>()
+                .CreateMapByAttribute<TargetObject>()
                 .DefaultDelimiter(null)
                 .ToByteMapper();
             return byteMapper.Create<T>();

@@ -18,7 +18,7 @@
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
-                .MapByAttribute<BinaryAttributeObject>()
+                .CreateMapByAttribute<BinaryAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<BinaryAttributeObject>();
 

@@ -6,13 +6,20 @@
     using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
 
-    internal sealed class MapBinaryExpression : IMemberMapFactory
+    public interface IMapBinarySyntax
     {
-        private readonly Endian? endian;
+        IMapBinarySyntax Endian(Endian value);
+    }
 
-        public MapBinaryExpression(Endian? endian)
+    internal sealed class MapBinaryExpression : IMemberMapFactory, IMapBinarySyntax
+    {
+        private Endian? endian;
+
+        // TODO
+        public IMapBinarySyntax Endian(Endian value)
         {
-            this.endian = endian;
+            endian = value;
+            return this;
         }
 
         public int CalcSize(Type type)
@@ -39,7 +46,5 @@
         {
             throw new NotImplementedException();
         }
-
-        // TODO
     }
 }

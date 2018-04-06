@@ -22,7 +22,7 @@
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeStyle(DateTimeStyles.None)
-                .MapByAttribute<DateTimeTextAttributeObject>()
+                .CreateMapByAttribute<DateTimeTextAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<DateTimeTextAttributeObject>();
 

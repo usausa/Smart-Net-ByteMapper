@@ -13,7 +13,7 @@
         {
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
-                .MapByAttribute<ByteAttributeObject>()
+                .CreateMapByAttribute<ByteAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ByteAttributeObject>();
 

@@ -17,9 +17,9 @@
 
         // Mapper
 
-        ITypeConfigSyntax<T> AddTypeMapFactory(ITypeMapFactory factory);
+        ITypeConfigSyntax<T> Map(ITypeMapFactory factory);
 
-        ITypeConfigSyntax<T> AddTypeMapFactory(int offset, ITypeMapFactory factory);
+        ITypeConfigSyntax<T> Map(int offset, ITypeMapFactory factory);
 
         // ForMember
 

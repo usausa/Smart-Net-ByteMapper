@@ -21,7 +21,7 @@
             return this;
         }
 
-        public void SetMemberMapFactory(IMemberMapFactory factory)
+        public void Map(IMemberMapFactory factory)
         {
             throw new NotImplementedException();
         }

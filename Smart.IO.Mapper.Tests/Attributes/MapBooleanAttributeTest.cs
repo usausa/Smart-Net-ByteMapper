@@ -28,7 +28,7 @@
                 .DefaultFiller(Filler)
                 .DefaultTrueValue(True)
                 .DefaultFalseValue(False)
-                .MapByAttribute<BooleanAttributeObject>()
+                .CreateMapByAttribute<BooleanAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<BooleanAttributeObject>();
 

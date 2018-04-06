@@ -59,12 +59,12 @@
 
         // Mapper
 
-        public ITypeConfigSyntax<T> AddTypeMapFactory(ITypeMapFactory factory)
+        public ITypeConfigSyntax<T> Map(ITypeMapFactory factory)
         {
-            return AddTypeMapFactory(lastOffset, factory);
+            return Map(lastOffset, factory);
         }
 
-        public ITypeConfigSyntax<T> AddTypeMapFactory(int offset, ITypeMapFactory factory)
+        public ITypeConfigSyntax<T> Map(int offset, ITypeMapFactory factory)
         {
             typeMapEntries.Add(new TypeMapEntry(offset, factory.CalcSize(typeof(T)), factory));
             return this;

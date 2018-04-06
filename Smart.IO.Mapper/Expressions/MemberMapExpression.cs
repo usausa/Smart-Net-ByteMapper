@@ -9,7 +9,7 @@
     {
         public IMemberMapFactory Factory { get; private set; }
 
-        public void SetMemberMapFactory(IMemberMapFactory factory)
+        public void Map(IMemberMapFactory factory)
         {
             Factory = factory;
         }
@@ -23,7 +23,7 @@
 
     internal class MemberMapArrayBuilder : IMemberMapConfigSyntax
     {
-        public void SetMemberMapFactory(IMemberMapFactory factory)
+        public void Map(IMemberMapFactory factory)
         {
             throw new NotImplementedException();
         }

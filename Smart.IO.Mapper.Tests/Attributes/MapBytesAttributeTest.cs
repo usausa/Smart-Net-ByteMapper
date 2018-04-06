@@ -16,7 +16,7 @@
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x30)
-                .MapByAttribute<BytesAttributeObject>()
+                .CreateMapByAttribute<BytesAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<BytesAttributeObject>();
 

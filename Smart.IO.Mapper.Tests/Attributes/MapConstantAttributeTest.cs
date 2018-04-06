@@ -17,7 +17,7 @@
                 .DefaultDelimiter(new byte[] { 0x0d, 0x0a })
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultEndian(Endian.Big)
-                .MapByAttribute<ConstAttributeObject>()
+                .CreateMapByAttribute<ConstAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ConstAttributeObject>();
 

@@ -8,14 +8,16 @@
 
     internal sealed class MapByteExpression : IMemberMapFactory
     {
+        private static readonly IByteConverter ByteConverter = new ByteConverter();
+
         public int CalcSize(Type type)
         {
-            throw new NotImplementedException();
+            return 1;
         }
 
         public IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
-            throw new NotImplementedException();
+            return ByteConverter;
         }
     }
 }

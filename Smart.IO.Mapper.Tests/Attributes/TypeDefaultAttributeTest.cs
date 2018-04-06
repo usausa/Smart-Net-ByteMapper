@@ -21,7 +21,7 @@
                 .DefaultNumberPadding(Padding.Left)
                 .DefaultNumberFiller(0x20)
                 .DefaultNumberStyle(NumberStyles.Integer)
-                .MapByAttribute<TypeDefaultAttributeObject>()
+                .CreateMapByAttribute<TypeDefaultAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<TypeDefaultAttributeObject>();
 

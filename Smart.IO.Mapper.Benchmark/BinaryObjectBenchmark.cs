@@ -17,7 +17,7 @@
         public void Setup()
         {
             var byteMapper = new ByteMapperConfig()
-                .MapByAttribute<BinaryObject>()
+                .CreateMapByAttribute<BinaryObject>()
                 .ToByteMapper();
 
             mapper = byteMapper.Create<BinaryObject>();

@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
     using System;
+    using System.Text;
 
     using Smart.ComponentModel;
     using Smart.IO.Mapper.Converters;
@@ -8,11 +9,37 @@
 
     public interface IMapStringSyntax
     {
-        // TODO
+        IMapDateTimeSyntax Encoding(Encoding value);
+
+        IMapDateTimeSyntax Trim(bool value);
+
+        IMapDateTimeSyntax Padding(Padding value);
+
+        IMapDateTimeSyntax Filler(byte value);
     }
 
     internal sealed class MapStringExpression : IMemberMapFactory, IMapStringSyntax
     {
+        public IMapDateTimeSyntax Encoding(Encoding value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapDateTimeSyntax Trim(bool value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapDateTimeSyntax Padding(Padding value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapDateTimeSyntax Filler(byte value)
+        {
+            throw new NotImplementedException();
+        }
+
         public int CalcSize(Type type)
         {
             throw new NotImplementedException();
@@ -22,7 +49,5 @@
         {
             throw new NotImplementedException();
         }
-
-        // TODO
     }
 }

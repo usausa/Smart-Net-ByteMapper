@@ -24,7 +24,7 @@
                 .DefaultNumberFiller(0x20)
                 .DefaultNumberStyle(NumberStyles.Integer)
                 .DefaultDecimalStyle(NumberStyles.Any)
-                .MapByAttribute<NumberTextAttributeObject>()
+                .CreateMapByAttribute<NumberTextAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<NumberTextAttributeObject>();
 

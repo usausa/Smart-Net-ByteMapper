@@ -45,9 +45,9 @@
         {
             return new DateTimeOffsetTextConverter(
                 14,
+                format,
                 Encoding.ASCII,
                 0x20,
-                format,
                 DateTimeStyles.None,
                 DateTimeFormatInfo.InvariantInfo,
                 type);

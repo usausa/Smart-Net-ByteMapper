@@ -20,7 +20,7 @@
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
-                .MapByAttribute<StringAttributeObject>()
+                .CreateMapByAttribute<StringAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<StringAttributeObject>();
 

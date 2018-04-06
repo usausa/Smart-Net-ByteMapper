@@ -17,7 +17,7 @@
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x00)
                 .DefaultEndian(Endian.Big)
-                .MapByAttribute<ArrayAttributeObject>()
+                .CreateMapByAttribute<ArrayAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<ArrayAttributeObject>();
 

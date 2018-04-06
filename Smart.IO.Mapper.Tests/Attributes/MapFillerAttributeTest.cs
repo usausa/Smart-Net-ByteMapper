@@ -18,7 +18,7 @@
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultFiller(0x20)
-                .MapByAttribute<FillerAttributeObject>()
+                .CreateMapByAttribute<FillerAttributeObject>()
                 .ToByteMapper();
             var mapper = byteMapper.Create<FillerAttributeObject>();
 

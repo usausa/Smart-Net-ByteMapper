@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper
 {
     using System;
+
     using Smart.IO.Mapper.Expressions;
 
     public static class ByteMapperConfigExpressionExtensions
@@ -9,24 +10,24 @@
         // ByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config, int size)
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size)
         {
-            return config.MapByExpression<T>(size, null);
+            return config.CreateMapByExpression<T>(size, null);
         }
 
-        public static ITypeConfigSyntax<T> MapByExpression<T>(this ByteMapperConfig config, int size, string profile)
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size, string profile)
         {
             var expression = new TypeMapExpression<T>(typeof(T), profile, size);
             config.AddMapping(expression);
             return expression;
         }
 
-        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type, int size)
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size)
         {
-            return config.MapByExpression(type, size, null);
+            return config.CreateMapByExpression(type, size, null);
         }
 
-        public static ITypeConfigSyntax<object> MapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
         {
             var expression = new TypeMapExpression<object>(type, profile, size);
             config.AddMapping(expression);
@@ -36,6 +37,8 @@
         //--------------------------------------------------------------------------------
         // Type
         //--------------------------------------------------------------------------------
+
+        // Default
 
         // TODO    //ITypeConfigSyntax<T> UseFiller(byte value);
         // TODO    //ITypeConfigSyntax<T> UseDelimitter(params byte[] delimitter);
@@ -55,19 +58,17 @@
         //    //    return this;
         //    //}
 
-        // TODO Default
-
         // Const
 
         public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
         {
-            syntax.AddTypeMapFactory(new MapConstantExpression(content));
+            syntax.Map(new MapConstantExpression(content));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
         {
-            syntax.AddTypeMapFactory(offset, new MapConstantExpression(content));
+            syntax.Map(offset, new MapConstantExpression(content));
             return syntax;
         }
 
@@ -75,25 +76,25 @@
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length)
         {
-            syntax.AddTypeMapFactory(new MapFillerExpression(length));
+            syntax.Map(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length, byte filler)
         {
-            syntax.AddTypeMapFactory(new MapFillerExpression(length));
+            syntax.Map(new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length)
         {
-            syntax.AddTypeMapFactory(offset, new MapFillerExpression(length));
+            syntax.Map(offset, new MapFillerExpression(length));
             return syntax;
         }
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int offset, int length, byte filler)
         {
-            syntax.AddTypeMapFactory(offset, new MapFillerExpression(length, filler));
+            syntax.Map(offset, new MapFillerExpression(length, filler));
             return syntax;
         }
 
@@ -103,14 +104,19 @@
 
         // Binary
 
-        public static void Binary(this IMemberMapConfigSyntax syntax)
+        public static IMapBinarySyntax Binary(this IMemberMapConfigSyntax syntax)
         {
-            syntax.SetMemberMapFactory(new MapBinaryExpression(null));
+            var expression = new MapBinaryExpression();
+            syntax.Map(expression);
+            return expression;
         }
 
         public static void Binary(this IMemberMapConfigSyntax syntax, Endian endian)
         {
-            syntax.SetMemberMapFactory(new MapBinaryExpression(endian));
+            var expression = new MapBinaryExpression();
+            expression
+                .Endian(endian);
+            syntax.Map(expression);
         }
 
         // Boolean
@@ -118,18 +124,71 @@
         public static IMapBooleanSyntax Boolean(this IMemberMapConfigSyntax syntax)
         {
             var expression = new MapBooleanExpression();
-            syntax.SetMemberMapFactory(expression);
+            syntax.Map(expression);
             return expression;
         }
 
-        // 2
-        // 3
+        public static IMapBooleanSyntax Boolean(this IMemberMapConfigSyntax syntax, byte trueValue, byte falseValue)
+        {
+            var expression = new MapBooleanExpression();
+            expression
+                .True(trueValue)
+                .False(falseValue);
+            syntax.Map(expression);
+            return expression;
+        }
 
-        // TODO for MemberMap/Member
+        public static void Boolean(this IMemberMapConfigSyntax syntax, byte trueValue, byte falseValue, byte nullValue)
+        {
+            var expression = new MapBooleanExpression();
+            expression
+                .True(trueValue)
+                .False(falseValue)
+                .Null(nullValue);
+            syntax.Map(expression);
+        }
+
         // Byte
+
+        public static void Byte(this IMemberMapConfigSyntax syntax)
+        {
+            syntax.Map(new MapByteExpression());
+        }
+
         // Bytes
+
+        public static IMapBytesSyntax Bytes(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapBytesExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
         // DateTime
-        // Number
+
+        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, int length, string format)
+        {
+            var expression = new MapDateTimeExpression();
+            syntax.Map(expression);
+            return expression;
+        }
+
+        // Number TODO formatオプション版？
+
+        public static IMapNumberSyntax Number(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapNumberExpression();
+            syntax.Map(expression);
+            return expression;
+        }
+
         // String
+
+        public static IMapStringSyntax String(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapStringExpression();
+            syntax.Map(expression);
+            return expression;
+        }
     }
 }
