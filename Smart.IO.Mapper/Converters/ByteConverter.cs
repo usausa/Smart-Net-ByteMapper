@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Converters
 {
-    public sealed class ByteConverter : IByteConverter
+    public sealed class MapConverter : IMapConverter
     {
         public object Read(byte[] buffer, int index)
         {

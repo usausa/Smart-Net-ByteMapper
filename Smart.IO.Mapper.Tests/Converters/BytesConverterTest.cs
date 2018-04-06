@@ -22,7 +22,7 @@
 
         private static readonly byte[] EmptyBytes;
 
-        private readonly BytesConverter converter;
+        private readonly MapsConverter converter;
 
         static BytesConverterTest()
         {
@@ -33,7 +33,7 @@
 
         public BytesConverterTest()
         {
-            converter = new BytesConverter(Length, 0x00);
+            converter = new MapsConverter(Length, 0x00);
         }
 
         //--------------------------------------------------------------------------------

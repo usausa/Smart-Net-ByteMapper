@@ -8,17 +8,17 @@
 
     public sealed class MapBinaryAttribute : AbstractMapMemberAttribute
     {
-        private static readonly IByteConverter BigEndianIntBinaryConverter = new BigEndianIntBinaryConverter();
+        private static readonly IMapConverter BigEndianIntBinaryConverter = new BigEndianIntBinaryConverter();
 
-        private static readonly IByteConverter LittleEndianIntBinaryConverter = new LittleEndianIntBinaryConverter();
+        private static readonly IMapConverter LittleEndianIntBinaryConverter = new LittleEndianIntBinaryConverter();
 
-        private static readonly IByteConverter BigEndianLongBinaryConverter = new BigEndianLongBinaryConverter();
+        private static readonly IMapConverter BigEndianLongBinaryConverter = new BigEndianLongBinaryConverter();
 
-        private static readonly IByteConverter LittleEndianLongBinaryConverter = new LittleEndianLongBinaryConverter();
+        private static readonly IMapConverter LittleEndianLongBinaryConverter = new LittleEndianLongBinaryConverter();
 
-        private static readonly IByteConverter BigEndianShortBinaryConverter = new BigEndianShortBinaryConverter();
+        private static readonly IMapConverter BigEndianShortBinaryConverter = new BigEndianShortBinaryConverter();
 
-        private static readonly IByteConverter LittleEndianShortBinaryConverter = new LittleEndianShortBinaryConverter();
+        private static readonly IMapConverter LittleEndianShortBinaryConverter = new LittleEndianShortBinaryConverter();
 
         private Endian? endian;
 
@@ -53,7 +53,7 @@
             return 0;
         }
 
-        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             var targetEndian = endian ?? parameters.GetParameter<Endian>(Parameter.Endian);
 

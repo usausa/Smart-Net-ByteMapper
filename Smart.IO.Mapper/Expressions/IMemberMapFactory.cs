@@ -10,6 +10,6 @@
     {
         int CalcSize(Type type);
 
-        IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);
+        IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);
     }
 }

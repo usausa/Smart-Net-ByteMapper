@@ -8,7 +8,7 @@
 
     public sealed class MapByteAttribute : AbstractMapMemberAttribute
     {
-        private static readonly IByteConverter ByteConverter = new ByteConverter();
+        private static readonly IMapConverter MapConverter = new MapConverter();
 
         public MapByteAttribute(int offset)
             : base(offset)
@@ -20,11 +20,11 @@
             return 1;
         }
 
-        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(byte))
             {
-                return ByteConverter;
+                return MapConverter;
             }
 
             return null;

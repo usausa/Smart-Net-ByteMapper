@@ -8,19 +8,13 @@
 
     public interface IMapArraySyntax
     {
-        IMapArraySyntax Count(int count);
+        //IMapArraySyntax Count(int count); 必須
 
         // TODO Member
     }
 
     internal sealed class MapArrayExpression : IMemberMapFactory, IMapArraySyntax, IMemberMapConfigSyntax
     {
-        public IMapArraySyntax Count(int count)
-        {
-            // TODO
-            return this;
-        }
-
         public void Map(IMemberMapFactory factory)
         {
             throw new NotImplementedException();
@@ -31,7 +25,7 @@
             throw new NotImplementedException();
         }
 
-        public IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             throw new NotImplementedException();
         }

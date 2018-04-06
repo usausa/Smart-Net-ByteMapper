@@ -86,7 +86,7 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if ((type == typeof(int)) || (type == typeof(int?)))
             {

@@ -29,7 +29,7 @@
             return elementSize * count;
         }
 
-        public IByteConverter CreateArrayConverter(IComponentContainer components, IMappingParameter parameters, Func<int, Array> allocator, int elementSize, IByteConverter elementConverter)
+        public IMapConverter CreateArrayConverter(IComponentContainer components, IMappingParameter parameters, Func<int, Array> allocator, int elementSize, IMapConverter elementConverter)
         {
             return new ArrayConverter(
                 allocator,

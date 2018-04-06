@@ -28,11 +28,11 @@
             return length;
         }
 
-        public override IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             if (type == typeof(byte[]))
             {
-                return new BytesConverter(
+                return new MapsConverter(
                     length,
                     filler ?? parameters.GetParameter<byte>(Parameter.Filler));
             }

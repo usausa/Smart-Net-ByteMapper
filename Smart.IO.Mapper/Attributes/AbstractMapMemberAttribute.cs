@@ -18,6 +18,6 @@
 
         public abstract int CalcSize(Type type);
 
-        public abstract IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);
+        public abstract IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);
     }
 }

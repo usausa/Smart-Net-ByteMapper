@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Converters
 {
-    public sealed class BigEndianShortBinaryConverter : IByteConverter
+    public sealed class BigEndianShortBinaryConverter : IMapConverter
     {
         public object Read(byte[] buffer, int index)
         {
@@ -13,7 +13,7 @@
         }
     }
 
-    public sealed class LittleEndianShortBinaryConverter : IByteConverter
+    public sealed class LittleEndianShortBinaryConverter : IMapConverter
     {
         public object Read(byte[] buffer, int index)
         {

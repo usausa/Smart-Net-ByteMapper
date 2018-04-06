@@ -8,7 +8,7 @@
     {
         private readonly int offset;
 
-        private readonly IByteConverter converter;
+        private readonly IMapConverter converter;
 
         private readonly Func<object, object> getter;
 
@@ -20,7 +20,7 @@
 
         public MemberMapper(
             int offset,
-            IByteConverter converter,
+            IMapConverter converter,
             Func<object, object> getter,
             Action<object, object> setter)
         {

@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class DecimalTextConverter : IByteConverter
+    public sealed class DecimalTextConverter : IMapConverter
     {
         private readonly int length;
 

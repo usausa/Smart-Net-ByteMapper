@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class ArrayConverter : IByteConverter
+    public class ArrayConverter : IMapConverter
     {
         private readonly int count;
 
@@ -12,9 +12,9 @@
 
         private readonly Func<int, Array> allocator;
 
-        private readonly IByteConverter elementConverter;
+        private readonly IMapConverter elementConverter;
 
-        public ArrayConverter(Func<int, Array> allocator, int count, byte filler, int elementSize, IByteConverter elementConverter)
+        public ArrayConverter(Func<int, Array> allocator, int count, byte filler, int elementSize, IMapConverter elementConverter)
         {
             this.allocator = allocator;
             this.count = count;

@@ -18,7 +18,7 @@
             Offset,
             new byte[12]);
 
-        private readonly IByteConverter converter = new ArrayConverter(
+        private readonly IMapConverter converter = new ArrayConverter(
             x => new int[x],
             3,
             0x00,

@@ -45,7 +45,7 @@
             throw new NotImplementedException();
         }
 
-        public IByteConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
+        public IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
         {
             throw new NotImplementedException();
         }

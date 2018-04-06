@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Helpers;
 
-    public sealed class ShortTextConverter : IByteConverter
+    public sealed class ShortTextConverter : IMapConverter
     {
         private readonly int length;
 
