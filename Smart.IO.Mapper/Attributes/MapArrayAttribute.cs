@@ -9,7 +9,7 @@
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class MapArrayAttribute : Attribute
     {
-        private readonly int count;
+        private readonly int length;
 
         private byte? filler;
 
@@ -19,21 +19,21 @@
             set => filler = value;
         }
 
-        public MapArrayAttribute(int count)
+        public MapArrayAttribute(int length)
         {
-            this.count = count;
+            this.length = length;
         }
 
         public int CalcSize(int elementSize)
         {
-            return elementSize * count;
+            return elementSize * length;
         }
 
         public IMapConverter CreateArrayConverter(IComponentContainer components, IMappingParameter parameters, Func<int, Array> allocator, int elementSize, IMapConverter elementConverter)
         {
             return new ArrayConverter(
                 allocator,
-                count,
+                length,
                 filler ?? parameters.GetParameter<byte>(Parameter.Filler),
                 elementSize,
                 elementConverter);

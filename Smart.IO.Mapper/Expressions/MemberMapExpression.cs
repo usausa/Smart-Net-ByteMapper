@@ -14,7 +14,7 @@
             Factory = factory;
         }
 
-        public IMemberMapConfigSyntax Array(int count)
+        public IMemberMapConfigSyntax Array(int length)
         {
             // TODO thisを返す
             throw new NotImplementedException();

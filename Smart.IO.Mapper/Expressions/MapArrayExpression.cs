@@ -8,7 +8,7 @@
 
     public interface IMapArraySyntax
     {
-        //IMapArraySyntax Count(int count); 必須
+        //IMapArraySyntax Count(int length); 必須
 
         // TODO Member
     }

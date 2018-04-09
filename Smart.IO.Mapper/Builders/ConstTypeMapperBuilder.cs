@@ -8,14 +8,16 @@
     {
         public int Offset { get; set; }
 
+        public byte[] Content { get; set; }
+
         public int CalcSize(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            return Content.Length;
         }
 
         public IMapper CreateMapper(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            return new ConstantMapper(Offset, Content);
         }
     }
 }

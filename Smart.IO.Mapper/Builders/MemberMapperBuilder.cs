@@ -3,6 +3,7 @@
     using System.Reflection;
 
     using Smart.IO.Mapper.Mappers;
+    using Smart.Reflection;
 
     public class MemberMapperBuilder<T> : IMemberMapperBuilder
         where T : IMapConverterBuilder
@@ -23,7 +24,12 @@
 
         public IMapper CreateMapper(IBuilderContext context, PropertyInfo pi)
         {
-            throw new System.NotImplementedException();
+            var delegateFactory = context.Components.Get<IDelegateFactory>();
+            return new MemberMapper(
+                Offset,
+                ConverterBuilder.CreateConverter(context, pi.PropertyType),
+                delegateFactory.CreateGetter(pi),
+                delegateFactory.CreateSetter(pi));
         }
     }
 }

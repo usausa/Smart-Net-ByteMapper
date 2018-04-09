@@ -8,14 +8,21 @@
     {
         public int Offset { get; set; }
 
+        public int Length { get; set; }
+
+        public byte? Filler { get; set; }
+
         public int CalcSize(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            return Length;
         }
 
         public IMapper CreateMapper(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            return new FillMapper(
+                Offset,
+                Length,
+                Filler ?? context.GetParameter<byte>(Parameter.Filler));
         }
     }
 }

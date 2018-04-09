@@ -4,7 +4,7 @@
 
     internal class ArrayConverter : IMapConverter
     {
-        private readonly int count;
+        private readonly int length;
 
         private readonly byte filler;
 
@@ -14,10 +14,10 @@
 
         private readonly IMapConverter elementConverter;
 
-        public ArrayConverter(Func<int, Array> allocator, int count, byte filler, int elementSize, IMapConverter elementConverter)
+        public ArrayConverter(Func<int, Array> allocator, int length, byte filler, int elementSize, IMapConverter elementConverter)
         {
             this.allocator = allocator;
-            this.count = count;
+            this.length = length;
             this.filler = filler;
             this.elementSize = elementSize;
             this.elementConverter = elementConverter;
@@ -25,9 +25,9 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var array = allocator(count);
+            var array = allocator(length);
 
-            for (var i = 0; i < count; i++)
+            for (var i = 0; i < length; i++)
             {
                 array.SetValue(elementConverter.Read(buffer, index), i);
                 index += elementSize;
@@ -40,16 +40,21 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, count * elementSize, filler);
+                buffer.Fill(index, length * elementSize, filler);
             }
             else
             {
                 var array = (Array)value;
 
-                for (var i = 0; i < count; i++)
+                for (var i = 0; i < array.Length; i++)
                 {
                     elementConverter.Write(buffer, index, array.GetValue(i));
                     index += elementSize;
+                }
+
+                if (array.Length < length)
+                {
+                    buffer.Fill(index + (array.Length * elementSize), (length - array.Length) * elementSize, filler);
                 }
             }
         }

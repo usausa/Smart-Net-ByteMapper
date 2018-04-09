@@ -4,6 +4,6 @@
 
     public interface IMemberConfigSyntax : IMemberMapConfigSyntax
     {
-        IMemberMapConfigSyntax Array(int count);
+        IMemberMapConfigSyntax Array(int length);
     }
 }
