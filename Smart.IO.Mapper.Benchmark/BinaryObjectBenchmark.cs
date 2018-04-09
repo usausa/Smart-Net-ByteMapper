@@ -41,7 +41,7 @@
             return mapper.ToByte(obj);
         }
 
-        [Map(40, AutoDelimitter = false, AutoFiller = false)]
+        [Map(40, UseDelimitter = false, AutoFiller = false)]
         public class BinaryObject
         {
             [MapBinary(0)]

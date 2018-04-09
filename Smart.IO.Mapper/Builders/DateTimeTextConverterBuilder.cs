@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class DateTimeTextConverterBuilder : IMapConverterBuilder
+    public sealed class DateTimeTextConverterBuilder : IMapConverterBuilder
     {
         public int Length { get; set; }
 

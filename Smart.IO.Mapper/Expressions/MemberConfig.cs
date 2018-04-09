@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal class MemberConfig : IMemberConfigSyntax
+    internal sealed class MemberConfig : IMemberConfigSyntax
     {
         public IMemberMapExpression Expression { get; private set; }
 
@@ -11,18 +11,17 @@
             Expression = expression;
         }
 
-        public IMemberMapConfigSyntax Array(int length)
+        public void Array(int length, Action<IMemberMapConfigSyntax> config)
         {
-            // TODO thisを返す
-            throw new NotImplementedException();
-        }
-    }
+            var element = new ElementConfig();
+            config(element);
 
-    internal class MemberMapArrayBuilder : IMemberMapConfigSyntax
-    {
-        public void Map(IMemberMapExpression expression)
-        {
-            throw new NotImplementedException();
+            if (element.Expression == null)
+            {
+                throw new InvalidOperationException("Element is not mapped.");
+            }
+
+            Expression = new MapArrayExpression(length, element.Expression.GetMapConverterBuilder());
         }
     }
 }

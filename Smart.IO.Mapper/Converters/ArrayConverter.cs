@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal class ArrayConverter : IMapConverter
+    internal sealed class ArrayConverter : IMapConverter
     {
         private readonly int length;
 

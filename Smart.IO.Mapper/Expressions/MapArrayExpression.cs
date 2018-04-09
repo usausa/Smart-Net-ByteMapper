@@ -1,33 +1,20 @@
-﻿//namespace Smart.IO.Mapper.Expressions
-//{
-//    using System;
+﻿namespace Smart.IO.Mapper.Expressions
+{
+    using Smart.IO.Mapper.Builders;
 
-//    using Smart.ComponentModel;
-//    using Smart.IO.Mapper.Converters;
-//    using Smart.IO.Mapper.Helpers;
+    internal sealed class MapArrayExpression : IMemberMapExpression
+    {
+        private readonly ArrayConverterBuilder builder = new ArrayConverterBuilder();
 
-//    public interface IMapArraySyntax
-//    {
-//        IMapArraySyntax Length(int length); 必須
+        public MapArrayExpression(int length, IMapConverterBuilder elementConverterBuilder)
+        {
+            builder.Length = length;
+            builder.ElementConverterBuilder = elementConverterBuilder;
+        }
 
-//         TODO Member
-//    }
-
-//    internal sealed class MapArrayExpression : IMemberMapFactory, IMapArraySyntax, IMemberMapConfigSyntax
-//    {
-//        public void Map(IMemberMapFactory factory)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public int CalcSize(Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public IMapConverterBuilder GetMapConverterBuilder()
+        {
+            return builder;
+        }
+    }
+}

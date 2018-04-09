@@ -23,14 +23,14 @@
             return config.CreateMapByAttribute(typeof(T), profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, bool validation)
         {
-            return config.CreateMapByAttribute(typeof(T), null, validate);
+            return config.CreateMapByAttribute(typeof(T), null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, string profile, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, string profile, bool validation)
         {
-            return config.CreateMapByAttribute(typeof(T), profile, validate);
+            return config.CreateMapByAttribute(typeof(T), profile, validation);
         }
 
         public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type)
@@ -43,12 +43,12 @@
             return config.CreateMapByAttribute(type, profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, bool validation)
         {
-            return config.CreateMapByAttribute(type, null, validate);
+            return config.CreateMapByAttribute(type, null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, string profile, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, string profile, bool validation)
         {
             if (type == null)
             {
@@ -61,7 +61,7 @@
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
 
-            config.AddMapping(new AttributeMapping(type, mapAttribute, profile, validate));
+            config.AddMapping(new AttributeMapping(type, mapAttribute, profile, validation));
 
             return config;
         }
@@ -80,12 +80,12 @@
             return CreateMapByAttribute(config, types, profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, bool validation)
         {
-            return CreateMapByAttribute(config, types, null, validate);
+            return CreateMapByAttribute(config, types, null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile, bool validate)
+        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile, bool validation)
         {
             if (types == null)
             {
@@ -102,7 +102,7 @@
                 .Where(x => x.Attribute != null);
             foreach (var pair in targets)
             {
-                config.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile, validate));
+                config.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile, validation));
             }
 
             return config;

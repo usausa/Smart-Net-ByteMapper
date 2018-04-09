@@ -5,7 +5,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class TextConverterBuilder : IMapConverterBuilder
+    public sealed class TextConverterBuilder : IMapConverterBuilder
     {
         public int Length { get; set; }
 

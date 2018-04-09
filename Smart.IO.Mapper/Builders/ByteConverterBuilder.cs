@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class ByteConverterBuilder : IMapConverterBuilder
+    public sealed class ByteConverterBuilder : IMapConverterBuilder
     {
         public static ByteConverterBuilder Default { get; } = new ByteConverterBuilder();
 

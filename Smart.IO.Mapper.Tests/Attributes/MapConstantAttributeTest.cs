@@ -34,7 +34,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(4, AutoDelimitter = true)]
+        [Map(4, UseDelimitter = true)]
         [MapConstant(0, new byte[] { 0x31, 0x32 })]
         internal class ConstAttributeObject
         {

@@ -8,7 +8,7 @@
     using Smart.ComponentModel;
     using Smart.Reflection;
 
-    public class ByteMapperConfig : IByteMapperConfig
+    public sealed class ByteMapperConfig : IByteMapperConfig
     {
         private readonly ComponentConfig config = new ComponentConfig();
 

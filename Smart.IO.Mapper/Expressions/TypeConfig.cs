@@ -2,21 +2,25 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Linq.Expressions;
+    using System.Reflection;
 
     using Smart.ComponentModel;
     using Smart.IO.Mapper.Builders;
-    using Smart.IO.Mapper.Converters;
     using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
+    using Smart.Reflection;
 
-    internal class TypeConfig<T> : ITypeConfigSyntax<T>, IMapping
+    internal sealed class TypeConfig<T> : ITypeConfigSyntax<T>, IMapping
     {
-        private readonly Dictionary<string, object> typeParameters = new Dictionary<string, object>();
-
         private readonly List<TypeMapEntry> typeMapEntries = new List<TypeMapEntry>();
 
         private readonly List<MemberMapEntry> memberMapEntries = new List<MemberMapEntry>();
+
+        private readonly Dictionary<string, object> typeParameters = new Dictionary<string, object>();
+
+        private bool validation = true;
 
         private bool autoFiller = true;
 
@@ -37,11 +41,11 @@
             Size = size;
         }
 
-        // Type default
+        // Type setting
 
-        public ITypeConfigSyntax<T> TypeDefault(string key, object value)
+        public ITypeConfigSyntax<T> WithValidation(bool value)
         {
-            typeParameters[key] = value;
+            validation = value;
             return this;
         }
 
@@ -59,6 +63,14 @@
             return this;
         }
 
+        // Type default
+
+        public ITypeConfigSyntax<T> TypeDefault(string key, object value)
+        {
+            typeParameters[key] = value;
+            return this;
+        }
+
         // Mapper
 
         public ITypeConfigSyntax<T> Map(ITypeMapExpression expression)
@@ -69,9 +81,11 @@
         public ITypeConfigSyntax<T> Map(int offset, ITypeMapExpression expression)
         {
             var builder = expression.GetTypeMapperBuilder();
-            typeMapEntries.Add(new TypeMapEntry(offset, builder.CalcSize(Type), builder));
+            var entry = new TypeMapEntry(offset, builder.CalcSize(Type), builder);
+            typeMapEntries.Add(entry);
 
-            // TODO size
+            lastOffset = Math.Max(offset, lastOffset) + entry.Size;
+
             return this;
         }
 
@@ -104,9 +118,8 @@
                 throw new InvalidOperationException("Property is not mapped.");
             }
 
-            // TODO array
-            var convertBuilder = member.Expression.GetMapConverterBuilder();
-            var entry = new MemberMapEntry(pi.PropertyType,  offset, convertBuilder.CalcSize(pi.PropertyType), convertBuilder);
+            var builder = member.Expression.GetMapConverterBuilder();
+            var entry = new MemberMapEntry(pi, offset, builder.CalcSize(pi.PropertyType), builder);
             memberMapEntries.Add(entry);
 
             lastOffset = Math.Max(offset, lastOffset) + entry.Size;
@@ -126,7 +139,45 @@
 
         public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
-            throw new NotImplementedException();
+            var context = new BuilderContext(components, parameters, typeParameters);
+
+            var list = new List<MapperPosition>();
+            list.AddRange(CreateTypeEntries(context));
+            list.AddRange(CreateMemberEntries(context));
+
+            MapperPositionHelper.Layout(
+                list,
+                Size,
+                Type.FullName,
+                validation,
+                useDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
+                autoFiller ? (byte?)context.GetParameter<byte>(Parameter.Filler) : null);
+
+            return list.Select(x => x.Mapper).ToArray();
+        }
+
+        private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)
+        {
+            return typeMapEntries
+                .Select(x => new MapperPosition(
+                    x.Offset,
+                    x.Size,
+                    x.Builder.CreateMapper(context, Type)));
+        }
+
+        private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
+        {
+            var delegateFactory = context.Components.Get<IDelegateFactory>();
+
+            return memberMapEntries
+                .Select(x => new MapperPosition(
+                    x.Offset,
+                    x.Size,
+                    new MemberMapper(
+                        x.Offset,
+                        x.Builder.CreateConverter(context, x.Property.PropertyType),
+                        delegateFactory.CreateGetter(x.Property),
+                        delegateFactory.CreateSetter(x.Property))));
         }
 
         private class TypeMapEntry
@@ -147,7 +198,7 @@
 
         private class MemberMapEntry
         {
-            public Type Type { get; }
+            public PropertyInfo Property { get; }
 
             public int Offset { get; }
 
@@ -155,8 +206,9 @@
 
             public IMapConverterBuilder Builder { get; }
 
-            public MemberMapEntry(Type type, int offset, int size, IMapConverterBuilder builder)
+            public MemberMapEntry(PropertyInfo property, int offset, int size, IMapConverterBuilder builder)
             {
+                Property = property;
                 Offset = offset;
                 Size = size;
                 Builder = builder;

@@ -6,7 +6,7 @@
     using Smart.Collections.Concurrent;
     using Smart.ComponentModel;
 
-    public class ByteMapper
+    public sealed class ByteMapper
     {
         private readonly IDictionary<string, object> parameters;
 

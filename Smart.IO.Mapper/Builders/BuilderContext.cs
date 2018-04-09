@@ -4,7 +4,7 @@
 
     using Smart.ComponentModel;
 
-    public class BuilderContext : IBuilderContext
+    public sealed class BuilderContext : IBuilderContext
     {
         private readonly IDictionary<string, object> globalParameters;
 

@@ -102,7 +102,7 @@
             return byteMapper.Create<T>();
         }
 
-        [Map(4, AutoDelimitter = false)]
+        [Map(4, UseDelimitter = false)]
         internal class TargetObject
         {
             [MapBinary(0)]

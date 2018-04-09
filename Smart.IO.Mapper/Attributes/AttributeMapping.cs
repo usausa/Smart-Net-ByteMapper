@@ -5,17 +5,17 @@
     using System.Linq;
     using System.Reflection;
 
-    using Smart.Collections.Generic;
     using Smart.ComponentModel;
     using Smart.IO.Mapper.Builders;
+    using Smart.IO.Mapper.Helpers;
     using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
-    internal class AttributeMapping : IMapping
+    internal sealed class AttributeMapping : IMapping
     {
         private readonly MapAttribute mapAttribute;
 
-        private readonly bool validate;
+        private readonly bool validation;
 
         public Type Type { get; }
 
@@ -23,12 +23,12 @@
 
         public int Size => mapAttribute.Size;
 
-        public AttributeMapping(Type type, MapAttribute mapAttribute, string profile, bool validate)
+        public AttributeMapping(Type type, MapAttribute mapAttribute, string profile, bool validation)
         {
             Type = type;
             this.mapAttribute = mapAttribute;
             Profile = profile;
-            this.validate = validate;
+            this.validation = validation;
         }
 
         public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
@@ -42,54 +42,13 @@
             list.AddRange(CreateTypeEntries(context));
             list.AddRange(CreateMemberEntries(context));
 
-            if (mapAttribute.AutoDelimitter)
-            {
-                var delimiter = context.GetParameter<byte[]>(Parameter.Delimiter);
-                if ((delimiter != null) && (delimiter.Length > 0))
-                {
-                    var offset = mapAttribute.Size - delimiter.Length;
-                    list.Add(new MapperPosition(offset, delimiter.Length, new ConstantMapper(offset, delimiter)));
-                }
-            }
-
-            list.Sort(MapperPosition.Comparer);
-
-            var filler = default(byte?);
-            var fillers = new List<MapperPosition>();
-            for (var i = 0; i < list.Count; i++)
-            {
-                var end = list[i].Offset + list[i].Size;
-                var next = i < list.Count - 1 ? list[i + 1].Offset : mapAttribute.Size;
-
-                if (validate && (end > next))
-                {
-                    throw new ByteMapperException(
-                        "Range overlap. " +
-                        $"type=[{Type.FullName}], " +
-                        $"range=[{list[i].Offset}..{end}], " +
-                        $"next=[{next}]");
-                }
-
-                if (mapAttribute.AutoFiller && (end < next))
-                {
-                    if (!filler.HasValue)
-                    {
-                        filler = context.GetParameter<byte>(Parameter.Filler);
-                    }
-
-                    var length = next - end;
-                    fillers.Add(new MapperPosition(
-                        end,
-                        length,
-                        new FillMapper(end, length, filler.Value)));
-                }
-            }
-
-            if (fillers.Count > 0)
-            {
-                list.AddRange(fillers);
-                list.Sort(MapperPosition.Comparer);
-            }
+            MapperPositionHelper.Layout(
+                list,
+                mapAttribute.Size,
+                Type.FullName,
+                validation,
+                mapAttribute.UseDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
+                mapAttribute.AutoFiller ? (byte?)context.GetParameter<byte>(Parameter.Filler) : null);
 
             return list.Select(x => x.Mapper).ToArray();
         }
@@ -110,6 +69,8 @@
 
         private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
         {
+            var delegateFactory = context.Components.Get<IDelegateFactory>();
+
             return Type.GetProperties()
                 .Select(x => new
                 {
@@ -120,8 +81,6 @@
                 .Where(x => x.Attribute != null)
                 .Select(x =>
                 {
-                    var delegateFactory = context.Components.Get<IDelegateFactory>();
-
                     if (x.ArrayAttribute != null)
                     {
                         if (!x.Property.PropertyType.IsArray)
@@ -179,24 +138,6 @@
                             delegateFactory.CreateGetter(x.Property),
                             delegateFactory.CreateSetter(x.Property)));
                 });
-        }
-
-        internal class MapperPosition
-        {
-            public static IComparer<MapperPosition> Comparer => Comparers.Delegate<MapperPosition>((x, y) => x.Offset - y.Offset);
-
-            public int Offset { get; }
-
-            public int Size { get; }
-
-            public IMapper Mapper { get; }
-
-            public MapperPosition(int offset, int size, IMapper mapper)
-            {
-                Offset = offset;
-                Size = size;
-                Mapper = mapper;
-            }
         }
     }
 }

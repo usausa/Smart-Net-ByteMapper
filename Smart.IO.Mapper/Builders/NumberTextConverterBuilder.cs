@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class NumberTextConverterBuilder : IMapConverterBuilder
+    public sealed class NumberTextConverterBuilder : IMapConverterBuilder
     {
         public int Length { get; set; }
 

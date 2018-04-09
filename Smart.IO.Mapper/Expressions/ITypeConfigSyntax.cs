@@ -5,15 +5,19 @@
 
     public interface ITypeConfigSyntax<T>
     {
-        // Type default
+        // Validation
 
-        ITypeConfigSyntax<T> TypeDefault(string key, object value);
+        ITypeConfigSyntax<T> WithValidation(bool value);
 
         // Type setting
 
         ITypeConfigSyntax<T> AutoFiller(bool value);
 
         ITypeConfigSyntax<T> UseDelimitter(bool value);
+
+        // Type default
+
+        ITypeConfigSyntax<T> TypeDefault(string key, object value);
 
         // Mapper
 

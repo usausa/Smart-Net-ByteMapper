@@ -23,13 +23,13 @@
                 .ToByteMapper()
                 .Create<SimpleObject>("test"));
 
-            // Validate
+            // Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute<SimpleObject>(true)
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Profile Validate
+            // Profile Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute<SimpleObject>("test", true)
                 .ToByteMapper()
@@ -49,13 +49,13 @@
                 .ToByteMapper()
                 .Create<SimpleObject>("test"));
 
-            // Type Validate
+            // Type Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), true)
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Type Profile Validate
+            // Type Profile Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), "test", true)
                 .ToByteMapper()
@@ -81,13 +81,13 @@
                 .ToByteMapper()
                 .Create<SimpleObject>("test"));
 
-            // Types Validate
+            // Types Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, true)
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Types Profile Validate
+            // Types Profile Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test", true)
                 .ToByteMapper()
@@ -141,12 +141,12 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(0, AutoDelimitter = false)]
+        [Map(0, UseDelimitter = false)]
         internal class SimpleObject
         {
         }
 
-        [Map(6, AutoDelimitter = false)]
+        [Map(6, UseDelimitter = false)]
         internal class OverlapObject
         {
             [MapBinary(0)]
@@ -156,7 +156,7 @@
             public int IntValue2 { get; set; }
         }
 
-        [Map(4, AutoDelimitter = false)]
+        [Map(4, UseDelimitter = false)]
         internal class NoArrayObject
         {
             [MapArray(1)]
@@ -164,7 +164,7 @@
             public int ArrayValue { get; set; }
         }
 
-        [Map(4, AutoDelimitter = false)]
+        [Map(4, UseDelimitter = false)]
         internal class ArrayUnmatchedObject
         {
             [MapArray(1)]
@@ -172,7 +172,7 @@
             public string[] ArrayValue { get; set; }
         }
 
-        [Map(1, AutoDelimitter = false)]
+        [Map(1, UseDelimitter = false)]
         internal class UnmatchedObject
         {
             [MapBinary(0)]

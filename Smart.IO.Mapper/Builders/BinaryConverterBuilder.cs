@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class BinaryConverterBuilder : IMapConverterBuilder
+    public sealed class BinaryConverterBuilder : IMapConverterBuilder
     {
         public Endian? Endian { get; set; }
 

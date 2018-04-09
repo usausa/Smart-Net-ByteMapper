@@ -9,7 +9,7 @@
 
         public bool AutoFiller { get; set; } = true;
 
-        public bool AutoDelimitter { get; set; } = true;
+        public bool UseDelimitter { get; set; } = true;
 
         public MapAttribute(int size)
         {

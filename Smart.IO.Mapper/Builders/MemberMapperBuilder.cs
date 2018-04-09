@@ -5,7 +5,7 @@
     using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
-    public class MemberMapperBuilder<T> : IMemberMapperBuilder
+    public sealed class MemberMapperBuilder<T> : IMemberMapperBuilder
         where T : IMapConverterBuilder
     {
         public int Offset { get; set; }

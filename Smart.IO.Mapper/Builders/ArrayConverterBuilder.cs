@@ -5,7 +5,7 @@
     using Smart.IO.Mapper.Converters;
     using Smart.Reflection;
 
-    public class ArrayConverterBuilder : IMapConverterBuilder
+    public sealed class ArrayConverterBuilder : IMapConverterBuilder
     {
         public int Length { get; set; }
 

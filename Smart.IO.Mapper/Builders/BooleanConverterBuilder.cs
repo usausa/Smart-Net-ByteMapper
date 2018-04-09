@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Converters;
 
-    public class BooleanConverterBuilder : IMapConverterBuilder
+    public sealed class BooleanConverterBuilder : IMapConverterBuilder
     {
         public byte? TrueValue { get; set; }
 
