@@ -13,9 +13,9 @@
 
         public IMapConverterBuilder ElementConverterBuilder { get; set; }
 
-        public int CalcSize(IBuilderContext context, Type type)
+        public int CalcSize(Type type)
         {
-            return Length * ElementConverterBuilder.CalcSize(context, type);
+            return Length * ElementConverterBuilder.CalcSize(type);
         }
 
         public IMapConverter CreateConverter(IBuilderContext context, Type type)
@@ -25,7 +25,7 @@
                 delegateFactory.CreateArrayAllocator(type),
                 Length,
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                ElementConverterBuilder.CalcSize(context, type),
+                ElementConverterBuilder.CalcSize(type),
                 ElementConverterBuilder.CreateConverter(context, type));
         }
     }

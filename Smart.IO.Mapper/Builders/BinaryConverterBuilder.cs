@@ -8,7 +8,7 @@
     {
         public Endian? Endian { get; set; }
 
-        public int CalcSize(IBuilderContext context, Type type)
+        public int CalcSize(Type type)
         {
             if (type == typeof(int))
             {

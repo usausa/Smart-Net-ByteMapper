@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapNumberTextAttribute : AbstractMapMemberAttribute
+    public sealed class MapNumberTextAttribute : AbstractMemberMapAttribute
     {
         private readonly NumberTextConverterBuilder builder = new NumberTextConverterBuilder();
 

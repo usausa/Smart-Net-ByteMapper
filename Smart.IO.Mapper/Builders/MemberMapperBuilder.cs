@@ -17,9 +17,9 @@
             ConverterBuilder = converterBuilder;
         }
 
-        public int CalcSize(IBuilderContext context, PropertyInfo pi)
+        public int CalcSize(PropertyInfo pi)
         {
-            return ConverterBuilder.CalcSize(context, pi.PropertyType);
+            return ConverterBuilder.CalcSize(pi.PropertyType);
         }
 
         public IMapper CreateMapper(IBuilderContext context, PropertyInfo pi)

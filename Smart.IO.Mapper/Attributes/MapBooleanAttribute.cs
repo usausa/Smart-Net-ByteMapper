@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapBooleanAttribute : AbstractMapMemberAttribute
+    public sealed class MapBooleanAttribute : AbstractMemberMapAttribute
     {
         private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
 

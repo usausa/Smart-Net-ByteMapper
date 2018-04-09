@@ -1,53 +1,56 @@
-﻿//namespace Smart.IO.Mapper.Expressions
-//{
-//    using System;
-//    using System.Text;
+﻿namespace Smart.IO.Mapper.Expressions
+{
+    using System.Text;
 
-//    using Smart.ComponentModel;
-//    using Smart.IO.Mapper.Converters;
-//    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
-//    public interface IMapTextSyntax
-//    {
-//        IMapDateTimeSyntax Encoding(Encoding value);
+    public interface IMapTextSyntax
+    {
+        IMapTextSyntax Encoding(Encoding value);
 
-//        IMapDateTimeSyntax Trim(bool value);
+        IMapTextSyntax Trim(bool value);
 
-//        IMapDateTimeSyntax Padding(Padding value);
+        IMapTextSyntax Padding(Padding value);
 
-//        IMapDateTimeSyntax Filler(byte value);
-//    }
+        IMapTextSyntax Filler(byte value);
+    }
 
-//    internal sealed class MapTextExpression : IMemberMapFactory, IMapTextSyntax
-//    {
-//        public IMapDateTimeSyntax Encoding(Encoding value)
-//        {
-//            throw new NotImplementedException();
-//        }
+    internal sealed class MapTextExpression : IMemberMapExpression, IMapTextSyntax
+    {
+        private readonly TextConverterBuilder builder = new TextConverterBuilder();
 
-//        public IMapDateTimeSyntax Trim(bool value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public MapTextExpression(int length)
+        {
+            builder.Length = length;
+        }
 
-//        public IMapDateTimeSyntax Padding(Padding value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapTextSyntax Encoding(Encoding value)
+        {
+            builder.Encoding = value;
+            return this;
+        }
 
-//        public IMapDateTimeSyntax Filler(byte value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapTextSyntax Trim(bool value)
+        {
+            builder.Trim = value;
+            return this;
+        }
 
-//        public int CalcSize(Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapTextSyntax Padding(Padding value)
+        {
+            builder.Padding = value;
+            return this;
+        }
 
-//        public IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        public IMapTextSyntax Filler(byte value)
+        {
+            builder.Filler = value;
+            return this;
+        }
+
+        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
+        {
+            return builder;
+        }
+    }
+}

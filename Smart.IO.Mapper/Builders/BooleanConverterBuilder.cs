@@ -12,7 +12,7 @@
 
         public byte? NullValue { get; set; }
 
-        public int CalcSize(IBuilderContext context, Type type)
+        public int CalcSize(Type type)
         {
             return 1;
         }

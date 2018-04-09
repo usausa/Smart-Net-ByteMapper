@@ -1,45 +1,41 @@
-﻿//namespace Smart.IO.Mapper.Expressions
-//{
-//    using System;
+﻿namespace Smart.IO.Mapper.Expressions
+{
+    using Smart.IO.Mapper.Builders;
 
-//    using Smart.ComponentModel;
-//    using Smart.IO.Mapper.Converters;
-//    using Smart.IO.Mapper.Helpers;
+    public interface IMapBooleanSyntax
+    {
+        IMapBooleanSyntax True(byte value);
 
-//    public interface IMapBooleanSyntax
-//    {
-//        IMapBooleanSyntax True(byte value);
+        IMapBooleanSyntax False(byte value);
 
-//        IMapBooleanSyntax False(byte value);
+        IMapBooleanSyntax Null(byte value);
+    }
 
-//        IMapBooleanSyntax Null(byte value);
-//    }
+    internal sealed class MapBooleanExpression : IMemberMapExpression, IMapBooleanSyntax
+    {
+        private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
 
-//    internal sealed class MapBooleanExpression : IMemberMapFactory, IMapBooleanSyntax
-//    {
-//        public IMapBooleanSyntax True(byte value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapBooleanSyntax True(byte value)
+        {
+            builder.TrueValue = value;
+            return this;
+        }
 
-//        public IMapBooleanSyntax False(byte value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapBooleanSyntax False(byte value)
+        {
+            builder.FalseValue = value;
+            return this;
+        }
 
-//        public IMapBooleanSyntax Null(byte value)
-//        {
-//            throw new NotImplementedException();
-//        }
+        public IMapBooleanSyntax Null(byte value)
+        {
+            builder.NullValue = value;
+            return this;
+        }
 
-//        public int CalcSize(Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
-
-//        public IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-//        {
-//            throw new NotImplementedException();
-//        }
-//    }
-//}
+        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
+        {
+            return builder;
+        }
+    }
+}

@@ -6,7 +6,9 @@
 
     public class ByteConverterBuilder : IMapConverterBuilder
     {
-        public int CalcSize(IBuilderContext context, Type type)
+        public static ByteConverterBuilder Default { get; } = new ByteConverterBuilder();
+
+        public int CalcSize(Type type)
         {
             return 1;
         }

@@ -97,13 +97,13 @@
         private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)
         {
             return Type.GetCustomAttributes()
-                .OfType<IMapTypeAttribute>()
+                .OfType<AbstractTypeMapAttribute>()
                 .Select(x =>
                 {
                     var builder = x.GetTypeMapperBuilder();
                     return new MapperPosition(
                         builder.Offset,
-                        builder.CalcSize(context, Type),
+                        builder.CalcSize(Type),
                         builder.CreateMapper(context, Type));
                 });
         }
@@ -114,7 +114,7 @@
                 .Select(x => new
                 {
                     Property = x,
-                    Attribute = x.GetCustomAttributes().OfType<IMapMemberAttribute>().FirstOrDefault(),
+                    Attribute = x.GetCustomAttributes().OfType<AbstractMemberMapAttribute>().FirstOrDefault(),
                     ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
                 })
                 .Where(x => x.Attribute != null)
@@ -151,7 +151,7 @@
 
                         return new MapperPosition(
                             x.Attribute.Offset,
-                            arrayBuilder.CalcSize(context, elementType),
+                            arrayBuilder.CalcSize(elementType),
                             new MemberMapper(
                                 x.Attribute.Offset,
                                 arrayBuilder.CreateConverter(context, elementType),
@@ -172,7 +172,7 @@
 
                     return new MapperPosition(
                         x.Attribute.Offset,
-                        builder.CalcSize(context, x.Property.PropertyType),
+                        builder.CalcSize(x.Property.PropertyType),
                         new MemberMapper(
                             x.Attribute.Offset,
                             converter,

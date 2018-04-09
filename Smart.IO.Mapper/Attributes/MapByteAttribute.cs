@@ -2,10 +2,8 @@
 {
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapByteAttribute : AbstractMapMemberAttribute
+    public sealed class MapByteAttribute : AbstractMemberMapAttribute
     {
-        private readonly ByteConverterBuilder builder = new ByteConverterBuilder();
-
         public MapByteAttribute(int offset)
             : base(offset)
         {
@@ -13,7 +11,7 @@
 
         public override IMapConverterBuilder GetConverterBuilder()
         {
-            return builder;
+            return ByteConverterBuilder.Default;
         }
     }
 }

@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapBytesAttribute : AbstractMapMemberAttribute
+    public sealed class MapBytesAttribute : AbstractMemberMapAttribute
     {
         private readonly BytesConverterBuilder builder = new BytesConverterBuilder();
 

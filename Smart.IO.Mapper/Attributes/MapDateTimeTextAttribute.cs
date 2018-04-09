@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapDateTimeTextAttribute : AbstractMapMemberAttribute
+    public sealed class MapDateTimeTextAttribute : AbstractMemberMapAttribute
     {
         private readonly DateTimeTextConverterBuilder builder = new DateTimeTextConverterBuilder();
 

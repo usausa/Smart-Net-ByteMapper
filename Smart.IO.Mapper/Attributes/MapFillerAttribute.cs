@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapFillerAttribute : AbstractMapTypeAttribute
+    public sealed class MapFillerAttribute : AbstractTypeMapAttribute
     {
         private readonly FillerTypeMapperBuilder builder = new FillerTypeMapperBuilder();
 

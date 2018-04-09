@@ -1,8 +1,8 @@
-﻿namespace Smart.IO.Mapper.Attributes
+﻿namespace Smart.IO.Mapper.Expressions
 {
     using Smart.IO.Mapper.Builders;
 
-    public interface IMapTypeAttribute
+    public interface ITypeMapExpression
     {
         ITypeMapperBuilder GetTypeMapperBuilder();
     }

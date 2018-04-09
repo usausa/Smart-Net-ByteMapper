@@ -8,7 +8,7 @@
     {
         int Offset { get; set; }
 
-        int CalcSize(IBuilderContext context, Type type);
+        int CalcSize(Type type);
 
         IMapper CreateMapper(IBuilderContext context, Type type);
     }

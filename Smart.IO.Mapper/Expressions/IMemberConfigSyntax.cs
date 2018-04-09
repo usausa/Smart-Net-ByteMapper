@@ -1,9 +1,7 @@
-﻿//namespace Smart.IO.Mapper.Expressions
-//{
-//    using System;
-
-//    public interface IMemberConfigSyntax : IMemberMapConfigSyntax
-//    {
-//        IMemberMapConfigSyntax Array(int length);
-//    }
-//}
+﻿namespace Smart.IO.Mapper.Expressions
+{
+    public interface IMemberConfigSyntax : IMemberMapConfigSyntax
+    {
+        IMemberMapConfigSyntax Array(int length);
+    }
+}

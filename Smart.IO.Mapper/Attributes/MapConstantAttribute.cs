@@ -2,7 +2,7 @@
 {
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapConstantAttribute : AbstractMapTypeAttribute
+    public sealed class MapConstantAttribute : AbstractTypeMapAttribute
     {
         private readonly ConstantTypeMapperBuilder builder = new ConstantTypeMapperBuilder();
 

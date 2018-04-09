@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Builders;
 
-    public sealed class MapBinaryAttribute : AbstractMapMemberAttribute
+    public sealed class MapBinaryAttribute : AbstractMemberMapAttribute
     {
         private readonly BinaryConverterBuilder builder = new BinaryConverterBuilder();
 
