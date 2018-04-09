@@ -13,6 +13,8 @@
 
         public void Array(int length, Action<IMemberMapConfigSyntax> config)
         {
+            // TODO arrayチェック！
+
             var element = new ElementConfig();
             config(element);
 

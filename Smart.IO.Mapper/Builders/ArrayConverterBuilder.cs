@@ -21,12 +21,13 @@
         public IMapConverter CreateConverter(IBuilderContext context, Type type)
         {
             var delegateFactory = context.Components.Get<IDelegateFactory>();
+            var elementType = type.GetElementType();
             return new ArrayConverter(
-                delegateFactory.CreateArrayAllocator(type),
+                delegateFactory.CreateArrayAllocator(elementType),
                 Length,
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                ElementConverterBuilder.CalcSize(type),
-                ElementConverterBuilder.CreateConverter(context, type));
+                ElementConverterBuilder.CalcSize(elementType),
+                ElementConverterBuilder.CreateConverter(context, elementType));
         }
     }
 }

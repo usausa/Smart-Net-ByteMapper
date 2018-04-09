@@ -54,7 +54,7 @@
 
                 if (array.Length < length)
                 {
-                    buffer.Fill(index + (array.Length * elementSize), (length - array.Length) * elementSize, filler);
+                    buffer.Fill(index, (length - array.Length) * elementSize, filler);
                 }
             }
         }

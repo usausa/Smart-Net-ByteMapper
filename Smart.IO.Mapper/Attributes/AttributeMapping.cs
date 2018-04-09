@@ -113,7 +113,7 @@
                             arrayBuilder.CalcSize(elementType),
                             new MemberMapper(
                                 x.Attribute.Offset,
-                                arrayBuilder.CreateConverter(context, elementType),
+                                arrayBuilder.CreateConverter(context, x.Property.PropertyType),
                                 delegateFactory.CreateGetter(x.Property),
                                 delegateFactory.CreateSetter(x.Property)));
                     }
