@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
+    using System.Globalization;
     using System.Text;
 
     using Smart.IO.Mapper.Helpers;
@@ -38,7 +39,9 @@
                 return culture.Value.ToCultureInfo();
             }
 
-            return parameters.GetParameter<IFormatProvider>(Parameter.Culture);
+            //return parameters.GetParameter<IFormatProvider>(Parameter.Culture);
+            // TODO
+            return CultureInfo.InvariantCulture;
         }
     }
 }

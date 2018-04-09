@@ -6,7 +6,9 @@
 
         public const string Encoding = nameof(Encoding);
 
-        public const string Culture = nameof(Culture);
+        public const string NumberProvider = nameof(NumberProvider);
+
+        public const string DateTimeProvider = nameof(DateTimeProvider);
 
         public const string NumberStyle = nameof(NumberStyle);
 

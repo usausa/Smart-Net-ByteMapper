@@ -8,7 +8,7 @@
 
     internal sealed class MapByteExpression : IMemberMapFactory
     {
-        private static readonly IMapConverter MapConverter = new MapConverter();
+        private static readonly IMapConverter MapConverter = new ByteConverter();
 
         public int CalcSize(Type type)
         {

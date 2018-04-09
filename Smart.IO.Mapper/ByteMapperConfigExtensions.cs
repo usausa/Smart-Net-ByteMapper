@@ -21,9 +21,14 @@
             return config.AddParameter(Parameter.Encoding, value);
         }
 
-        public static ByteMapperConfig DefaultCulture(this ByteMapperConfig config, IFormatProvider value)
+        public static ByteMapperConfig DefaultNumberProvider(this ByteMapperConfig config, IFormatProvider value)
         {
-            return config.AddParameter(Parameter.Culture, value);
+            return config.AddParameter(Parameter.NumberProvider, value);
+        }
+
+        public static ByteMapperConfig DefaultDateTimeProvider(this ByteMapperConfig config, IFormatProvider value)
+        {
+            return config.AddParameter(Parameter.DateTimeProvider, value);
         }
 
         public static ByteMapperConfig DefaultNumberStyle(this ByteMapperConfig config, NumberStyles value)

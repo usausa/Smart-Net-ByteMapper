@@ -25,6 +25,8 @@
 
         private Culture? culture;
 
+        public string Format { get; set; }
+
         public int CodePage
         {
             get => throw new NotSupportedException();
@@ -92,6 +94,7 @@
             {
                 return new IntTextConverter(
                     length,
+                    Format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     trim ?? parameters.GetParameter<bool>(Parameter.Trim),
                     padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
@@ -105,6 +108,7 @@
             {
                 return new LongTextConverter(
                     length,
+                    Format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     trim ?? parameters.GetParameter<bool>(Parameter.Trim),
                     padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
@@ -118,6 +122,7 @@
             {
                 return new ShortTextConverter(
                     length,
+                    Format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     trim ?? parameters.GetParameter<bool>(Parameter.Trim),
                     padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),
@@ -131,6 +136,7 @@
             {
                 return new DecimalTextConverter(
                     length,
+                    Format,
                     AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
                     trim ?? parameters.GetParameter<bool>(Parameter.Trim),
                     padding ?? parameters.GetParameter<Padding>(Parameter.NumberPadding),

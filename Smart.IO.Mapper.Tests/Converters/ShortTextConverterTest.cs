@@ -40,6 +40,7 @@ namespace Smart.IO.Mapper.Converters
         {
             return new ShortTextConverter(
                 Length,
+                null,
                 Encoding.ASCII,
                 true,
                 Padding.Left,

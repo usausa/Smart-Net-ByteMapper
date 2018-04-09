@@ -34,6 +34,7 @@
         {
             return new DecimalTextConverter(
                 Length,
+                null,
                 Encoding.ASCII,
                 true,
                 Padding.Left,

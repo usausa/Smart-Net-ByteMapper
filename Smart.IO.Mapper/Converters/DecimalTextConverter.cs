@@ -10,6 +10,8 @@
     {
         private readonly int length;
 
+        private readonly string format;
+
         private readonly Encoding encoding;
 
         private readonly bool trim;
@@ -26,6 +28,7 @@
 
         public DecimalTextConverter(
             int length,
+            string format,
             Encoding encoding,
             bool trim,
             Padding padding,
@@ -35,6 +38,7 @@
             Type type)
         {
             this.length = length;
+            this.format = format;
             this.encoding = encoding;
             this.trim = trim;
             this.padding = padding;
@@ -63,7 +67,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((decimal)value).ToString(provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.WriteString(((decimal)value).ToString(format, provider), buffer, index, length, encoding, padding, filler);
             }
         }
     }

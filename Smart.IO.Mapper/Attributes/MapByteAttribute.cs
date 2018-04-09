@@ -8,7 +8,7 @@
 
     public sealed class MapByteAttribute : AbstractMapMemberAttribute
     {
-        private static readonly IMapConverter MapConverter = new MapConverter();
+        private static readonly IMapConverter MapConverter = new ByteConverter();
 
         public MapByteAttribute(int offset)
             : base(offset)

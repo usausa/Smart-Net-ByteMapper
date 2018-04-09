@@ -12,7 +12,7 @@
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new[] { Value });
 
-        private readonly MapConverter converter = new MapConverter();
+        private readonly ByteConverter converter = new ByteConverter();
 
         [Fact]
         public void ReadToByte()

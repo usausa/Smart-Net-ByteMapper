@@ -2,6 +2,8 @@
 {
     internal sealed class BigEndianLongBinaryConverter : IMapConverter
     {
+        public static IMapConverter Default { get; } = new BigEndianIntBinaryConverter();
+
         public object Read(byte[] buffer, int index)
         {
             return ByteOrder.GetLongBE(buffer, index);
@@ -15,6 +17,8 @@
 
     internal sealed class LittleEndianLongBinaryConverter : IMapConverter
     {
+        public static IMapConverter Default { get; } = new LittleEndianLongBinaryConverter();
+
         public object Read(byte[] buffer, int index)
         {
             return ByteOrder.GetLongLE(buffer, index);

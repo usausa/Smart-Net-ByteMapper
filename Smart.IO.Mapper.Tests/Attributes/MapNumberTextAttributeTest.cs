@@ -18,7 +18,7 @@
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
-                .DefaultCulture(CultureInfo.InvariantCulture)
+                .DefaultNumberProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultNumberPadding(Padding.Left)
                 .DefaultNumberFiller(0x20)

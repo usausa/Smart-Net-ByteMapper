@@ -18,7 +18,7 @@
             var byteMapper = new ByteMapperConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
-                .DefaultCulture(CultureInfo.InvariantCulture)
+                .DefaultDateTimeProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeStyle(DateTimeStyles.None)

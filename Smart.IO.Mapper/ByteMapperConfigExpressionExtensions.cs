@@ -52,9 +52,14 @@
             return syntax.TypeDefault(Parameter.Encoding, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeCulture<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        public static ITypeConfigSyntax<T> TypeNumberProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
         {
-            return syntax.TypeDefault(Parameter.Culture, value);
+            return syntax.TypeDefault(Parameter.NumberProvider, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeProvider, value);
         }
 
         public static ITypeConfigSyntax<T> TypeNumberStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)

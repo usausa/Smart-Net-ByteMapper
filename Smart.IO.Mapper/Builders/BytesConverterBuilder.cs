@@ -6,14 +6,25 @@
 
     public class BytesConverterBuilder : IMapConverterBuilder
     {
+        public int Length { get; set; }
+
+        public byte? Filler { get; set; }
+
         public int CalcSize(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            return Length;
         }
 
         public IMapConverter CreateConverter(IBuilderContext context, Type type)
         {
-            throw new NotImplementedException();
+            if (type == typeof(byte[]))
+            {
+                return new BytesConverter(
+                    Length,
+                    Filler ?? context.GetParameter<byte>(Parameter.Filler));
+            }
+
+            return null;
         }
     }
 }
