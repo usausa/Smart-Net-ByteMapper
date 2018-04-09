@@ -1,43 +1,28 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapBytesAttribute : AbstractMapMemberAttribute
     {
-        private readonly int length;
-
-        private byte? filler;
+        private readonly BytesConverterBuilder builder = new BytesConverterBuilder();
 
         public byte Filler
         {
             get => throw new NotSupportedException();
-            set => filler = value;
+            set => builder.Filler = value;
         }
 
         public MapBytesAttribute(int offset, int length)
             : base(offset)
         {
-            this.length = length;
+            builder.Length = length;
         }
 
-        public override int CalcSize(Type type)
+        public override IMapConverterBuilder GetConverterBuilder()
         {
-            return length;
-        }
-
-        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            if (type == typeof(byte[]))
-            {
-                return new BytesConverter(
-                    length,
-                    filler ?? parameters.GetParameter<byte>(Parameter.Filler));
-            }
-
-            return null;
+            return builder;
         }
     }
 }

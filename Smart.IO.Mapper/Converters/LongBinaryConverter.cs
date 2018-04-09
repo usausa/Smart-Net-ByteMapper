@@ -2,7 +2,7 @@
 {
     internal sealed class BigEndianLongBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianIntBinaryConverter();
+        public static IMapConverter Default { get; } = new BigEndianLongBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {

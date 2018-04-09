@@ -69,8 +69,6 @@
             Assert.Throws<NotSupportedException>(() => attribute.TrueValue);
             Assert.Throws<NotSupportedException>(() => attribute.FalseValue);
             Assert.Throws<NotSupportedException>(() => attribute.NullValue);
-
-            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

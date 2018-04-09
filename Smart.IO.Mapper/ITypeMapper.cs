@@ -2,7 +2,7 @@
 {
     using System;
 
-    public interface ITypeMapper<T>
+    public interface ITypeMapper<in T>
     {
         Type TargetType { get; }
 

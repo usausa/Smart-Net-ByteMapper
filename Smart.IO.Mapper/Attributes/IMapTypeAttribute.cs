@@ -1,17 +1,9 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System;
-    using Smart.ComponentModel;
-
-    using Smart.IO.Mapper.Helpers;
-    using Smart.IO.Mapper.Mappers;
+    using Smart.IO.Mapper.Builders;
 
     public interface IMapTypeAttribute
     {
-        int Offset { get; }
-
-        int CalcSize(Type type);
-
-        IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type);
+        ITypeMapperBuilder GetTypeMapperBuilder();
     }
 }

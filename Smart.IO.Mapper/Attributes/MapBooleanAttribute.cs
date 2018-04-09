@@ -2,34 +2,28 @@
 {
     using System;
 
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapBooleanAttribute : AbstractMapMemberAttribute
     {
-        private byte? trueValue;
-
-        private byte? falseValue;
-
-        private byte? nullValue;
+        private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
 
         public byte TrueValue
         {
             get => throw new NotSupportedException();
-            set => trueValue = value;
+            set => builder.TrueValue = value;
         }
 
         public byte FalseValue
         {
             get => throw new NotSupportedException();
-            set => falseValue = value;
+            set => builder.FalseValue = value;
         }
 
         public byte NullValue
         {
             get => throw new NotSupportedException();
-            set => nullValue = value;
+            set => builder.NullValue = value;
         }
 
         public MapBooleanAttribute(int offset)
@@ -37,29 +31,9 @@
         {
         }
 
-        public override int CalcSize(Type type)
+        public override IMapConverterBuilder GetConverterBuilder()
         {
-            return 1;
-        }
-
-        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            if (type == typeof(bool))
-            {
-                return new BooleanConverter(
-                    trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
-                    falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue));
-            }
-
-            if (type == typeof(bool?))
-            {
-                return new NullableBooleanConverter(
-                    trueValue ?? parameters.GetParameter<byte>(Parameter.TrueValue),
-                    falseValue ?? parameters.GetParameter<byte>(Parameter.FalseValue),
-                    nullValue ?? parameters.GetParameter<byte>(Parameter.Filler));
-            }
-
-            return null;
+            return builder;
         }
     }
 }

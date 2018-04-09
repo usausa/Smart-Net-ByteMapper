@@ -2,104 +2,54 @@
 {
     using System;
     using System.Globalization;
+    using System.Text;
 
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapDateTimeTextAttribute : AbstractMapMemberAttribute
     {
-        private readonly int length;
-
-        private readonly string format;
-
-        private int? codePage;
-
-        private string encodingName;
-
-        private byte? filler;
-
-        private DateTimeStyles? style;
-
-        private Culture? culture;
+        private readonly DateTimeTextConverterBuilder builder = new DateTimeTextConverterBuilder();
 
         public int CodePage
         {
             get => throw new NotSupportedException();
-            set
-            {
-                codePage = value;
-                encodingName = null;
-            }
+            set => builder.Encoding = Encoding.GetEncoding(value);
         }
 
         public string EncodingName
         {
             get => throw new NotSupportedException();
-            set
-            {
-                encodingName = value;
-                codePage = null;
-            }
+            set => builder.Encoding = Encoding.GetEncoding(value);
         }
 
         public byte Filler
         {
             get => throw new NotSupportedException();
-            set => filler = value;
+            set => builder.Filler = value;
         }
 
         public DateTimeStyles Style
         {
             get => throw new NotSupportedException();
-            set => style = value;
+            set => builder.Style = value;
         }
 
         public Culture Culture
         {
             get => throw new NotSupportedException();
-            set => culture = value;
+            set => builder.Provider = value.ToCultureInfo();
         }
 
         public MapDateTimeTextAttribute(int offset, int length, string format)
             : base(offset)
         {
-            this.length = length;
-            this.format = format;
+            builder.Length = length;
+            builder.Format = format;
         }
 
-        public override int CalcSize(Type type)
+        public override IMapConverterBuilder GetConverterBuilder()
         {
-            return length;
-        }
-
-        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            if ((type == typeof(DateTime)) || (type == typeof(DateTime?)))
-            {
-                return new DateTimeTextConverter(
-                    length,
-                    format,
-                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
-                    filler ?? parameters.GetParameter<byte>(Parameter.Filler),
-                    style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
-                    AttributeParameterHelper.GetProvider(parameters, culture),
-                    type);
-            }
-
-            if ((type == typeof(DateTimeOffset)) || (type == typeof(DateTimeOffset?)))
-            {
-                return new DateTimeOffsetTextConverter(
-                    length,
-                    format,
-                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
-                    filler ?? parameters.GetParameter<byte>(Parameter.Filler),
-                    style ?? parameters.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
-                    AttributeParameterHelper.GetProvider(parameters, culture),
-                    type);
-            }
-
-            return null;
+            return builder;
         }
     }
 }

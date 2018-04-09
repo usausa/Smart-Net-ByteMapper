@@ -81,8 +81,6 @@
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
             Assert.Throws<NotSupportedException>(() => attribute.Style);
             Assert.Throws<NotSupportedException>(() => attribute.Culture);
-
-            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

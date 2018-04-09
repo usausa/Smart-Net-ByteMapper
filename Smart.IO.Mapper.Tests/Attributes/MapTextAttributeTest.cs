@@ -54,8 +54,6 @@
             Assert.Throws<NotSupportedException>(() => attribute.Trim);
             Assert.Throws<NotSupportedException>(() => attribute.Padding);
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
-
-            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

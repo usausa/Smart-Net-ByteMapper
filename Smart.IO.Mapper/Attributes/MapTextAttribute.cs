@@ -1,87 +1,53 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
+    using System.Text;
 
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapTextAttribute : AbstractMapMemberAttribute
     {
-        private readonly int length;
-
-        private int? codePage;
-
-        private string encodingName;
-
-        private bool? trim;
-
-        private Padding? padding;
-
-        private byte? filler;
+        private readonly TextConverterBuilder builder = new TextConverterBuilder();
 
         public int CodePage
         {
             get => throw new NotSupportedException();
-            set
-            {
-                codePage = value;
-                encodingName = null;
-            }
+            set => builder.Encoding = Encoding.GetEncoding(value);
         }
 
         public string EncodingName
         {
             get => throw new NotSupportedException();
-            set
-            {
-                encodingName = value;
-                codePage = null;
-            }
+            set => builder.Encoding = Encoding.GetEncoding(value);
         }
 
         public bool Trim
         {
             get => throw new NotSupportedException();
-            set => trim = value;
+            set => builder.Trim = value;
         }
 
         public Padding Padding
         {
             get => throw new NotSupportedException();
-            set => padding = value;
+            set => builder.Padding = value;
         }
 
         public byte Filler
         {
             get => throw new NotSupportedException();
-            set => filler = value;
+            set => builder.Filler = value;
         }
 
         public MapTextAttribute(int offset, int length)
             : base(offset)
         {
-            this.length = length;
+            builder.Length = length;
         }
 
-        public override int CalcSize(Type type)
+        public override IMapConverterBuilder GetConverterBuilder()
         {
-            return length;
-        }
-
-        public override IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            if (type == typeof(string))
-            {
-                return new TextConverter(
-                    length,
-                    AttributeParameterHelper.GetEncoding(parameters, codePage, encodingName),
-                    trim ?? parameters.GetParameter<bool>(Parameter.Trim),
-                    padding ?? parameters.GetParameter<Padding>(Parameter.TextPadding),
-                    filler ?? parameters.GetParameter<byte>(Parameter.TextFiller));
-            }
-
-            return null;
+            return builder;
         }
     }
 }

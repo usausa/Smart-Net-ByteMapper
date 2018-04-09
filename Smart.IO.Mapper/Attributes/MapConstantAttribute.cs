@@ -1,29 +1,20 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
-    using System;
-
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Helpers;
-    using Smart.IO.Mapper.Mappers;
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapConstantAttribute : AbstractMapTypeAttribute
     {
-        private readonly byte[] content;
+        private readonly ConstantTypeMapperBuilder builder = new ConstantTypeMapperBuilder();
 
         public MapConstantAttribute(int offset, byte[] content)
-            : base(offset)
         {
-            this.content = content;
+            builder.Offset = offset;
+            builder.Content = content;
         }
 
-        public override int CalcSize(Type type)
+        public override ITypeMapperBuilder GetTypeMapperBuilder()
         {
-            return content.Length;
-        }
-
-        public override IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            return new ConstantMapper(Offset, content);
+            return builder;
         }
     }
 }

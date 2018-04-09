@@ -7,7 +7,7 @@
 
     using Smart.Collections.Generic;
     using Smart.ComponentModel;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
     using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
@@ -33,17 +33,18 @@
 
         public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
-            var mappingParameter = new MappingParameter(
+            var context = new BuilderContext(
+                components,
                 parameters,
                 Type.GetCustomAttributes().OfType<ITypeDefaultAttribute>().ToDictionary(x => x.Key, x => x.Value));
 
             var list = new List<MapperPosition>();
-            list.AddRange(CreateTypeEntries(components, mappingParameter));
-            list.AddRange(CreateMemberEntries(components, mappingParameter));
+            list.AddRange(CreateTypeEntries(context));
+            list.AddRange(CreateMemberEntries(context));
 
             if (mapAttribute.AutoDelimitter)
             {
-                var delimiter = mappingParameter.GetParameter<byte[]>(Parameter.Delimiter);
+                var delimiter = context.GetParameter<byte[]>(Parameter.Delimiter);
                 if ((delimiter != null) && (delimiter.Length > 0))
                 {
                     var offset = mapAttribute.Size - delimiter.Length;
@@ -73,7 +74,7 @@
                 {
                     if (!filler.HasValue)
                     {
-                        filler = mappingParameter.GetParameter<byte>(Parameter.Filler);
+                        filler = context.GetParameter<byte>(Parameter.Filler);
                     }
 
                     var length = next - end;
@@ -93,17 +94,21 @@
             return list.Select(x => x.Mapper).ToArray();
         }
 
-        private IEnumerable<MapperPosition> CreateTypeEntries(IComponentContainer components, IMappingParameter parameters)
+        private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)
         {
             return Type.GetCustomAttributes()
                 .OfType<IMapTypeAttribute>()
-                .Select(x => new MapperPosition(
-                    x.Offset,
-                    x.CalcSize(Type),
-                    x.CreateMapper(components, parameters, Type)));
+                .Select(x =>
+                {
+                    var builder = x.GetTypeMapperBuilder();
+                    return new MapperPosition(
+                        builder.Offset,
+                        builder.CalcSize(context, Type),
+                        builder.CreateMapper(context, Type));
+                });
         }
 
-        private IEnumerable<MapperPosition> CreateMemberEntries(IComponentContainer components, IMappingParameter parameters)
+        private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
         {
             return Type.GetProperties()
                 .Select(x => new
@@ -115,7 +120,7 @@
                 .Where(x => x.Attribute != null)
                 .Select(x =>
                 {
-                    var delegateFactory = components.Get<IDelegateFactory>();
+                    var delegateFactory = context.Components.Get<IDelegateFactory>();
 
                     if (x.ArrayAttribute != null)
                     {
@@ -129,10 +134,10 @@
                         }
 
                         var elementType = x.Property.PropertyType.GetElementType();
-                        var elementSize = x.Attribute.CalcSize(elementType);
 
-                        var converter = x.Attribute.CreateConverter(components, parameters, elementType);
-                        if (converter == null)
+                        var elementBuilder = x.Attribute.GetConverterBuilder();
+                        var elementConverter = elementBuilder.CreateConverter(context, elementType);
+                        if (elementConverter == null)
                         {
                             throw new ByteMapperException(
                                 "Attribute does not match property. " +
@@ -141,41 +146,38 @@
                                 $"attribute=[{x.Attribute.GetType().FullName}]");
                         }
 
+                        var arrayBuilder = x.ArrayAttribute.GetArrayConverterBuilder();
+                        arrayBuilder.ElementConverterBuilder = elementBuilder;
+
                         return new MapperPosition(
                             x.Attribute.Offset,
-                            x.ArrayAttribute.CalcSize(elementSize),
+                            arrayBuilder.CalcSize(context, elementType),
                             new MemberMapper(
                                 x.Attribute.Offset,
-                                x.ArrayAttribute.CreateArrayConverter(
-                                    components,
-                                    parameters,
-                                    delegateFactory.CreateArrayAllocator(elementType),
-                                    elementSize,
-                                    converter),
+                                arrayBuilder.CreateConverter(context, elementType),
                                 delegateFactory.CreateGetter(x.Property),
                                 delegateFactory.CreateSetter(x.Property)));
                     }
-                    else
+
+                    var builder = x.Attribute.GetConverterBuilder();
+                    var converter = builder.CreateConverter(context, x.Property.PropertyType);
+                    if (converter == null)
                     {
-                        var converter = x.Attribute.CreateConverter(components, parameters, x.Property.PropertyType);
-                        if (converter == null)
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{x.Attribute.GetType().FullName}]");
-                        }
-
-                        return new MapperPosition(
-                            x.Attribute.Offset,
-                            x.Attribute.CalcSize(x.Property.PropertyType),
-                            new MemberMapper(
-                                x.Attribute.Offset,
-                                converter,
-                                delegateFactory.CreateGetter(x.Property),
-                                delegateFactory.CreateSetter(x.Property)));
+                        throw new ByteMapperException(
+                            "Attribute does not match property. " +
+                            $"type=[{x.Property.DeclaringType?.FullName}], " +
+                            $"property=[{x.Property.Name}], " +
+                            $"attribute=[{x.Attribute.GetType().FullName}]");
                     }
+
+                    return new MapperPosition(
+                        x.Attribute.Offset,
+                        builder.CalcSize(context, x.Property.PropertyType),
+                        new MemberMapper(
+                            x.Attribute.Offset,
+                            converter,
+                            delegateFactory.CreateGetter(x.Property),
+                            delegateFactory.CreateSetter(x.Property)));
                 });
         }
 

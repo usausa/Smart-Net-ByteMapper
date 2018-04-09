@@ -1,42 +1,28 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-    using Smart.ComponentModel;
 
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class MapArrayAttribute : Attribute
     {
-        private readonly int length;
-
-        private byte? filler;
+        private readonly ArrayConverterBuilder builder = new ArrayConverterBuilder();
 
         public byte Filler
         {
             get => throw new NotSupportedException();
-            set => filler = value;
+            set => builder.Filler = value;
         }
 
         public MapArrayAttribute(int length)
         {
-            this.length = length;
+            builder.Length = length;
         }
 
-        public int CalcSize(int elementSize)
+        public ArrayConverterBuilder GetArrayConverterBuilder()
         {
-            return elementSize * length;
-        }
-
-        public IMapConverter CreateArrayConverter(IComponentContainer components, IMappingParameter parameters, Func<int, Array> allocator, int elementSize, IMapConverter elementConverter)
-        {
-            return new ArrayConverter(
-                allocator,
-                length,
-                filler ?? parameters.GetParameter<byte>(Parameter.Filler),
-                elementSize,
-                elementConverter);
+            return builder;
         }
     }
 }

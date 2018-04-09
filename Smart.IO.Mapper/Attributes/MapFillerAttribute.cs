@@ -2,39 +2,27 @@
 {
     using System;
 
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Helpers;
-    using Smart.IO.Mapper.Mappers;
+    using Smart.IO.Mapper.Builders;
 
     public sealed class MapFillerAttribute : AbstractMapTypeAttribute
     {
-        private readonly int length;
-
-        private byte? filler;
+        private readonly FillerTypeMapperBuilder builder = new FillerTypeMapperBuilder();
 
         public byte Filler
         {
             get => throw new NotSupportedException();
-            set => filler = value;
+            set => builder.Filler = value;
         }
 
         public MapFillerAttribute(int offset, int length)
-            : base(offset)
         {
-            this.length = length;
+            builder.Offset = offset;
+            builder.Length = length;
         }
 
-        public override int CalcSize(Type type)
+        public override ITypeMapperBuilder GetTypeMapperBuilder()
         {
-            return length;
-        }
-
-        public override IMapper CreateMapper(IComponentContainer components, IMappingParameter parameters, Type type)
-        {
-            return new FillMapper(
-                Offset,
-                length,
-                filler ?? parameters.GetParameter<byte>(Parameter.Filler));
+            return builder;
         }
     }
 }

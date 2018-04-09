@@ -1,10 +1,8 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
     using System;
-    using Smart.ComponentModel;
 
-    using Smart.IO.Mapper.Converters;
-    using Smart.IO.Mapper.Helpers;
+    using Smart.IO.Mapper.Builders;
 
     [AttributeUsage(AttributeTargets.Property)]
     public abstract class AbstractMapMemberAttribute : Attribute, IMapMemberAttribute
@@ -16,8 +14,6 @@
             Offset = offset;
         }
 
-        public abstract int CalcSize(Type type);
-
-        public abstract IMapConverter CreateConverter(IComponentContainer components, IMappingParameter parameters, Type type);
+        public abstract IMapConverterBuilder GetConverterBuilder();
     }
 }

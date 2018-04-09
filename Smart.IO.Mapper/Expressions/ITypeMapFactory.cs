@@ -1,15 +1,15 @@
-﻿namespace Smart.IO.Mapper.Expressions
-{
-    using System;
+﻿//namespace Smart.IO.Mapper.Expressions
+//{
+//    using System;
 
-    using Smart.ComponentModel;
-    using Smart.IO.Mapper.Helpers;
-    using Smart.IO.Mapper.Mappers;
+//    using Smart.ComponentModel;
+//    using Smart.IO.Mapper.Helpers;
+//    using Smart.IO.Mapper.Mappers;
 
-    public interface ITypeMapFactory
-    {
-        int CalcSize(Type type);
+//    public interface ITypeMapFactory
+//    {
+//        int CalcSize(Type type);
 
-        IMapper CreateMapper(int offset, IComponentContainer components, IMappingParameter parameters, Type type);
-    }
-}
+//        IMapper CreateMapper(int offset, IComponentContainer components, IMappingParameter parameters, Type type);
+//    }
+//}

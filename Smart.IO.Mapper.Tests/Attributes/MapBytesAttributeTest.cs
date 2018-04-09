@@ -52,8 +52,6 @@
             var attribute = new MapBytesAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
-
-            Assert.Null(attribute.CreateConverter(null, null, typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Smart.IO.Mapper.Mock;
-
     using Xunit;
 
     public class MapBinaryAttributeTest
@@ -74,9 +72,6 @@
             var attribute = new MapBinaryAttribute(0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Endian);
-
-            Assert.Equal(0, attribute.CalcSize(typeof(object)));
-            Assert.Null(attribute.CreateConverter(null, new MockMappingParametercs(), typeof(object)));
         }
 
         //--------------------------------------------------------------------------------

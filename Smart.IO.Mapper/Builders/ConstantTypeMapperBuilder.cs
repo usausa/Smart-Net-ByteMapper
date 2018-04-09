@@ -4,7 +4,7 @@
 
     using Smart.IO.Mapper.Mappers;
 
-    public class ConstTypeMapperBuilder : ITypeMapperBuilder
+    public class ConstantTypeMapperBuilder : ITypeMapperBuilder
     {
         public int Offset { get; set; }
 

@@ -15,20 +15,18 @@
 
         public int CalcSize(IBuilderContext context, Type type)
         {
-            var elementType = type.GetElementType();
-            return Length * ElementConverterBuilder.CalcSize(context, elementType);
+            return Length * ElementConverterBuilder.CalcSize(context, type);
         }
 
         public IMapConverter CreateConverter(IBuilderContext context, Type type)
         {
             var delegateFactory = context.Components.Get<IDelegateFactory>();
-            var elementType = type.GetElementType();
             return new ArrayConverter(
-                delegateFactory.CreateArrayAllocator(elementType),
+                delegateFactory.CreateArrayAllocator(type),
                 Length,
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                ElementConverterBuilder.CalcSize(context, elementType),
-                ElementConverterBuilder.CreateConverter(context, elementType));
+                ElementConverterBuilder.CalcSize(context, type),
+                ElementConverterBuilder.CreateConverter(context, type));
         }
     }
 }
