@@ -16,11 +16,11 @@
         [GlobalSetup]
         public void Setup()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .CreateMapByAttribute<BinaryObject>()
-                .ToByteMapper();
+                .ToMapperFactory();
 
-            mapper = byteMapper.Create<BinaryObject>();
+            mapper = mapperFactory.Create<BinaryObject>();
         }
 
         [Benchmark]

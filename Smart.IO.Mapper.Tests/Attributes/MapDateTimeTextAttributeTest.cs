@@ -15,7 +15,7 @@
         [Fact]
         public void MapByDateTimeTextAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultDateTimeProvider(CultureInfo.InvariantCulture)
@@ -23,8 +23,8 @@
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeStyle(DateTimeStyles.None)
                 .CreateMapByAttribute<DateTimeTextAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<DateTimeTextAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<DateTimeTextAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new DateTimeTextAttributeObject

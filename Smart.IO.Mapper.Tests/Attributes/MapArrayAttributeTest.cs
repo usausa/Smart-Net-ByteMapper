@@ -13,13 +13,13 @@
         [Fact]
         public void MapByArrayAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x00)
                 .DefaultEndian(Endian.Big)
                 .CreateMapByAttribute<ArrayAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<ArrayAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<ArrayAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new ArrayAttributeObject();

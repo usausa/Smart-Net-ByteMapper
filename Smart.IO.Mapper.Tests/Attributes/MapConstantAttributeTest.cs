@@ -13,13 +13,13 @@
         [Fact]
         public void MapByConstAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(new byte[] { 0x0d, 0x0a })
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultEndian(Endian.Big)
                 .CreateMapByAttribute<ConstAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<ConstAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<ConstAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new ConstAttributeObject();

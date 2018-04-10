@@ -13,12 +13,12 @@
         [Fact]
         public void MapByBinaryAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
                 .CreateMapByAttribute<BinaryAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<BinaryAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<BinaryAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new BinaryAttributeObject

@@ -13,42 +13,42 @@
         // Config.Single
         //--------------------------------------------------------------------------------
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config)
+        public static MapperFactoryConfig CreateMapByAttribute<T>(this MapperFactoryConfig config)
         {
             return config.CreateMapByAttribute(typeof(T), null, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, string profile)
+        public static MapperFactoryConfig CreateMapByAttribute<T>(this MapperFactoryConfig config, string profile)
         {
             return config.CreateMapByAttribute(typeof(T), profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute<T>(this MapperFactoryConfig config, bool validation)
         {
             return config.CreateMapByAttribute(typeof(T), null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config, string profile, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute<T>(this MapperFactoryConfig config, string profile, bool validation)
         {
             return config.CreateMapByAttribute(typeof(T), profile, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, Type type)
         {
             return config.CreateMapByAttribute(type, null, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, string profile)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, Type type, string profile)
         {
             return config.CreateMapByAttribute(type, profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, Type type, bool validation)
         {
             return config.CreateMapByAttribute(type, null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, Type type, string profile, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, Type type, string profile, bool validation)
         {
             if (type == null)
             {
@@ -70,22 +70,22 @@
         // Config.Multi
         //--------------------------------------------------------------------------------
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types)
         {
             return CreateMapByAttribute(config, types, null, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, string profile)
         {
             return CreateMapByAttribute(config, types, profile, true);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, bool validation)
         {
             return CreateMapByAttribute(config, types, null, validation);
         }
 
-        public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types, string profile, bool validation)
+        public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, string profile, bool validation)
         {
             if (types == null)
             {
@@ -112,22 +112,22 @@
         // Profile.Single
         //--------------------------------------------------------------------------------
 
-        public static ByteMapperProfile CreateMapByAttribute<T>(this ByteMapperProfile profile)
+        public static MapperProfile CreateMapByAttribute<T>(this MapperProfile profile)
         {
             return profile.CreateMapByAttribute(typeof(T), true);
         }
 
-        public static ByteMapperProfile CreateMapByAttribute<T>(this ByteMapperProfile profile, bool validation)
+        public static MapperProfile CreateMapByAttribute<T>(this MapperProfile profile, bool validation)
         {
             return profile.CreateMapByAttribute(typeof(T), validation);
         }
 
-        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, Type type)
+        public static MapperProfile CreateMapByAttribute(this MapperProfile profile, Type type)
         {
             return profile.CreateMapByAttribute(type, true);
         }
 
-        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, Type type, bool validation)
+        public static MapperProfile CreateMapByAttribute(this MapperProfile profile, Type type, bool validation)
         {
             if (type == null)
             {
@@ -149,12 +149,12 @@
         // Profile.Multi
         //--------------------------------------------------------------------------------
 
-        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, IEnumerable<Type> types)
+        public static MapperProfile CreateMapByAttribute(this MapperProfile profile, IEnumerable<Type> types)
         {
             return CreateMapByAttribute(profile, types, true);
         }
 
-        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, IEnumerable<Type> types, bool validation)
+        public static MapperProfile CreateMapByAttribute(this MapperProfile profile, IEnumerable<Type> types, bool validation)
         {
             if (types == null)
             {

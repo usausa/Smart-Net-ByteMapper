@@ -9,7 +9,7 @@
     using Smart.ComponentModel;
     using Smart.Reflection;
 
-    public sealed class ByteMapperConfig : IByteMapperConfig
+    public sealed class MapperFactoryConfig : IMapperFactoryConfig
     {
         private readonly ComponentConfig config = new ComponentConfig();
 
@@ -17,9 +17,9 @@
 
         private readonly IList<IMapping> mappings = new List<IMapping>();
 
-        private readonly IList<IByteMapperProfile> profiles = new List<IByteMapperProfile>();
+        private readonly IList<IMapperProfile> profiles = new List<IMapperProfile>();
 
-        public ByteMapperConfig()
+        public MapperFactoryConfig()
         {
             config.Add<IDelegateFactory>(DelegateFactory.Default);
 
@@ -41,7 +41,7 @@
             this.DefaultFalseValue(0x30);
         }
 
-        public ByteMapperConfig Configure(Action<ComponentConfig> action)
+        public MapperFactoryConfig Configure(Action<ComponentConfig> action)
         {
             if (action == null)
             {
@@ -53,14 +53,14 @@
             return this;
         }
 
-        public ByteMapperConfig AddParameter<T>(string name, T parameter)
+        public MapperFactoryConfig AddParameter<T>(string name, T parameter)
         {
             parameters[name] = parameter;
 
             return this;
         }
 
-        public ByteMapperConfig AddMapping(IMapping mapping)
+        public MapperFactoryConfig AddMapping(IMapping mapping)
         {
             if (mapping == null)
             {
@@ -71,7 +71,7 @@
             return this;
         }
 
-        public ByteMapperConfig AddProfile(IByteMapperProfile profile)
+        public MapperFactoryConfig AddProfile(IMapperProfile profile)
         {
             if (profile == null)
             {
@@ -82,8 +82,8 @@
             return this;
         }
 
-        public ByteMapperConfig AddProfile<TProfile>()
-            where TProfile : IByteMapperProfile, new()
+        public MapperFactoryConfig AddProfile<TProfile>()
+            where TProfile : IMapperProfile, new()
         {
             profiles.Add(new TProfile());
             return this;
@@ -93,17 +93,17 @@
         // IByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        IComponentContainer IByteMapperConfig.ResolveComponents()
+        IComponentContainer IMapperFactoryConfig.ResolveComponents()
         {
             return config.ToContainer();
         }
 
-        IDictionary<string, object> IByteMapperConfig.ResolveParameters()
+        IDictionary<string, object> IMapperFactoryConfig.ResolveParameters()
         {
             return new Dictionary<string, object>(parameters);
         }
 
-        IEnumerable<IMapping> IByteMapperConfig.ResolveMappings()
+        IEnumerable<IMapping> IMapperFactoryConfig.ResolveMappings()
         {
             return mappings.Concat(profiles.SelectMany(x => x.ResolveMappings()));
         }

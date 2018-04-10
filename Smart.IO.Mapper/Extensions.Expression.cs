@@ -12,24 +12,24 @@
         // ByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size)
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperFactoryConfig config, int size)
         {
             return config.CreateMapByExpression<T>(size, null);
         }
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size, string profile)
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperFactoryConfig config, int size, string profile)
         {
             var expression = new TypeConfigExpression<T>(typeof(T), profile, size);
             config.AddMapping(expression);
             return expression;
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size)
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperFactoryConfig config, Type type, int size)
         {
             return config.CreateMapByExpression(type, size, null);
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, string profile)
         {
             var expression = new TypeConfigExpression<object>(type, profile, size);
             config.AddMapping(expression);
@@ -40,14 +40,14 @@
         // ByteMapperProfile
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperProfile profile, int size)
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperProfile profile, int size)
         {
             var expression = new TypeConfigExpression<T>(typeof(T), profile.Name, size);
             profile.AddMapping(expression);
             return expression;
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperProfile profile, Type type, int size)
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperProfile profile, Type type, int size)
         {
             var expression = new TypeConfigExpression<object>(type, profile.Name, size);
             profile.AddMapping(expression);

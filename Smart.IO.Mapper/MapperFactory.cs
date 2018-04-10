@@ -7,7 +7,7 @@
     using Smart.Collections.Concurrent;
     using Smart.ComponentModel;
 
-    public sealed class ByteMapper
+    public sealed class MapperFactory
     {
         private readonly IDictionary<string, object> parameters;
 
@@ -17,7 +17,7 @@
 
         public IComponentContainer Components { get; }
 
-        public ByteMapper(IByteMapperConfig config)
+        public MapperFactory(IMapperFactoryConfig config)
         {
             if (config == null)
             {

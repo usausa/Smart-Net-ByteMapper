@@ -15,7 +15,7 @@
         [Fact]
         public void MapByNumberTextAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultNumberProvider(CultureInfo.InvariantCulture)
@@ -25,8 +25,8 @@
                 .DefaultNumberStyle(NumberStyles.Integer)
                 .DefaultDecimalStyle(NumberStyles.Any)
                 .CreateMapByAttribute<NumberTextAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<NumberTextAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<NumberTextAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new NumberTextAttributeObject

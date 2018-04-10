@@ -3,22 +3,22 @@
     using System;
     using System.Collections.Generic;
 
-    public class ByteMapperProfile : IByteMapperProfile
+    public class MapperProfile : IMapperProfile
     {
         private readonly List<IMapping> mappings = new List<IMapping>();
 
         public string Name { get; }
 
-        public ByteMapperProfile()
+        public MapperProfile()
         {
         }
 
-        public ByteMapperProfile(string name)
+        public MapperProfile(string name)
         {
             Name = name;
         }
 
-        public ByteMapperProfile AddMapping(IMapping mapping)
+        public MapperProfile AddMapping(IMapping mapping)
         {
             if (mapping == null)
             {
@@ -33,7 +33,7 @@
         // IByteMapperProfile
         //--------------------------------------------------------------------------------
 
-        IEnumerable<IMapping> IByteMapperProfile.ResolveMappings()
+        IEnumerable<IMapping> IMapperProfile.ResolveMappings()
         {
             return mappings;
         }

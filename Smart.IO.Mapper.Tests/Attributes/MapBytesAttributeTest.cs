@@ -13,12 +13,12 @@
         [Fact]
         public void MapByBytesAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x30)
                 .CreateMapByAttribute<BytesAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<BytesAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<BytesAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new BytesAttributeObject

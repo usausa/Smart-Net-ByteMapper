@@ -23,14 +23,14 @@
         [Fact]
         public void MapByBooleanAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(Filler)
                 .DefaultTrueValue(True)
                 .DefaultFalseValue(False)
                 .CreateMapByAttribute<BooleanAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<BooleanAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<BooleanAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new BooleanAttributeObject();

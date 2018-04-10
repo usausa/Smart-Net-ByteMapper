@@ -14,7 +14,7 @@
         [Fact]
         public void MapUseTypeDefaultAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultNumberProvider(CultureInfo.InvariantCulture)
@@ -22,8 +22,8 @@
                 .DefaultNumberFiller(0x20)
                 .DefaultNumberStyle(NumberStyles.Integer)
                 .CreateMapByAttribute<TypeDefaultAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<TypeDefaultAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<TypeDefaultAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new TypeDefaultAttributeObject { IntValue = 1 };

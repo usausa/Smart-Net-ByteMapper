@@ -11,11 +11,11 @@
         [Fact]
         public void MapByByteAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .CreateMapByAttribute<ByteAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<ByteAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<ByteAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new ByteAttributeObject

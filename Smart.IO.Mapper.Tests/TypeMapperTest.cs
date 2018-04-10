@@ -86,7 +86,7 @@
         [Fact]
         public void TypeMapperNotExists()
         {
-            Assert.Throws<ByteMapperException>(() => new ByteMapperConfig().ToByteMapper().Create<object>());
+            Assert.Throws<ByteMapperException>(() => new MapperFactoryConfig().ToMapperFactory().Create<object>());
         }
 
         //--------------------------------------------------------------------------------
@@ -95,11 +95,11 @@
 
         private ITypeMapper<T> CreateTypeMapper<T>()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .CreateMapByAttribute<TargetObject>()
                 .DefaultDelimiter(null)
-                .ToByteMapper();
-            return byteMapper.Create<T>();
+                .ToMapperFactory();
+            return mapperFactory.Create<T>();
         }
 
         [Map(4, UseDelimitter = false)]

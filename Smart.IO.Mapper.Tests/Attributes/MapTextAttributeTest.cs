@@ -14,15 +14,15 @@
         [Fact]
         public void MapByStringAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
                 .CreateMapByAttribute<TextAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<TextAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<TextAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new TextAttributeObject();

@@ -4,7 +4,7 @@
 
     using Smart.ComponentModel;
 
-    public interface IByteMapperConfig
+    public interface IMapperFactoryConfig
     {
         IComponentContainer ResolveComponents();
 

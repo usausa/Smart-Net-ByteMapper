@@ -18,88 +18,88 @@
             // Generic
 
             // Named
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute<SimpleObject>("test")
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute<SimpleObject>(true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Named Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute<SimpleObject>("test", true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Type
 
             // Type
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(typeof(SimpleObject))
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Type Named
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), "test")
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Type Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Type Named Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), "test", true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Type-null
-            Assert.Throws<ArgumentNullException>(() => new ByteMapperConfig().CreateMapByAttribute((Type)null));
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByAttribute((Type)null));
 
             // Type-invalid
-            Assert.Throws<ArgumentException>(() => new ByteMapperConfig().CreateMapByAttribute(typeof(object)));
+            Assert.Throws<ArgumentException>(() => new MapperFactoryConfig().CreateMapByAttribute(typeof(object)));
 
             // Types
 
             // Types
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) })
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Types Named
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test")
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Types Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Types Named Validation
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test", true)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
             // Types-null
-            Assert.Throws<ArgumentNullException>(() => new ByteMapperConfig().CreateMapByAttribute((Type[])null));
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByAttribute((Type[])null));
 
             // Null name is default
-            Assert.NotNull(new ByteMapperConfig()
+            Assert.NotNull(new MapperFactoryConfig()
                 .CreateMapByAttribute<SimpleObject>(null)
-                .ToByteMapper()
+                .ToMapperFactory()
                 .Create<SimpleObject>());
         }
 
@@ -111,30 +111,30 @@
         public void MapByAttributeIsOverlap()
         {
             Assert.Throws<ByteMapperException>(
-                () => new ByteMapperConfig().CreateMapByAttribute<OverlapObject>(true).ToByteMapper().Create<OverlapObject>());
+                () => new MapperFactoryConfig().CreateMapByAttribute<OverlapObject>(true).ToMapperFactory().Create<OverlapObject>());
 
-            new ByteMapperConfig().CreateMapByAttribute<OverlapObject>(false).ToByteMapper().Create<OverlapObject>();
+            new MapperFactoryConfig().CreateMapByAttribute<OverlapObject>(false).ToMapperFactory().Create<OverlapObject>();
         }
 
         [Fact]
         public void MapByAttributeIsNoArray()
         {
             Assert.Throws<ByteMapperException>(
-                () => new ByteMapperConfig().CreateMapByAttribute<NoArrayObject>(true).ToByteMapper().Create<NoArrayObject>());
+                () => new MapperFactoryConfig().CreateMapByAttribute<NoArrayObject>(true).ToMapperFactory().Create<NoArrayObject>());
         }
 
         [Fact]
         public void MapByAttributeIsArrayUnmatched()
         {
             Assert.Throws<ByteMapperException>(
-                () => new ByteMapperConfig().CreateMapByAttribute<ArrayUnmatchedObject>(true).ToByteMapper().Create<ArrayUnmatchedObject>());
+                () => new MapperFactoryConfig().CreateMapByAttribute<ArrayUnmatchedObject>(true).ToMapperFactory().Create<ArrayUnmatchedObject>());
         }
 
         [Fact]
         public void MapByAttributeIsUnmatched()
         {
             Assert.Throws<ByteMapperException>(
-                () => new ByteMapperConfig().CreateMapByAttribute<UnmatchedObject>(true).ToByteMapper().Create<UnmatchedObject>());
+                () => new MapperFactoryConfig().CreateMapByAttribute<UnmatchedObject>(true).ToMapperFactory().Create<UnmatchedObject>());
         }
 
         //--------------------------------------------------------------------------------

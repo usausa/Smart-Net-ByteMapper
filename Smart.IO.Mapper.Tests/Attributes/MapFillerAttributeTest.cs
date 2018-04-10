@@ -14,13 +14,13 @@
         [Fact]
         public void MapByFillerAttribute()
         {
-            var byteMapper = new ByteMapperConfig()
+            var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultFiller(0x20)
                 .CreateMapByAttribute<FillerAttributeObject>()
-                .ToByteMapper();
-            var mapper = byteMapper.Create<FillerAttributeObject>();
+                .ToMapperFactory();
+            var mapper = mapperFactory.Create<FillerAttributeObject>();
 
             var buffer = new byte[mapper.Size];
             var obj = new FillerAttributeObject();

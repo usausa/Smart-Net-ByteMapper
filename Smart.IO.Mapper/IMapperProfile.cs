@@ -2,7 +2,7 @@
 {
     using System.Collections.Generic;
 
-    public interface IByteMapperProfile
+    public interface IMapperProfile
     {
         IEnumerable<IMapping> ResolveMappings();
     }
