@@ -39,8 +39,8 @@
         //--------------------------------------------------------------------------------
 
         [Map(4)]
-        [TypeDefault(Parameter.NumberPadding, Padding.Right)]
-        [TypeDefault(Parameter.NumberFiller, (byte)'_')]
+        [TypeNumberPadding(Padding.Right)]
+        [TypeNumberFiller((byte)'_')]
         internal class TypeDefaultAttributeObject
         {
             [MapNumberText(0, 4)]
