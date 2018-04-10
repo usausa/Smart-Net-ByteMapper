@@ -11,7 +11,7 @@
     {
         Type Type { get; }
 
-        string Profile { get; }
+        string Name { get; }
 
         int Size { get; }
 

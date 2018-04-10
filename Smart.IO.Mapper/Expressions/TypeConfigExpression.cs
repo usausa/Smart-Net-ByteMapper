@@ -30,14 +30,14 @@
 
         public Type Type { get; }
 
-        public string Profile { get; }
+        public string Name { get; }
 
         public int Size { get; }
 
-        public TypeConfigExpression(Type type, string profile, int size)
+        public TypeConfigExpression(Type type, string name, int size)
         {
             Type = type;
-            Profile = profile;
+            Name = name;
             Size = size;
         }
 

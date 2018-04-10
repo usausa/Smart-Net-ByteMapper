@@ -19,15 +19,15 @@
 
         public Type Type { get; }
 
-        public string Profile { get; }
+        public string Name { get; }
 
         public int Size => mapAttribute.Size;
 
-        public AttributeMapping(Type type, MapAttribute mapAttribute, string profile, bool validation)
+        public AttributeMapping(Type type, MapAttribute mapAttribute, string name, bool validation)
         {
             Type = type;
             this.mapAttribute = mapAttribute;
-            Profile = profile;
+            Name = name;
             this.validation = validation;
         }
 

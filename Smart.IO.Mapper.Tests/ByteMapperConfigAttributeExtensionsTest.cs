@@ -17,7 +17,7 @@
         {
             // Generic
 
-            // Profile
+            // Named
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute<SimpleObject>("test")
                 .ToByteMapper()
@@ -29,7 +29,7 @@
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Profile Validation
+            // Named Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute<SimpleObject>("test", true)
                 .ToByteMapper()
@@ -43,7 +43,7 @@
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Type Profile
+            // Type Named
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), "test")
                 .ToByteMapper()
@@ -55,7 +55,7 @@
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Type Profile Validation
+            // Type Named Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(typeof(SimpleObject), "test", true)
                 .ToByteMapper()
@@ -75,7 +75,7 @@
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Types Profile
+            // Types Named
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test")
                 .ToByteMapper()
@@ -87,7 +87,7 @@
                 .ToByteMapper()
                 .Create<SimpleObject>());
 
-            // Types Profile Validation
+            // Types Named Validation
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test", true)
                 .ToByteMapper()
@@ -96,7 +96,7 @@
             // Types-null
             Assert.Throws<ArgumentNullException>(() => new ByteMapperConfig().CreateMapByAttribute((Type[])null));
 
-            // Null profile is default
+            // Null name is default
             Assert.NotNull(new ByteMapperConfig()
                 .CreateMapByAttribute<SimpleObject>(null)
                 .ToByteMapper()
