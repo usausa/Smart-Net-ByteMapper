@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class ByteMapperConfigAttributeExtensionsTest
+    public class AttributeExtensionsTest
     {
         //--------------------------------------------------------------------------------
         // Call
