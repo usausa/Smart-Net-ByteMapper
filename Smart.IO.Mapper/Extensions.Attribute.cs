@@ -7,10 +7,10 @@
 
     using Smart.IO.Mapper.Attributes;
 
-    public static class ByteMapperConfigAttributeExtensions
+    public static class AttributeExtensions
     {
         //--------------------------------------------------------------------------------
-        // Single
+        // Config.Single
         //--------------------------------------------------------------------------------
 
         public static ByteMapperConfig CreateMapByAttribute<T>(this ByteMapperConfig config)
@@ -67,7 +67,7 @@
         }
 
         //--------------------------------------------------------------------------------
-        // Multi
+        // Config.Multi
         //--------------------------------------------------------------------------------
 
         public static ByteMapperConfig CreateMapByAttribute(this ByteMapperConfig config, IEnumerable<Type> types)
@@ -106,6 +106,75 @@
             }
 
             return config;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Profile.Single
+        //--------------------------------------------------------------------------------
+
+        public static ByteMapperProfile CreateMapByAttribute<T>(this ByteMapperProfile profile)
+        {
+            return profile.CreateMapByAttribute(typeof(T), true);
+        }
+
+        public static ByteMapperProfile CreateMapByAttribute<T>(this ByteMapperProfile profile, bool validation)
+        {
+            return profile.CreateMapByAttribute(typeof(T), validation);
+        }
+
+        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, Type type)
+        {
+            return profile.CreateMapByAttribute(type, true);
+        }
+
+        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, Type type, bool validation)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            var mapAttribute = type.GetCustomAttribute<MapAttribute>();
+            if (mapAttribute == null)
+            {
+                throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
+            }
+
+            profile.AddMapping(new AttributeMapping(type, mapAttribute, profile.Name, validation));
+
+            return profile;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Profile.Multi
+        //--------------------------------------------------------------------------------
+
+        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, IEnumerable<Type> types)
+        {
+            return CreateMapByAttribute(profile, types, true);
+        }
+
+        public static ByteMapperProfile CreateMapByAttribute(this ByteMapperProfile profile, IEnumerable<Type> types, bool validation)
+        {
+            if (types == null)
+            {
+                throw new ArgumentNullException(nameof(types));
+            }
+
+            var targets = types
+                .Where(x => x != null)
+                .Select(x => new
+                {
+                    Type = x,
+                    Attribute = x.GetCustomAttribute<MapAttribute>()
+                })
+                .Where(x => x.Attribute != null);
+            foreach (var pair in targets)
+            {
+                profile.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile.Name, validation));
+            }
+
+            return profile;
         }
     }
 }

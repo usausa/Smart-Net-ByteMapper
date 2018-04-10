@@ -23,11 +23,19 @@
             builder.Length = length;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapBytesSyntax Filler(byte value)
         {
             builder.Filler = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

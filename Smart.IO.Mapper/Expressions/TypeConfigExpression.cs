@@ -41,6 +41,10 @@
             Size = size;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         // Type setting
 
         public ITypeConfigSyntax<T> WithValidation(bool value)
@@ -157,6 +161,10 @@
             return this;
         }
 
+        //--------------------------------------------------------------------------------
+        // IMapping
+        //--------------------------------------------------------------------------------
+
         IMapper[] IMapping.CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(components, parameters, typeParameters);
@@ -199,6 +207,10 @@
                         delegateFactory.CreateGetter(x.Property),
                         delegateFactory.CreateSetter(x.Property))));
         }
+
+        //--------------------------------------------------------------------------------
+        // Entry
+        //--------------------------------------------------------------------------------
 
         private class TypeMapEntry
         {

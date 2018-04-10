@@ -30,6 +30,10 @@
             builder.Length = length;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapTextSyntax Encoding(Encoding value)
         {
             if (value == null)
@@ -58,6 +62,10 @@
             builder.Filler = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

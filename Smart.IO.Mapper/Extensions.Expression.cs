@@ -6,7 +6,7 @@
 
     using Smart.IO.Mapper.Expressions;
 
-    public static class ByteMapperConfigExpressionExtensions
+    public static class ExpressionExtensions
     {
         //--------------------------------------------------------------------------------
         // ByteMapperConfig
@@ -33,6 +33,24 @@
         {
             var expression = new TypeConfigExpression<object>(type, profile, size);
             config.AddMapping(expression);
+            return expression;
+        }
+
+        //--------------------------------------------------------------------------------
+        // ByteMapperProfile
+        //--------------------------------------------------------------------------------
+
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperProfile profile, int size)
+        {
+            var expression = new TypeConfigExpression<T>(typeof(T), profile.Name, size);
+            profile.AddMapping(expression);
+            return expression;
+        }
+
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperProfile profile, Type type, int size)
+        {
+            var expression = new TypeConfigExpression<object>(type, profile.Name, size);
+            profile.AddMapping(expression);
             return expression;
         }
 

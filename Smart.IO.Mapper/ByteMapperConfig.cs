@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.Linq;
     using System.Text;
 
     using Smart.ComponentModel;
@@ -12,9 +13,11 @@
     {
         private readonly ComponentConfig config = new ComponentConfig();
 
-        private readonly Dictionary<string, object> parameters = new Dictionary<string, object>();
+        private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
 
-        private readonly List<IMapping> mappings = new List<IMapping>();
+        private readonly IList<IMapping> mappings = new List<IMapping>();
+
+        private readonly IList<IByteMapperProfile> profiles = new List<IByteMapperProfile>();
 
         public ByteMapperConfig()
         {
@@ -68,6 +71,28 @@
             return this;
         }
 
+        public ByteMapperConfig AddProfile(IByteMapperProfile profile)
+        {
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            profiles.Add(profile);
+            return this;
+        }
+
+        public ByteMapperConfig AddProfile<TProfile>()
+            where TProfile : IByteMapperProfile, new()
+        {
+            profiles.Add(new TProfile());
+            return this;
+        }
+
+        //--------------------------------------------------------------------------------
+        // IByteMapperConfig
+        //--------------------------------------------------------------------------------
+
         IComponentContainer IByteMapperConfig.ResolveComponents()
         {
             return config.ToContainer();
@@ -80,7 +105,7 @@
 
         IEnumerable<IMapping> IByteMapperConfig.ResolveMappings()
         {
-            return mappings;
+            return mappings.Concat(profiles.SelectMany(x => x.ResolveMappings()));
         }
     }
 }

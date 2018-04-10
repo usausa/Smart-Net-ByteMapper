@@ -18,6 +18,10 @@
             builder.Content = content;
         }
 
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
+
         ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder()
         {
             return builder;

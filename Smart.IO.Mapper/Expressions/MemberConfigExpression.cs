@@ -11,6 +11,10 @@
             Expression = expression;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public void Array(int length, Action<IMemberMapConfigSyntax> config)
         {
             if (length < 0)

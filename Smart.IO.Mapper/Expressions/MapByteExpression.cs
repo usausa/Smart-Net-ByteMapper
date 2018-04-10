@@ -4,6 +4,10 @@
 
     internal sealed class MapByteExpression : IMemberMapExpression
     {
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
+
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {
             return ByteConverterBuilder.Default;

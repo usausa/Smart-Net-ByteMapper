@@ -32,6 +32,10 @@
             builder.Format = format;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapDateTimeSyntax Encoding(Encoding value)
         {
             if (value == null)
@@ -65,6 +69,10 @@
             builder.Provider = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

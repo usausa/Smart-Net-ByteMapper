@@ -15,6 +15,10 @@
     {
         private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapBooleanSyntax True(byte value)
         {
             builder.TrueValue = value;
@@ -32,6 +36,10 @@
             builder.NullValue = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

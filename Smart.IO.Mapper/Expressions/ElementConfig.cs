@@ -6,6 +6,10 @@
     {
         public IMemberMapExpression Expression { get; private set; }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
         {
             if (expression == null)

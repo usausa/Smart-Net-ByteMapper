@@ -46,6 +46,10 @@
             builder.Format = format;
         }
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapNumberSyntax Encoding(Encoding value)
         {
             if (value == null)
@@ -91,6 +95,10 @@
             builder.Provider = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

@@ -11,11 +11,19 @@
     {
         private readonly BinaryConverterBuilder builder = new BinaryConverterBuilder();
 
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
         public IMapBinarySyntax Endian(Endian value)
         {
             builder.Endian = value;
             return this;
         }
+
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
 
         IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
         {

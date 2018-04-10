@@ -29,6 +29,10 @@
             builder.Filler = filler;
         }
 
+        //--------------------------------------------------------------------------------
+        // Expression
+        //--------------------------------------------------------------------------------
+
         ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder()
         {
             return builder;
