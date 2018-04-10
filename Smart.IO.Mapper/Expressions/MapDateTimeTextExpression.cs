@@ -23,12 +23,22 @@
 
         public MapDateTimeTextExpression(int length, string format)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
             builder.Format = format;
         }
 
         public IMapDateTimeSyntax Encoding(Encoding value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             builder.Encoding = value;
             return this;
         }
@@ -47,6 +57,11 @@
 
         public IMapDateTimeSyntax Provider(IFormatProvider value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             builder.Provider = value;
             return this;
         }

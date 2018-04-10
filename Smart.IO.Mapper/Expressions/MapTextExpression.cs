@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
+    using System;
     using System.Text;
 
     using Smart.IO.Mapper.Builders;
@@ -21,11 +22,21 @@
 
         public MapTextExpression(int length)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
         }
 
         public IMapTextSyntax Encoding(Encoding value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             builder.Encoding = value;
             return this;
         }

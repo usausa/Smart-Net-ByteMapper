@@ -5,7 +5,7 @@
 
     using Smart.IO.Mapper.Mappers;
 
-    public class TypeMapper<T> : ITypeMapper<T>
+    internal class TypeMapper<T> : ITypeMapper<T>
     {
         private readonly IMapper[] readableMappers;
 

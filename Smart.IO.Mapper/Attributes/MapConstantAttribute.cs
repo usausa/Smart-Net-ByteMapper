@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Attributes
 {
+    using System;
+
     using Smart.IO.Mapper.Builders;
 
     public sealed class MapConstantAttribute : AbstractTypeMapAttribute
@@ -8,6 +10,16 @@
 
         public MapConstantAttribute(int offset, byte[] content)
         {
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
             builder.Offset = offset;
             builder.Content = content;
         }

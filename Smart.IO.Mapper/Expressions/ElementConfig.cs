@@ -1,11 +1,18 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
+    using System;
+
     internal sealed class ElementConfig : IMemberMapConfigSyntax
     {
         public IMemberMapExpression Expression { get; private set; }
 
-        public void Map(IMemberMapExpression expression)
+        void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             Expression = expression;
         }
     }

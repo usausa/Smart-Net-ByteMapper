@@ -17,6 +17,11 @@
 
         public MapArrayAttribute(int length)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
         }
 

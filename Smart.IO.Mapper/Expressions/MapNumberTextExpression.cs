@@ -27,17 +27,32 @@
 
         public MapNumberTextExpression(int length)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
         }
 
         public MapNumberTextExpression(int length, string format)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
             builder.Format = format;
         }
 
         public IMapNumberSyntax Encoding(Encoding value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             builder.Encoding = value;
             return this;
         }
@@ -68,6 +83,11 @@
 
         public IMapNumberSyntax Provider(IFormatProvider value)
         {
+            if (value == null)
+            {
+                throw new ArgumentNullException(nameof(value));
+            }
+
             builder.Provider = value;
             return this;
         }

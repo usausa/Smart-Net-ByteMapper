@@ -13,6 +13,11 @@
 
         public MapAttribute(int size)
         {
+            if (size < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(size));
+            }
+
             Size = size;
         }
     }

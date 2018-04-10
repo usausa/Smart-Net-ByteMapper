@@ -31,7 +31,7 @@
             this.validation = validation;
         }
 
-        public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapper[] IMapping.CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(
                 components,

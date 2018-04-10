@@ -17,6 +17,11 @@
         public MapBytesAttribute(int offset, int length)
             : base(offset)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
         }
 

@@ -12,7 +12,7 @@
     using Smart.IO.Mapper.Mappers;
     using Smart.Reflection;
 
-    internal sealed class TypeConfig<T> : ITypeConfigSyntax<T>, IMapping
+    internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMapping
     {
         private readonly List<TypeMapEntry> typeMapEntries = new List<TypeMapEntry>();
 
@@ -34,7 +34,7 @@
 
         public int Size { get; }
 
-        public TypeConfig(Type type, string profile, int size)
+        public TypeConfigExpression(Type type, string profile, int size)
         {
             Type = type;
             Profile = profile;
@@ -73,13 +73,23 @@
 
         // Mapper
 
-        public ITypeConfigSyntax<T> Map(ITypeMapExpression expression)
+        ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(ITypeMapExpression expression)
         {
-            return Map(lastOffset, expression);
+            return MapInternal(lastOffset, expression);
         }
 
-        public ITypeConfigSyntax<T> Map(int offset, ITypeMapExpression expression)
+        ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(int offset, ITypeMapExpression expression)
         {
+            return MapInternal(offset, expression);
+        }
+
+        private ITypeConfigSyntax<T> MapInternal(int offset, ITypeMapExpression expression)
+        {
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             var builder = expression.GetTypeMapperBuilder();
             var entry = new TypeMapEntry(offset, builder.CalcSize(Type), builder);
             typeMapEntries.Add(entry);
@@ -93,11 +103,31 @@
 
         public ITypeConfigSyntax<T> ForMember(string name, Action<IMemberConfigSyntax> config)
         {
-            return ForMember(name, lastOffset, config);
+            return ForMemberInternal(name, lastOffset, config);
         }
 
         public ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberConfigSyntax> config)
         {
+            return ForMemberInternal(name, offset, config);
+        }
+
+        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberConfigSyntax> config)
+        {
+            return ForMemberInternal(ExpressionHelper.GetMemberName(expr), lastOffset, config);
+        }
+
+        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberConfigSyntax> config)
+        {
+            return ForMemberInternal(ExpressionHelper.GetMemberName(expr), offset, config);
+        }
+
+        private ITypeConfigSyntax<T> ForMemberInternal(string name, int offset, Action<IMemberConfigSyntax> config)
+        {
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(config));
@@ -110,7 +140,7 @@
                 throw new ArgumentException("Name is invalid.", nameof(name));
             }
 
-            var member = new MemberConfig();
+            var member = new MemberConfigExpression();
             config(member);
 
             if (member.Expression == null)
@@ -127,17 +157,7 @@
             return this;
         }
 
-        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberConfigSyntax> config)
-        {
-            return ForMember(ExpressionHelper.GetMemberName(expr), lastOffset, config);
-        }
-
-        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberConfigSyntax> config)
-        {
-            return ForMember(ExpressionHelper.GetMemberName(expr), offset, config);
-        }
-
-        public IMapper[] CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapper[] IMapping.CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(components, parameters, typeParameters);
 

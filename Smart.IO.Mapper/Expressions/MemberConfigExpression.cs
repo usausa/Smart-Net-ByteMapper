@@ -2,18 +2,21 @@
 {
     using System;
 
-    internal sealed class MemberConfig : IMemberConfigSyntax
+    internal sealed class MemberConfigExpression : IMemberConfigSyntax
     {
         public IMemberMapExpression Expression { get; private set; }
 
-        public void Map(IMemberMapExpression expression)
+        void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
         {
             Expression = expression;
         }
 
         public void Array(int length, Action<IMemberMapConfigSyntax> config)
         {
-            // TODO arrayチェック！
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
 
             var element = new ElementConfig();
             config(element);

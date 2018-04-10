@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
+    using System;
+
     using Smart.IO.Mapper.Builders;
 
     public interface IMapBytesSyntax
@@ -13,6 +15,11 @@
 
         public MapBytesExpression(int length)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Length = length;
         }
 

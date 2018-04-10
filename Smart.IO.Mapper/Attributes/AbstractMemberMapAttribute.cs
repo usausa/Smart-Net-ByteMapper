@@ -11,6 +11,11 @@
 
         protected AbstractMemberMapAttribute(int offset)
         {
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
             Offset = offset;
         }
 

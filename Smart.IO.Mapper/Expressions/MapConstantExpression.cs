@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.Mapper.Expressions
 {
+    using System;
+
     using Smart.IO.Mapper.Builders;
 
     internal sealed class MapConstantExpression : ITypeMapExpression
@@ -8,6 +10,11 @@
 
         public MapConstantExpression(byte[] content)
         {
+            if (content == null)
+            {
+                throw new ArgumentNullException(nameof(content));
+            }
+
             builder.Content = content;
         }
 

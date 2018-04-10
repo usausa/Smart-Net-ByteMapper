@@ -12,29 +12,29 @@
         // ByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        //public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size)
-        //{
-        //    return config.CreateMapByExpression<T>(size, null);
-        //}
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size)
+        {
+            return config.CreateMapByExpression<T>(size, null);
+        }
 
-        //public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size, string profile)
-        //{
-        //    var expression = new TypeMapExpression<T>(typeof(T), profile, size);
-        //    config.AddMapping(expression);
-        //    return expression;
-        //}
+        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this ByteMapperConfig config, int size, string profile)
+        {
+            var expression = new TypeConfigExpression<T>(typeof(T), profile, size);
+            config.AddMapping(expression);
+            return expression;
+        }
 
-        //public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size)
-        //{
-        //    return config.CreateMapByExpression(type, size, null);
-        //}
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size)
+        {
+            return config.CreateMapByExpression(type, size, null);
+        }
 
-        //public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
-        //{
-        //    var expression = new TypeMapExpression<object>(type, profile, size);
-        //    config.AddMapping(expression);
-        //    return expression;
-        //}
+        public static ITypeConfigSyntax<object> CreateMapByExpression(this ByteMapperConfig config, Type type, int size, string profile)
+        {
+            var expression = new TypeConfigExpression<object>(type, profile, size);
+            config.AddMapping(expression);
+            return expression;
+        }
 
         //--------------------------------------------------------------------------------
         // Type

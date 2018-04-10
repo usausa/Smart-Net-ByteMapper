@@ -59,6 +59,11 @@
 
         public ByteMapperConfig AddMapping(IMapping mapping)
         {
+            if (mapping == null)
+            {
+                throw new ArgumentNullException(nameof(mapping));
+            }
+
             mappings.Add(mapping);
             return this;
         }

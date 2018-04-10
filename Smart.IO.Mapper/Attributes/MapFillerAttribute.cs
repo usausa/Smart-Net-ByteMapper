@@ -16,6 +16,16 @@
 
         public MapFillerAttribute(int offset, int length)
         {
+            if (offset < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(offset));
+            }
+
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
             builder.Offset = offset;
             builder.Length = length;
         }

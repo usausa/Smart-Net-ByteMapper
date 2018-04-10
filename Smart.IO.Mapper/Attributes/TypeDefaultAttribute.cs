@@ -11,6 +11,11 @@
 
         public TypeDefaultAttribute(string key, object value)
         {
+            if (key == null)
+            {
+                throw new ArgumentNullException(nameof(key));
+            }
+
             Key = key;
             Value = value;
         }

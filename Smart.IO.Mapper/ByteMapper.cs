@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.Mapper
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -18,6 +19,11 @@
 
         public ByteMapper(IByteMapperConfig config)
         {
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
+            }
+
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
             mappings = config.ResolveMappings()

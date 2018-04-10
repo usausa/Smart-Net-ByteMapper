@@ -43,6 +43,13 @@
         public MapDateTimeTextAttribute(int offset, int length, string format)
             : base(offset)
         {
+            if (length < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
+            // TODO format
+
             builder.Length = length;
             builder.Format = format;
         }
