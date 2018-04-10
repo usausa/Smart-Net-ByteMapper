@@ -1,3 +1,10 @@
-# Work-Net-ByteMapper
+# Smart.IO.Mapper .NET - byte mapper library for .NET
 
-Byte array object mapper.
+## What is this?
+
+* byte array <-> object mapper.
+* (under construction)
+
+## Example
+
+(under construction)

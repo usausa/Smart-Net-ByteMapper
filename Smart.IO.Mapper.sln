@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.gitmodules = .gitmodules
 		README.md = README.md
+		Smart.IO.Mapper.nuspec = Smart.IO.Mapper.nuspec
 		Smart.IO.Mapper.ruleset = Smart.IO.Mapper.ruleset
+		Smart.IO.Mapper.sln.DotSettings = Smart.IO.Mapper.sln.DotSettings
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.Mapper.Tests", "Smart.IO.Mapper.Tests\Smart.IO.Mapper.Tests.csproj", "{FB8A1E91-2727-407E-974E-AAF87E13FC88}"
