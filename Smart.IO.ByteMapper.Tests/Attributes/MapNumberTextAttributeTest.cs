@@ -38,26 +38,25 @@
                 ShortValue = 1,
                 CustomShortValue = -1,
                 DecimalValue = 12.34m,
-                CustomDecimalValue = -12.3m
+                CustomDecimalValue = -1.2m
             };
 
             // Write
             mapper.ToByte(buffer, 0, obj);
-
             Assert.Equal(
                 Encoding.ASCII.GetBytes(
                     "   1" +
                     "    " +
-                    "-1__" +
+                    "-01_" +
                     "     1" +
                     "      " +
-                    "-1____" +
+                    "-01___" +
                     " 1" +
                     "  " +
                     "-1" +
                     " 12.34" +
                     "      " +
-                    "-12.3_"),
+                    "-1.20_"),
                 buffer);
 
             // Read
@@ -74,7 +73,7 @@
                     "-2" +
                     "  23.4" +
                     "  23.4" +
-                    "-23.45"),
+                    " -23.4"),
                 obj);
 
             Assert.Equal(2, obj.IntValue);
@@ -88,7 +87,7 @@
             Assert.Equal((short)-2, obj.CustomShortValue);
             Assert.Equal(23.4m, obj.DecimalValue);
             Assert.Equal(23.4m, obj.NullableDecimalValue);
-            Assert.Equal(-23.45m, obj.CustomDecimalValue);
+            Assert.Equal(-23.4m, obj.CustomDecimalValue);
         }
 
         //--------------------------------------------------------------------------------
@@ -124,7 +123,7 @@
             [MapNumberText(4, 4)]
             public int? NullableIntValue { get; set; }
 
-            [MapNumberText(8, 4, EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(8, 4, Format = "D2", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
             public int CustomIntValue { get; set; }
 
             // long
@@ -135,7 +134,7 @@
             [MapNumberText(18, 6)]
             public long? NullableLongValue { get; set; }
 
-            [MapNumberText(24, 6, CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(24, 6, Format = "D2", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
             public long CustomLongValue { get; set; }
 
             // short
@@ -146,7 +145,7 @@
             [MapNumberText(32, 2)]
             public short? NullableShortValue { get; set; }
 
-            [MapNumberText(34, 2, EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(34, 2, Format = "D1", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
             public short CustomShortValue { get; set; }
 
             // decimal
@@ -157,7 +156,7 @@
             [MapNumberText(42, 6)]
             public decimal? NullableDecimalValue { get; set; }
 
-            [MapNumberText(48, 6, CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(48, 6, Format = "0.00", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
             public decimal CustomDecimalValue { get; set; }
         }
     }
