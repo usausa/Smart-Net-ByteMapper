@@ -12,7 +12,7 @@
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[] { 0x00, 0x01 });
 
-        private readonly BigEndianShortBinaryConverter converter = new BigEndianShortBinaryConverter();
+        private readonly IMapConverter converter = BigEndianShortBinaryConverter.Default;
 
         [Fact]
         public void ReadToBigEndianShortBinary()
