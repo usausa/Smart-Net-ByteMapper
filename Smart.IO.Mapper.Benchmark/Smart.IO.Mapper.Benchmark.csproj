@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <CodeAnalysisRuleSet>..\Smart.IO.Mapper.ruleset</CodeAnalysisRuleSet>
+    <Version>1.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

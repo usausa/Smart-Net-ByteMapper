@@ -15,9 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.Mapper.Tests", "Smart.IO.Mapper.Tests\Smart.IO.Mapper.Tests.csproj", "{FB8A1E91-2727-407E-974E-AAF87E13FC88}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.Mapper.Work", "Smart.IO.Mapper.Work\Smart.IO.Mapper.Work.csproj", "{CE7EC76B-7035-4442-B4A3-19187751EE76}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.IO.Mapper.Benchmark", "Smart.IO.Mapper.Benchmark\Smart.IO.Mapper.Benchmark.csproj", "{E0180652-F5C0-4220-9ECC-2FD234F8180F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.Mapper.Benchmark", "Smart.IO.Mapper.Benchmark\Smart.IO.Mapper.Benchmark.csproj", "{E0180652-F5C0-4220-9ECC-2FD234F8180F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,10 +31,6 @@ Global
 		{FB8A1E91-2727-407E-974E-AAF87E13FC88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FB8A1E91-2727-407E-974E-AAF87E13FC88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FB8A1E91-2727-407E-974E-AAF87E13FC88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CE7EC76B-7035-4442-B4A3-19187751EE76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CE7EC76B-7035-4442-B4A3-19187751EE76}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CE7EC76B-7035-4442-B4A3-19187751EE76}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CE7EC76B-7035-4442-B4A3-19187751EE76}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E0180652-F5C0-4220-9ECC-2FD234F8180F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E0180652-F5C0-4220-9ECC-2FD234F8180F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E0180652-F5C0-4220-9ECC-2FD234F8180F}.Release|Any CPU.ActiveCfg = Release|Any CPU
