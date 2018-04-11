@@ -114,7 +114,7 @@
 
                         return new MapperPosition(
                             x.Attribute.Offset,
-                            arrayBuilder.CalcSize(elementType),
+                            arrayBuilder.CalcSize(x.Property.PropertyType),
                             new MemberMapper(
                                 x.Attribute.Offset,
                                 arrayBuilder.CreateConverter(context, x.Property.PropertyType),

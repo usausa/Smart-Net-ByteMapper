@@ -15,7 +15,8 @@
 
         public int CalcSize(Type type)
         {
-            return Length * ElementConverterBuilder.CalcSize(type);
+            var elementType = type.GetElementType();
+            return Length * ElementConverterBuilder.CalcSize(elementType);
         }
 
         public IMapConverter CreateConverter(IBuilderContext context, Type type)
