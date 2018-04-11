@@ -12,7 +12,7 @@
     using Smart.IO.ByteMapper.Mappers;
     using Smart.Reflection;
 
-    internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMapping
+    internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
     {
         private readonly List<TypeMapEntry> typeMapEntries = new List<TypeMapEntry>();
 
@@ -20,7 +20,11 @@
 
         private readonly Dictionary<string, object> typeParameters = new Dictionary<string, object>();
 
+        private readonly int size;
+
         private bool validation = true;
+
+        private byte? nullFiller;
 
         private bool autoFiller = true;
 
@@ -32,20 +36,18 @@
 
         public string Name { get; }
 
-        public int Size { get; }
-
         public TypeConfigExpression(Type type, string name, int size)
         {
             Type = type;
             Name = name;
-            Size = size;
+            this.size = size;
         }
 
         //--------------------------------------------------------------------------------
         // Syntax
         //--------------------------------------------------------------------------------
 
-        // Type setting
+        // Validation
 
         public ITypeConfigSyntax<T> WithValidation(bool value)
         {
@@ -54,6 +56,12 @@
         }
 
         // Type setting
+
+        public ITypeConfigSyntax<T> NullFiller(byte value)
+        {
+            nullFiller = value;
+            return this;
+        }
 
         public ITypeConfigSyntax<T> AutoFiller(bool value)
         {
@@ -162,12 +170,14 @@
         }
 
         //--------------------------------------------------------------------------------
-        // IMapping
+        // IMappingFactory
         //--------------------------------------------------------------------------------
 
-        IMapper[] IMapping.CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapping IMappingFactory.Create(IComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(components, parameters, typeParameters);
+
+            var filler = context.GetParameter<byte>(Parameter.Filler);
 
             var list = new List<MapperPosition>();
             list.AddRange(CreateTypeEntries(context));
@@ -175,13 +185,13 @@
 
             MapperPositionHelper.Layout(
                 list,
-                Size,
+                size,
                 Type.FullName,
                 validation,
                 useDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
-                autoFiller ? (byte?)context.GetParameter<byte>(Parameter.Filler) : null);
+                autoFiller ? (byte?)filler : null);
 
-            return list.Select(x => x.Mapper).ToArray();
+            return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
         }
 
         private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)

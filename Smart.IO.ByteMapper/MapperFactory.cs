@@ -11,7 +11,7 @@
     {
         private readonly IDictionary<string, object> parameters;
 
-        private readonly IDictionary<MapKey, IMapping> mappings;
+        private readonly IDictionary<MapKey, IMappingFactory> mappingFactories;
 
         private readonly ThreadsafeHashArrayMap<MapKey, object> cache = new ThreadsafeHashArrayMap<MapKey, object>();
 
@@ -26,7 +26,7 @@
 
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
-            mappings = config.ResolveMappings()
+            mappingFactories = config.ResolveMappingFactories()
                 .ToDictionary(x => new MapKey(x.Type, x.Name ?? Names.Default), x => x);
         }
 
@@ -49,15 +49,13 @@
 
         private ITypeMapper<T> CreateMapper<T>(MapKey key)
         {
-            if (!mappings.TryGetValue(key, out var mapping))
+            if (!mappingFactories.TryGetValue(key, out var mappingFactory))
             {
                 throw new ByteMapperException($"Mapper entry is not exist. type=[{key.Type.FullName}], name=[{key.Name}]");
             }
 
-            return new TypeMapper<T>(
-                mapping.Type,
-                mapping.Size,
-                mapping.CreateMappers(Components, parameters));
+            var mapping = mappingFactory.Create(Components, parameters);
+            return new TypeMapper<T>(mapping.Type, mapping.Size, mapping.Filler, mapping.Mappers);
         }
     }
 }

@@ -11,6 +11,8 @@
 
         // Type setting
 
+        ITypeConfigSyntax<T> NullFiller(byte value);
+
         ITypeConfigSyntax<T> AutoFiller(bool value);
 
         ITypeConfigSyntax<T> UseDelimitter(bool value);

@@ -15,7 +15,7 @@
 
         private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
 
-        private readonly IList<IMapping> mappings = new List<IMapping>();
+        private readonly IList<IMappingFactory> factories = new List<IMappingFactory>();
 
         private readonly IList<IMapperProfile> profiles = new List<IMapperProfile>();
 
@@ -60,14 +60,14 @@
             return this;
         }
 
-        public MapperFactoryConfig AddMapping(IMapping mapping)
+        public MapperFactoryConfig AddMappingFactory(IMappingFactory factory)
         {
-            if (mapping == null)
+            if (factory == null)
             {
-                throw new ArgumentNullException(nameof(mapping));
+                throw new ArgumentNullException(nameof(factory));
             }
 
-            mappings.Add(mapping);
+            factories.Add(factory);
             return this;
         }
 
@@ -103,9 +103,9 @@
             return new Dictionary<string, object>(parameters);
         }
 
-        IEnumerable<IMapping> IMapperFactoryConfig.ResolveMappings()
+        IEnumerable<IMappingFactory> IMapperFactoryConfig.ResolveMappingFactories()
         {
-            return mappings.Concat(profiles.SelectMany(x => x.ResolveMappings()));
+            return factories.Concat(profiles.SelectMany(x => x.ResolveMappingFactories()));
         }
     }
 }

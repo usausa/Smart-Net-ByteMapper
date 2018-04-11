@@ -61,7 +61,7 @@
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
 
-            config.AddMapping(new AttributeMapping(type, mapAttribute, profile, validation));
+            config.AddMappingFactory(new AttributeMappingFactory(type, mapAttribute, profile, validation));
 
             return config;
         }
@@ -102,7 +102,7 @@
                 .Where(x => x.Attribute != null);
             foreach (var pair in targets)
             {
-                config.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile, validation));
+                config.AddMappingFactory(new AttributeMappingFactory(pair.Type, pair.Attribute, profile, validation));
             }
 
             return config;
@@ -140,7 +140,7 @@
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
 
-            profile.AddMapping(new AttributeMapping(type, mapAttribute, profile.Name, validation));
+            profile.AddMappingFactory(new AttributeMappingFactory(type, mapAttribute, profile.Name, validation));
 
             return profile;
         }
@@ -171,7 +171,7 @@
                 .Where(x => x.Attribute != null);
             foreach (var pair in targets)
             {
-                profile.AddMapping(new AttributeMapping(pair.Type, pair.Attribute, profile.Name, validation));
+                profile.AddMappingFactory(new AttributeMappingFactory(pair.Type, pair.Attribute, profile.Name, validation));
             }
 
             return profile;

@@ -20,7 +20,7 @@
         public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperFactoryConfig config, int size, string profile)
         {
             var expression = new TypeConfigExpression<T>(typeof(T), profile, size);
-            config.AddMapping(expression);
+            config.AddMappingFactory(expression);
             return expression;
         }
 
@@ -32,7 +32,7 @@
         public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, string profile)
         {
             var expression = new TypeConfigExpression<object>(type, profile, size);
-            config.AddMapping(expression);
+            config.AddMappingFactory(expression);
             return expression;
         }
 
@@ -43,14 +43,14 @@
         public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperProfile profile, int size)
         {
             var expression = new TypeConfigExpression<T>(typeof(T), profile.Name, size);
-            profile.AddMapping(expression);
+            profile.AddMappingFactory(expression);
             return expression;
         }
 
         public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperProfile profile, Type type, int size)
         {
             var expression = new TypeConfigExpression<object>(type, profile.Name, size);
-            profile.AddMapping(expression);
+            profile.AddMappingFactory(expression);
             return expression;
         }
 

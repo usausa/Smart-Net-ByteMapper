@@ -11,14 +11,17 @@
 
         private readonly IMapper[] writableMappers;
 
+        private readonly byte filler;
+
         public Type TargetType { get; }
 
         public int Size { get; }
 
-        public TypeMapper(Type targetType, int size, IMapper[] mappers)
+        public TypeMapper(Type targetType, int size, byte filler, IMapper[] mappers)
         {
             TargetType = targetType;
             Size = size;
+            this.filler = filler;
             readableMappers = mappers.Where(x => x.CanRead).ToArray();
             writableMappers = mappers.Where(x => x.CanWrite).ToArray();
         }
@@ -33,9 +36,16 @@
 
         public void ToByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < writableMappers.Length; i++)
+            if (target == null)
             {
-                writableMappers[i].Write(buffer, index, target);
+                buffer.Fill(index, Size, filler);
+            }
+            else
+            {
+                for (var i = 0; i < writableMappers.Length; i++)
+                {
+                    writableMappers[i].Write(buffer, index, target);
+                }
             }
         }
     }

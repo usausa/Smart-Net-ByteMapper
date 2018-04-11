@@ -5,7 +5,17 @@
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class MapAttribute : Attribute
     {
+        private byte? nullFiller;
+
         public int Size { get; }
+
+        public bool HasNullFiller => nullFiller.HasValue;
+
+        public byte NullFiller
+        {
+            get => nullFiller ?? 0;
+            set => nullFiller = value;
+        }
 
         public bool AutoFiller { get; set; } = true;
 

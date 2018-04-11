@@ -10,6 +10,6 @@
 
         IDictionary<string, object> ResolveParameters();
 
-        IEnumerable<IMapping> ResolveMappings();
+        IEnumerable<IMappingFactory> ResolveMappingFactories();
     }
 }

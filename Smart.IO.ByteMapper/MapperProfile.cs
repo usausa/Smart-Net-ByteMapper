@@ -5,7 +5,7 @@
 
     public class MapperProfile : IMapperProfile
     {
-        private readonly List<IMapping> mappings = new List<IMapping>();
+        private readonly List<IMappingFactory> factories = new List<IMappingFactory>();
 
         public string Name { get; }
 
@@ -18,14 +18,14 @@
             Name = name;
         }
 
-        public MapperProfile AddMapping(IMapping mapping)
+        public MapperProfile AddMappingFactory(IMappingFactory factory)
         {
-            if (mapping == null)
+            if (factory == null)
             {
-                throw new ArgumentNullException(nameof(mapping));
+                throw new ArgumentNullException(nameof(factory));
             }
 
-            mappings.Add(mapping);
+            factories.Add(factory);
             return this;
         }
 
@@ -33,9 +33,9 @@
         // IByteMapperProfile
         //--------------------------------------------------------------------------------
 
-        IEnumerable<IMapping> IMapperProfile.ResolveMappings()
+        IEnumerable<IMappingFactory> IMapperProfile.ResolveMappingFactories()
         {
-            return mappings;
+            return factories;
         }
     }
 }

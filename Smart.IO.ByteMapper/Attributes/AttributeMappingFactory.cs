@@ -11,7 +11,7 @@
     using Smart.IO.ByteMapper.Mappers;
     using Smart.Reflection;
 
-    internal sealed class AttributeMapping : IMapping
+    internal sealed class AttributeMappingFactory : IMappingFactory
     {
         private readonly MapAttribute mapAttribute;
 
@@ -21,9 +21,7 @@
 
         public string Name { get; }
 
-        public int Size => mapAttribute.Size;
-
-        public AttributeMapping(Type type, MapAttribute mapAttribute, string name, bool validation)
+        public AttributeMappingFactory(Type type, MapAttribute mapAttribute, string name, bool validation)
         {
             Type = type;
             this.mapAttribute = mapAttribute;
@@ -31,12 +29,14 @@
             this.validation = validation;
         }
 
-        IMapper[] IMapping.CreateMappers(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapping IMappingFactory.Create(IComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(
                 components,
                 parameters,
                 Type.GetCustomAttributes().OfType<ITypeDefaultAttribute>().ToDictionary(x => x.Key, x => x.Value));
+
+            var filler = context.GetParameter<byte>(Parameter.Filler);
 
             var list = new List<MapperPosition>();
             list.AddRange(CreateTypeEntries(context));
@@ -48,9 +48,13 @@
                 Type.FullName,
                 validation,
                 mapAttribute.UseDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
-                mapAttribute.AutoFiller ? (byte?)context.GetParameter<byte>(Parameter.Filler) : null);
+                mapAttribute.AutoFiller ? (byte?)filler : null);
 
-            return list.Select(x => x.Mapper).ToArray();
+            return new Mapping(
+                Type,
+                mapAttribute.Size,
+                mapAttribute.HasNullFiller ? mapAttribute.NullFiller : filler,
+                list.Select(x => x.Mapper).ToArray());
         }
 
         private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)

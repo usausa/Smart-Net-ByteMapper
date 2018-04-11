@@ -4,6 +4,6 @@
 
     public interface IMapperProfile
     {
-        IEnumerable<IMapping> ResolveMappings();
+        IEnumerable<IMappingFactory> ResolveMappingFactories();
     }
 }
