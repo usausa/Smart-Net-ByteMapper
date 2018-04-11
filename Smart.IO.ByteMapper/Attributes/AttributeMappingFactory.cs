@@ -87,7 +87,10 @@
                 {
                     if (x.ArrayAttribute != null)
                     {
-                        if (!x.Property.PropertyType.IsArray)
+                        var arrayBuilder = x.ArrayAttribute.GetArrayConverterBuilder();
+                        arrayBuilder.ElementConverterBuilder = x.Attribute.GetConverterBuilder();
+
+                        if (!arrayBuilder.Match(x.Property.PropertyType))
                         {
                             throw new ByteMapperException(
                                 "Attribute does not match property. " +
@@ -95,22 +98,6 @@
                                 $"property=[{x.Property.Name}], " +
                                 $"attribute=[{typeof(MapArrayAttribute).FullName}]");
                         }
-
-                        var elementType = x.Property.PropertyType.GetElementType();
-
-                        var elementBuilder = x.Attribute.GetConverterBuilder();
-                        var elementConverter = elementBuilder.CreateConverter(context, elementType);
-                        if (elementConverter == null)
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{x.Attribute.GetType().FullName}]");
-                        }
-
-                        var arrayBuilder = x.ArrayAttribute.GetArrayConverterBuilder();
-                        arrayBuilder.ElementConverterBuilder = elementBuilder;
 
                         return new MapperPosition(
                             x.Attribute.Offset,
@@ -123,8 +110,7 @@
                     }
 
                     var builder = x.Attribute.GetConverterBuilder();
-                    var converter = builder.CreateConverter(context, x.Property.PropertyType);
-                    if (converter == null)
+                    if (!builder.Match(x.Property.PropertyType))
                     {
                         throw new ByteMapperException(
                             "Attribute does not match property. " +
@@ -138,7 +124,7 @@
                         builder.CalcSize(x.Property.PropertyType),
                         new MemberMapper(
                             x.Attribute.Offset,
-                            converter,
+                            builder.CreateConverter(context, x.Property.PropertyType),
                             delegateFactory.CreateGetter(x.Property),
                             delegateFactory.CreateSetter(x.Property)));
                 });

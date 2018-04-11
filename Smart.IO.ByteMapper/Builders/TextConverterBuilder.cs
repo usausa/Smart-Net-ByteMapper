@@ -1,11 +1,10 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
     using System.Text;
 
     using Smart.IO.ByteMapper.Converters;
 
-    public sealed class TextConverterBuilder : IMapConverterBuilder
+    public sealed class TextConverterBuilder : AbstractMapConverterBuilder<TextConverterBuilder>
     {
         public int Length { get; set; }
 
@@ -17,24 +16,19 @@
 
         public byte? Filler { get; set; }
 
-        public int CalcSize(Type type)
+        static TextConverterBuilder()
         {
-            return Length;
+            AddEntry(typeof(string), (b, t) => b.Length, (b, t, c) => b.CreateTextConverter(c));
         }
 
-        public IMapConverter CreateConverter(IBuilderContext context, Type type)
+        private IMapConverter CreateTextConverter(IBuilderContext context)
         {
-            if (type == typeof(string))
-            {
-                return new TextConverter(
-                    Length,
-                    Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
-                    Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                    Padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
-                    Filler ?? context.GetParameter<byte>(Parameter.TextFiller));
-            }
-
-            return null;
+            return new TextConverter(
+                Length,
+                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Trim ?? context.GetParameter<bool>(Parameter.Trim),
+                Padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
+                Filler ?? context.GetParameter<byte>(Parameter.TextFiller));
         }
     }
 }

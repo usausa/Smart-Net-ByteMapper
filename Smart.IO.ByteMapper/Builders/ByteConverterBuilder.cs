@@ -1,26 +1,14 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
-
     using Smart.IO.ByteMapper.Converters;
 
-    public sealed class ByteConverterBuilder : IMapConverterBuilder
+    public sealed class ByteConverterBuilder : AbstractMapConverterBuilder<ByteConverterBuilder>
     {
         public static ByteConverterBuilder Default { get; } = new ByteConverterBuilder();
 
-        public int CalcSize(Type type)
+        static ByteConverterBuilder()
         {
-            return 1;
-        }
-
-        public IMapConverter CreateConverter(IBuilderContext context, Type type)
-        {
-            if (type == typeof(byte))
-            {
-                return ByteConverter.Default;
-            }
-
-            return null;
+            AddEntry(typeof(byte), 1, (b, t, c) => ByteConverter.Default);
         }
     }
 }

@@ -13,6 +13,11 @@
 
         public IMapConverterBuilder ElementConverterBuilder { get; set; }
 
+        public bool Match(Type type)
+        {
+            return type.IsArray && ElementConverterBuilder.Match(type.GetElementType());
+        }
+
         public int CalcSize(Type type)
         {
             var elementType = type.GetElementType();

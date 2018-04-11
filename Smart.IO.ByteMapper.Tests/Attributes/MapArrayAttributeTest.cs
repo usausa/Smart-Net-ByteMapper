@@ -68,6 +68,20 @@
             Assert.Equal(new byte[] { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }, obj.ByteArrayValue);
         }
 
+        [Fact]
+        public void MapByArrayAttributeIsNoArray()
+        {
+            Assert.Throws<ByteMapperException>(
+                () => new MapperFactoryConfig().CreateMapByAttribute<NoArrayObject>(true).ToMapperFactory().Create<NoArrayObject>());
+        }
+
+        [Fact]
+        public void MapByArrayAttributeIsArrayUnmatched()
+        {
+            Assert.Throws<ByteMapperException>(
+                () => new MapperFactoryConfig().CreateMapByAttribute<ArrayUnmatchedObject>(true).ToMapperFactory().Create<ArrayUnmatchedObject>());
+        }
+
         //--------------------------------------------------------------------------------
         // Fix
         //--------------------------------------------------------------------------------
@@ -94,6 +108,22 @@
             [MapArray(7, Filler = 0xFF)]
             [MapByte(12)]
             public byte[] ByteArrayValue { get; set; }
+        }
+
+        [Map(4, UseDelimitter = false)]
+        internal class NoArrayObject
+        {
+            [MapArray(1)]
+            [MapBinary(0)]
+            public int ArrayValue { get; set; }
+        }
+
+        [Map(4, UseDelimitter = false)]
+        internal class ArrayUnmatchedObject
+        {
+            [MapArray(1)]
+            [MapBinary(0)]
+            public string[] ArrayValue { get; set; }
         }
     }
 }

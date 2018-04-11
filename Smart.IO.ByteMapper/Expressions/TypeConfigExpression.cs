@@ -161,6 +161,14 @@
             }
 
             var builder = member.Expression.GetMapConverterBuilder();
+            if (!builder.Match(pi.PropertyType))
+            {
+                throw new ByteMapperException(
+                    "Expression does not match property. " +
+                    $"type=[{pi.DeclaringType?.FullName}], " +
+                    $"property=[{pi.Name}]");
+            }
+
             var entry = new MemberMapEntry(pi, offset, builder.CalcSize(pi.PropertyType), builder);
             memberMapEntries.Add(entry);
 

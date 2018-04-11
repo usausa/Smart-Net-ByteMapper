@@ -6,6 +6,8 @@
 
     public interface IMapConverterBuilder
     {
+        bool Match(Type type);
+
         int CalcSize(Type type);
 
         IMapConverter CreateConverter(IBuilderContext context, Type type);

@@ -1,10 +1,8 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
-
     using Smart.IO.ByteMapper.Converters;
 
-    public sealed class BooleanConverterBuilder : IMapConverterBuilder
+    public sealed class BooleanConverterBuilder : AbstractMapConverterBuilder<BooleanConverterBuilder>
     {
         public byte? TrueValue { get; set; }
 
@@ -12,29 +10,25 @@
 
         public byte? NullValue { get; set; }
 
-        public int CalcSize(Type type)
+        static BooleanConverterBuilder()
         {
-            return 1;
+            AddEntry(typeof(bool), 1, (b, t, c) => b.CreateBooleanConverter(c));
+            AddEntry(typeof(bool?), 1, (b, t, c) => b.CreateNullableBooleanConverter(c));
         }
 
-        public IMapConverter CreateConverter(IBuilderContext context, Type type)
+        private IMapConverter CreateBooleanConverter(IBuilderContext context)
         {
-            if (type == typeof(bool))
-            {
-                return new BooleanConverter(
-                    TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
-                    FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue));
-            }
+            return new BooleanConverter(
+                TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
+                FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue));
+        }
 
-            if (type == typeof(bool?))
-            {
-                return new NullableBooleanConverter(
-                    TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
-                    FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue),
-                    NullValue ?? context.GetParameter<byte>(Parameter.Filler));
-            }
-
-            return null;
+        private IMapConverter CreateNullableBooleanConverter(IBuilderContext context)
+        {
+            return new NullableBooleanConverter(
+                TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
+                FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue),
+                NullValue ?? context.GetParameter<byte>(Parameter.Filler));
         }
     }
 }

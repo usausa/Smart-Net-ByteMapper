@@ -1,59 +1,40 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
-
     using Smart.IO.ByteMapper.Converters;
 
-    public sealed class BinaryConverterBuilder : IMapConverterBuilder
+    public sealed class BinaryConverterBuilder : AbstractMapConverterBuilder<BinaryConverterBuilder>
     {
         public Endian? Endian { get; set; }
 
-        public int CalcSize(Type type)
+        static BinaryConverterBuilder()
         {
-            if (type == typeof(int))
-            {
-                return 4;
-            }
-
-            if (type == typeof(long))
-            {
-                return 8;
-            }
-
-            if (type == typeof(short))
-            {
-                return 2;
-            }
-
-            return 0;
+            AddEntry(typeof(int), 4, (b, t, c) => b.CreateIntBinaryConverter(c));
+            AddEntry(typeof(long), 8, (b, t, c) => b.CreateLongBinaryConverter(c));
+            AddEntry(typeof(short), 2, (b, t, c) => b.CreateShortBinaryConverter(c));
         }
 
-        public IMapConverter CreateConverter(IBuilderContext context, Type type)
+        private IMapConverter CreateIntBinaryConverter(IBuilderContext context)
         {
             var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? BigEndianIntBinaryConverter.Default
+                : LittleEndianIntBinaryConverter.Default;
+        }
 
-            if (type == typeof(int))
-            {
-                return targetEndian == Smart.IO.ByteMapper.Endian.Big
-                    ? BigEndianIntBinaryConverter.Default
-                    : LittleEndianIntBinaryConverter.Default;
-            }
+        private IMapConverter CreateLongBinaryConverter(IBuilderContext context)
+        {
+            var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? BigEndianLongBinaryConverter.Default
+                : LittleEndianLongBinaryConverter.Default;
+        }
 
-            if (type == typeof(long))
-            {
-                return targetEndian == Smart.IO.ByteMapper.Endian.Big
-                    ? BigEndianLongBinaryConverter.Default
-                    : LittleEndianLongBinaryConverter.Default;
-            }
-
-            if (type == typeof(short))
-            {
-                return targetEndian == Smart.IO.ByteMapper.Endian.Big
-                    ? BigEndianShortBinaryConverter.Default
-                    : LittleEndianShortBinaryConverter.Default;
-            }
-
-            return null;
+        private IMapConverter CreateShortBinaryConverter(IBuilderContext context)
+        {
+            var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? BigEndianShortBinaryConverter.Default
+                : LittleEndianShortBinaryConverter.Default;
         }
     }
 }
