@@ -26,6 +26,16 @@
             writableMappers = mappers.Where(x => x.CanWrite).ToArray();
         }
 
+        public void FromByte(byte[] buffer, int index, object target)
+        {
+            FromByte(buffer, index, (T)target);
+        }
+
+        public void ToByte(byte[] buffer, int index, object target)
+        {
+            ToByte(buffer, index, (T)target);
+        }
+
         public void FromByte(byte[] buffer, int index, T target)
         {
             for (var i = 0; i < readableMappers.Length; i++)

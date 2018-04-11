@@ -3,12 +3,15 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
 
     using Smart.Collections.Concurrent;
     using Smart.ComponentModel;
 
     public sealed class MapperFactory
     {
+        private static readonly MethodInfo CreateMethod = typeof(MapperFactory).GetMethod(nameof(CreateInternal));
+
         private readonly IDictionary<string, object> parameters;
 
         private readonly IDictionary<MapKey, IMappingFactory> mappingFactories;
@@ -30,12 +33,38 @@
                 .ToDictionary(x => new MapKey(x.Type, x.Name ?? Names.Default), x => x);
         }
 
+        public ITypeMapper Create(Type type)
+        {
+            return CallGenericCreateInternal(type, Names.Default);
+        }
+
+        public ITypeMapper Create(Type type, string profile)
+        {
+            return CallGenericCreateInternal(type, profile);
+        }
+
         public ITypeMapper<T> Create<T>()
         {
-            return Create<T>(Names.Default);
+            return CreateInternal<T>(Names.Default);
         }
 
         public ITypeMapper<T> Create<T>(string profile)
+        {
+            return CreateInternal<T>(profile);
+        }
+
+        private ITypeMapper CallGenericCreateInternal(Type type, string profile)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            var genericMethod = CreateMethod.MakeGenericMethod(type);
+            return (ITypeMapper)genericMethod.Invoke(this, new object[] { profile });
+        }
+
+        private ITypeMapper<T> CreateInternal<T>(string profile)
         {
             var type = typeof(T);
             var key = new MapKey(type, profile ?? Names.Default);
