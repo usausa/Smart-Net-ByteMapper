@@ -8,7 +8,7 @@
     {
         private readonly ConstantTypeMapperBuilder builder = new ConstantTypeMapperBuilder();
 
-        public MapConstantExpression(byte[] content)
+        public MapConstantExpression(params byte[] content)
         {
             if (content == null)
             {

@@ -99,6 +99,7 @@
         {
             var attribute = new MapNumberTextAttribute(0, 0);
 
+            Assert.Throws<NotSupportedException>(() => attribute.Format);
             Assert.Throws<NotSupportedException>(() => attribute.CodePage);
             Assert.Throws<NotSupportedException>(() => attribute.EncodingName);
             Assert.Throws<NotSupportedException>(() => attribute.Trim);
@@ -106,6 +107,9 @@
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
             Assert.Throws<NotSupportedException>(() => attribute.Style);
             Assert.Throws<NotSupportedException>(() => attribute.Culture);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextAttribute(-1, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextAttribute(0, -1));
         }
 
         //--------------------------------------------------------------------------------

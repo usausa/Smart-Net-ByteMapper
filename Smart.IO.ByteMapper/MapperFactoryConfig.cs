@@ -23,7 +23,7 @@
         {
             config.Add<IDelegateFactory>(DelegateFactory.Default);
 
-            this.DefaultDelimiter(new byte[] { 0x0d, 0x0a });
+            this.DefaultDelimiter(0x0D, 0x0A);
             this.DefaultEncoding(Encoding.ASCII);
             this.DefaultNumberProvider(CultureInfo.InvariantCulture);
             this.DefaultDateTimeProvider(CultureInfo.InvariantCulture);

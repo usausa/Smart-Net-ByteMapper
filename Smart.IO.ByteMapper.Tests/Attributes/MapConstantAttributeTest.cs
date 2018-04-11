@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Attributes
 {
+    using System;
     using System.Text;
 
     using Xunit;
@@ -14,7 +15,7 @@
         public void MapByConstAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(new byte[] { 0x0d, 0x0a })
+                .DefaultDelimiter(0x0D, 0x0A)
                 .DefaultEncoding(Encoding.ASCII)
                 .DefaultEndian(Endian.Big)
                 .CreateMapByAttribute<ConstAttributeObject>()
@@ -28,6 +29,17 @@
             mapper.ToByte(buffer, 0, obj);
 
             Assert.Equal(Encoding.ASCII.GetBytes("12\r\n"), buffer);
+        }
+
+        //--------------------------------------------------------------------------------
+        // Fix
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void CoverageFix()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Empty<byte>.Array));
+            Assert.Throws<ArgumentNullException>(() => new MapConstantAttribute(0, null));
         }
 
         //--------------------------------------------------------------------------------

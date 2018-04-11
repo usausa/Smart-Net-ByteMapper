@@ -11,7 +11,7 @@
             return new MapperFactory(config);
         }
 
-        public static MapperFactoryConfig DefaultDelimiter(this MapperFactoryConfig config, byte[] value)
+        public static MapperFactoryConfig DefaultDelimiter(this MapperFactoryConfig config, params byte[] value)
         {
             return config.AddParameter(Parameter.Delimiter, value);
         }

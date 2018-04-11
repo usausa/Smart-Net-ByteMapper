@@ -11,7 +11,7 @@
 
         public object Value { get; }
 
-        public TypeDelimiterAttribute(byte[] value)
+        public TypeDelimiterAttribute(params byte[] value)
         {
             Value = value;
         }

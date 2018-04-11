@@ -52,6 +52,9 @@
             var attribute = new MapBytesAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(-1, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(0, -1));
         }
 
         //--------------------------------------------------------------------------------

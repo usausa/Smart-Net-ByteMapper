@@ -48,8 +48,6 @@
                 throw new ArgumentOutOfRangeException(nameof(length));
             }
 
-            // TODO format
-
             builder.Length = length;
             builder.Format = format;
         }

@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper.Attributes
 {
+    using System;
+
     using Xunit;
 
     public class MapByteAttributeTest
@@ -34,6 +36,16 @@
             mapper.FromByte(buffer, 0, obj);
 
             Assert.Equal(2, obj.ByteValue);
+        }
+
+        //--------------------------------------------------------------------------------
+        // Fix
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void CoverageFix()
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapByteAttribute(-1));
         }
 
         //--------------------------------------------------------------------------------

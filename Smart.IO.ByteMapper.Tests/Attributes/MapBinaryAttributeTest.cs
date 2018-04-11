@@ -72,6 +72,8 @@
             var attribute = new MapBinaryAttribute(0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Endian);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBinaryAttribute(-1));
         }
 
         //--------------------------------------------------------------------------------

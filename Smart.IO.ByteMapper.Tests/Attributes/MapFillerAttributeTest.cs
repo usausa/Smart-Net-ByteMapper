@@ -41,6 +41,9 @@
             var attribute = new MapFillerAttribute(0, 0);
 
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerAttribute(-1, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerAttribute(0, -1));
         }
 
         //--------------------------------------------------------------------------------

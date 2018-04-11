@@ -54,6 +54,9 @@
             Assert.Throws<NotSupportedException>(() => attribute.Trim);
             Assert.Throws<NotSupportedException>(() => attribute.Padding);
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapTextAttribute(-1, 0));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapTextAttribute(0, -1));
         }
 
         //--------------------------------------------------------------------------------

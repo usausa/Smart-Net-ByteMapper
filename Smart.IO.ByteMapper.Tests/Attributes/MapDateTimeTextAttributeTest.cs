@@ -81,6 +81,9 @@
             Assert.Throws<NotSupportedException>(() => attribute.Filler);
             Assert.Throws<NotSupportedException>(() => attribute.Style);
             Assert.Throws<NotSupportedException>(() => attribute.Culture);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapDateTimeTextAttribute(-1, 0, string.Empty));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapDateTimeTextAttribute(0, -1, string.Empty));
         }
 
         //--------------------------------------------------------------------------------

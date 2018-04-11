@@ -69,6 +69,8 @@
             Assert.Throws<NotSupportedException>(() => attribute.TrueValue);
             Assert.Throws<NotSupportedException>(() => attribute.FalseValue);
             Assert.Throws<NotSupportedException>(() => attribute.NullValue);
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBooleanAttribute(-1));
         }
 
         //--------------------------------------------------------------------------------

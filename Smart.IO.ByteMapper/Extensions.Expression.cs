@@ -60,7 +60,7 @@
 
         // Default
 
-        public static ITypeConfigSyntax<T> TypeDelimiter<T>(this ITypeConfigSyntax<T> syntax, byte[] value)
+        public static ITypeConfigSyntax<T> TypeDelimiter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
         {
             return syntax.TypeDefault(Parameter.Delimiter, value);
         }
@@ -142,7 +142,7 @@
 
         // Type
 
-        public static ITypeConfigSyntax<T> UseDelimitter<T>(this ITypeConfigSyntax<T> syntax, byte[] value)
+        public static ITypeConfigSyntax<T> UseDelimitter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
         {
             if ((value != null) && (value.Length > 0))
             {
@@ -158,13 +158,13 @@
 
         // Const
 
-        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, params byte[] content)
         {
             syntax.Map(new MapConstantExpression(content));
             return syntax;
         }
 
-        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, params byte[] content)
         {
             syntax.Map(offset, new MapConstantExpression(content));
             return syntax;
