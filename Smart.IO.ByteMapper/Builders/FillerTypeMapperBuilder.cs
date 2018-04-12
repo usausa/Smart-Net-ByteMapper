@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
-
     using Smart.IO.ByteMapper.Mappers;
 
     public sealed class FillerTypeMapperBuilder : ITypeMapperBuilder
@@ -12,12 +10,12 @@
 
         public byte? Filler { get; set; }
 
-        public int CalcSize(Type type)
+        public int CalcSize()
         {
             return Length;
         }
 
-        public IMapper CreateMapper(IBuilderContext context, Type type)
+        public IMapper CreateMapper(IBuilderContext context)
         {
             return new FillMapper(
                 Offset,

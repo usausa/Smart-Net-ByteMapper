@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    using System;
-
     using Smart.IO.ByteMapper.Mappers;
 
     public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
@@ -10,12 +8,12 @@
 
         public byte[] Content { get; set; }
 
-        public int CalcSize(Type type)
+        public int CalcSize()
         {
             return Content.Length;
         }
 
-        public IMapper CreateMapper(IBuilderContext context, Type type)
+        public IMapper CreateMapper(IBuilderContext context)
         {
             return new ConstantMapper(Offset, Content);
         }

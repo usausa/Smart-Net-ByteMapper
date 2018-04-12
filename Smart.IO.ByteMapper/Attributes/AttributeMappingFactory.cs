@@ -8,8 +8,6 @@
     using Smart.ComponentModel;
     using Smart.IO.ByteMapper.Builders;
     using Smart.IO.ByteMapper.Helpers;
-    using Smart.IO.ByteMapper.Mappers;
-    using Smart.Reflection;
 
     internal sealed class AttributeMappingFactory : IMappingFactory
     {
@@ -66,15 +64,13 @@
                     var builder = x.GetTypeMapperBuilder();
                     return new MapperPosition(
                         builder.Offset,
-                        builder.CalcSize(Type),
-                        builder.CreateMapper(context, Type));
+                        builder.CalcSize(),
+                        builder.CreateMapper(context));
                 });
         }
 
         private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
         {
-            var delegateFactory = context.Components.Get<IDelegateFactory>();
-
             return Type.GetProperties()
                 .Select(x => new
                 {
@@ -85,49 +81,38 @@
                 .Where(x => x.Attribute != null)
                 .Select(x =>
                 {
-                    if (x.ArrayAttribute != null)
-                    {
-                        var arrayBuilder = x.ArrayAttribute.GetArrayConverterBuilder();
-                        arrayBuilder.ElementConverterBuilder = x.Attribute.GetConverterBuilder();
-
-                        if (!arrayBuilder.Match(x.Property.PropertyType))
-                        {
-                            throw new ByteMapperException(
-                                "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType.FullName}], " +
-                                $"property=[{x.Property.Name}], " +
-                                $"attribute=[{typeof(MapArrayAttribute).FullName}]");
-                        }
-
-                        return new MapperPosition(
-                            x.Attribute.Offset,
-                            arrayBuilder.CalcSize(x.Property.PropertyType),
-                            new MemberMapper(
-                                x.Attribute.Offset,
-                                arrayBuilder.CreateConverter(context, x.Property.PropertyType),
-                                delegateFactory.CreateGetter(x.Property),
-                                delegateFactory.CreateSetter(x.Property)));
-                    }
-
-                    var builder = x.Attribute.GetConverterBuilder();
-                    if (!builder.Match(x.Property.PropertyType))
+                    var converterBuilder = CreateConverterBuilder(x.ArrayAttribute, x.Attribute);
+                    if (!converterBuilder.Match(x.Property.PropertyType))
                     {
                         throw new ByteMapperException(
                             "Attribute does not match property. " +
                             $"type=[{x.Property.DeclaringType.FullName}], " +
                             $"property=[{x.Property.Name}], " +
-                            $"attribute=[{x.Attribute.GetType().FullName}]");
+                            $"attribute=[{typeof(MapArrayAttribute).FullName}]");
                     }
 
-                    return new MapperPosition(
-                        x.Attribute.Offset,
-                        builder.CalcSize(x.Property.PropertyType),
-                        new MemberMapper(
-                            x.Attribute.Offset,
-                            builder.CreateConverter(context, x.Property.PropertyType),
-                            delegateFactory.CreateGetter(x.Property),
-                            delegateFactory.CreateSetter(x.Property)));
+                    var builder = new MemberMapperBuilder(converterBuilder)
+                    {
+                        Offset = x.Attribute.Offset,
+                        Property = x.Property
+                    };
+
+                    return new MapperPosition(builder.Offset, builder.CalcSize(), builder.CreateMapper(context));
                 });
+        }
+
+        private static IMapConverterBuilder CreateConverterBuilder(
+            MapArrayAttribute arrayAttribute,
+            AbstractMemberMapAttribute memberAttribute)
+        {
+            if (arrayAttribute != null)
+            {
+                var builder = arrayAttribute.GetArrayConverterBuilder();
+                builder.ElementConverterBuilder = memberAttribute.GetConverterBuilder();
+                return builder;
+            }
+
+            return memberAttribute.GetConverterBuilder();
         }
     }
 }

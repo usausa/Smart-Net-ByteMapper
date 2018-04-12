@@ -8,8 +8,10 @@
     {
         int Offset { get; set; }
 
-        int CalcSize(PropertyInfo pi);
+        PropertyInfo Property { get; set; }
 
-        IMapper CreateMapper(IBuilderContext context, PropertyInfo pi);
+        int CalcSize();
+
+        IMapper CreateMapper(IBuilderContext context);
     }
 }

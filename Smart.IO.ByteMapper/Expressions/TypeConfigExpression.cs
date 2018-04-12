@@ -4,19 +4,16 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Reflection;
 
     using Smart.ComponentModel;
     using Smart.IO.ByteMapper.Builders;
     using Smart.IO.ByteMapper.Helpers;
-    using Smart.IO.ByteMapper.Mappers;
-    using Smart.Reflection;
 
     internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
     {
-        private readonly List<TypeMapEntry> typeMapEntries = new List<TypeMapEntry>();
+        private readonly List<ITypeMapperBuilder> typeMapBuilders = new List<ITypeMapperBuilder>();
 
-        private readonly List<MemberMapEntry> memberMapEntries = new List<MemberMapEntry>();
+        private readonly List<IMemberMapperBuilder> memberMapBuilders = new List<IMemberMapperBuilder>();
 
         private readonly Dictionary<string, object> typeParameters = new Dictionary<string, object>();
 
@@ -103,10 +100,10 @@
             }
 
             var builder = expression.GetTypeMapperBuilder();
-            var entry = new TypeMapEntry(offset, builder.CalcSize(Type), builder);
-            typeMapEntries.Add(entry);
+            builder.Offset = offset;
+            typeMapBuilders.Add(builder);
 
-            lastOffset = Math.Max(offset, lastOffset) + entry.Size;
+            lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
 
             return this;
         }
@@ -160,8 +157,8 @@
                 throw new InvalidOperationException("Property is not mapped.");
             }
 
-            var builder = member.Expression.GetMapConverterBuilder();
-            if (!builder.Match(pi.PropertyType))
+            var converterBuilder = member.Expression.GetMapConverterBuilder();
+            if (!converterBuilder.Match(pi.PropertyType))
             {
                 throw new ByteMapperException(
                     "Expression does not match property. " +
@@ -169,10 +166,14 @@
                     $"property=[{pi.Name}]");
             }
 
-            var entry = new MemberMapEntry(pi, offset, builder.CalcSize(pi.PropertyType), builder);
-            memberMapEntries.Add(entry);
+            var builder = new MemberMapperBuilder(converterBuilder)
+            {
+                Property = pi,
+                Offset = offset
+            };
+            memberMapBuilders.Add(builder);
 
-            lastOffset = Math.Max(offset, lastOffset) + entry.Size;
+            lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
 
             return this;
         }
@@ -188,8 +189,8 @@
             var filler = context.GetParameter<byte>(Parameter.Filler);
 
             var list = new List<MapperPosition>();
-            list.AddRange(CreateTypeEntries(context));
-            list.AddRange(CreateMemberEntries(context));
+            list.AddRange(typeMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
+            list.AddRange(memberMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
 
             MapperPositionHelper.Layout(
                 list,
@@ -200,69 +201,6 @@
                 autoFiller ? (byte?)filler : null);
 
             return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
-        }
-
-        private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)
-        {
-            return typeMapEntries
-                .Select(x => new MapperPosition(
-                    x.Offset,
-                    x.Size,
-                    x.Builder.CreateMapper(context, Type)));
-        }
-
-        private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
-        {
-            var delegateFactory = context.Components.Get<IDelegateFactory>();
-
-            return memberMapEntries
-                .Select(x => new MapperPosition(
-                    x.Offset,
-                    x.Size,
-                    new MemberMapper(
-                        x.Offset,
-                        x.Builder.CreateConverter(context, x.Property.PropertyType),
-                        delegateFactory.CreateGetter(x.Property),
-                        delegateFactory.CreateSetter(x.Property))));
-        }
-
-        //--------------------------------------------------------------------------------
-        // Entry
-        //--------------------------------------------------------------------------------
-
-        private class TypeMapEntry
-        {
-            public int Offset { get; }
-
-            public int Size { get; }
-
-            public ITypeMapperBuilder Builder { get; }
-
-            public TypeMapEntry(int offset, int size, ITypeMapperBuilder builder)
-            {
-                Offset = offset;
-                Size = size;
-                Builder = builder;
-            }
-        }
-
-        private class MemberMapEntry
-        {
-            public PropertyInfo Property { get; }
-
-            public int Offset { get; }
-
-            public int Size { get; }
-
-            public IMapConverterBuilder Builder { get; }
-
-            public MemberMapEntry(PropertyInfo property, int offset, int size, IMapConverterBuilder builder)
-            {
-                Property = property;
-                Offset = offset;
-                Size = size;
-                Builder = builder;
-            }
         }
     }
 }

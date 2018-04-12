@@ -5,31 +5,32 @@
     using Smart.IO.ByteMapper.Mappers;
     using Smart.Reflection;
 
-    public sealed class MemberMapperBuilder<T> : IMemberMapperBuilder
-        where T : IMapConverterBuilder
+    public sealed class MemberMapperBuilder : IMemberMapperBuilder
     {
+        private readonly IMapConverterBuilder converterBuilder;
+
         public int Offset { get; set; }
 
-        public T ConverterBuilder { get; }
+        public PropertyInfo Property { get; set; }
 
-        public MemberMapperBuilder(T converterBuilder)
+        public MemberMapperBuilder(IMapConverterBuilder converterBuilder)
         {
-            ConverterBuilder = converterBuilder;
+            this.converterBuilder = converterBuilder;
         }
 
-        public int CalcSize(PropertyInfo pi)
+        public int CalcSize()
         {
-            return ConverterBuilder.CalcSize(pi.PropertyType);
+            return converterBuilder.CalcSize(Property.PropertyType);
         }
 
-        public IMapper CreateMapper(IBuilderContext context, PropertyInfo pi)
+        public IMapper CreateMapper(IBuilderContext context)
         {
             var delegateFactory = context.Components.Get<IDelegateFactory>();
             return new MemberMapper(
                 Offset,
-                ConverterBuilder.CreateConverter(context, pi.PropertyType),
-                delegateFactory.CreateGetter(pi),
-                delegateFactory.CreateSetter(pi));
+                converterBuilder.CreateConverter(context, Property.PropertyType),
+                delegateFactory.CreateGetter(Property),
+                delegateFactory.CreateSetter(Property));
         }
     }
 }
