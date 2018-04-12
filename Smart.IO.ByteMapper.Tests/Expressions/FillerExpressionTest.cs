@@ -1,58 +1,61 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+﻿namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Text;
 
+    using Smart.Functional;
+
     using Xunit;
 
-    public class MapFillerAttributeTest
+    public class FillerExpressionTest
     {
         //--------------------------------------------------------------------------------
-        // Attribute
+        // Expression
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByFillerAttribute()
+        public void MapByConstExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller((byte)' ')
-                .CreateMapByAttribute<FillerAttributeObject>()
+                .Also(config =>
+                {
+                    config
+                        .CreateMapByExpression<FillerExpressionObject>(4)
+                        .AutoFiller(true)
+                        .Filler(0, 1)
+                        .Filler(1, 1, (byte)'0')
+                        .Filler(1)
+                        .Filler(1, (byte)'_');
+                })
                 .ToMapperFactory();
-            var mapper = mapperFactory.Create<FillerAttributeObject>();
+            var mapper = mapperFactory.Create<FillerExpressionObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new FillerAttributeObject();
+            var obj = new FillerExpressionObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(Encoding.ASCII.GetBytes("    00"), buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes(" 0 _"), buffer);
         }
 
-        //--------------------------------------------------------------------------------
         // Fix
         //--------------------------------------------------------------------------------
 
         [Fact]
         public void CoverageFix()
         {
-            var attribute = new MapFillerAttribute(0, 0);
-
-            Assert.Throws<NotSupportedException>(() => attribute.Filler);
-
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerAttribute(-1, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerAttribute(0, -1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1, 0x00));
         }
 
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(6, AutoFiller = true)]
-        [MapFiller(0, 2)]
-        [MapFiller(4, 2, Filler = 0x30)]
-        internal class FillerAttributeObject
+        internal class FillerExpressionObject
         {
         }
     }

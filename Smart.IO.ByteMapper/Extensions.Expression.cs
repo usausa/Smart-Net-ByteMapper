@@ -158,13 +158,13 @@
 
         // Const
 
-        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, params byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, byte[] content)
         {
             syntax.Map(new MapConstantExpression(content));
             return syntax;
         }
 
-        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, params byte[] content)
+        public static ITypeConfigSyntax<T> Constant<T>(this ITypeConfigSyntax<T> syntax, int offset, byte[] content)
         {
             syntax.Map(offset, new MapConstantExpression(content));
             return syntax;
@@ -180,7 +180,7 @@
 
         public static ITypeConfigSyntax<T> Filler<T>(this ITypeConfigSyntax<T> syntax, int length, byte filler)
         {
-            syntax.Map(new MapFillerExpression(length));
+            syntax.Map(new MapFillerExpression(length, filler));
             return syntax;
         }
 

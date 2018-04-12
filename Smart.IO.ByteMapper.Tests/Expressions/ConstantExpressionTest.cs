@@ -1,52 +1,57 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+﻿namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Text;
 
+    using Smart.Functional;
+
     using Xunit;
 
-    public class MapConstantAttributeTest
+    public class ConstantExpressionTest
     {
         //--------------------------------------------------------------------------------
-        // Attribute
+        // Expression
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByConstAttribute()
+        public void MapByConstExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(0x0D, 0x0A)
-                .CreateMapByAttribute<ConstAttributeObject>()
+                .Also(config =>
+                {
+                    config
+                        .CreateMapByExpression<ConstExpressionObject>(6)
+                        .UseDelimitter(true)
+                        .Constant(0, new byte[] { 0x31, 0x32 })
+                        .Constant(new byte[] { 0x33, 0x34 });
+                })
                 .ToMapperFactory();
-            var mapper = mapperFactory.Create<ConstAttributeObject>();
+            var mapper = mapperFactory.Create<ConstExpressionObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new ConstAttributeObject();
+            var obj = new ConstExpressionObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(Encoding.ASCII.GetBytes("12\r\n"), buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes("1234\r\n"), buffer);
         }
 
-        //--------------------------------------------------------------------------------
         // Fix
         //--------------------------------------------------------------------------------
 
         [Fact]
         public void CoverageFix()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Empty<byte>.Array));
-            Assert.Throws<ArgumentNullException>(() => new MapConstantAttribute(0, null));
+            Assert.Throws<ArgumentNullException>(() => new MapConstantExpression(null));
         }
 
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(4, UseDelimitter = true)]
-        [MapConstant(0, new byte[] { 0x31, 0x32 })]
-        internal class ConstAttributeObject
+        internal class ConstExpressionObject
         {
         }
     }
