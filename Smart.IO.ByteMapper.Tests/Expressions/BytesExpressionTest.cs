@@ -1,44 +1,53 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
-    using System.Text;
 
     using Smart.Functional;
 
     using Xunit;
 
-    public class FillerExpressionTest
+    public class BytesExpressionTest
     {
         //--------------------------------------------------------------------------------
         // Expression
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByConstExpression()
+        public void MapByBinaryExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
-                .DefaultFiller((byte)' ')
+                .DefaultFiller(0x30)
                 .Also(config =>
                 {
                     config
-                        .CreateMapByExpression<FillerExpressionObject>(4)
-                        .AutoFiller(true)
-                        .Filler(0, 1)
-                        .Filler(1, 1, (byte)'0')
-                        .Filler(1)
-                        .Filler(1, (byte)'_');
+                        .CreateMapByExpression<BytesAttributeObject>(8)
+                        .ForMember(x => x.BytesValue, c => c.Bytes(4))
+                        .ForMember(x => x.CustomBytesValue, c => c.Bytes(4).Filler(0x30));
                 })
                 .ToMapperFactory();
-            var mapper = mapperFactory.Create<FillerExpressionObject>();
+            var mapper = mapperFactory.Create<BytesAttributeObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new FillerExpressionObject();
+            var obj = new BytesAttributeObject
+            {
+                BytesValue = new byte[] { 0x01, 0x02, 0x03, 0x04 }
+            };
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(Encoding.ASCII.GetBytes(" 0 _"), buffer);
+            Assert.Equal(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30 }, buffer);
+
+            // Read
+            for (var i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = 0xff;
+            }
+
+            mapper.FromByte(buffer, 0, obj);
+
+            Assert.Equal(new byte[] { 0xff, 0xff, 0xff, 0xff }, obj.BytesValue);
         }
 
         //--------------------------------------------------------------------------------
@@ -48,16 +57,18 @@
         [Fact]
         public void CoverageFix()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1, 0x00));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesExpression(-1));
         }
 
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
-        internal class FillerExpressionObject
+        internal class BytesAttributeObject
         {
+            public byte[] BytesValue { get; set; }
+
+            public byte[] CustomBytesValue { get; set; }
         }
     }
 }
