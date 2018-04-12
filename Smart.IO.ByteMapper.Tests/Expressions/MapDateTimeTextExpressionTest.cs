@@ -8,14 +8,14 @@
 
     using Xunit;
 
-    public class MapDateTimeExpressionTest
+    public class MapDateTimeTextExpressionTest
     {
         //--------------------------------------------------------------------------------
         // Expression
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByDateTimeExpression()
+        public void MapByDateTimeTextExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
@@ -27,31 +27,31 @@
                 .Also(config =>
                 {
                     config
-                        .CreateMapByExpression<DateTimeExpressionObject>(60)
+                        .CreateMapByExpression<DateTimeTextExpressionObject>(60)
                         .ForMember(
                             x => x.DateTimeValue,
-                            c => c.DateTime(8, "yyyyMMdd"))
+                            c => c.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.NullableDateTimeValue,
-                            c => c.DateTime(8, "yyyyMMdd"))
+                            c => c.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.CustomDateTimeValue,
-                            c => c.DateTime(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture))
+                            c => c.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture))
                         .ForMember(
                             x => x.DateTimeOffsetValue,
-                            c => c.DateTime(8, "yyyyMMdd"))
+                            c => c.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.NullableDateTimeOffsetValue,
-                            c => c.DateTime(8, "yyyyMMdd"))
+                            c => c.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.CustomDateTimeOffsetValue,
-                            c => c.DateTime(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture));
+                            c => c.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture));
                 })
                 .ToMapperFactory();
-            var mapper = mapperFactory.Create<DateTimeExpressionObject>();
+            var mapper = mapperFactory.Create<DateTimeTextExpressionObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new DateTimeExpressionObject
+            var obj = new DateTimeTextExpressionObject
             {
                 DateTimeValue = new DateTime(2000, 12, 31, 0, 0, 0),
                 DateTimeOffsetValue = new DateTimeOffset(new DateTime(2000, 12, 31, 0, 0, 0))
@@ -107,7 +107,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        internal class DateTimeExpressionObject
+        internal class DateTimeTextExpressionObject
         {
             public DateTime DateTimeValue { get; set; }
 

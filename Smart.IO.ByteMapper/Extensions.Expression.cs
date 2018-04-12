@@ -264,7 +264,7 @@
 
         // DateTime
 
-        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, int length, string format)
+        public static IMapDateTimeSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
         {
             var expression = new MapDateTimeTextExpression(length, format);
             syntax.Map(expression);
@@ -273,14 +273,14 @@
 
         // Number
 
-        public static IMapNumberSyntax Number(this IMemberMapConfigSyntax syntax, int length)
+        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
         {
             var expression = new MapNumberTextExpression(length);
             syntax.Map(expression);
             return expression;
         }
 
-        public static IMapNumberSyntax Number(this IMemberMapConfigSyntax syntax, int length, string format)
+        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
         {
             var expression = new MapNumberTextExpression(length, format);
             syntax.Map(expression);
