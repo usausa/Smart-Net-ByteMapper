@@ -4,7 +4,7 @@
 
     using Xunit;
 
-    public class BooleanExpressionTest
+    public class MapBooleanExpressionTest
     {
         private const byte Filler = 0x00;
 

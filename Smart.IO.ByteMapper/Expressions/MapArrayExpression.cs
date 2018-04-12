@@ -4,7 +4,12 @@
 
     using Smart.IO.ByteMapper.Builders;
 
-    internal sealed class MapArrayExpression : IMemberMapExpression
+    public interface IMapArraySyntax
+    {
+        void Filler(byte value);
+    }
+
+    internal sealed class MapArrayExpression : IMemberMapExpression, IMapArraySyntax
     {
         private readonly ArrayConverterBuilder builder = new ArrayConverterBuilder();
 
@@ -17,6 +22,15 @@
 
             builder.Length = length;
             builder.ElementConverterBuilder = elementConverterBuilder;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Syntax
+        //--------------------------------------------------------------------------------
+
+        public void Filler(byte value)
+        {
+            builder.Filler = value;
         }
 
         //--------------------------------------------------------------------------------

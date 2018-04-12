@@ -7,7 +7,7 @@
 
     using Xunit;
 
-    public class FillerExpressionTest
+    public class MapConstantExpressionTest
     {
         //--------------------------------------------------------------------------------
         // Expression
@@ -17,28 +17,25 @@
         public void MapByConstExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .DefaultFiller((byte)' ')
+                .DefaultDelimiter(0x0D, 0x0A)
                 .Also(config =>
                 {
                     config
-                        .CreateMapByExpression<FillerExpressionObject>(4)
-                        .AutoFiller(true)
-                        .Filler(0, 1)
-                        .Filler(1, 1, (byte)'0')
-                        .Filler(1)
-                        .Filler(1, (byte)'_');
+                        .CreateMapByExpression<ConstExpressionObject>(6)
+                        .UseDelimitter(true)
+                        .Constant(0, new byte[] { 0x31, 0x32 })
+                        .Constant(new byte[] { 0x33, 0x34 });
                 })
                 .ToMapperFactory();
-            var mapper = mapperFactory.Create<FillerExpressionObject>();
+            var mapper = mapperFactory.Create<ConstExpressionObject>();
 
             var buffer = new byte[mapper.Size];
-            var obj = new FillerExpressionObject();
+            var obj = new ConstExpressionObject();
 
             // Write
             mapper.ToByte(buffer, 0, obj);
 
-            Assert.Equal(Encoding.ASCII.GetBytes(" 0 _"), buffer);
+            Assert.Equal(Encoding.ASCII.GetBytes("1234\r\n"), buffer);
         }
 
         //--------------------------------------------------------------------------------
@@ -48,15 +45,14 @@
         [Fact]
         public void CoverageFix()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapFillerExpression(-1, 0x00));
+            Assert.Throws<ArgumentNullException>(() => new MapConstantExpression(null));
         }
 
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
-        internal class FillerExpressionObject
+        internal class ConstExpressionObject
         {
         }
     }

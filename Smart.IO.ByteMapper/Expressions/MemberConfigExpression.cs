@@ -15,11 +15,16 @@
         // Syntax
         //--------------------------------------------------------------------------------
 
-        public void Array(int length, Action<IMemberMapConfigSyntax> config)
+        public IMapArraySyntax Array(int length, Action<IMemberMapConfigSyntax> config)
         {
             if (length < 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(length));
+            }
+
+            if (config == null)
+            {
+                throw new ArgumentNullException(nameof(config));
             }
 
             var element = new ElementConfigExpression();
@@ -30,7 +35,10 @@
                 throw new InvalidOperationException("Element is not mapped.");
             }
 
-            Expression = new MapArrayExpression(length, element.Expression.GetMapConverterBuilder());
+            var expression = new MapArrayExpression(length, element.Expression.GetMapConverterBuilder());
+            Expression = expression;
+
+            return expression;
         }
     }
 }

@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class BytesExpressionTest
+    public class MapBytesExpressionTest
     {
         //--------------------------------------------------------------------------------
         // Expression
