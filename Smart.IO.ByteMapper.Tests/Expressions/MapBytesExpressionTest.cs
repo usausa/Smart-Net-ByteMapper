@@ -13,7 +13,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByBinaryExpression()
+        public void MapByBytesExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)

@@ -14,7 +14,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByConstExpression()
+        public void MapByFillerExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)

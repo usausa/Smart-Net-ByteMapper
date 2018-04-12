@@ -12,7 +12,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapByConstAttribute()
+        public void MapByConstantAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(0x0D, 0x0A)
