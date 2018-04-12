@@ -10,8 +10,6 @@
 
     public sealed class MapperFactory
     {
-        private static readonly MethodInfo CreateMethod = typeof(MapperFactory).GetMethod(nameof(CreateInternal));
-
         private readonly IDictionary<string, object> parameters;
 
         private readonly IDictionary<MapKey, IMappingFactory> mappingFactories;
@@ -35,7 +33,7 @@
 
         public ITypeMapper Create(Type type)
         {
-            return CallGenericCreateInternal(type, Names.Default);
+            return CallGenericCreateInternal(type, null);
         }
 
         public ITypeMapper Create(Type type, string profile)
@@ -45,7 +43,7 @@
 
         public ITypeMapper<T> Create<T>()
         {
-            return CreateInternal<T>(Names.Default);
+            return CreateInternal<T>(null);
         }
 
         public ITypeMapper<T> Create<T>(string profile)
@@ -60,7 +58,8 @@
                 throw new ArgumentNullException(nameof(type));
             }
 
-            var genericMethod = CreateMethod.MakeGenericMethod(type);
+            var method = GetType().GetMethod(nameof(CreateInternal), BindingFlags.Instance | BindingFlags.NonPublic);
+            var genericMethod = method.MakeGenericMethod(type);
             return (ITypeMapper)genericMethod.Invoke(this, new object[] { profile });
         }
 

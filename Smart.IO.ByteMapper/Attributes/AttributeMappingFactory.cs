@@ -94,7 +94,7 @@
                         {
                             throw new ByteMapperException(
                                 "Attribute does not match property. " +
-                                $"type=[{x.Property.DeclaringType?.FullName}], " +
+                                $"type=[{x.Property.DeclaringType.FullName}], " +
                                 $"property=[{x.Property.Name}], " +
                                 $"attribute=[{typeof(MapArrayAttribute).FullName}]");
                         }
@@ -114,7 +114,7 @@
                     {
                         throw new ByteMapperException(
                             "Attribute does not match property. " +
-                            $"type=[{x.Property.DeclaringType?.FullName}], " +
+                            $"type=[{x.Property.DeclaringType.FullName}], " +
                             $"property=[{x.Property.Name}], " +
                             $"attribute=[{x.Attribute.GetType().FullName}]");
                     }
