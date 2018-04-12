@@ -2,7 +2,7 @@
 {
     using System;
 
-    internal sealed class ElementConfig : IMemberMapConfigSyntax
+    internal sealed class ElementConfigExpression : IMemberMapConfigSyntax
     {
         public IMemberMapExpression Expression { get; private set; }
 

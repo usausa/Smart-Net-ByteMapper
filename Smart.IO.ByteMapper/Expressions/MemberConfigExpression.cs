@@ -22,7 +22,7 @@
                 throw new ArgumentOutOfRangeException(nameof(length));
             }
 
-            var element = new ElementConfig();
+            var element = new ElementConfigExpression();
             config(element);
 
             if (element.Expression == null)
