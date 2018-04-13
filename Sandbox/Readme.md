@@ -30,3 +30,12 @@
 ## Decimal
 
 (TODO)
+
+## Div10
+
+|    Method |     Mean |     Error |    StdDev | Allocated |
+|---------- |---------:|----------:|----------:|----------:|
+|     Div10 | 6.548 ns | 0.4304 ns | 0.0243 ns |       0 B |
+| FastDiv10 | 4.614 ns | 0.6804 ns | 0.0384 ns |       0 B |
+
+* `FastDiv10` is signed only

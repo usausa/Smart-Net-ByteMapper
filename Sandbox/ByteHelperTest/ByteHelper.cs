@@ -165,5 +165,18 @@
         // TODO parse
 
         // TODO format
+
+        //--------------------------------------------------------------------------------
+        // Helper
+        //--------------------------------------------------------------------------------
+
+        private const long InvDivisor = 0x1999999A;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int Div10Signed(int dividend)
+        {
+            // signed only
+            return (int)((InvDivisor * dividend) >> 32);
+        }
     }
 }
