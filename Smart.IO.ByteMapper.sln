@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.Tests",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.Benchmark", "Smart.IO.ByteMapper.Benchmark\Smart.IO.ByteMapper.Benchmark.csproj", "{E0180652-F5C0-4220-9ECC-2FD234F8180F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.IO.ByteMapper.AspNetCore", "Smart.IO.ByteMapper.AspNetCore\Smart.IO.ByteMapper.AspNetCore.csproj", "{3FB7DF56-DE58-48DB-A462-9080975DEB02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.AspNetCore", "Smart.IO.ByteMapper.AspNetCore\Smart.IO.ByteMapper.AspNetCore.csproj", "{3FB7DF56-DE58-48DB-A462-9080975DEB02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example.WebApplication", "Example.WebApplication\Example.WebApplication.csproj", "{EBC693E9-5530-49E8-85F0-806BECA1330C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{3FB7DF56-DE58-48DB-A462-9080975DEB02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FB7DF56-DE58-48DB-A462-9080975DEB02}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FB7DF56-DE58-48DB-A462-9080975DEB02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBC693E9-5530-49E8-85F0-806BECA1330C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBC693E9-5530-49E8-85F0-806BECA1330C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBC693E9-5530-49E8-85F0-806BECA1330C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBC693E9-5530-49E8-85F0-806BECA1330C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
