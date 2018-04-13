@@ -45,12 +45,10 @@
         private byte[] text20EmptyBuffer;
 
         private IMapConverter numberText8Converter;
-        private IMapConverter numberText8AsciiConverter;
         private byte[] numberText8MaxBuffer;
         private byte[] numberText8ZeroBuffer;
 
         private IMapConverter dateTimeText14Converter;
-        private IMapConverter dateTimeText14AsciiConverter;
         private byte[] dateTimeText14Buffer;
 
         private static IBuilderContext CreateBuilderContext()
@@ -93,7 +91,6 @@
             // Text
             var text20Builder = new TextConverterBuilder { Length = 20 };
             text20Converter = text20Builder.CreateConverter(context, typeof(string));
-
             text20Single20Buffer = SjisEncoding.GetFixedBytes(Text20Single10, 20);
             text20Wide10Buffer = SjisEncoding.GetFixedBytes(Text20Wide5, 20);
             text20EmptyBuffer = SjisEncoding.GetFixedBytes(Text20Empty, 20);
@@ -101,18 +98,12 @@
             // Number
             var numberText8Builder = new NumberTextConverterBuilder { Length = 8 };
             numberText8Converter = numberText8Builder.CreateConverter(context, typeof(int));
-            var numberText8AsciiBuilder = new NumberTextConverterBuilder { Length = 8, Encoding = Encoding.ASCII };
-            numberText8AsciiConverter = numberText8AsciiBuilder.CreateConverter(context, typeof(int));
-
             numberText8MaxBuffer = SjisEncoding.GetFixedBytes(NumberText8Max.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
             numberText8ZeroBuffer = SjisEncoding.GetFixedBytes(NumberText8Zero.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
 
             // DateTime
             var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14 };
             dateTimeText14Converter = dateTimeText14Builder.CreateConverter(context, typeof(DateTime));
-            var dateTimeText14AsciiBuilder = new DateTimeTextConverterBuilder { Length = 14, Encoding = Encoding.ASCII };
-            dateTimeText14AsciiConverter = dateTimeText14AsciiBuilder.CreateConverter(context, typeof(DateTime));
-
             dateTimeText14Buffer = SjisEncoding.GetFixedBytes(DateTimeText14.ToString("yyyyMMddHHmmss"), 14);
         }
 
@@ -155,19 +146,19 @@
         // Text
 
         [Benchmark]
-        public void ReadText20Single20()
+        public void ReadSjisText20Single20()
         {
             text20Converter.Read(text20Single20Buffer, 0);
         }
 
         [Benchmark]
-        public void ReadText20Wide5()
+        public void ReadSjisText20Wide5()
         {
             text20Converter.Read(text20Wide10Buffer, 0);
         }
 
         [Benchmark]
-        public void ReadText20Empty()
+        public void ReadSjisText20Empty()
         {
             text20Converter.Read(text20EmptyBuffer, 0);
         }
@@ -186,30 +177,12 @@
             numberText8Converter.Read(numberText8ZeroBuffer, 0);
         }
 
-        [Benchmark]
-        public void ReadNumberText8AsciiMax()
-        {
-            numberText8AsciiConverter.Read(numberText8MaxBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberText8AsciiZero()
-        {
-            numberText8AsciiConverter.Read(numberText8ZeroBuffer, 0);
-        }
-
         // DateTime
 
         [Benchmark]
         public void ReadDateTimeText14()
         {
             dateTimeText14Converter.Read(dateTimeText14Buffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadDateTimeText14Ascii()
-        {
-            dateTimeText14AsciiConverter.Read(dateTimeText14Buffer, 0);
         }
 
         //--------------------------------------------------------------------------------
@@ -251,19 +224,19 @@
         // Text
 
         [Benchmark]
-        public void WriteText20Single20()
+        public void WriteSjisText20Single20()
         {
             text20Converter.Write(text20Single20Buffer, 0, Text20Single10);
         }
 
         [Benchmark]
-        public void WriteText20Wide5()
+        public void WriteSjisText20Wide5()
         {
             text20Converter.Write(text20Wide10Buffer, 0, Text20Wide5);
         }
 
         [Benchmark]
-        public void WriteText20Empty()
+        public void WriteSjisText20Empty()
         {
             text20Converter.Write(text20EmptyBuffer, 0, Text20Empty);
         }
@@ -282,30 +255,12 @@
             numberText8Converter.Write(numberText8ZeroBuffer, 0, NumberText8Zero);
         }
 
-        [Benchmark]
-        public void WriteNumberText8AsciiMax()
-        {
-            numberText8AsciiConverter.Write(numberText8MaxBuffer, 0, NumberText8Max);
-        }
-
-        [Benchmark]
-        public void WriteNumberText8AsciiZero()
-        {
-            numberText8AsciiConverter.Write(numberText8ZeroBuffer, 0, NumberText8Zero);
-        }
-
         // DateTime
 
         [Benchmark]
         public void WriteDateTimeText14()
         {
             dateTimeText14Converter.Write(dateTimeText14Buffer, 0, DateTimeText14);
-        }
-
-        [Benchmark]
-        public void WriteDateTimeText14Ascii()
-        {
-            dateTimeText14AsciiConverter.Write(dateTimeText14Buffer, 0, DateTimeText14);
         }
     }
 }
