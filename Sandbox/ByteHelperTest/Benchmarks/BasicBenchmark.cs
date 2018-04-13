@@ -5,5 +5,14 @@
     [Config(typeof(BenchmarkConfig))]
     public class BasicBenchmark
     {
+        [Benchmark]
+        public void FillDefault()
+        {
+        }
+
+        [Benchmark]
+        public void FillMemoryCopy()
+        {
+        }
     }
 }
