@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Benchmark
 {
+    using System;
     using System.Collections.Generic;
     using System.Globalization;
     using System.Text;
@@ -21,8 +22,22 @@
         private const int NumberText8Max = 999999999;
         private const int NumberText8Zero = 0;
 
+        private static readonly byte[] Bytes10 = new byte[10];
+
+        private static readonly byte[] Bytes20 = new byte[20];
+
+        private static readonly DateTime DateTimeText14 = new DateTime(2000, 12, 31, 23, 59, 59);
+
         private IMapConverter intBinaryConverter;
         private byte[] intBinaryBuffer;
+
+        private IMapConverter booleanConverter;
+        private byte[] booleanBuffer;
+
+        private IMapConverter bytes10Converter;
+        private byte[] bytes10Buffer;
+        private IMapConverter bytes20Converter;
+        private byte[] bytes20Buffer;
 
         private IMapConverter text20Converter;
         private byte[] text20Single20Buffer;
@@ -33,6 +48,10 @@
         private IMapConverter numberText8AsciiConverter;
         private byte[] numberText8MaxBuffer;
         private byte[] numberText8ZeroBuffer;
+
+        private IMapConverter dateTimeText14Converter;
+        private IMapConverter dateTimeText14AsciiConverter;
+        private byte[] dateTimeText14Buffer;
 
         private static IBuilderContext CreateBuilderContext()
         {
@@ -57,6 +76,20 @@
             intBinaryConverter = intBinaryBuilder.CreateConverter(context, typeof(int));
             intBinaryBuffer = new byte[intBinaryBuilder.CalcSize(typeof(int))];
 
+            // Boolean
+            var booleanBuilder = new BooleanConverterBuilder();
+            booleanConverter = booleanBuilder.CreateConverter(context, typeof(bool));
+            booleanBuffer = new byte[] { 0x30 };
+
+            // bytes
+            var bytes10Builder = new BytesConverterBuilder { Length = 10 };
+            bytes10Converter = bytes10Builder.CreateConverter(context, typeof(byte[]));
+            bytes10Buffer = new byte[bytes10Builder.CalcSize(typeof(byte[]))];
+
+            var bytes20Builder = new BytesConverterBuilder { Length = 20 };
+            bytes20Converter = bytes20Builder.CreateConverter(context, typeof(byte[]));
+            bytes20Buffer = new byte[bytes20Builder.CalcSize(typeof(byte[]))];
+
             // Text
             var text20Builder = new TextConverterBuilder { Length = 20 };
             text20Converter = text20Builder.CreateConverter(context, typeof(string));
@@ -74,8 +107,13 @@
             numberText8MaxBuffer = SjisEncoding.GetFixedBytes(NumberText8Max.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
             numberText8ZeroBuffer = SjisEncoding.GetFixedBytes(NumberText8Zero.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
 
-            // TODO DateTime
-            // TODO Bool
+            // DateTime
+            var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14 };
+            dateTimeText14Converter = dateTimeText14Builder.CreateConverter(context, typeof(DateTime));
+            var dateTimeText14AsciiBuilder = new DateTimeTextConverterBuilder { Length = 14, Encoding = Encoding.ASCII };
+            dateTimeText14AsciiConverter = dateTimeText14AsciiBuilder.CreateConverter(context, typeof(DateTime));
+
+            dateTimeText14Buffer = SjisEncoding.GetFixedBytes(DateTimeText14.ToString("yyyyMMddHHmmss"), 14);
         }
 
         //--------------------------------------------------------------------------------
@@ -89,6 +127,29 @@
         public void ReadIntBinary()
         {
             intBinaryConverter.Read(intBinaryBuffer, 0);
+        }
+
+        // Boolean
+
+        [Benchmark]
+
+        public void ReadBoolean()
+        {
+            booleanConverter.Read(booleanBuffer, 0);
+        }
+
+        // Bytes
+
+        [Benchmark]
+        public void ReadBytes10()
+        {
+            bytes10Converter.Read(bytes10Buffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadBytes20()
+        {
+            bytes20Converter.Read(bytes20Buffer, 0);
         }
 
         // Text
@@ -137,14 +198,19 @@
             numberText8AsciiConverter.Read(numberText8ZeroBuffer, 0);
         }
 
-        //[Benchmark]
-        //public void ReadIntText8()
-        //{
-        //    numberText8Converter.Read(numberText8Buffer, 0);
-        //}
+        // DateTime
 
-        // TODO DateTime
-        // TODO Bool
+        [Benchmark]
+        public void ReadDateTimeText14()
+        {
+            dateTimeText14Converter.Read(dateTimeText14Buffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadDateTimeText14Ascii()
+        {
+            dateTimeText14AsciiConverter.Read(dateTimeText14Buffer, 0);
+        }
 
         //--------------------------------------------------------------------------------
         // Write
@@ -157,6 +223,29 @@
         public void WriteIntBinary()
         {
             intBinaryConverter.Write(intBinaryBuffer, 0, 0);
+        }
+
+        // Boolean
+
+        [Benchmark]
+
+        public void WriteBoolean()
+        {
+            booleanConverter.Write(booleanBuffer, 0, false);
+        }
+
+        // Bytes
+
+        [Benchmark]
+        public void WriteBytes10()
+        {
+            bytes10Converter.Write(bytes10Buffer, 0, Bytes10);
+        }
+
+        [Benchmark]
+        public void WriteBytes20()
+        {
+            bytes20Converter.Write(bytes20Buffer, 0, Bytes20);
         }
 
         // Text
@@ -190,7 +279,7 @@
         [Benchmark]
         public void WriteNumberText8Zero()
         {
-            numberText8Converter.Write(numberText8MaxBuffer, 0, NumberText8Zero);
+            numberText8Converter.Write(numberText8ZeroBuffer, 0, NumberText8Zero);
         }
 
         [Benchmark]
@@ -202,10 +291,21 @@
         [Benchmark]
         public void WriteNumberText8AsciiZero()
         {
-            numberText8AsciiConverter.Write(numberText8MaxBuffer, 0, NumberText8Zero);
+            numberText8AsciiConverter.Write(numberText8ZeroBuffer, 0, NumberText8Zero);
         }
 
-        // TODO DateTime
-        // TODO Bool
+        // DateTime
+
+        [Benchmark]
+        public void WriteDateTimeText14()
+        {
+            dateTimeText14Converter.Write(dateTimeText14Buffer, 0, DateTimeText14);
+        }
+
+        [Benchmark]
+        public void WriteDateTimeText14Ascii()
+        {
+            dateTimeText14AsciiConverter.Write(dateTimeText14Buffer, 0, DateTimeText14);
+        }
     }
 }
