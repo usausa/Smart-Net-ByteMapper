@@ -19,7 +19,7 @@
                 {
                     config
                         .CreateMapByExpression<ByteExpressionObject>(1)
-                        .ForMember(x => x.ByteValue, c => c.Byte());
+                        .ForMember(x => x.ByteValue, m => m.Byte());
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<ByteExpressionObject>();

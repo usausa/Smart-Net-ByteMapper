@@ -30,26 +30,26 @@
                 {
                     config
                         .CreateMapByExpression<NumberTextExpressionObject>(54)
-                        .ForMember(x => x.IntValue, c => c.NumberText(4))
-                        .ForMember(x => x.NullableIntValue, c => c.NumberText(4))
+                        .ForMember(x => x.IntValue, m => m.NumberText(4))
+                        .ForMember(x => x.NullableIntValue, m => m.NumberText(4))
                         .ForMember(
                             x => x.CustomIntValue,
-                            c => c.NumberText(4, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.LongValue, c => c.NumberText(6))
-                        .ForMember(x => x.NullableLongValue, c => c.NumberText(6))
+                            m => m.NumberText(4, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                        .ForMember(x => x.LongValue, m => m.NumberText(6))
+                        .ForMember(x => x.NullableLongValue, m => m.NumberText(6))
                         .ForMember(
                             x => x.CustomLongValue,
-                            c => c.NumberText(6, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.ShortValue, c => c.NumberText(2))
-                        .ForMember(x => x.NullableShortValue, c => c.NumberText(2))
+                            m => m.NumberText(6, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                        .ForMember(x => x.ShortValue, m => m.NumberText(2))
+                        .ForMember(x => x.NullableShortValue, m => m.NumberText(2))
                         .ForMember(
                             x => x.CustomShortValue,
-                            c => c.NumberText(2, "D1").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.DecimalValue, c => c.NumberText(6))
-                        .ForMember(x => x.NullableDecimalValue, c => c.NumberText(6))
+                            m => m.NumberText(2, "D1").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                        .ForMember(x => x.DecimalValue, m => m.NumberText(6))
+                        .ForMember(x => x.NullableDecimalValue, m => m.NumberText(6))
                         .ForMember(
                             x => x.CustomDecimalValue,
-                            c => c.NumberText(6, "0.00").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture));
+                            m => m.NumberText(6, "0.00").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<NumberTextExpressionObject>();

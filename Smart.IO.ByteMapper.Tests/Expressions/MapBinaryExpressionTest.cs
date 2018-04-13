@@ -20,12 +20,12 @@
                 {
                     config
                         .CreateMapByExpression<BinaryExpressionObject>(28)
-                        .ForMember(x => x.BigEndianIntValue, c => c.Binary())
-                        .ForMember(x => x.LittleEndianIntValue, c => c.Binary(Endian.Little))
-                        .ForMember(x => x.BigEndianLongValue, c => c.Binary())
-                        .ForMember(x => x.LittleEndianLongValue, c => c.Binary(Endian.Little))
-                        .ForMember(x => x.BigEndianShortValue, c => c.Binary())
-                        .ForMember(x => x.LittleEndianShortValue, c => c.Binary(Endian.Little));
+                        .ForMember(x => x.BigEndianIntValue, m => m.Binary())
+                        .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
+                        .ForMember(x => x.BigEndianLongValue, m => m.Binary())
+                        .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
+                        .ForMember(x => x.BigEndianShortValue, m => m.Binary())
+                        .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BinaryExpressionObject>();

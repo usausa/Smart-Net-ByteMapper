@@ -23,8 +23,8 @@
                 {
                     config
                         .CreateMapByExpression<ArrayExpressionObject>(19)
-                        .ForMember(x => x.ArrayValue, c => c.Array(3, e => e.Binary()))
-                        .ForMember(x => x.ByteArrayValue, c => c.Array(7, e => e.Byte()).Filler(0xFF));
+                        .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
+                        .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<ArrayExpressionObject>();

@@ -22,8 +22,8 @@
                 {
                     config
                         .CreateMapByExpression<BytesAttributeObject>(8)
-                        .ForMember(x => x.BytesValue, c => c.Bytes(4))
-                        .ForMember(x => x.CustomBytesValue, c => c.Bytes(4).Filler(0x30));
+                        .ForMember(x => x.BytesValue, m => m.Bytes(4))
+                        .ForMember(x => x.CustomBytesValue, m => m.Bytes(4).Filler(0x30));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BytesAttributeObject>();

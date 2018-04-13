@@ -28,10 +28,10 @@
                         .CreateMapByExpression<TextExpressionObject>(8)
                         .ForMember(
                             x => x.StringValue,
-                            c => c.Text(4))
+                            m => m.Text(4))
                         .ForMember(
                             x => x.CustomStringValue,
-                            c => c.Text(4).Encoding(Encoding.ASCII).Trim(false).Padding(Padding.Left).Filler((byte)'_'));
+                            m => m.Text(4).Encoding(Encoding.ASCII).Trim(false).Padding(Padding.Left).Filler((byte)'_'));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<TextExpressionObject>();

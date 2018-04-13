@@ -30,22 +30,22 @@
                         .CreateMapByExpression<DateTimeTextExpressionObject>(60)
                         .ForMember(
                             x => x.DateTimeValue,
-                            c => c.DateTimeText(8, "yyyyMMdd"))
+                            m => m.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.NullableDateTimeValue,
-                            c => c.DateTimeText(8, "yyyyMMdd"))
+                            m => m.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.CustomDateTimeValue,
-                            c => c.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture))
+                            m => m.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture))
                         .ForMember(
                             x => x.DateTimeOffsetValue,
-                            c => c.DateTimeText(8, "yyyyMMdd"))
+                            m => m.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.NullableDateTimeOffsetValue,
-                            c => c.DateTimeText(8, "yyyyMMdd"))
+                            m => m.DateTimeText(8, "yyyyMMdd"))
                         .ForMember(
                             x => x.CustomDateTimeOffsetValue,
-                            c => c.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture));
+                            m => m.DateTimeText(14, "yyyyMMddHHmmss").Encoding(Encoding.ASCII).Filler((byte)'_').Style(DateTimeStyles.None).Provider(CultureInfo.InvariantCulture));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<DateTimeTextExpressionObject>();

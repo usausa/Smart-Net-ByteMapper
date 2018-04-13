@@ -162,7 +162,7 @@
             {
                 throw new ByteMapperException(
                     "Expression does not match property. " +
-                    $"type=[{pi.DeclaringType?.FullName}], " +
+                    $"type=[{pi.DeclaringType.FullName}], " +
                     $"property=[{pi.Name}]");
             }
 

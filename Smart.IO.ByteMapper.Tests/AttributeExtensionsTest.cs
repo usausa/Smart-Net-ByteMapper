@@ -13,7 +13,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapCall()
+        public void MapByAttributeCall()
         {
             // Generic
 

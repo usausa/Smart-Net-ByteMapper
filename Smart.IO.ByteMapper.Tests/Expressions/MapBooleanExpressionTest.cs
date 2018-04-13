@@ -32,10 +32,10 @@
                 {
                     config
                         .CreateMapByExpression<BooleanExpressionObject>(4)
-                        .ForMember(x => x.BooleanValue, c => c.Boolean())
-                        .ForMember(x => x.NullableBooleanValue, c => c.Boolean())
-                        .ForMember(x => x.CustomBooleanValue, c => c.Boolean(Yes, No))
-                        .ForMember(x => x.CustomNullableBooleanValue, c => c.Boolean(Yes, No, Filler));
+                        .ForMember(x => x.BooleanValue, m => m.Boolean())
+                        .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
+                        .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))
+                        .ForMember(x => x.CustomNullableBooleanValue, m => m.Boolean(Yes, No, Filler));
                 })
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BooleanExpressionObject>();

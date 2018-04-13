@@ -53,10 +53,10 @@
                         .TypeEndian(Endian.Little)
                         .TypeTrueValue((byte)'Y')
                         .TypeFalseValue((byte)'N')
-                        .ForMember(x => x.IntValue, 0, c => c.NumberText(2))
-                        .ForMember(x => x.DecimalValue, 2, c => c.NumberText(2))
-                        .ForMember(x => x.StringValue, 4, c => c.Text(2))
-                        .ForMember(x => x.BoolValue, 6, c => c.Boolean());
+                        .ForMember(x => x.IntValue, 0, m => m.NumberText(2))
+                        .ForMember(x => x.DecimalValue, 2, m => m.NumberText(2))
+                        .ForMember(x => x.StringValue, 4, m => m.Text(2))
+                        .ForMember(x => x.BoolValue, 6, m => m.Boolean());
                 }).ToMapperFactory();
             var mapper = mapperFactory.Create<TypeDefaultExpressionObject>();
 
