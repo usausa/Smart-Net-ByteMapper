@@ -70,6 +70,16 @@
             return syntax.TypeDefault(Parameter.Encoding, value);
         }
 
+        public static ITypeConfigSyntax<T> TypeNumberEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        {
+            return syntax.TypeDefault(Parameter.NumberEncoding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeEncoding, value);
+        }
+
         public static ITypeConfigSyntax<T> TypeNumberProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
         {
             return syntax.TypeDefault(Parameter.NumberProvider, value);

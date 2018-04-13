@@ -17,6 +17,8 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.UTF8)
+                .DefaultNumberEncoding(Encoding.UTF8)
+                .DefaultDateTimeEncoding(Encoding.UTF8)
                 .DefaultNumberProvider(CultureInfo.CurrentCulture)
                 .DefaultDateTimeProvider(CultureInfo.CurrentCulture)
                 .DefaultNumberStyle(NumberStyles.Integer)
@@ -51,6 +53,8 @@
 
             // Fix
             Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
+            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeNumberEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
+            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeDateTimeEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
         }
 
         //--------------------------------------------------------------------------------
@@ -60,6 +64,8 @@
         [Map(10)]
         [TypeDelimiter(0x0D, 0x0A)]
         [TypeEncoding("ASCII")]
+        [TypeNumberEncoding("ASCII")]
+        [TypeDateTimeEncoding("ASCII")]
         [TypeNumberProvider(Culture.Invaliant)]
         [TypeDateTimeProvider(Culture.Invaliant)]
         [TypeNumberStyle(NumberStyles.Any)]

@@ -6,6 +6,10 @@
 
         public const string Encoding = nameof(Encoding);
 
+        public const string NumberEncoding = nameof(NumberEncoding);
+
+        public const string DateTimeEncoding = nameof(DateTimeEncoding);
+
         public const string NumberProvider = nameof(NumberProvider);
 
         public const string DateTimeProvider = nameof(DateTimeProvider);

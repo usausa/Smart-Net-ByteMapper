@@ -25,6 +25,8 @@
 
             this.DefaultDelimiter(0x0D, 0x0A);
             this.DefaultEncoding(Encoding.ASCII);
+            this.DefaultNumberEncoding(Encoding.ASCII);
+            this.DefaultDateTimeEncoding(Encoding.ASCII);
             this.DefaultNumberProvider(CultureInfo.InvariantCulture);
             this.DefaultDateTimeProvider(CultureInfo.InvariantCulture);
             this.DefaultNumberStyle(NumberStyles.Integer);

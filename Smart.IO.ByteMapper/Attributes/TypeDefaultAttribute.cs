@@ -36,6 +36,42 @@
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeNumberEncodingAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.NumberEncoding;
+
+        public object Value { get; }
+
+        public TypeNumberEncodingAttribute(int codePage)
+        {
+            Value = Encoding.GetEncoding(codePage);
+        }
+
+        public TypeNumberEncodingAttribute(string encodingName)
+        {
+            Value = Encoding.GetEncoding(encodingName);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeDateTimeEncodingAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.DateTimeEncoding;
+
+        public object Value { get; }
+
+        public TypeDateTimeEncodingAttribute(int codePage)
+        {
+            Value = Encoding.GetEncoding(codePage);
+        }
+
+        public TypeDateTimeEncodingAttribute(string encodingName)
+        {
+            Value = Encoding.GetEncoding(encodingName);
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class TypeNumberProviderAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key => Parameter.NumberProvider;

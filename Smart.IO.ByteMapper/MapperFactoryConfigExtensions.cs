@@ -21,6 +21,16 @@
             return config.AddParameter(Parameter.Encoding, value);
         }
 
+        public static MapperFactoryConfig DefaultNumberEncoding(this MapperFactoryConfig config, Encoding value)
+        {
+            return config.AddParameter(Parameter.NumberEncoding, value);
+        }
+
+        public static MapperFactoryConfig DefaultDateTimeEncoding(this MapperFactoryConfig config, Encoding value)
+        {
+            return config.AddParameter(Parameter.DateTimeEncoding, value);
+        }
+
         public static MapperFactoryConfig DefaultNumberProvider(this MapperFactoryConfig config, IFormatProvider value)
         {
             return config.AddParameter(Parameter.NumberProvider, value);

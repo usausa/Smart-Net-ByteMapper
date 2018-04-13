@@ -41,7 +41,7 @@
             return new IntTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
@@ -55,7 +55,7 @@
             return new LongTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
@@ -69,7 +69,7 @@
             return new ShortTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
@@ -83,7 +83,7 @@
             return new DecimalTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),

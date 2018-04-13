@@ -17,7 +17,7 @@
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
-                .DefaultEncoding(Encoding.ASCII)
+                .DefaultDateTimeEncoding(Encoding.ASCII)
                 .DefaultDateTimeProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)

@@ -33,7 +33,7 @@
             return new DateTimeTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeEncoding),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                 Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeProvider),
@@ -45,7 +45,7 @@
             return new DateTimeOffsetTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeEncoding),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeStyle),
                 Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeProvider),

@@ -19,7 +19,7 @@
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
-                .DefaultEncoding(Encoding.ASCII)
+                .DefaultNumberEncoding(Encoding.ASCII)
                 .DefaultNumberProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultNumberPadding(Padding.Left)
