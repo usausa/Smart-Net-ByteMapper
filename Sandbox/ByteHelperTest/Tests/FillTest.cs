@@ -1,6 +1,6 @@
 ﻿namespace ByteHelperTest.Tests
 {
-    public class BasicTest
+    public class FillTest
     {
     }
 }

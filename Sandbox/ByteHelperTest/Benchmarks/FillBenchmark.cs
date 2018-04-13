@@ -3,7 +3,7 @@
     using BenchmarkDotNet.Attributes;
 
     [Config(typeof(BenchmarkConfig))]
-    public class BasicBenchmark
+    public class FillBenchmark
     {
         private readonly byte[] buffer = new byte[20];
 
