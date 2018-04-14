@@ -17,21 +17,36 @@
                 return array;
             }
 
-            array[offset] = value;
-
-            int copy;
-            for (copy = 1; copy <= length / 2; copy <<= 1)
+            for (var i = 0; i < length; i++)
             {
-                Buffer.BlockCopy(array, offset, array, offset + copy, copy);
+                array[offset + i] = value;
             }
-
-            Buffer.BlockCopy(array, offset, array, offset + copy, length - copy);
 
             return array;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe byte[] FillUnsafe(this byte[] array, int offset, int length, byte value)
+        {
+            if ((length <= 0) || (array == null))
+            {
+                return array;
+            }
+
+            fixed (byte* pSrc = &array[offset])
+            {
+                for (var i = 0; i < length; i++)
+                {
+                    var pDst = pSrc + i;
+                    *pDst = value;
+                }
+            }
+
+            return array;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe byte[] FillMemoryCopy(this byte[] array, int offset, int length, byte value)
         {
             // few cost
             if ((length <= 0) || (array == null))

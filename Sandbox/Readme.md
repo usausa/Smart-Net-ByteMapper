@@ -2,10 +2,14 @@
 
 ## Fill
 
-         Method |     Mean |    Error |    StdDev | Allocated |
---------------- |---------:|---------:|----------:|----------:|
-    FillDefault | 40.74 ns | 5.973 ns | 0.3375 ns |       0 B |
- FillMemoryCopy | 20.13 ns | 2.189 ns | 0.1237 ns |       0 B |
+           Method |     Mean |     Error |    StdDev | Allocated |
+----------------- |---------:|----------:|----------:|----------:|
+           Fill32 | 13.98 ns | 13.868 ns | 0.7836 ns |       0 B |
+     FillUnsafe32 | 15.31 ns |  1.360 ns | 0.0768 ns |       0 B |
+ FillMemoryCopy32 | 22.94 ns |  6.249 ns | 0.3531 ns |       0 B |
+           Fill64 | 38.54 ns | 19.524 ns | 1.1031 ns |       0 B |
+     FillUnsafe64 | 37.44 ns |  2.674 ns | 0.1511 ns |       0 B |
+ FillMemoryCopy64 | 29.01 ns |  6.686 ns | 0.3778 ns |       0 B |
 
 ## Encoding
 
