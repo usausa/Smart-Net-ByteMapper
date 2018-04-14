@@ -2,10 +2,10 @@
 
 ## Fill
 
-|         Method |     Mean |    Error |    StdDev | Allocated |
-|--------------- |---------:|---------:|----------:|----------:|
-|    FillDefault | 40.16 ns | 6.283 ns | 0.3550 ns |       0 B |
-| FillMemoryCopy | 27.10 ns | 3.712 ns | 0.2097 ns |       0 B |
+         Method |     Mean |    Error |    StdDev | Allocated |
+--------------- |---------:|---------:|----------:|----------:|
+    FillDefault | 40.74 ns | 5.973 ns | 0.3375 ns |       0 B |
+ FillMemoryCopy | 20.13 ns | 2.189 ns | 0.1237 ns |       0 B |
 
 ## Encoding
 
