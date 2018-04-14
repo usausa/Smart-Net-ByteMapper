@@ -41,21 +41,18 @@
 
             fixed (byte* pSrc = &array[offset])
             {
-                pSrc[offset] = value;
+                *pSrc = value;
+                byte* pDst;
 
                 int copy;
                 for (copy = 1; copy <= length / 2; copy <<= 1)
                 {
-                    fixed (byte* pDst = &array[offset + copy])
-                    {
-                        Buffer.MemoryCopy(pSrc, pDst, length - copy, copy);
-                    }
+                    pDst = pSrc + copy;
+                    Buffer.MemoryCopy(pSrc, pDst, length - copy, copy);
                 }
 
-                fixed (byte* pDst = &array[offset + copy])
-                {
-                    Buffer.MemoryCopy(pSrc, pDst, length - copy, length - copy);
-                }
+                pDst = pSrc + copy;
+                Buffer.MemoryCopy(pSrc, pDst, length - copy, length - copy);
             }
 
             return array;
@@ -74,9 +71,14 @@
             fixed (char* pSrc = str)
             fixed (byte* pDst = &bytes[0])
             {
+                var ps = pSrc;
+                var pd = pDst;
+
                 for (var i = 0; i < length; i++)
                 {
-                    pDst[i] = (byte)pSrc[i];
+                    *pd = (byte)*ps;
+                    ps++;
+                    pd++;
                 }
             }
 
@@ -87,37 +89,23 @@
         public static unsafe string GetAsciiString(byte[] bytes)
         {
             var length = bytes.Length;
+            var str = new string('\0', length);
 
             fixed (byte* pSrc = &bytes[0])
+            fixed (char* pDst = str)
             {
-                char* pDst = stackalloc char[length];
+                var ps = pSrc;
+                var pd = pDst;
 
                 for (var i = 0; i < length; i++)
                 {
-                    pDst[i] = (char)pSrc[i];
-                }
-
-                return new string(pDst);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe string GetAsciiString2(byte[] bytes)
-        {
-            // Faster than stackalloc ?
-            var length = bytes.Length;
-            var chars = new char[length];
-
-            fixed (byte* pSrc = &bytes[0])
-            fixed (char* pDst = &chars[0])
-            {
-                for (var i = 0; i < length; i++)
-                {
-                    pDst[i] = (char)pSrc[i];
+                    *pd = (char)*ps;
+                    ps++;
+                    pd++;
                 }
             }
 
-            return new string(chars);
+            return str;
         }
 
         //--------------------------------------------------------------------------------

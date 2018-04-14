@@ -42,11 +42,5 @@
         {
             ByteHelper.GetAsciiString(Bytes);
         }
-
-        [Benchmark]
-        public void GetStringByCustom2()
-        {
-            ByteHelper.GetAsciiString2(Bytes);
-        }
     }
 }
