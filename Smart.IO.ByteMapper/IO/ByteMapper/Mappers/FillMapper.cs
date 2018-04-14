@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Smart.IO.ByteMapper.Helpers;
+
     public sealed class FillMapper : IMapper
     {
         private readonly int offset;
@@ -28,7 +30,7 @@
 
         public void Write(byte[] buffer, int index, object target)
         {
-            buffer.Fill(index + offset, length, filler);
+            BytesHelper.Fill(buffer, index + offset, length, filler);
         }
     }
 }

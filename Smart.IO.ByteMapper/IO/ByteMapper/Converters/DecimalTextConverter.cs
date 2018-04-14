@@ -63,7 +63,7 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, length, filler);
+                BytesHelper.Fill(buffer, index, length, filler);
             }
             else
             {

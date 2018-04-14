@@ -7,17 +7,26 @@
     public static class BytesHelper
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Fill(byte[] byets, int offset, int length, byte value)
+        {
+            for (var i = 0; i < length; i++)
+            {
+                byets[offset + i] = value;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyPadRight(byte[] bytes, byte[] buffer, int offset, int length, byte filler)
         {
             Buffer.BlockCopy(bytes, 0, buffer, offset, bytes.Length);
-            buffer.Fill(offset + bytes.Length, length - bytes.Length, filler);
+            Fill(buffer, offset + bytes.Length, length - bytes.Length, filler);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void CopyPadLeft(byte[] bytes, byte[] buffer, int offset, int length, byte filler)
         {
             Buffer.BlockCopy(bytes, 0, buffer, offset + length - bytes.Length, bytes.Length);
-            buffer.Fill(offset, length - bytes.Length, filler);
+            Fill(buffer, offset, length - bytes.Length, filler);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

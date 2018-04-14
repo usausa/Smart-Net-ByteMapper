@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapAttributeTest
@@ -63,7 +61,7 @@
 
             Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(new DefaultFillerObject()));
 
-            var buffer = new byte[noMapper.Size].Also(x => x.Fill(0x11));
+            var buffer = new byte[noMapper.Size].Fill(0x11);
             noMapper.ToByte(buffer, 0, new NoFillerObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }
@@ -107,7 +105,7 @@
 
             Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimitterObject()));
 
-            var buffer = new byte[noMapper.Size].Also(x => x.Fill(0x11));
+            var buffer = new byte[noMapper.Size].Fill(0x11);
             noMapper.ToByte(buffer, 0, new NoDelimitterObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }

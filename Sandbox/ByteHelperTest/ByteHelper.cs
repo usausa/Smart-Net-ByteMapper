@@ -54,6 +54,16 @@
                 return array;
             }
 
+            //if (length <= 32)
+            //{
+            //    for (var i = 0; i < length; i++)
+            //    {
+            //        array[offset + i] = value;
+            //    }
+
+            //    return array;
+            //}
+
             fixed (byte* pSrc = &array[offset])
             {
                 *pSrc = value;

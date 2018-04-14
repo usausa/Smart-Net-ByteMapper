@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
 
+    using Smart.IO.ByteMapper.Helpers;
     using Smart.IO.ByteMapper.Mappers;
 
     internal class TypeMapper<T> : ITypeMapper<T>
@@ -48,7 +49,7 @@
         {
             if (target == null)
             {
-                buffer.Fill(index, Size, filler);
+                BytesHelper.Fill(buffer, index, Size, filler);
             }
             else
             {

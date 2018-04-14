@@ -2,6 +2,8 @@
 {
     using System;
 
+    using Smart.IO.ByteMapper.Helpers;
+
     internal sealed class ArrayConverter : IMapConverter
     {
         private readonly int length;
@@ -40,7 +42,7 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, length * elementSize, filler);
+                BytesHelper.Fill(buffer, index, length * elementSize, filler);
             }
             else
             {
@@ -54,7 +56,7 @@
 
                 if (array.Length < length)
                 {
-                    buffer.Fill(index, (length - array.Length) * elementSize, filler);
+                    BytesHelper.Fill(buffer, index, (length - array.Length) * elementSize, filler);
                 }
             }
         }

@@ -39,7 +39,7 @@
         {
             if (value == null)
             {
-                buffer.Fill(index, Length, filler);
+                BytesHelper.Fill(buffer, index, Length, filler);
             }
             else
             {
