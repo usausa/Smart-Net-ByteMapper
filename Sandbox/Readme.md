@@ -4,17 +4,17 @@
 
 ### Parse
 
-|        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
-|-------------- |----------:|----------:|----------:|-------:|----------:|
-|  ParseDefault | 392.84 ns |  4.889 ns | 0.2762 ns | 0.0124 |      56 B |
-|   ParseCustom |  55.35 ns | 11.418 ns | 0.6452 ns |      - |       0 B |
+|        Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|-----------:|----------:|-------:|----------:|
+|  ParseDefault | 394.10 ns |  76.617 ns | 4.3290 ns | 0.0129 |      56 B |
+|   ParseCustom |  54.43 ns |   8.146 ns | 0.4603 ns |      - |       0 B |
 
 ### Format
 
-|        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
-|-------------- |----------:|----------:|----------:|-------:|----------:|
-| FormatDefault | 616.22 ns | 55.081 ns | 3.1122 ns | 0.0582 |     248 B |
-|  FormatCustom | 121.90 ns | 34.962 ns | 1.9754 ns | 0.0112 |      48 B |
+|        Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|-----------:|----------:|-------:|----------:|
+| FormatDefault | 620.34 ns | 131.122 ns | 7.4086 ns | 0.0582 |     248 B |
+|  FormatCustom | 113.61 ns |  18.495 ns | 1.0450 ns | 0.0113 |      48 B |
 
 ## Integer
 

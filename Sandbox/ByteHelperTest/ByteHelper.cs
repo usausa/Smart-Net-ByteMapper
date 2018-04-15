@@ -169,156 +169,163 @@
         // DateTime
         //--------------------------------------------------------------------------------
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime dateTime)
+        public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime dateTime)
         {
-            var year = 0;
-            var month = 0;
-            var day = 0;
-            var hour = 0;
-            var minute = 0;
-            var second = 0;
-            var milisecond = 0;
-            var msPow = 100;
-
-            for (var i = 0; i < format.Length; i++)
+            fixed (byte* pBytes = &bytes[0])
+            fixed (char* pFormat = format)
             {
-                var value = bytes[index + i] - '0';
-                if ((value >= 0) && (value < 10))
+                var year = 0;
+                var month = 0;
+                var day = 0;
+                var hour = 0;
+                var minute = 0;
+                var second = 0;
+                var milisecond = 0;
+                var msPow = 100;
+
+                var length = format.Length;
+                for (var i = 0; i < length; i++)
                 {
-                    switch (format[i])
+                    var value = *(pBytes + index + i) - '0';
+                    if ((value >= 0) && (value < 10))
                     {
-                        case 'y':
-                            year = (year * 10) + value;
-                            break;
-                        case 'M':
-                            month = (month * 10) + value;
-                            break;
-                        case 'd':
-                            day = (day * 10) + value;
-                            break;
-                        case 'H':
-                            hour = (hour * 10) + value;
-                            break;
-                        case 'm':
-                            minute = (minute * 10) + value;
-                            break;
-                        case 's':
-                            second = (second * 10) + value;
-                            break;
-                        case 'f':
-                            milisecond = milisecond + (value * msPow);
-                            msPow /= 10;
-                            break;
-                        default:
-                            dateTime = default;
-                            return false;
+                        switch (*(pFormat + i))
+                        {
+                            case 'y':
+                                year = (year * 10) + value;
+                                break;
+                            case 'M':
+                                month = (month * 10) + value;
+                                break;
+                            case 'd':
+                                day = (day * 10) + value;
+                                break;
+                            case 'H':
+                                hour = (hour * 10) + value;
+                                break;
+                            case 'm':
+                                minute = (minute * 10) + value;
+                                break;
+                            case 's':
+                                second = (second * 10) + value;
+                                break;
+                            case 'f':
+                                milisecond = milisecond + (value * msPow);
+                                msPow /= 10;
+                                break;
+                            default:
+                                dateTime = default;
+                                return false;
+                        }
+                    }
+                    else if (*(pFormat + i) == 'f')
+                    {
+                        msPow /= 10;
                     }
                 }
-                else if (format[i] == 'f')
-                {
-                    msPow /= 10;
-                }
-            }
 
-            try
-            {
-                dateTime = new DateTime(year, month, day, hour, minute, second, milisecond);
-                return true;
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                dateTime = default;
-                return false;
+                try
+                {
+                    dateTime = new DateTime(year, month, day, hour, minute, second, milisecond);
+                    return true;
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    dateTime = default;
+                    return false;
+                }
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
+        public static unsafe void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
         {
-            // TODO length
-            for (var i = 0; i < format.Length; i++)
+            fixed (byte* pBytes = &bytes[0])
+            fixed (char* pFormat = format)
             {
-                var c = format[i];
-
-                var pow = 0;
-                int value;
-                switch (c)
+                var length = format.Length;
+                for (var i = 0; i < length; i++)
                 {
-                    case 'y':
-                        value = dateTime.Year;
-                        break;
-                    case 'M':
-                        value = dateTime.Month;
-                        break;
-                    case 'd':
-                        value = dateTime.Day;
-                        break;
-                    case 'H':
-                        value = dateTime.Hour;
-                        break;
-                    case 'm':
-                        value = dateTime.Minute;
-                        break;
-                    case 's':
-                        value = dateTime.Second;
-                        break;
-                    case 'f':
-                        value = dateTime.Millisecond;
-                        pow = 100;
-                        break;
-                    default:
-                        bytes[index + i] = (byte)c;
-                        continue;
-                }
+                    var c = *(pFormat + i);
 
-                if (pow == 0)
-                {
-                    var append = 0;
-                    for (var j = i + 1; j < format.Length; j++)
+                    var pow = 0;
+                    int value;
+                    switch (c)
                     {
-                        if (format[j] == c)
-                        {
-                            append++;
-                        }
-                        else
-                        {
+                        case 'y':
+                            value = dateTime.Year;
                             break;
-                        }
+                        case 'M':
+                            value = dateTime.Month;
+                            break;
+                        case 'd':
+                            value = dateTime.Day;
+                            break;
+                        case 'H':
+                            value = dateTime.Hour;
+                            break;
+                        case 'm':
+                            value = dateTime.Minute;
+                            break;
+                        case 's':
+                            value = dateTime.Second;
+                            break;
+                        case 'f':
+                            value = dateTime.Millisecond;
+                            pow = 100;
+                            break;
+                        default:
+                            *(pBytes + index + i) = (byte)c;
+                            continue;
                     }
 
-                    var start = index + i;
-                    for (var j = start + append; j >= start; j--)
+                    if (pow == 0)
                     {
-                        bytes[j] = (byte)('0' + (value % 10));
-                        value = value / 10;
-                    }
-
-                    i += append;
-                }
-                else
-                {
-                    while (true)
-                    {
-                        var div = value / pow;
-                        value = value % pow;
-                        pow = pow / 10;
-
-                        bytes[index + i] = (byte)('0' + div);
-
-                        var next = i + 1;
-                        if ((next < format.Length) && (format[next] == c))
+                        var append = 0;
+                        for (var j = i + 1; j < length; j++)
                         {
-                            if (pow == 0)
+                            if (*(pFormat + j) == c)
                             {
-                                throw new FormatException("Invalid format.");
+                                append++;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+
+                        var start = index + i;
+                        for (var j = start + append; j >= start; j--)
+                        {
+                            *(pBytes + j) = (byte)('0' + (value % 10));
+                            value = value / 10;
+                        }
+
+                        i += append;
+                    }
+                    else
+                    {
+                        while (true)
+                        {
+                            var div = value / pow;
+                            value = value % pow;
+                            pow = pow / 10;
+
+                            *(pBytes + index + i) = (byte)('0' + div);
+
+                            var next = i + 1;
+                            if ((next < length) && (*(pFormat + next) == c))
+                            {
+                                if (pow == 0)
+                                {
+                                    throw new FormatException("Invalid format.");
+                                }
+
+                                i = next;
+                                continue;
                             }
 
-                            i = next;
-                            continue;
+                            break;
                         }
-
-                        break;
                     }
                 }
             }
