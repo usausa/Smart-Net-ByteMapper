@@ -137,8 +137,6 @@
         // Integer
         //--------------------------------------------------------------------------------
 
-        // TODO format check
-
         // TODO parse 1, 2, 3
 
         // TODO format
@@ -163,8 +161,6 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
-        // TODO format check
-
         // TODO parse 1, 2, 3
 
         // TODO format
@@ -173,9 +169,68 @@
         // DateTime
         //--------------------------------------------------------------------------------
 
-        // TODO format check
+        public static bool TryParse(byte[] bytes, int index, string format, out DateTime dateTime)
+        {
+            var year = 0;
+            var month = 0;
+            var day = 0;
+            var hour = 0;
+            var minute = 0;
+            var second = 0;
+            var milisecond = 0;
+            var msPow = 100;
 
-        // TODO parse
+            for (var i = 0; i < format.Length; i++)
+            {
+                var value = bytes[index + i] - '0';
+                if ((value >= 0) && (value < 10))
+                {
+                    switch (format[i])
+                    {
+                        case 'y':
+                            year = (year * 10) + value;
+                            break;
+                        case 'M':
+                            month = (month * 10) + value;
+                            break;
+                        case 'd':
+                            day = (day * 10) + value;
+                            break;
+                        case 'H':
+                            hour = (hour * 10) + value;
+                            break;
+                        case 'm':
+                            minute = (minute * 10) + value;
+                            break;
+                        case 's':
+                            second = (second * 10) + value;
+                            break;
+                        case 'f':
+                            milisecond = milisecond + (value * msPow);
+                            msPow /= 10;
+                            break;
+                        default:
+                            dateTime = default;
+                            return false;
+                    }
+                }
+                else if (format[i] == 'f')
+                {
+                    msPow /= 10;
+                }
+            }
+
+            try
+            {
+                dateTime = new DateTime(year, month, day, hour, minute, second, milisecond);
+                return true;
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                dateTime = default;
+                return false;
+            }
+        }
 
         // TODO format
 
