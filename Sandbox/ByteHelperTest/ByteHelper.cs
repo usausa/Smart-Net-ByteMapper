@@ -163,13 +163,14 @@
 
         // TODO parse 1, 2, 3
 
-        // TODO format
+        // TODO format -000123 ?
 
         //--------------------------------------------------------------------------------
         // DateTime
         //--------------------------------------------------------------------------------
 
-        public static bool TryParse(byte[] bytes, int index, string format, out DateTime dateTime)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime dateTime)
         {
             var year = 0;
             var month = 0;
@@ -232,7 +233,96 @@
             }
         }
 
-        // TODO format
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
+        {
+            // TODO length
+            for (var i = 0; i < format.Length; i++)
+            {
+                var c = format[i];
+
+                var pow = 0;
+                int value;
+                switch (c)
+                {
+                    case 'y':
+                        value = dateTime.Year;
+                        break;
+                    case 'M':
+                        value = dateTime.Month;
+                        break;
+                    case 'd':
+                        value = dateTime.Day;
+                        break;
+                    case 'H':
+                        value = dateTime.Hour;
+                        break;
+                    case 'm':
+                        value = dateTime.Minute;
+                        break;
+                    case 's':
+                        value = dateTime.Second;
+                        break;
+                    case 'f':
+                        value = dateTime.Millisecond;
+                        pow = 100;
+                        break;
+                    default:
+                        bytes[index + i] = (byte)c;
+                        continue;
+                }
+
+                if (pow == 0)
+                {
+                    var append = 0;
+                    for (var j = i + 1; j < format.Length; j++)
+                    {
+                        if (format[j] == c)
+                        {
+                            append++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    var start = index + i;
+                    for (var j = start + append; j >= start; j--)
+                    {
+                        bytes[j] = (byte)('0' + (value % 10));
+                        value = value / 10;
+                    }
+
+                    i += append;
+                }
+                else
+                {
+                    while (true)
+                    {
+                        var div = value / pow;
+                        value = value % pow;
+                        pow = pow / 10;
+
+                        bytes[index + i] = (byte)('0' + div);
+
+                        var next = i + 1;
+                        if ((next < format.Length) && (format[next] == c))
+                        {
+                            if (pow == 0)
+                            {
+                                throw new FormatException("Invalid format.");
+                            }
+
+                            i = next;
+                            continue;
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
 
         //--------------------------------------------------------------------------------
         // Helper

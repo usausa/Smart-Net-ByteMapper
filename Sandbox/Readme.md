@@ -4,14 +4,17 @@
 
 ### Parse
 
-|       Method |      Mean |    Error |    StdDev |  Gen 0 | Allocated |
-|------------- |----------:|---------:|----------:|-------:|----------:|
-| ParseDefault | 397.22 ns | 59.95 ns | 3.3875 ns | 0.0129 |      56 B |
-|  ParseCustom |  56.97 ns | 13.66 ns | 0.7721 ns |      - |       0 B |
+|        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|----------:|----------:|-------:|----------:|
+|  ParseDefault | 392.84 ns |  4.889 ns | 0.2762 ns | 0.0124 |      56 B |
+|   ParseCustom |  55.35 ns | 11.418 ns | 0.6452 ns |      - |       0 B |
 
 ### Format
 
-(TODO)
+|        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|----------:|----------:|-------:|----------:|
+| FormatDefault | 616.22 ns | 55.081 ns | 3.1122 ns | 0.0582 |     248 B |
+|  FormatCustom | 121.90 ns | 34.962 ns | 1.9754 ns | 0.0112 |      48 B |
 
 ## Integer
 
