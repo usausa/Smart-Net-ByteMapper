@@ -154,7 +154,7 @@
 
                 while (i < length)
                 {
-                    var num = *(pBytes + index + i) - '0';
+                    var num = *(pBytes + index + i) - 0x30;
                     if ((num >= 0) && (num < 10))
                     {
                         value = (value * 10) + num;
@@ -173,6 +173,96 @@
 
                 value *= sign;
                 return i == length;
+            }
+        }
+
+        public static unsafe void FormatInt32(byte[] bytes, int offset, int length, int value, Padding padding, bool withZero)
+        {
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                if ((padding == Padding.Left) || withZero)
+                {
+                    var i = length - 1;
+                    while (i > 0)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (value % 10));
+                        i--;
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    var minus = value < 0;
+                    if (withZero)
+                    {
+                        while (i > (minus ? 1 : 0))
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+
+                        if (minus && (i > 0))
+                        {
+                            *pBytes = 0x2D;
+                        }
+                    }
+                    else
+                    {
+                        if (minus && (i > 0))
+                        {
+                            *(pBytes + i) = 0x2D;
+                            i--;
+                        }
+
+                        while (i > 0)
+                        {
+                            *(pBytes + i) = 0x20;
+                            i--;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (value % 10));
+                        i++;
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if ((value < 0) && (i < length))
+                    {
+                        *(pBytes + i) = 0x2D;
+                        i++;
+                    }
+
+                    var start = pBytes;
+                    var end = pBytes + i - 1;
+                    while (start < end)
+                    {
+                        var tmp = *start;
+                        *start = *end;
+                        *end = tmp;
+                        start++;
+                        end--;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = 0x30;
+                        i++;
+                    }
+                }
             }
         }
 
@@ -207,7 +297,7 @@
                 var length = format.Length;
                 for (var i = 0; i < length; i++)
                 {
-                    var num = *(pBytes + i) - '0';
+                    var num = *(pBytes + i) - 0x30;
                     if ((num >= 0) && (num < 10))
                     {
                         switch (*(pFormat + i))
@@ -316,7 +406,7 @@
 
                         for (var j = i + append; j >= i; j--)
                         {
-                            *(pBytes + j) = (byte)('0' + (value % 10));
+                            *(pBytes + j) = (byte)(0x30 + (value % 10));
                             value = value / 10;
                         }
 
@@ -330,7 +420,7 @@
                             value = value % pow;
                             pow = pow / 10;
 
-                            *(pBytes + i) = (byte)('0' + div);
+                            *(pBytes + i) = (byte)(0x30 + div);
 
                             var next = i + 1;
                             if ((next < length) && (*(pFormat + next) == c))
