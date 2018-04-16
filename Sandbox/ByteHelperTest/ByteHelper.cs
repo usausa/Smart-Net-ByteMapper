@@ -70,7 +70,7 @@
                 byte* pDst;
 
                 int copy;
-                for (copy = 1; copy <= length / 2; copy <<= 1)
+                for (copy = 1; copy <= length >> 1; copy <<= 1)
                 {
                     pDst = pSrc + copy;
                     Buffer.MemoryCopy(pSrc, pDst, length - copy, copy);
@@ -183,7 +183,22 @@
                 if ((padding == Padding.Left) || withZero)
                 {
                     var i = length - 1;
-                    while (i > 0)
+
+                    if ((value == Int32.MinValue) && (i >= 0))
+                    {
+                        *(pBytes + i) = 0x38;
+                        i--;
+
+                        value = -214748364;
+                    }
+
+                    var minus = value < 0;
+                    if (minus)
+                    {
+                        value = -value;
+                    }
+
+                    while (i >= 0)
                     {
                         *(pBytes + i) = (byte)(0x30 + (value % 10));
                         i--;
@@ -195,29 +210,28 @@
                         }
                     }
 
-                    var minus = value < 0;
                     if (withZero)
                     {
-                        while (i > (minus ? 1 : 0))
+                        while (i >= (minus ? 1 : 0))
                         {
                             *(pBytes + i) = 0x30;
                             i--;
                         }
 
-                        if (minus && (i > 0))
+                        if (minus && (i >= 0))
                         {
                             *pBytes = 0x2D;
                         }
                     }
                     else
                     {
-                        if (minus && (i > 0))
+                        if (minus && (i >= 0))
                         {
                             *(pBytes + i) = 0x2D;
                             i--;
                         }
 
-                        while (i > 0)
+                        while (i >= 0)
                         {
                             *(pBytes + i) = 0x20;
                             i--;
@@ -227,6 +241,20 @@
                 else
                 {
                     var i = 0;
+
+                    if ((value == Int32.MinValue) && (i < length))
+                    {
+                        *(pBytes + i) = 0x38;
+                        i++;
+
+                        value = -214748364;
+                    }
+
+                    var minus = value < 0;
+                    if (minus)
+                    {
+                        value = -value;
+                    }
 
                     while (i < length)
                     {
@@ -240,7 +268,7 @@
                         }
                     }
 
-                    if ((value < 0) && (i < length))
+                    if (minus && (i < length))
                     {
                         *(pBytes + i) = 0x2D;
                         i++;
@@ -259,14 +287,12 @@
 
                     while (i < length)
                     {
-                        *(pBytes + i) = 0x30;
+                        *(pBytes + i) = 0x20;
                         i++;
                     }
                 }
             }
         }
-
-        // TODO format
 
         //--------------------------------------------------------------------------------
         // Decimal
@@ -407,7 +433,7 @@
                         for (var j = i + append; j >= i; j--)
                         {
                             *(pBytes + j) = (byte)(0x30 + (value % 10));
-                            value = value / 10;
+                            value /= 10;
                         }
 
                         i += append;
@@ -418,7 +444,7 @@
                         {
                             var div = value / pow;
                             value = value % pow;
-                            pow = pow / 10;
+                            pow /= 10;
 
                             *(pBytes + i) = (byte)(0x30 + div);
 

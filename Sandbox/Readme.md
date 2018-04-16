@@ -6,25 +6,31 @@
 
 |        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
 |-------------- |----------:|----------:|----------:|-------:|----------:|
-|  ParseDefault | 373.80 ns | 52.152 ns | 2.9467 ns | 0.0129 |      56 B |
-|   ParseCustom |  50.27 ns |  2.271 ns | 0.1283 ns |      - |       0 B |
+|  ParseDefault | 379.74 ns | 57.056 ns | 3.2238 ns | 0.0129 |      56 B |
+|   ParseCustom |  51.18 ns |  3.987 ns | 0.2253 ns |      - |       0 B |
 
 ### Format
 
 |        Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
 |-------------- |----------:|----------:|----------:|-------:|----------:|
-| FormatDefault | 589.57 ns | 35.826 ns | 2.0242 ns | 0.0582 |     248 B |
-|  FormatCustom | 107.44 ns |  6.825 ns | 0.3856 ns | 0.0113 |      48 B |
+| FormatDefault | 598.85 ns | 52.007 ns | 2.9385 ns | 0.0582 |     248 B |
+|  FormatCustom | 108.48 ns |  5.897 ns | 0.3332 ns | 0.0113 |      48 B |
 
 ## Integer
 
 ### Parse
 
-(TODO)
+|        Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|-----------:|----------:|-------:|----------:|
+|  ParseDefault | 125.24 ns | 26.1181 ns | 1.4757 ns | 0.0112 |      48 B |
+|   ParseCustom |  16.07 ns |  1.7261 ns | 0.0975 ns |      - |       0 B |
 
 ### Format
 
-(TODO)
+|        Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|-------------- |----------:|-----------:|----------:|-------:|----------:|
+| FormatDefault | 111.20 ns | 11.0991 ns | 0.6271 ns | 0.0190 |      80 B |
+|  FormatCustom |  19.83 ns |  0.1357 ns | 0.0077 ns | 0.0076 |      32 B |
 
 ## Decimal
 
@@ -40,27 +46,27 @@
 
 |           Method |     Mean |     Error |    StdDev | Allocated |
 |----------------- |---------:|----------:|----------:|----------:|
-|           Fill32 | 13.98 ns | 13.868 ns | 0.7836 ns |       0 B |
-|     FillUnsafe32 | 15.31 ns |  1.360 ns | 0.0768 ns |       0 B |
-| FillMemoryCopy32 | 22.94 ns |  6.249 ns | 0.3531 ns |       0 B |
-|           Fill64 | 38.54 ns | 19.524 ns | 1.1031 ns |       0 B |
-|     FillUnsafe64 | 37.44 ns |  2.674 ns | 0.1511 ns |       0 B |
-| FillMemoryCopy64 | 29.01 ns |  6.686 ns | 0.3778 ns |       0 B |
+|           Fill32 | 11.52 ns | 0.6409 ns | 0.0362 ns |       0 B |
+|     FillUnsafe32 | 15.20 ns | 0.8971 ns | 0.0507 ns |       0 B |
+| FillMemoryCopy32 | 21.53 ns | 2.1351 ns | 0.1206 ns |       0 B |
+|           Fill64 | 40.24 ns | 1.2358 ns | 0.0698 ns |       0 B |
+|     FillUnsafe64 | 36.76 ns | 3.9663 ns | 0.2241 ns |       0 B |
+| FillMemoryCopy64 | 26.95 ns | 1.1605 ns | 0.0656 ns |       0 B |
 
 ## Encoding
 
-|              Method |     Mean |     Error |    StdDev |  Gen 0 | Allocated |
-|-------------------- |---------:|----------:|----------:|-------:|----------:|
-|  GetBytesByEncoding | 33.52 ns | 4.9345 ns | 0.2788 ns | 0.0095 |      40 B |
-|    GetBytesByCustom | 12.18 ns | 0.8216 ns | 0.0464 ns | 0.0095 |      40 B |
-| GetStringByEncoding | 28.23 ns | 2.5924 ns | 0.1465 ns | 0.0114 |      48 B |
-|   GetStringByCustom | 15.24 ns | 0.7134 ns | 0.0403 ns | 0.0114 |      48 B |
+|              Method |     Mean |    Error |    StdDev |  Gen 0 | Allocated |
+|-------------------- |---------:|---------:|----------:|-------:|----------:|
+|  GetBytesByEncoding | 32.48 ns | 4.998 ns | 0.2824 ns | 0.0095 |      40 B |
+|    GetBytesByCustom | 11.76 ns | 1.303 ns | 0.0736 ns | 0.0095 |      40 B |
+| GetStringByEncoding | 27.19 ns | 2.138 ns | 0.1208 ns | 0.0114 |      48 B |
+|   GetStringByCustom | 14.46 ns | 1.997 ns | 0.1129 ns | 0.0114 |      48 B |
 
 ## Div10
 
 |    Method |     Mean |     Error |    StdDev | Allocated |
 |---------- |---------:|----------:|----------:|----------:|
-|     Div10 | 6.548 ns | 0.4304 ns | 0.0243 ns |       0 B |
-| FastDiv10 | 4.614 ns | 0.6804 ns | 0.0384 ns |       0 B |
+|     Div10 | 6.366 ns | 0.4650 ns | 0.0263 ns |       0 B |
+| FastDiv10 | 4.569 ns | 0.4567 ns | 0.0258 ns |       0 B |
 
 * `FastDiv10` is signed only
