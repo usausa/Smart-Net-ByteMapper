@@ -137,7 +137,44 @@
         // Integer
         //--------------------------------------------------------------------------------
 
-        // TODO parse 1, 2, 3
+        public static unsafe bool TryParseInt32(byte[] bytes, int index, int length, out int value)
+        {
+            value = 0;
+
+            fixed (byte* pBytes = &bytes[0])
+            {
+                var i = 0;
+                while ((i < length) && (*(pBytes + i) == ' '))
+                {
+                    i++;
+                }
+
+                var sign = *(pBytes + i) == '-' ? -1 : 1;
+                i += sign == -1 ? 1 : 0;
+
+                while (i < length)
+                {
+                    var num = *(pBytes + index + i) - '0';
+                    if ((num >= 0) && (num < 10))
+                    {
+                        value = (value * 10) + num;
+                        i++;
+                    }
+                    else
+                    {
+                        while ((i < length) && (*(pBytes + i) == ' '))
+                        {
+                            i++;
+                        }
+
+                        break;
+                    }
+                }
+
+                value *= sign;
+                return i == length;
+            }
+        }
 
         // TODO format
 
