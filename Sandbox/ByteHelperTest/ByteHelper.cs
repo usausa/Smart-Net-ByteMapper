@@ -141,22 +141,6 @@
 
         // TODO format
 
-        //// TODO check, minus, trim ?
-        //public static int ParseInteger(byte[] bytes, int index, int count)
-        //{
-        //    var end = index + count;
-
-        //    // No check, simple version
-        //    var value = 0;
-        //    for (var i = index; i < end; i++)
-        //    {
-        //        value *= 10;
-        //        value += bytes[i] - '0';
-        //    }
-
-        //    return value;
-        //}
-
         //--------------------------------------------------------------------------------
         // Decimal
         //--------------------------------------------------------------------------------
@@ -169,9 +153,9 @@
         // DateTime
         //--------------------------------------------------------------------------------
 
-        public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime dateTime)
+        public static unsafe bool TryParseDateTime(byte[] bytes, int offset, string format, out DateTime value)
         {
-            fixed (byte* pBytes = &bytes[0])
+            fixed (byte* pBytes = &bytes[offset])
             fixed (char* pFormat = format)
             {
                 var year = 0;
@@ -186,35 +170,35 @@
                 var length = format.Length;
                 for (var i = 0; i < length; i++)
                 {
-                    var value = *(pBytes + index + i) - '0';
-                    if ((value >= 0) && (value < 10))
+                    var num = *(pBytes + i) - '0';
+                    if ((num >= 0) && (num < 10))
                     {
                         switch (*(pFormat + i))
                         {
                             case 'y':
-                                year = (year * 10) + value;
+                                year = (year * 10) + num;
                                 break;
                             case 'M':
-                                month = (month * 10) + value;
+                                month = (month * 10) + num;
                                 break;
                             case 'd':
-                                day = (day * 10) + value;
+                                day = (day * 10) + num;
                                 break;
                             case 'H':
-                                hour = (hour * 10) + value;
+                                hour = (hour * 10) + num;
                                 break;
                             case 'm':
-                                minute = (minute * 10) + value;
+                                minute = (minute * 10) + num;
                                 break;
                             case 's':
-                                second = (second * 10) + value;
+                                second = (second * 10) + num;
                                 break;
                             case 'f':
-                                milisecond = milisecond + (value * msPow);
+                                milisecond = milisecond + (num * msPow);
                                 msPow /= 10;
                                 break;
                             default:
-                                dateTime = default;
+                                value = default;
                                 return false;
                         }
                     }
@@ -226,20 +210,20 @@
 
                 try
                 {
-                    dateTime = new DateTime(year, month, day, hour, minute, second, milisecond);
+                    value = new DateTime(year, month, day, hour, minute, second, milisecond);
                     return true;
                 }
                 catch (ArgumentOutOfRangeException)
                 {
-                    dateTime = default;
+                    value = default;
                     return false;
                 }
             }
         }
 
-        public static unsafe void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
+        public static unsafe void FormatDateTime(byte[] bytes, int offset, string format, DateTime dateTime)
         {
-            fixed (byte* pBytes = &bytes[0])
+            fixed (byte* pBytes = &bytes[offset])
             fixed (char* pFormat = format)
             {
                 var length = format.Length;
@@ -274,7 +258,7 @@
                             pow = 100;
                             break;
                         default:
-                            *(pBytes + index + i) = (byte)c;
+                            *(pBytes + i) = (byte)c;
                             continue;
                     }
 
@@ -293,8 +277,7 @@
                             }
                         }
 
-                        var start = index + i;
-                        for (var j = start + append; j >= start; j--)
+                        for (var j = i + append; j >= i; j--)
                         {
                             *(pBytes + j) = (byte)('0' + (value % 10));
                             value = value / 10;
@@ -310,7 +293,7 @@
                             value = value % pow;
                             pow = pow / 10;
 
-                            *(pBytes + index + i) = (byte)('0' + div);
+                            *(pBytes + i) = (byte)('0' + div);
 
                             var next = i + 1;
                             if ((next < length) && (*(pFormat + next) == c))
