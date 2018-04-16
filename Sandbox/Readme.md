@@ -36,7 +36,12 @@
 
 ### Parse
 
-(TODO)
+|         Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
+|--------------- |----------:|----------:|----------:|-------:|----------:|
+|  ParseDefault8 | 236.64 ns | 32.761 ns | 1.8511 ns | 0.0112 |      48 B |
+|   ParseCustom8 |  77.40 ns |  7.044 ns | 0.3980 ns |      - |       0 B |
+| ParseDefault28 | 644.46 ns | 25.973 ns | 1.4675 ns | 0.0200 |      88 B |
+|  ParseCustom28 | 247.61 ns | 19.769 ns | 1.1170 ns |      - |       0 B |
 
 ### Format
 
