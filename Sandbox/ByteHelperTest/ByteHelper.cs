@@ -587,10 +587,12 @@
             }
         }
 
+        private const int NegativeBitFlag = unchecked((int)0x80000000);
+
         public static unsafe void FormatDecimal2(byte[] bytes, int offset, int length, decimal value, byte scale, Padding padding, bool withZero)
         {
             var bits = Decimal.GetBits(value);
-            var negative = (bits[3] & 0x8000000) != 0;
+            var negative = (bits[3] & NegativeBitFlag) != 0;
             var decimalScale = (bits[3] >> 16) & 0x7F;
             var decimalNum = ((ulong)bits[1] << 32) + (ulong)bits[0];
 
@@ -737,12 +739,12 @@
                         if (i == dotPos)
                         {
                             *(pBytes + i) = 0x2E;
-                            i--;
+                            i++;
 
                             if (decimalNum == 0)
                             {
                                 *(pBytes + i) = 0x30;
-                                i--;
+                                i++;
                             }
                         }
 
@@ -772,12 +774,12 @@
                             if (i == dotPos)
                             {
                                 *(pBytes + i) = 0x2E;
-                                i--;
+                                i++;
 
                                 if (decimalNum2 == 0)
                                 {
                                     *(pBytes + i) = 0x30;
-                                    i--;
+                                    i++;
                                 }
                             }
 
@@ -817,7 +819,7 @@
         public static unsafe void FormatDecimal3(byte[] bytes, int offset, int length, decimal value, byte scale, Padding padding, bool withZero)
         {
             var bits = Decimal.GetBits(value);
-            var negative = (bits[3] & 0x8000000) != 0;
+            var negative = (bits[3] & NegativeBitFlag) != 0;
             var decimalScale = (bits[3] >> 16) & 0x7F;
             var decimalNum = (uint)bits[0];
 
