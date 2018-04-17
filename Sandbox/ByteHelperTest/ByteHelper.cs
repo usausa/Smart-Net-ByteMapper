@@ -619,34 +619,37 @@
                         }
                     }
 
-                    while (i >= 0)
+                    if (decimalNum > UInt32.MaxValue)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
-                        i--;
-
-                        decimalNum /= 10;
-
-                        if (i == dotPos)
+                        while (i >= 0)
                         {
-                            *(pBytes + i) = 0x2E;
+                            *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
                             i--;
+
+                            decimalNum /= 10;
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i) = 0x2E;
+                                i--;
+
+                                if (decimalNum == 0)
+                                {
+                                    *(pBytes + i) = 0x30;
+                                    i--;
+                                }
+                            }
+
+                            // MEMO tune
+                            if (decimalNum <= UInt32.MaxValue)
+                            {
+                                break;
+                            }
 
                             if (decimalNum == 0)
                             {
-                                *(pBytes + i) = 0x30;
-                                i--;
+                                break;
                             }
-                        }
-
-                        // MEMO tune
-                        if (decimalNum <= UInt32.MaxValue)
-                        {
-                            break;
-                        }
-
-                        if (decimalNum == 0)
-                        {
-                            break;
                         }
                     }
 
@@ -729,34 +732,37 @@
                         }
                     }
 
-                    while (i < length)
+                    if (decimalNum > UInt32.MaxValue)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
-                        i++;
-
-                        decimalNum /= 10;
-
-                        if (i == dotPos)
+                        while (i < length)
                         {
-                            *(pBytes + i) = 0x2E;
+                            *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
                             i++;
+
+                            decimalNum /= 10;
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i) = 0x2E;
+                                i++;
+
+                                if (decimalNum == 0)
+                                {
+                                    *(pBytes + i) = 0x30;
+                                    i++;
+                                }
+                            }
+
+                            // MEMO tune
+                            if (decimalNum <= UInt32.MaxValue)
+                            {
+                                break;
+                            }
 
                             if (decimalNum == 0)
                             {
-                                *(pBytes + i) = 0x30;
-                                i++;
+                                break;
                             }
-                        }
-
-                        // MEMO tune
-                        if (decimalNum <= UInt32.MaxValue)
-                        {
-                            break;
-                        }
-
-                        if (decimalNum == 0)
-                        {
-                            break;
                         }
                     }
 
