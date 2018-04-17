@@ -54,12 +54,14 @@
                 }
             }
 
+            // TODO range取得にする？
             return encoding.GetString(buffer, start, size);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void WriteString(string value, byte[] buffer, int offset, int length, Encoding encoding, Padding padding, byte filler)
         {
+            // TODO bytes外？ readとの対応！
             var bytes = encoding.GetBytes(value);
             if (bytes.Length >= length)
             {
