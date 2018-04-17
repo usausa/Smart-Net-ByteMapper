@@ -15,24 +15,25 @@
         public void MapUseTypeDefaultAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.UTF8)
-                .DefaultNumberEncoding(Encoding.UTF8)
-                .DefaultDateTimeEncoding(Encoding.UTF8)
-                .DefaultNumberProvider(CultureInfo.CurrentCulture)
-                .DefaultDateTimeProvider(CultureInfo.CurrentCulture)
-                .DefaultNumberStyle(NumberStyles.Integer)
-                .DefaultDecimalStyle(NumberStyles.Integer)
-                .DefaultDateTimeStyle(DateTimeStyles.None)
                 .DefaultTrim(false)
                 .DefaultTextPadding(Padding.Right)
-                .DefaultNumberPadding(Padding.Left)
                 .DefaultFiller((byte)' ')
                 .DefaultTextFiller((byte)' ')
-                .DefaultNumberFiller((byte)' ')
                 .DefaultEndian(Endian.Big)
                 .DefaultTrueValue((byte)'1')
                 .DefaultFalseValue((byte)'1')
+                .DefaultNumberTextEncoding(Encoding.UTF8)
+                .DefaultNumberTextProvider(CultureInfo.CurrentCulture)
+                .DefaultNumberTextNumberStyle(NumberStyles.Integer)
+                .DefaultNumberTextDecimalStyle(NumberStyles.Integer)
+                .DefaultNumberTextPadding(Padding.Left)
+                .DefaultNumberTextFiller((byte)' ')
+                .DefaultDateTimeTextEncoding(Encoding.UTF8)
+                .DefaultDateTimeTextProvider(CultureInfo.CurrentCulture)
+                .DefaultDateTimeTextStyle(DateTimeStyles.None)
                 .CreateMapByAttribute<TypeDefaultAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<TypeDefaultAttributeObject>();
@@ -53,8 +54,8 @@
 
             // Fix
             Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
-            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeNumberEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
-            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeDateTimeEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
+            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeNumberTextEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
+            Assert.Equal(Encoding.ASCII.CodePage, ((Encoding)new TypeDateTimeTextEncodingAttribute(Encoding.ASCII.CodePage).Value).CodePage);
         }
 
         //--------------------------------------------------------------------------------
@@ -64,22 +65,22 @@
         [Map(10)]
         [TypeDelimiter(0x0D, 0x0A)]
         [TypeEncoding("ASCII")]
-        [TypeNumberEncoding("ASCII")]
-        [TypeDateTimeEncoding("ASCII")]
-        [TypeNumberProvider(Culture.Invaliant)]
-        [TypeDateTimeProvider(Culture.Invaliant)]
-        [TypeNumberStyle(NumberStyles.Any)]
-        [TypeDecimalStyle(NumberStyles.Any)]
-        [TypeDateTimeStyle(DateTimeStyles.None)]
         [TypeTrim(true)]
         [TypeTextPadding(Padding.Left)]
-        [TypeNumberPadding(Padding.Right)]
         [TypeFiller((byte)'*')]
         [TypeTextFiller((byte)'_')]
-        [TypeNumberFiller((byte)'_')]
         [TypeEndian(Endian.Little)]
         [TypeTrueValue((byte)'Y')]
         [TypeFalseValue((byte)'N')]
+        [TypeNumberTextEncoding("ASCII")]
+        [TypeNumberTextProvider(Culture.Invaliant)]
+        [TypeNumberTextNumberStyle(NumberStyles.Any)]
+        [TypeNumberTextDecimalStyle(NumberStyles.Any)]
+        [TypeNumberTextPadding(Padding.Right)]
+        [TypeNumberTextFiller((byte)'_')]
+        [TypeDateTimeTextEncoding("ASCII")]
+        [TypeDateTimeTextProvider(Culture.Invaliant)]
+        [TypeDateTimeTextStyle(DateTimeStyles.None)]
         internal class TypeDefaultAttributeObject
         {
             [MapNumberText(0, 2)]

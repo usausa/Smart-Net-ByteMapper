@@ -2,40 +2,22 @@
 {
     public static class Parameter
     {
-        public const string Delimiter = nameof(Delimiter);
+        public const string Delimiter = nameof(Parameter) + "." + nameof(Delimiter);
 
-        public const string Encoding = nameof(Encoding);
+        public const string Encoding = nameof(Parameter) + "." + nameof(Encoding);
 
-        public const string NumberEncoding = nameof(NumberEncoding);
+        public const string Trim = nameof(Parameter) + "." + nameof(Trim);
 
-        public const string DateTimeEncoding = nameof(DateTimeEncoding);
+        public const string TextPadding = nameof(Parameter) + "." + nameof(TextPadding);
 
-        public const string NumberProvider = nameof(NumberProvider);
+        public const string Filler = nameof(Parameter) + "." + nameof(Filler);
 
-        public const string DateTimeProvider = nameof(DateTimeProvider);
+        public const string TextFiller = nameof(Parameter) + "." + nameof(TextFiller);
 
-        public const string NumberStyle = nameof(NumberStyle);
+        public const string Endian = nameof(Parameter) + "." + nameof(Endian);
 
-        public const string DecimalStyle = nameof(DecimalStyle);
+        public const string TrueValue = nameof(Parameter) + "." + nameof(TrueValue);
 
-        public const string DateTimeStyle = nameof(DateTimeStyle);
-
-        public const string Trim = nameof(Trim);
-
-        public const string TextPadding = nameof(TextPadding);
-
-        public const string NumberPadding = nameof(NumberPadding);
-
-        public const string Filler = nameof(Filler);
-
-        public const string TextFiller = nameof(TextFiller);
-
-        public const string NumberFiller = nameof(NumberFiller);
-
-        public const string Endian = nameof(Endian);
-
-        public const string TrueValue = nameof(TrueValue);
-
-        public const string FalseValue = nameof(FalseValue);
+        public const string FalseValue = nameof(Parameter) + "." + nameof(FalseValue);
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
-    using System.Globalization;
     using System.Text;
 
     using Smart.IO.ByteMapper.Expressions;
@@ -70,41 +69,6 @@
             return syntax.TypeDefault(Parameter.Encoding, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeNumberEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
-        {
-            return syntax.TypeDefault(Parameter.NumberEncoding, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeDateTimeEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
-        {
-            return syntax.TypeDefault(Parameter.DateTimeEncoding, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
-        {
-            return syntax.TypeDefault(Parameter.NumberProvider, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeDateTimeProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
-        {
-            return syntax.TypeDefault(Parameter.DateTimeProvider, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
-        {
-            return syntax.TypeDefault(Parameter.NumberStyle, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeDecimalStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
-        {
-            return syntax.TypeDefault(Parameter.DecimalStyle, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeDateTimeStyle<T>(this ITypeConfigSyntax<T> syntax, DateTimeStyles value)
-        {
-            return syntax.TypeDefault(Parameter.DateTimeStyle, value);
-        }
-
         public static ITypeConfigSyntax<T> TypeTrim<T>(this ITypeConfigSyntax<T> syntax, bool value)
         {
             return syntax.TypeDefault(Parameter.Trim, value);
@@ -115,11 +79,6 @@
             return syntax.TypeDefault(Parameter.TextPadding, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeNumberPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
-        {
-            return syntax.TypeDefault(Parameter.NumberPadding, value);
-        }
-
         public static ITypeConfigSyntax<T> TypeFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.Filler, value);
@@ -128,11 +87,6 @@
         public static ITypeConfigSyntax<T> TypeTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.TextFiller, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
-        {
-            return syntax.TypeDefault(Parameter.NumberFiller, value);
         }
 
         public static ITypeConfigSyntax<T> TypeEndian<T>(this ITypeConfigSyntax<T> syntax, Endian value)
@@ -268,31 +222,6 @@
         public static IMapBytesSyntax Bytes(this IMemberMapConfigSyntax syntax, int length)
         {
             var expression = new MapBytesExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        // DateTime
-
-        public static IMapDateTimeSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
-        {
-            var expression = new MapDateTimeTextExpression(length, format);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        // Number
-
-        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
-        {
-            var expression = new MapNumberTextExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
-        {
-            var expression = new MapNumberTextExpression(length, format);
             syntax.Map(expression);
             return expression;
         }

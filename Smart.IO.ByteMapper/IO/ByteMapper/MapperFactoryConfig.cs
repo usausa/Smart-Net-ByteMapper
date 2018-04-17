@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Globalization;
     using System.Linq;
     using System.Text;
 
@@ -25,19 +24,10 @@
 
             this.DefaultDelimiter(0x0D, 0x0A);
             this.DefaultEncoding(Encoding.ASCII);
-            this.DefaultNumberEncoding(Encoding.ASCII);
-            this.DefaultDateTimeEncoding(Encoding.ASCII);
-            this.DefaultNumberProvider(CultureInfo.InvariantCulture);
-            this.DefaultDateTimeProvider(CultureInfo.InvariantCulture);
-            this.DefaultNumberStyle(NumberStyles.Integer);
-            this.DefaultDecimalStyle(NumberStyles.Number);
-            this.DefaultDateTimeStyle(DateTimeStyles.None);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);
-            this.DefaultNumberPadding(Padding.Left);
             this.DefaultFiller(0x20);
             this.DefaultTextFiller(0x20);
-            this.DefaultNumberFiller(0x20);
             this.DefaultEndian(Endian.Big);
             this.DefaultTrueValue(0x31);
             this.DefaultFalseValue(0x30);

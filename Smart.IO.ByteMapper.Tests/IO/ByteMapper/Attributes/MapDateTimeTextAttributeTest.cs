@@ -16,12 +16,13 @@
         public void MapByDateTimeTextAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
-                .DefaultDateTimeEncoding(Encoding.ASCII)
-                .DefaultDateTimeProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)
-                .DefaultDateTimeStyle(DateTimeStyles.None)
+                .DefaultDateTimeTextEncoding(Encoding.ASCII)
+                .DefaultDateTimeTextProvider(CultureInfo.InvariantCulture)
+                .DefaultDateTimeTextStyle(DateTimeStyles.None)
                 .CreateMapByAttribute<DateTimeTextAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<DateTimeTextAttributeObject>();

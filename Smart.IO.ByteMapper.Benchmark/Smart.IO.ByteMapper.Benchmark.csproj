@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj" />
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
   </ItemGroup>
 

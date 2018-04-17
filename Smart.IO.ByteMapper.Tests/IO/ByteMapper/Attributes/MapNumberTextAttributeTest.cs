@@ -16,14 +16,15 @@
         public void MapByNumberTextAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
-                .DefaultNumberEncoding(Encoding.ASCII)
-                .DefaultNumberProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
-                .DefaultNumberPadding(Padding.Left)
-                .DefaultNumberFiller(0x20)
-                .DefaultNumberStyle(NumberStyles.Integer)
-                .DefaultDecimalStyle(NumberStyles.Any)
+                .DefaultNumberTextEncoding(Encoding.ASCII)
+                .DefaultNumberTextProvider(CultureInfo.InvariantCulture)
+                .DefaultNumberTextNumberStyle(NumberStyles.Integer)
+                .DefaultNumberTextDecimalStyle(NumberStyles.Any)
+                .DefaultNumberTextPadding(Padding.Left)
+                .DefaultNumberTextFiller(0x20)
                 .CreateMapByAttribute<NumberTextAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<NumberTextAttributeObject>();

@@ -18,12 +18,13 @@
         public void MapByDateTimeTextExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
-                .DefaultDateTimeEncoding(Encoding.ASCII)
-                .DefaultDateTimeProvider(CultureInfo.InvariantCulture)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)
-                .DefaultDateTimeStyle(DateTimeStyles.None)
+                .DefaultDateTimeTextEncoding(Encoding.ASCII)
+                .DefaultDateTimeTextProvider(CultureInfo.InvariantCulture)
+                .DefaultDateTimeTextStyle(DateTimeStyles.None)
                 .Also(config =>
                 {
                     config
