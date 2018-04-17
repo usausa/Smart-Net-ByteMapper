@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		.gitmodules = .gitmodules
 		README.md = README.md
+		Smart.IO.ByteMapper.AspNetCore.nuspec = Smart.IO.ByteMapper.AspNetCore.nuspec
 		Smart.IO.ByteMapper.nuspec = Smart.IO.ByteMapper.nuspec
+		Smart.IO.ByteMapper.Options.nuspec = Smart.IO.ByteMapper.Options.nuspec
 		Smart.IO.ByteMapper.ruleset = Smart.IO.ByteMapper.ruleset
 		Smart.IO.ByteMapper.sln.DotSettings = Smart.IO.ByteMapper.sln.DotSettings
 	EndProjectSection
@@ -23,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.AspNetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example.WebApplication", "Example.WebApplication\Example.WebApplication.csproj", "{EBC693E9-5530-49E8-85F0-806BECA1330C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Smart.IO.ByteMapper.Options", "Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj", "{2F875071-9750-4DB0-8A98-F6A924D99B7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.Options", "Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj", "{2F875071-9750-4DB0-8A98-F6A924D99B7C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Example", "Example", "{3FAA7244-DB42-4713-B0B1-9F6E66D4B856}"
 EndProject
