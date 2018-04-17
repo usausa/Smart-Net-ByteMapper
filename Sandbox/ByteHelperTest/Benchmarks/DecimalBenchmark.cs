@@ -19,7 +19,7 @@
 
         private static readonly decimal Value19 = 12345678901234567.89m;
 
-        private static readonly decimal Value28 = 12345678901234567890123456.78m;
+        //private static readonly decimal Value28 = 12345678901234567890123456.78m;
 
         // Parse
 
@@ -91,25 +91,30 @@
             Encoding.ASCII.GetBytes(Value8.ToString("0000000.000"));
         }
 
-        //[Benchmark]
-        //public void FormatCustom8()
-        //{
-        //    var buffer = new byte[11];
-        //    ByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value8, Padding.Left, true);
-        //}
+        [Benchmark]
+        public void FormatCustomB8()
+        {
+            var buffer = new byte[11];
+            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 3, Padding.Left, true);
+        }
+
+        [Benchmark]
+        public void FormatDefault19()
+        {
+            Encoding.ASCII.GetBytes(Value19.ToString("000000000000000000.000"));
+        }
+
+        [Benchmark]
+        public void FormatCustomB19()
+        {
+            var buffer = new byte[22];
+            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true);
+        }
 
         //[Benchmark]
         //public void FormatDefault28()
         //{
         //    Encoding.ASCII.GetBytes(Value28.ToString("000000000000000000000000000.000"));
-        //}
-
-
-        //[Benchmark]
-        //public void FormatCustom28()
-        //{
-        //    var buffer = new byte[31];
-        //    ByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value28, Padding.Left, true);
         //}
     }
 }

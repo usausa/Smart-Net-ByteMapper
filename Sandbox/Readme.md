@@ -36,16 +36,25 @@
 
 ### Parse
 
-|         Method |      Mean |     Error |    StdDev |  Gen 0 | Allocated |
-|--------------- |----------:|----------:|----------:|-------:|----------:|
-|  ParseDefault8 | 236.64 ns | 32.761 ns | 1.8511 ns | 0.0112 |      48 B |
-|   ParseCustom8 |  77.40 ns |  7.044 ns | 0.3980 ns |      - |       0 B |
-| ParseDefault28 | 644.46 ns | 25.973 ns | 1.4675 ns | 0.0200 |      88 B |
-|  ParseCustom28 | 247.61 ns | 19.769 ns | 1.1170 ns |      - |       0 B |
+|          Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|---------------- |----------:|-----------:|----------:|-------:|----------:|
+|   ParseDefault8 | 239.74 ns | 65.0942 ns | 3.6779 ns | 0.0110 |      48 B |
+|    ParseCustom8 |  77.33 ns |  3.7454 ns | 0.2116 ns |      - |       0 B |
+|   ParseCustomB8 |  19.45 ns |  2.1832 ns | 0.1234 ns |      - |       0 B |
+|  ParseDefault19 | 450.23 ns | 33.1618 ns | 1.8737 ns | 0.0167 |      72 B |
+|   ParseCustom19 | 167.81 ns | 22.7759 ns | 1.2869 ns |      - |       0 B |
+|  ParseCustomB19 |  32.05 ns |  0.6701 ns | 0.0379 ns |      - |       0 B |
+|  ParseDefault28 | 647.23 ns | 20.9874 ns | 1.1858 ns | 0.0200 |      88 B |
+|   ParseCustom28 | 241.74 ns | 17.1769 ns | 0.9705 ns |      - |       0 B |
 
 ### Format
 
-(TODO)
+|          Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|---------------- |----------:|-----------:|----------:|-------:|----------:|
+|  FormatDefault8 | 223.44 ns | 16.9187 ns | 0.9559 ns | 0.0207 |      88 B |
+|  FormatCustomB8 | 132.84 ns | 15.7912 ns | 0.8922 ns | 0.0188 |      80 B |
+| FormatDefault19 | 335.74 ns | 28.0104 ns | 1.5826 ns | 0.0281 |     120 B |
+| FormatCustomB19 | 289.07 ns | 17.2724 ns | 0.9759 ns | 0.0205 |      88 B |
 
 ## Fill
 

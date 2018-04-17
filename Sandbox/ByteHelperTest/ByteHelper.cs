@@ -325,7 +325,7 @@
                 i += negative ? 1 : 0;
 
                 var count = 0;
-                var decimalPos = -1;
+                var dotPos = -1;
                 while (i < length)
                 {
                     var num = *(pBytes + i) - 0x30;
@@ -340,9 +340,9 @@
                             return false;
                         }
                     }
-                    else if ((*(pBytes + i) == '.') && (decimalPos == -1))
+                    else if ((*(pBytes + i) == '.') && (dotPos == -1))
                     {
-                        decimalPos = count;
+                        dotPos = count;
                     }
                     else
                     {
@@ -367,7 +367,7 @@
                     mantissa.Mid,
                     mantissa.Hi,
                     negative,
-                    (byte)(decimalPos == -1 ? 0 : (count - decimalPos)));
+                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
                 return true;
             }
         }
@@ -546,7 +546,7 @@
 
                 var midlo = 0UL;
                 var count = 0;
-                var decimalPos = -1;
+                var dotPos = -1;
                 while (i < length)
                 {
                     var num = *(pBytes + i) - 0x30;
@@ -555,9 +555,9 @@
                         midlo = (midlo * 10) + (ulong)num;
                         count++;
                     }
-                    else if ((*(pBytes + i) == '.') && (decimalPos == -1))
+                    else if ((*(pBytes + i) == '.') && (dotPos == -1))
                     {
-                        decimalPos = count;
+                        dotPos = count;
                     }
                     else
                     {
@@ -582,45 +582,61 @@
                     (int)((midlo >> 32) & 0xFFFFFFFF),
                     0,
                     negative,
-                    (byte)(decimalPos == -1 ? 0 : (count - decimalPos)));
+                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
                 return true;
             }
         }
 
-        public static unsafe void FormatDecimal2(byte[] bytes, int offset, int length, decimal value, Padding padding, bool withZero)
+        public static unsafe void FormatDecimal2(byte[] bytes, int offset, int length, decimal value, byte scale, Padding padding, bool withZero)
         {
             var bits = Decimal.GetBits(value);
             var negative = (bits[3] & 0x8000000) != 0;
-            var scale = (bits[3] >> 16) & 0x7F;
-            var num = ((ulong)bits[1] << 32) + (ulong)bits[0];
+            var decimalScale = (bits[3] >> 16) & 0x7F;
+            var decimalNum = ((ulong)bits[1] << 32) + (ulong)bits[0];
 
             fixed (byte* pBytes = &bytes[offset])
             {
                 if ((padding == Padding.Left) || withZero)
                 {
                     var i = length - 1;
-                    var decimalPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        for (var j = 0; j < decimalScale - scale; j++)
+                        {
+                            decimalNum /= 10;
+                        }
+                    }
 
                     while (i >= 0)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (num % 10));
+                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
                         i--;
 
-                        num /= 10;
+                        decimalNum /= 10;
 
-                        if (i == decimalPos)
+                        if (i == dotPos)
                         {
                             *(pBytes + i) = 0x2E;
                             i--;
 
-                            if (num == 0)
+                            if (decimalNum == 0)
                             {
                                 *(pBytes + i) = 0x30;
                                 i--;
                             }
                         }
 
-                        if (num == 0)
+                        if (decimalNum == 0)
                         {
                             break;
                         }
@@ -657,28 +673,44 @@
                 else
                 {
                     var i = 0;
-                    var decimalPos = scale > 0 ? scale : Int32.MinValue;
+                    var dotPos = scale > 0 ? scale : Int32.MinValue;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i) = 0x30;
+                            i++;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        for (var j = 0; j < decimalScale - scale; j++)
+                        {
+                            decimalNum /= 10;
+                        }
+                    }
 
                     while (i < length)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (num % 10));
+                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
                         i++;
 
-                        num /= 10;
+                        decimalNum /= 10;
 
-                        if (i == decimalPos)
+                        if (i == dotPos)
                         {
                             *(pBytes + i) = 0x2E;
                             i--;
 
-                            if (num == 0)
+                            if (decimalNum == 0)
                             {
                                 *(pBytes + i) = 0x30;
                                 i--;
                             }
                         }
 
-                        if (num == 0)
+                        if (decimalNum == 0)
                         {
                             break;
                         }
