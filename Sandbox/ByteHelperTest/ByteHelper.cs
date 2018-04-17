@@ -197,8 +197,8 @@
                         value = -214748364;
                     }
 
-                    var minus = value < 0;
-                    if (minus)
+                    var negative = value < 0;
+                    if (negative)
                     {
                         value = -value;
                     }
@@ -217,20 +217,20 @@
 
                     if (withZero)
                     {
-                        while (i >= (minus ? 1 : 0))
+                        while (i >= (negative ? 1 : 0))
                         {
                             *(pBytes + i) = 0x30;
                             i--;
                         }
 
-                        if (minus && (i >= 0))
+                        if (negative && (i >= 0))
                         {
                             *pBytes = 0x2D;
                         }
                     }
                     else
                     {
-                        if (minus && (i >= 0))
+                        if (negative && (i >= 0))
                         {
                             *(pBytes + i) = 0x2D;
                             i--;
@@ -255,8 +255,8 @@
                         value = -214748364;
                     }
 
-                    var minus = value < 0;
-                    if (minus)
+                    var negative = value < 0;
+                    if (negative)
                     {
                         value = -value;
                     }
@@ -273,7 +273,7 @@
                         }
                     }
 
-                    if (minus && (i < length))
+                    if (negative && (i < length))
                     {
                         *(pBytes + i) = 0x2D;
                         i++;
@@ -325,7 +325,7 @@
                 i += negative ? 1 : 0;
 
                 var count = 0;
-                var decimalPos = 0;
+                var decimalPos = -1;
                 while (i < length)
                 {
                     var num = *(pBytes + i) - 0x30;
@@ -340,7 +340,7 @@
                             return false;
                         }
                     }
-                    else if ((*(pBytes + i) == '.') && (decimalPos == 0))
+                    else if ((*(pBytes + i) == '.') && (decimalPos == -1))
                     {
                         decimalPos = count;
                     }
@@ -362,7 +362,12 @@
                     return false;
                 }
 
-                value = new decimal(mantissa.Lo, mantissa.Mid, mantissa.Hi, negative, (byte)(count - decimalPos));
+                value = new decimal(
+                    mantissa.Lo,
+                    mantissa.Mid,
+                    mantissa.Hi,
+                    negative,
+                    (byte)(decimalPos == -1 ? 0 : (count - decimalPos)));
                 return true;
             }
         }
@@ -453,6 +458,255 @@
                 l = l << bit;
                 value = (int)(l & 0xFFFFFFFF);
                 return (int)((l >> 32) & 0xFFFFFFFF);
+            }
+        }
+
+        //public static unsafe void FormatDecimal(byte[] bytes, int offset, int length, decimal value, Padding padding, bool withZero)
+        //{
+        //    // TODO これだと遅すぎる
+        //    fixed (byte* pBytes = &bytes[offset])
+        //    {
+        //        if ((padding == Padding.Left) || withZero)
+        //        {
+        //            var i = length - 1;
+
+        //            var negative = value < 0;
+        //            if (negative)
+        //            {
+        //                value = -value;
+        //            }
+
+        //            while (i >= 0)
+        //            {
+        //                *(pBytes + i) = (byte)(0x30 + (value % 10));
+        //                i--;
+
+        //                value = decimal.Floor(value / 10);
+        //                if (value == 0m)
+        //                {
+        //                    break;
+        //                }
+        //            }
+
+        //            if (withZero)
+        //            {
+        //                while (i >= (negative ? 1 : 0))
+        //                {
+        //                    *(pBytes + i) = 0x30;
+        //                    i--;
+        //                }
+
+        //                if (negative && (i >= 0))
+        //                {
+        //                    *pBytes = 0x2D;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (negative && (i >= 0))
+        //                {
+        //                    *(pBytes + i) = 0x2D;
+        //                    i--;
+        //                }
+
+        //                while (i >= 0)
+        //                {
+        //                    *(pBytes + i) = 0x20;
+        //                    i--;
+        //                }
+        //            }
+
+        //        }
+
+        //        // TODO
+        //    }
+        //}
+
+        // TypeB
+
+        public static unsafe bool TryParseDecimal2(byte[] bytes, int index, int length, out decimal value)
+        {
+            value = 0m;
+
+            fixed (byte* pBytes = &bytes[index])
+            {
+                var i = 0;
+                while ((i < length) && (*(pBytes + i) == ' '))
+                {
+                    i++;
+                }
+
+                if (i == length)
+                {
+                    return true;
+                }
+
+                var negative = *(pBytes + i) == '-';
+                i += negative ? 1 : 0;
+
+                var midlo = 0UL;
+                var count = 0;
+                var decimalPos = -1;
+                while (i < length)
+                {
+                    var num = *(pBytes + i) - 0x30;
+                    if ((num >= 0) && (num < 10))
+                    {
+                        midlo = (midlo * 10) + (ulong)num;
+                        count++;
+                    }
+                    else if ((*(pBytes + i) == '.') && (decimalPos == -1))
+                    {
+                        decimalPos = count;
+                    }
+                    else
+                    {
+                        while ((i < length) && (*(pBytes + i) == ' '))
+                        {
+                            i++;
+                        }
+
+                        break;
+                    }
+
+                    i++;
+                }
+
+                if (i != length)
+                {
+                    return false;
+                }
+
+                value = new decimal(
+                    (int)(midlo & 0xFFFFFFFF),
+                    (int)((midlo >> 32) & 0xFFFFFFFF),
+                    0,
+                    negative,
+                    (byte)(decimalPos == -1 ? 0 : (count - decimalPos)));
+                return true;
+            }
+        }
+
+        public static unsafe void FormatDecimal2(byte[] bytes, int offset, int length, decimal value, Padding padding, bool withZero)
+        {
+            var bits = Decimal.GetBits(value);
+            var negative = (bits[3] & 0x8000000) != 0;
+            var scale = (bits[3] >> 16) & 0x7F;
+            var num = ((ulong)bits[1] << 32) + (ulong)bits[0];
+
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                if ((padding == Padding.Left) || withZero)
+                {
+                    var i = length - 1;
+                    var decimalPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (num % 10));
+                        i--;
+
+                        num /= 10;
+
+                        if (i == decimalPos)
+                        {
+                            *(pBytes + i) = 0x2E;
+                            i--;
+
+                            if (num == 0)
+                            {
+                                *(pBytes + i) = 0x30;
+                                i--;
+                            }
+                        }
+
+                        if (num == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (withZero)
+                    {
+                        while (i >= (negative ? 1 : 0))
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = 0x2D;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i) = 0x2D;
+                            i--;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i) = 0x20;
+                            i--;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+                    var decimalPos = scale > 0 ? scale : Int32.MinValue;
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (num % 10));
+                        i++;
+
+                        num /= 10;
+
+                        if (i == decimalPos)
+                        {
+                            *(pBytes + i) = 0x2E;
+                            i--;
+
+                            if (num == 0)
+                            {
+                                *(pBytes + i) = 0x30;
+                                i--;
+                            }
+                        }
+
+                        if (num == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i) = 0x2D;
+                        i++;
+                    }
+
+                    var start = pBytes;
+                    var end = pBytes + i - 1;
+                    while (start < end)
+                    {
+                        var tmp = *start;
+                        *start = *end;
+                        *end = tmp;
+                        start++;
+                        end--;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = 0x20;
+                        i++;
+                    }
+                }
             }
         }
 
