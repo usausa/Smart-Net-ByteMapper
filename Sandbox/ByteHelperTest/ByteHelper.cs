@@ -636,6 +636,233 @@
                             }
                         }
 
+                        // MEMO tune
+                        if (decimalNum <= UInt32.MaxValue)
+                        {
+                            break;
+                        }
+
+                        if (decimalNum == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    // MEMO tune
+                    if (decimalNum > 0)
+                    {
+                        var decimalNum2 = (uint)decimalNum;
+                        while (i >= 0)
+                        {
+                            *(pBytes + i) = (byte)(0x30 + (decimalNum2 % 10));
+                            i--;
+
+                            decimalNum2 /= 10;
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i) = 0x2E;
+                                i--;
+
+                                if (decimalNum2 == 0)
+                                {
+                                    *(pBytes + i) = 0x30;
+                                    i--;
+                                }
+                            }
+
+                            if (decimalNum2 == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (withZero)
+                    {
+                        while (i >= (negative ? 1 : 0))
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = 0x2D;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i) = 0x2D;
+                            i--;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i) = 0x20;
+                            i--;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+                    var dotPos = scale > 0 ? scale : Int32.MinValue;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i) = 0x30;
+                            i++;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        for (var j = 0; j < decimalScale - scale; j++)
+                        {
+                            decimalNum /= 10;
+                        }
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
+                        i++;
+
+                        decimalNum /= 10;
+
+                        if (i == dotPos)
+                        {
+                            *(pBytes + i) = 0x2E;
+                            i--;
+
+                            if (decimalNum == 0)
+                            {
+                                *(pBytes + i) = 0x30;
+                                i--;
+                            }
+                        }
+
+                        // MEMO tune
+                        if (decimalNum <= UInt32.MaxValue)
+                        {
+                            break;
+                        }
+
+                        if (decimalNum == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    // MEMO tune
+                    if (decimalNum > 0)
+                    {
+                        var decimalNum2 = (uint)decimalNum;
+                        while (i < length)
+                        {
+                            *(pBytes + i) = (byte)(0x30 + (decimalNum2 % 10));
+                            i++;
+
+                            decimalNum2 /= 10;
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i) = 0x2E;
+                                i--;
+
+                                if (decimalNum2 == 0)
+                                {
+                                    *(pBytes + i) = 0x30;
+                                    i--;
+                                }
+                            }
+
+                            if (decimalNum2 == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i) = 0x2D;
+                        i++;
+                    }
+
+                    var start = pBytes;
+                    var end = pBytes + i - 1;
+                    while (start < end)
+                    {
+                        var tmp = *start;
+                        *start = *end;
+                        *end = tmp;
+                        start++;
+                        end--;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = 0x20;
+                        i++;
+                    }
+                }
+            }
+        }
+
+        public static unsafe void FormatDecimal3(byte[] bytes, int offset, int length, decimal value, byte scale, Padding padding, bool withZero)
+        {
+            var bits = Decimal.GetBits(value);
+            var negative = (bits[3] & 0x8000000) != 0;
+            var decimalScale = (bits[3] >> 16) & 0x7F;
+            var decimalNum = (uint)bits[0];
+
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                if ((padding == Padding.Left) || withZero)
+                {
+                    var i = length - 1;
+                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        for (var j = 0; j < decimalScale - scale; j++)
+                        {
+                            decimalNum /= 10;
+                        }
+                    }
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
+                        i--;
+
+                        decimalNum /= 10;
+
+                        if (i == dotPos)
+                        {
+                            *(pBytes + i) = 0x2E;
+                            i--;
+
+                            if (decimalNum == 0)
+                            {
+                                *(pBytes + i) = 0x30;
+                                i--;
+                            }
+                        }
+
                         if (decimalNum == 0)
                         {
                             break;

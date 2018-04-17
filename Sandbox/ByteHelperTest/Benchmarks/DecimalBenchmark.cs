@@ -19,7 +19,7 @@
 
         private static readonly decimal Value19 = 12345678901234567.89m;
 
-        //private static readonly decimal Value28 = 12345678901234567890123456.78m;
+        private static readonly decimal Value28 = 12345678901234567890123456.78m;
 
         // Parse
 
@@ -80,7 +80,7 @@
         //[Benchmark]
         //public void ParseCustomB28()
         //{
-        //     Not supported
+        //    // Not supported
         //}
 
         // Format
@@ -88,14 +88,21 @@
         [Benchmark]
         public void FormatDefault8()
         {
-            Encoding.ASCII.GetBytes(Value8.ToString("0000000.000"));
+            Encoding.ASCII.GetBytes(Value8.ToString("000000.00"));
         }
 
         [Benchmark]
         public void FormatCustomB8()
         {
-            var buffer = new byte[11];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 3, Padding.Left, true);
+            var buffer = new byte[9];
+            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true);
+        }
+
+        [Benchmark]
+        public void FormatCustomC8()
+        {
+            var buffer = new byte[9];
+            ByteHelper.FormatDecimal3(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true);
         }
 
         [Benchmark]
@@ -111,10 +118,10 @@
             ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true);
         }
 
-        //[Benchmark]
-        //public void FormatDefault28()
-        //{
-        //    Encoding.ASCII.GetBytes(Value28.ToString("000000000000000000000000000.000"));
-        //}
+        [Benchmark]
+        public void FormatDefault28()
+        {
+            Encoding.ASCII.GetBytes(Value28.ToString("000000000000000000000000000.000"));
+        }
     }
 }
