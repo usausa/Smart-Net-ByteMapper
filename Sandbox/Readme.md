@@ -16,6 +16,8 @@
 | FormatDefault | 598.85 ns | 52.007 ns | 2.9385 ns | 0.0582 |     248 B |
 |  FormatCustom | 108.48 ns |  5.897 ns | 0.3332 ns | 0.0113 |      48 B |
 
+----
+
 ## Integer
 
 ### Parse
@@ -31,6 +33,30 @@
 |-------------- |----------:|-----------:|----------:|-------:|----------:|
 | FormatDefault | 111.20 ns | 11.0991 ns | 0.6271 ns | 0.0190 |      80 B |
 |  FormatCustom |  19.83 ns |  0.1357 ns | 0.0077 ns | 0.0076 |      32 B |
+
+----
+
+## Long
+
+### Parse
+
+|          Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|---------------- |----------:|-----------:|----------:|-------:|----------:|
+|   ParseDefault8 | 139.90 ns | 162.509 ns | 9.1821 ns | 0.0112 |      48 B |
+|    ParseCustom8 |  16.47 ns |   2.993 ns | 0.1691 ns |      - |       0 B |
+|  ParseDefault19 | 197.16 ns |  23.340 ns | 1.3187 ns | 0.0150 |      64 B |
+|   ParseCustom19 |  35.65 ns |   2.222 ns | 0.1255 ns |      - |       0 B |
+
+### Format
+
+|          Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|---------------- |----------:|-----------:|----------:|-------:|----------:|
+|  FormatDefault8 | 117.30 ns |  32.805 ns | 1.8535 ns | 0.0190 |      80 B |
+|   FormatCustom8 |  20.70 ns |   2.589 ns | 0.1463 ns | 0.0076 |      32 B |
+| FormatDefault19 | 165.52 ns |   9.062 ns | 0.5120 ns | 0.0265 |     112 B |
+|  FormatCustom19 |  42.28 ns |   3.881 ns | 0.2193 ns | 0.0114 |      48 B |
+
+----
 
 ## Decimal
 
@@ -58,6 +84,8 @@
 | FormatCustomB19 | 240.63 ns |  21.837 ns | 1.2338 ns | 0.0205 |      88 B |
 | FormatDefault28 | 466.52 ns |  14.816 ns | 0.8371 ns | 0.0343 |     144 B |
 
+----
+
 ## Fill
 
 |           Method |     Mean |     Error |    StdDev | Allocated |
@@ -69,6 +97,8 @@
 |     FillUnsafe64 | 36.76 ns | 3.9663 ns | 0.2241 ns |       0 B |
 | FillMemoryCopy64 | 26.95 ns | 1.1605 ns | 0.0656 ns |       0 B |
 
+----
+
 ## Encoding
 
 |              Method |     Mean |    Error |    StdDev |  Gen 0 | Allocated |
@@ -77,6 +107,8 @@
 |    GetBytesByCustom | 11.76 ns | 1.303 ns | 0.0736 ns | 0.0095 |      40 B |
 | GetStringByEncoding | 27.19 ns | 2.138 ns | 0.1208 ns | 0.0114 |      48 B |
 |   GetStringByCustom | 14.46 ns | 1.997 ns | 0.1129 ns | 0.0114 |      48 B |
+
+----
 
 ## Div10
 

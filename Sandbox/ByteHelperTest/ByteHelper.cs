@@ -300,6 +300,172 @@
         }
 
         //--------------------------------------------------------------------------------
+        // Long
+        //--------------------------------------------------------------------------------
+
+        public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, out long value)
+        {
+            value = 0;
+
+            fixed (byte* pBytes = &bytes[index])
+            {
+                var i = 0;
+                while ((i < length) && (*(pBytes + i) == ' '))
+                {
+                    i++;
+                }
+
+                if (i == length)
+                {
+                    return true;
+                }
+
+                var sign = *(pBytes + i) == '-' ? -1 : 1;
+                i += sign == -1 ? 1 : 0;
+
+                while (i < length)
+                {
+                    var num = *(pBytes + i) - 0x30;
+                    if ((num >= 0) && (num < 10))
+                    {
+                        value = (value * 10) + num;
+                        i++;
+                    }
+                    else
+                    {
+                        while ((i < length) && (*(pBytes + i) == ' '))
+                        {
+                            i++;
+                        }
+
+                        break;
+                    }
+                }
+
+                value *= sign;
+                return i == length;
+            }
+        }
+
+        public static unsafe void FormatInt64(byte[] bytes, int offset, int length, long value, Padding padding, bool withZero)
+        {
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                if ((padding == Padding.Left) || withZero)
+                {
+                    var i = length - 1;
+
+                    if ((value == Int64.MinValue) && (i >= 0))
+                    {
+                        *(pBytes + i) = 0x38;
+                        i--;
+
+                        value = -922337203685477580;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (value % 10));
+                        i--;
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (withZero)
+                    {
+                        while (i >= (negative ? 1 : 0))
+                        {
+                            *(pBytes + i) = 0x30;
+                            i--;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = 0x2D;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i) = 0x2D;
+                            i--;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i) = 0x20;
+                            i--;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+
+                    if ((value == Int64.MinValue) && (i < length))
+                    {
+                        *(pBytes + i) = 0x38;
+                        i++;
+
+                        value = -922337203685477580;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = (byte)(0x30 + (value % 10));
+                        i++;
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i) = 0x2D;
+                        i++;
+                    }
+
+                    var start = pBytes;
+                    var end = pBytes + i - 1;
+                    while (start < end)
+                    {
+                        var tmp = *start;
+                        *start = *end;
+                        *end = tmp;
+                        start++;
+                        end--;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i) = 0x20;
+                        i++;
+                    }
+                }
+            }
+        }
+
+        //--------------------------------------------------------------------------------
         // Decimal
         //--------------------------------------------------------------------------------
 
@@ -613,10 +779,11 @@
                     }
                     else if (scale < decimalScale)
                     {
-                        for (var j = 0; j < decimalScale - scale; j++)
-                        {
-                            decimalNum /= 10;
-                        }
+                        //for (var j = 0; j < decimalScale - scale; j++)
+                        //{
+                        //    decimalNum /= 10;
+                        //}
+                        FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
                     if (decimalNum > UInt32.MaxValue)
@@ -726,10 +893,11 @@
                     }
                     else if (scale < decimalScale)
                     {
-                        for (var j = 0; j < decimalScale - scale; j++)
-                        {
-                            decimalNum /= 10;
-                        }
+                        //for (var j = 0; j < decimalScale - scale; j++)
+                        //{
+                        //    decimalNum /= 10;
+                        //}
+                        FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
                     if (decimalNum > UInt32.MaxValue)
@@ -818,6 +986,39 @@
                         *(pBytes + i) = 0x20;
                         i++;
                     }
+                }
+            }
+        }
+
+        // private
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void FixDecimalScale(ref ulong value, int diff)
+        {
+            if ((value <= UInt32.MaxValue) && (diff <= 9))
+            {
+                var pow = 10U;
+                for (var i = 0; i < diff - 1; i++)
+                {
+                    pow *= 10;
+                }
+
+                value = (uint)value / pow;
+            }
+            else if (diff <= 19)
+            {
+                var pow = 10UL;
+                for (var i = 0; i < diff - 1; i++)
+                {
+                    pow *= 10;
+                }
+
+                value = value / pow;
+            }
+            else
+            {
+                for (var i = 0; i < diff; i++)
+                {
+                    value /= 10;
                 }
             }
         }
