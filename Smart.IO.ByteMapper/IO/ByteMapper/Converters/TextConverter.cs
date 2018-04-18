@@ -32,7 +32,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var start = index;
+            var size = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+            }
+
+            return encoding.GetString(buffer, start, size);
         }
 
         public void Write(byte[] buffer, int index, object value)
@@ -43,7 +50,7 @@
             }
             else
             {
-                BytesHelper.WriteString((string)value, buffer, index, length, encoding, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes((string)value), buffer, index, length, padding, filler);
             }
         }
     }

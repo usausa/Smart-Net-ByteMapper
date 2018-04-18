@@ -53,7 +53,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var start = index;
+            var size = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+            }
+
+            var value = encoding.GetString(buffer, start, size);
             if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -70,7 +77,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((int)value).ToString(format, provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes(((int)value).ToString(format, provider)), buffer, index, length, padding, filler);
             }
         }
     }
@@ -122,7 +129,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var start = index;
+            var size = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+            }
+
+            var value = encoding.GetString(buffer, start, size);
             if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -139,7 +153,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((long)value).ToString(format, provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes(((long)value).ToString(format, provider)), buffer, index, length, padding, filler);
             }
         }
     }
@@ -191,7 +205,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var start = index;
+            var size = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+            }
+
+            var value = encoding.GetString(buffer, start, size);
             if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -208,7 +229,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((short)value).ToString(format, provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes(((short)value).ToString(format, provider)), buffer, index, length, padding, filler);
             }
         }
     }
@@ -257,7 +278,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var value = BytesHelper.ReadString(buffer, index, length, encoding, trim, padding, filler);
+            var start = index;
+            var size = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+            }
+
+            var value = encoding.GetString(buffer, start, size);
             if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
             {
                 return result;
@@ -274,7 +302,7 @@
             }
             else
             {
-                BytesHelper.WriteString(((decimal)value).ToString(format, provider), buffer, index, length, encoding, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, index, length, padding, filler);
             }
         }
     }

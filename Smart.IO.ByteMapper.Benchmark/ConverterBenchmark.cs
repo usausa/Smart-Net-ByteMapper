@@ -53,7 +53,8 @@
 
         private static IBuilderContext CreateBuilderContext()
         {
-            var config = new MapperFactoryConfig();
+            var config = new MapperFactoryConfig()
+                .UseOptionsDefault();
             config.DefaultEncoding(SjisEncoding.Instance);
 
             return new BuilderContext(

@@ -30,39 +30,29 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static string ReadString(byte[] buffer, int offset, int length, Encoding encoding, bool trim, Padding padding, byte filler)
+        public static void TrimRange(byte[] buffer, ref int start, ref int size, Padding padding, byte filler)
         {
-            var start = offset;
-            var size = length;
-            if (trim)
+            if (padding == Padding.Left)
             {
-                if (padding == Padding.Left)
+                var end = start + size;
+                while ((start < end) && (buffer[start] == filler))
                 {
-                    var end = start + length;
-                    while ((start < end) && (buffer[start] == filler))
-                    {
-                        start++;
-                        size--;
-                    }
-                }
-                else
-                {
-                    while ((size > 0) && (buffer[start + size - 1] == filler))
-                    {
-                        size--;
-                    }
+                    start++;
+                    size--;
                 }
             }
-
-            // TODO range取得にする？
-            return encoding.GetString(buffer, start, size);
+            else
+            {
+                while ((size > 0) && (buffer[start + size - 1] == filler))
+                {
+                    size--;
+                }
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void WriteString(string value, byte[] buffer, int offset, int length, Encoding encoding, Padding padding, byte filler)
+        public static void CopyBytes(byte[] bytes, byte[] buffer, int offset, int length, Padding padding, byte filler)
         {
-            // TODO bytes外？ readとの対応！
-            var bytes = encoding.GetBytes(value);
             if (bytes.Length >= length)
             {
                 Buffer.BlockCopy(bytes, 0, buffer, offset, length);
