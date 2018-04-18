@@ -510,7 +510,7 @@
                     {
                         dotPos = count;
                     }
-                    else
+                    else if (*(pBytes + i) != ',')
                     {
                         while ((i < length) && (*(pBytes + i) == ' '))
                         {
@@ -725,7 +725,7 @@
                     {
                         dotPos = count;
                     }
-                    else
+                    else if (*(pBytes + i) != ',')
                     {
                         while ((i < length) && (*(pBytes + i) == ' '))
                         {

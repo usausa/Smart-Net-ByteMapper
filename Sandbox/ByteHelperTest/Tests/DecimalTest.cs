@@ -60,6 +60,16 @@
             Assert.True(ret);
             Assert.Equal(-12345678901234567.89m, value);
 
+            buffer = Encoding.ASCII.GetBytes("12,345,678,901,234,567.89");
+            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
+            Assert.True(ret);
+            Assert.Equal(12345678901234567.89m, value);
+
+            buffer = Encoding.ASCII.GetBytes("-12,345,678,901,234,567.89");
+            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
+            Assert.True(ret);
+            Assert.Equal(-12345678901234567.89m, value);
+
             buffer = Encoding.ASCII.GetBytes("0");
             ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
             Assert.True(ret);
