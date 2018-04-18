@@ -149,7 +149,7 @@
         }
 
         //--------------------------------------------------------------------------------
-        // Integer
+        // Number
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -353,33 +353,40 @@
                     var num = *(pBytes + i) - Num0;
                     if ((num >= 0) && (num < 10))
                     {
-                        switch (*(pFormat + i))
+                        var c = *(pFormat + i);
+                        if (c == FormatYear)
                         {
-                            case FormatYear:
-                                year = (year * 10) + num;
-                                break;
-                            case FormatMonth:
-                                month = (month * 10) + num;
-                                break;
-                            case FormatDay:
-                                day = (day * 10) + num;
-                                break;
-                            case FormatHour:
-                                hour = (hour * 10) + num;
-                                break;
-                            case FormatMinute:
-                                minute = (minute * 10) + num;
-                                break;
-                            case FormatSecond:
-                                second = (second * 10) + num;
-                                break;
-                            case FormatMilisecond:
-                                milisecond = milisecond + (num * msPow);
-                                msPow /= 10;
-                                break;
-                            default:
-                                value = default;
-                                return false;
+                            year = (year * 10) + num;
+                        }
+                        else if (c == FormatMonth)
+                        {
+                            month = (month * 10) + num;
+                        }
+                        else if (c == FormatDay)
+                        {
+                            day = (day * 10) + num;
+                        }
+                        else if (c == FormatHour)
+                        {
+                            hour = (hour * 10) + num;
+                        }
+                        else if (c == FormatMinute)
+                        {
+                            minute = (minute * 10) + num;
+                        }
+                        else if (c == FormatSecond)
+                        {
+                            second = (second * 10) + num;
+                        }
+                        else if (c == FormatMilisecond)
+                        {
+                            milisecond = milisecond + (num * msPow);
+                            msPow /= 10;
+                        }
+                        else
+                        {
+                            value = default;
+                            return false;
                         }
                     }
                     else if (*(pFormat + i) == FormatMilisecond)

@@ -1,6 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Attributes
 {
-    public class MapNumberAttribute
+    public class MapIntegerAttribute
     {
     }
 }
