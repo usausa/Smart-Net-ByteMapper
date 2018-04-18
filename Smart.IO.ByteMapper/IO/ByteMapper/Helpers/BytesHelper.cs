@@ -416,37 +416,43 @@
                 var length = format.Length;
                 for (var i = 0; i < length; i++)
                 {
-                    var c = *(pFormat + i);
-
                     var pow = 0;
                     int value;
-                    switch (c)
+
+                    var c = *(pFormat + i);
+                    if (c == FormatYear)
                     {
-                        case FormatYear:
-                            value = dateTime.Year;
-                            break;
-                        case FormatMonth:
-                            value = dateTime.Month;
-                            break;
-                        case FormatDay:
-                            value = dateTime.Day;
-                            break;
-                        case FormatHour:
-                            value = dateTime.Hour;
-                            break;
-                        case FormatMinute:
-                            value = dateTime.Minute;
-                            break;
-                        case FormatSecond:
-                            value = dateTime.Second;
-                            break;
-                        case FormatMilisecond:
-                            value = dateTime.Millisecond;
-                            pow = 100;
-                            break;
-                        default:
-                            *(pBytes + i) = (byte)c;
-                            continue;
+                        value = dateTime.Year;
+                    }
+                    else if (c == FormatMonth)
+                    {
+                        value = dateTime.Month;
+                    }
+                    else if (c == FormatDay)
+                    {
+                        value = dateTime.Day;
+                    }
+                    else if (c == FormatHour)
+                    {
+                        value = dateTime.Hour;
+                    }
+                    else if (c == FormatMinute)
+                    {
+                        value = dateTime.Minute;
+                    }
+                    else if (c == FormatSecond)
+                    {
+                        value = dateTime.Second;
+                    }
+                    else if (c == FormatMilisecond)
+                    {
+                        value = dateTime.Millisecond;
+                        pow = 100;
+                    }
+                    else
+                    {
+                        *(pBytes + i) = (byte)c;
+                        continue;
                     }
 
                     if (pow == 0)
