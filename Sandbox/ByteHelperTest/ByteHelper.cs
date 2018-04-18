@@ -755,12 +755,20 @@
 
         private const int NegativeBitFlag = unchecked((int)0x80000000);
 
-        public static unsafe void FormatDecimal2(byte[] bytes, int offset, int length, decimal value, byte scale, Padding padding, bool withZero)
+        public static unsafe void FormatDecimal2(
+            byte[] bytes,
+            int offset,
+            int length,
+            decimal value,
+            byte scale,
+            Padding padding,
+            bool withZero,
+            int groupingSize)
         {
             var bits = Decimal.GetBits(value);
             var negative = (bits[3] & NegativeBitFlag) != 0;
             var decimalScale = (bits[3] >> 16) & 0x7F;
-            var decimalNum = ((ulong)bits[1] << 32) + (ulong)bits[0];
+            var decimalNum = ((ulong)(bits[1] & 0x00000000FFFFFFFF) << 32) + (ulong)(bits[0] & 0x00000000FFFFFFFF);
 
             fixed (byte* pBytes = &bytes[offset])
             {
@@ -768,13 +776,13 @@
                 {
                     var i = length - 1;
                     var dotPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+                    var groupingCount = 0;
 
                     if (scale > decimalScale)
                     {
                         for (var j = 0; j < scale - decimalScale; j++)
                         {
-                            *(pBytes + i) = 0x30;
-                            i--;
+                            *(pBytes + i--) = 0x30;
                         }
                     }
                     else if (scale < decimalScale)
@@ -790,20 +798,29 @@
                     {
                         while (i >= 0)
                         {
-                            *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
-                            i--;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = 0x2C;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i--) = (byte)(0x30 + (decimalNum % 10));
 
                             decimalNum /= 10;
 
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
                             if (i == dotPos)
                             {
-                                *(pBytes + i) = 0x2E;
-                                i--;
+                                *(pBytes + i--) = 0x2E;
 
                                 if (decimalNum == 0)
                                 {
-                                    *(pBytes + i) = 0x30;
-                                    i--;
+                                    *(pBytes + i--) = 0x30;
                                 }
                             }
 
@@ -826,20 +843,29 @@
                         var decimalNum2 = (uint)decimalNum;
                         while (i >= 0)
                         {
-                            *(pBytes + i) = (byte)(0x30 + (decimalNum2 % 10));
-                            i--;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = 0x2C;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i--) = (byte)(0x30 + (decimalNum2 % 10));
 
                             decimalNum2 /= 10;
 
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
                             if (i == dotPos)
                             {
-                                *(pBytes + i) = 0x2E;
-                                i--;
+                                *(pBytes + i--) = 0x2E;
 
                                 if (decimalNum2 == 0)
                                 {
-                                    *(pBytes + i) = 0x30;
-                                    i--;
+                                    *(pBytes + i--) = 0x30;
                                 }
                             }
 
@@ -852,10 +878,22 @@
 
                     if (withZero)
                     {
-                        while (i >= (negative ? 1 : 0))
+                        var end = negative ? 1 : 0;
+                        while (i >= end)
                         {
-                            *(pBytes + i) = 0x30;
-                            i--;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = 0x2C;
+
+                                groupingCount = 0;
+                            }
+
+                            if (i >= end)
+                            {
+                                *(pBytes + i--) = 0x30;
+                            }
+
+                            groupingCount++;
                         }
 
                         if (negative && (i >= 0))
@@ -867,14 +905,12 @@
                     {
                         if (negative && (i >= 0))
                         {
-                            *(pBytes + i) = 0x2D;
-                            i--;
+                            *(pBytes + i--) = 0x2D;
                         }
 
                         while (i >= 0)
                         {
-                            *(pBytes + i) = 0x20;
-                            i--;
+                            *(pBytes + i--) = 0x20;
                         }
                     }
                 }
@@ -882,13 +918,13 @@
                 {
                     var i = 0;
                     var dotPos = scale > 0 ? scale : Int32.MinValue;
+                    var groupingCount = 0;
 
                     if (scale > decimalScale)
                     {
                         for (var j = 0; j < scale - decimalScale; j++)
                         {
-                            *(pBytes + i) = 0x30;
-                            i++;
+                            *(pBytes + i++) = 0x30;
                         }
                     }
                     else if (scale < decimalScale)
@@ -904,20 +940,29 @@
                     {
                         while (i < length)
                         {
-                            *(pBytes + i) = (byte)(0x30 + (decimalNum % 10));
-                            i++;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i++) = 0x2C;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i++) = (byte)(0x30 + (decimalNum % 10));
 
                             decimalNum /= 10;
 
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
                             if (i == dotPos)
                             {
-                                *(pBytes + i) = 0x2E;
-                                i++;
+                                *(pBytes + i++) = 0x2E;
 
                                 if (decimalNum == 0)
                                 {
-                                    *(pBytes + i) = 0x30;
-                                    i++;
+                                    *(pBytes + i++) = 0x30;
                                 }
                             }
 
@@ -940,20 +985,29 @@
                         var decimalNum2 = (uint)decimalNum;
                         while (i < length)
                         {
-                            *(pBytes + i) = (byte)(0x30 + (decimalNum2 % 10));
-                            i++;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i++) = 0x2C;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i++) = (byte)(0x30 + (decimalNum2 % 10));
 
                             decimalNum2 /= 10;
 
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
                             if (i == dotPos)
                             {
-                                *(pBytes + i) = 0x2E;
-                                i++;
+                                *(pBytes + i++) = 0x2E;
 
                                 if (decimalNum2 == 0)
                                 {
-                                    *(pBytes + i) = 0x30;
-                                    i++;
+                                    *(pBytes + i++) = 0x30;
                                 }
                             }
 
@@ -966,8 +1020,7 @@
 
                     if (negative && (i < length))
                     {
-                        *(pBytes + i) = 0x2D;
-                        i++;
+                        *(pBytes + i++) = 0x2D;
                     }
 
                     var start = pBytes;
@@ -983,8 +1036,7 @@
 
                     while (i < length)
                     {
-                        *(pBytes + i) = 0x20;
-                        i++;
+                        *(pBytes + i++) = 0x20;
                     }
                 }
             }

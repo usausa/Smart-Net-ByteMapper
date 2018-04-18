@@ -95,7 +95,7 @@
         public void FormatCustomB8()
         {
             var buffer = new byte[9];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true);
+            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true, -1);
         }
 
         [Benchmark]
@@ -115,7 +115,7 @@
         public void FormatCustomB19()
         {
             var buffer = new byte[22];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true);
+            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true, -1);
         }
 
         [Benchmark]
