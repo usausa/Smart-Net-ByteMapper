@@ -42,6 +42,10 @@
 
             // Failed
 
+            // Empty
+            buffer = Empty<byte>.Array;
+            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", out value));
+
             // Invalid format
             buffer = Encoding.ASCII.GetBytes("21991231");
             Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "xxxxxxxx", out value));

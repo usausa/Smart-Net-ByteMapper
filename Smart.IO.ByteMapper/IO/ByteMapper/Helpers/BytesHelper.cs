@@ -153,7 +153,7 @@
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseInt32(byte[] bytes, int index, int length, out short value)
+        public static bool TryParseInt16(byte[] bytes, int index, int length, out short value)
         {
             var ret = TryParseInt64(bytes, index, length, out var longValue);
             value = (short)longValue;
@@ -171,7 +171,12 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, out long value)
         {
-            value = 0;
+            value = 0L;
+
+            if (length <= 0)
+            {
+                return false;
+            }
 
             fixed (byte* pBytes = &bytes[index])
             {
@@ -183,7 +188,7 @@
 
                 if (i == length)
                 {
-                    return true;
+                    return false;
                 }
 
                 var sign = *(pBytes + i) == Minus ? -1 : 1;
@@ -335,6 +340,12 @@
 
         public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime value)
         {
+            if (bytes.Length - index < format.Length)
+            {
+                value = default;
+                return false;
+            }
+
             fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
             {
