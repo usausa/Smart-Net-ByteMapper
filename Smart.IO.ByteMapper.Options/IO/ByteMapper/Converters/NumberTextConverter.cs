@@ -54,13 +54,13 @@
         public object Read(byte[] buffer, int index)
         {
             var start = index;
-            var size = length;
+            var count = length;
             if (trim)
             {
-                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            var value = encoding.GetString(buffer, start, size);
+            var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -130,13 +130,13 @@
         public object Read(byte[] buffer, int index)
         {
             var start = index;
-            var size = length;
+            var count = length;
             if (trim)
             {
-                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            var value = encoding.GetString(buffer, start, size);
+            var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -206,13 +206,13 @@
         public object Read(byte[] buffer, int index)
         {
             var start = index;
-            var size = length;
+            var count = length;
             if (trim)
             {
-                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            var value = encoding.GetString(buffer, start, size);
+            var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
@@ -279,13 +279,13 @@
         public object Read(byte[] buffer, int index)
         {
             var start = index;
-            var size = length;
+            var count = length;
             if (trim)
             {
-                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            var value = encoding.GetString(buffer, start, size);
+            var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
             {
                 return result;

@@ -33,13 +33,13 @@
         public object Read(byte[] buffer, int index)
         {
             var start = index;
-            var size = length;
+            var count = length;
             if (trim)
             {
-                BytesHelper.TrimRange(buffer, ref start, ref size, padding, filler);
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            return encoding.GetString(buffer, start, size);
+            return encoding.GetString(buffer, start, count);
         }
 
         public void Write(byte[] buffer, int index, object value)

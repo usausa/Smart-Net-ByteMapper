@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper.Converters
 {
+    using Smart.IO.ByteMapper.Helpers;
+
     internal class AsciiConverter : IMapConverter
     {
         private readonly int length;
@@ -24,12 +26,26 @@
 
         public object Read(byte[] buffer, int index)
         {
-            throw new System.NotImplementedException();
+            var start = index;
+            var count = length;
+            if (trim)
+            {
+                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
+            }
+
+            return BytesHelper.GetAsciiString(buffer, start, count);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            throw new System.NotImplementedException();
+            if (value == null)
+            {
+                BytesHelper.Fill(buffer, index, length, filler);
+            }
+            else
+            {
+                BytesHelper.CopyBytes(BytesHelper.GetAsciiBytes((string)value), buffer, index, length, padding, filler);
+            }
         }
     }
 }
