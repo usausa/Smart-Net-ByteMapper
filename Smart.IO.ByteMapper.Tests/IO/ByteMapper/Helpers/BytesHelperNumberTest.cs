@@ -67,11 +67,7 @@
             // Failed
 
             // Empty
-            buffer = Empty<byte>.Array;
-            Assert.False(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
-
-            // Space
-            buffer = Encoding.ASCII.GetBytes(" ");
+            buffer = Encoding.ASCII.GetBytes("                   ");
             Assert.False(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
 
             // Invalid Value

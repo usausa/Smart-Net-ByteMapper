@@ -173,11 +173,6 @@
         {
             value = 0L;
 
-            if (length <= 0)
-            {
-                return false;
-            }
-
             fixed (byte* pBytes = &bytes[index])
             {
                 var i = 0;
@@ -219,22 +214,22 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool fillZero)
+        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zeroPadding)
         {
-            FormatInt64(bytes, index, length, value, padding, fillZero);
+            FormatInt64(bytes, index, length, value, padding, zeroPadding);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool fillZero)
+        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zeroPadding)
         {
-            FormatInt64(bytes, index, length, value, padding, fillZero);
+            FormatInt64(bytes, index, length, value, padding, zeroPadding);
         }
 
-        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool fillZero)
+        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zeroPadding)
         {
             fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || fillZero)
+                if ((padding == Padding.Left) || zeroPadding)
                 {
                     var i = length - 1;
 
@@ -261,7 +256,7 @@
                         }
                     }
 
-                    if (fillZero)
+                    if (zeroPadding)
                     {
                         while (i >= (negative ? 1 : 0))
                         {
@@ -340,12 +335,6 @@
 
         public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime value)
         {
-            if (bytes.Length - index < format.Length)
-            {
-                value = default;
-                return false;
-            }
-
             fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
             {
