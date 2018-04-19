@@ -8,12 +8,6 @@
     {
         private readonly IntegerConverterBuilder builder = new IntegerConverterBuilder();
 
-        public bool Trim
-        {
-            get => throw new NotSupportedException();
-            set => builder.Trim = value;
-        }
-
         public Padding Padding
         {
             get => throw new NotSupportedException();

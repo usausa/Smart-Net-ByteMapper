@@ -8,8 +8,6 @@
     {
         public int Length { get; set; }
 
-        public bool? Trim { get; set; }
-
         public Padding? Padding { get; set; }
 
         public bool? ZeroFill { get; set; }
@@ -30,7 +28,6 @@
         {
             return new Int32Converter(
                 Length,
-                Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
@@ -41,7 +38,6 @@
         {
             return new Int64Converter(
                 Length,
-                Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
@@ -52,7 +48,6 @@
         {
             return new Int16Converter(
                 Length,
-                Trim ?? context.GetParameter<bool>(Parameter.Trim),
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),

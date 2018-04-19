@@ -8,8 +8,6 @@
     {
         private readonly int length;
 
-        private readonly bool trim;
-
         private readonly Padding padding;
 
         private readonly bool zerofill;
@@ -22,14 +20,12 @@
 
         public Int32Converter(
             int length,
-            bool trim,
             Padding padding,
             bool zerofill,
             byte filler,
             Type type)
         {
             this.length = length;
-            this.trim = trim;
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
@@ -39,14 +35,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            if ((count > 0) && BytesHelper.TryParseInt32(buffer, start, count, out var result))
+            if (BytesHelper.TryParseInt32(buffer, index, length, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
@@ -71,8 +60,6 @@
     {
         private readonly int length;
 
-        private readonly bool trim;
-
         private readonly Padding padding;
 
         private readonly bool zerofill;
@@ -85,14 +72,12 @@
 
         public Int64Converter(
             int length,
-            bool trim,
             Padding padding,
             bool zerofill,
             byte filler,
             Type type)
         {
             this.length = length;
-            this.trim = trim;
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
@@ -102,14 +87,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            if ((count > 0) && BytesHelper.TryParseInt64(buffer, start, count, out var result))
+            if (BytesHelper.TryParseInt64(buffer, index, length, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
@@ -134,8 +112,6 @@
     {
         private readonly int length;
 
-        private readonly bool trim;
-
         private readonly Padding padding;
 
         private readonly bool zerofill;
@@ -148,14 +124,12 @@
 
         public Int16Converter(
             int length,
-            bool trim,
             Padding padding,
             bool zerofill,
             byte filler,
             Type type)
         {
             this.length = length;
-            this.trim = trim;
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
@@ -165,14 +139,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            if ((count > 0) && BytesHelper.TryParseInt16(buffer, start, count, out var result))
+            if (BytesHelper.TryParseInt16(buffer, index, length, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }

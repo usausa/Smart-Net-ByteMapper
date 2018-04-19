@@ -6,8 +6,6 @@
 
     public interface IMapIntegerSyntax
     {
-        IMapIntegerSyntax Trim(bool value);
-
         IMapIntegerSyntax Padding(Padding value);
 
         IMapIntegerSyntax ZeroFill(bool value);
@@ -32,12 +30,6 @@
         //--------------------------------------------------------------------------------
         // Syntax
         //--------------------------------------------------------------------------------
-
-        public IMapIntegerSyntax Trim(bool value)
-        {
-            builder.Trim = value;
-            return this;
-        }
 
         public IMapIntegerSyntax Padding(Padding value)
         {
