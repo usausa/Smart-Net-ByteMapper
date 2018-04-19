@@ -6,18 +6,18 @@
 
     using Smart.IO.ByteMapper.Builders;
 
-    public interface IMapDateTimeSyntax
+    public interface IMapDateTimeTextSyntax
     {
-        IMapDateTimeSyntax Encoding(Encoding value);
+        IMapDateTimeTextSyntax Encoding(Encoding value);
 
-        IMapDateTimeSyntax Filler(byte value);
+        IMapDateTimeTextSyntax Filler(byte value);
 
-        IMapDateTimeSyntax Style(DateTimeStyles value);
+        IMapDateTimeTextSyntax Style(DateTimeStyles value);
 
-        IMapDateTimeSyntax Provider(IFormatProvider value);
+        IMapDateTimeTextSyntax Provider(IFormatProvider value);
     }
 
-    internal sealed class MapDateTimeTextExpression : IMemberMapExpression, IMapDateTimeSyntax
+    internal sealed class MapDateTimeTextExpression : IMemberMapExpression, IMapDateTimeTextSyntax
     {
         private readonly DateTimeTextConverterBuilder builder = new DateTimeTextConverterBuilder();
 
@@ -36,7 +36,7 @@
         // Syntax
         //--------------------------------------------------------------------------------
 
-        public IMapDateTimeSyntax Encoding(Encoding value)
+        public IMapDateTimeTextSyntax Encoding(Encoding value)
         {
             if (value == null)
             {
@@ -47,19 +47,19 @@
             return this;
         }
 
-        public IMapDateTimeSyntax Filler(byte value)
+        public IMapDateTimeTextSyntax Filler(byte value)
         {
             builder.Filler = value;
             return this;
         }
 
-        public IMapDateTimeSyntax Style(DateTimeStyles value)
+        public IMapDateTimeTextSyntax Style(DateTimeStyles value)
         {
             builder.Style = value;
             return this;
         }
 
-        public IMapDateTimeSyntax Provider(IFormatProvider value)
+        public IMapDateTimeTextSyntax Provider(IFormatProvider value)
         {
             if (value == null)
             {

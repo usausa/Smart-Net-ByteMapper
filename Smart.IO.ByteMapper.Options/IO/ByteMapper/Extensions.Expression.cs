@@ -65,7 +65,7 @@
 
         // DateTime
 
-        public static IMapDateTimeSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
+        public static IMapDateTimeTextSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
         {
             var expression = new MapDateTimeTextExpression(length, format);
             syntax.Map(expression);

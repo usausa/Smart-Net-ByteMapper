@@ -250,11 +250,20 @@
             return expression;
         }
 
-        // String
+        // Ascii
 
         public static IMapAsciiSyntax Ascii(this IMemberMapConfigSyntax syntax, int length)
         {
             var expression = new MapAsciiExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        // DateTime
+
+        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)
+        {
+            var expression = new MapDateTimeExpression(format);
             syntax.Map(expression);
             return expression;
         }
