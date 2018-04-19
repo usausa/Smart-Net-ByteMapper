@@ -331,7 +331,7 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
-        public static bool IsDecimalLimited64Applicable(int length, int scale, int groupSize)
+        public static bool IsDecimalLimited64Applicable(int length, byte scale, int groupSize)
         {
             // must (length >= 0) && (scale >= 0) && (groupSize >= 0) && (scale + 1 < length)
             return length - (scale > 0 ? 1 : 0) - (groupSize > 0 ? (length - scale - 1) / groupSize : 0) <= 19;
@@ -402,22 +402,22 @@
 
         public static unsafe void FormatDecimalLimited64(
             byte[] bytes,
-            int offset,
+            int index,
             int length,
             decimal value,
             byte scale,
+            int groupingSize,
             Padding padding,
-            bool fillZero,
-            int groupingSize)
+            bool zerofill)
         {
             var bits = Decimal.GetBits(value);
             var negative = (bits[3] & NegativeBitFlag) != 0;
             var decimalScale = (bits[3] >> 16) & 0x7F;
             var decimalNum = ((ulong)(bits[1] & 0x00000000FFFFFFFF) << 32) + (ulong)(bits[0] & 0x00000000FFFFFFFF);
 
-            fixed (byte* pBytes = &bytes[offset])
+            fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || fillZero)
+                if ((padding == Padding.Left) || zerofill)
                 {
                     var i = length - 1;
                     var dotPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
@@ -515,7 +515,7 @@
                         }
                     }
 
-                    if (fillZero)
+                    if (zerofill)
                     {
                         var end = negative ? 1 : 0;
                         while (i >= end)
