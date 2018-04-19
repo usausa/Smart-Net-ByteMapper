@@ -6,26 +6,26 @@
 
     using Smart.IO.ByteMapper.Builders;
 
-    public interface IMapNumberSyntax
+    public interface IMapNumberTextSyntax
     {
-        IMapNumberSyntax Encoding(Encoding value);
+        IMapNumberTextSyntax Encoding(Encoding value);
 
-        IMapNumberSyntax Trim(bool value);
+        IMapNumberTextSyntax Trim(bool value);
 
-        IMapNumberSyntax Padding(Padding value);
+        IMapNumberTextSyntax Padding(Padding value);
 
-        IMapNumberSyntax Filler(byte value);
+        IMapNumberTextSyntax Filler(byte value);
 
-        IMapNumberSyntax Style(NumberStyles value);
+        IMapNumberTextSyntax Style(NumberStyles value);
 
-        IMapNumberSyntax Provider(IFormatProvider value);
+        IMapNumberTextSyntax Provider(IFormatProvider value);
     }
 
-    internal sealed class MapNumberTextExpression : IMemberMapExpression, IMapNumberSyntax
+    internal sealed class MapNumberTextTextExpression : IMemberMapExpression, IMapNumberTextSyntax
     {
         private readonly NumberTextConverterBuilder builder = new NumberTextConverterBuilder();
 
-        public MapNumberTextExpression(int length)
+        public MapNumberTextTextExpression(int length)
         {
             if (length < 0)
             {
@@ -35,7 +35,7 @@
             builder.Length = length;
         }
 
-        public MapNumberTextExpression(int length, string format)
+        public MapNumberTextTextExpression(int length, string format)
         {
             if (length < 0)
             {
@@ -50,7 +50,7 @@
         // Syntax
         //--------------------------------------------------------------------------------
 
-        public IMapNumberSyntax Encoding(Encoding value)
+        public IMapNumberTextSyntax Encoding(Encoding value)
         {
             if (value == null)
             {
@@ -61,31 +61,31 @@
             return this;
         }
 
-        public IMapNumberSyntax Trim(bool value)
+        public IMapNumberTextSyntax Trim(bool value)
         {
             builder.Trim = value;
             return this;
         }
 
-        public IMapNumberSyntax Padding(Padding value)
+        public IMapNumberTextSyntax Padding(Padding value)
         {
             builder.Padding = value;
             return this;
         }
 
-        public IMapNumberSyntax Filler(byte value)
+        public IMapNumberTextSyntax Filler(byte value)
         {
             builder.Filler = value;
             return this;
         }
 
-        public IMapNumberSyntax Style(NumberStyles value)
+        public IMapNumberTextSyntax Style(NumberStyles value)
         {
             builder.Style = value;
             return this;
         }
 
-        public IMapNumberSyntax Provider(IFormatProvider value)
+        public IMapNumberTextSyntax Provider(IFormatProvider value)
         {
             if (value == null)
             {

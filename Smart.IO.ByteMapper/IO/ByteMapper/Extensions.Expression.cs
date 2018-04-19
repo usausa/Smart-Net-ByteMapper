@@ -259,6 +259,15 @@
             return expression;
         }
 
+        // Integer
+
+        public static IMapIntegerSyntax IntegerText(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapIntegerExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
         // DateTime
 
         public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)

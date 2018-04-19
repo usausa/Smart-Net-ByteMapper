@@ -124,10 +124,10 @@
         [Fact]
         public void CoverageFix()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextExpression(-1));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextExpression(-1, null));
-            Assert.Throws<ArgumentNullException>(() => new MapNumberTextExpression(0, null).Encoding(null));
-            Assert.Throws<ArgumentNullException>(() => new MapNumberTextExpression(0, null).Provider(null));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextTextExpression(-1));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapNumberTextTextExpression(-1, null));
+            Assert.Throws<ArgumentNullException>(() => new MapNumberTextTextExpression(0, null).Encoding(null));
+            Assert.Throws<ArgumentNullException>(() => new MapNumberTextTextExpression(0, null).Provider(null));
         }
 
         //--------------------------------------------------------------------------------

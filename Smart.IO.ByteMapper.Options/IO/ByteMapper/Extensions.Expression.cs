@@ -74,16 +74,16 @@
 
         // Number
 
-        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
+        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
         {
-            var expression = new MapNumberTextExpression(length);
+            var expression = new MapNumberTextTextExpression(length);
             syntax.Map(expression);
             return expression;
         }
 
-        public static IMapNumberSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
+        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
         {
-            var expression = new MapNumberTextExpression(length, format);
+            var expression = new MapNumberTextTextExpression(length, format);
             syntax.Map(expression);
             return expression;
         }
