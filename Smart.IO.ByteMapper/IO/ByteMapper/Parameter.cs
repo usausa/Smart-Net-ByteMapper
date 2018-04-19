@@ -14,6 +14,8 @@
 
         public const string ZeroFill = nameof(Parameter) + "." + nameof(ZeroFill);
 
+        public const string Grouping = nameof(Parameter) + "." + nameof(Grouping);
+
         public const string Filler = nameof(Parameter) + "." + nameof(Filler);
 
         public const string TextFiller = nameof(Parameter) + "." + nameof(TextFiller);

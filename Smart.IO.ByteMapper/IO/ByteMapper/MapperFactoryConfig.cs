@@ -26,6 +26,7 @@
             this.DefaultEncoding(Encoding.ASCII);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);
+            this.DefaultZeroFill(false);
             this.DefaultFiller(0x20);
             this.DefaultTextFiller(0x20);
             this.DefaultEndian(Endian.Big);

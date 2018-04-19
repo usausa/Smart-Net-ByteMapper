@@ -1,6 +1,41 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
-    public class DecimalConverterBuilder
+    using System;
+
+    using Smart.IO.ByteMapper.Converters;
+
+    public sealed class DecimalConverterBuilder : AbstractMapConverterBuilder<DecimalConverterBuilder>
     {
+        public int Length { get; set; }
+
+        public byte Scale { get; set; }
+
+        public bool? UseGrouping { get; set; }
+
+        public int GroupingSize { get; set; } = 3;
+
+        public Padding? Padding { get; set; }
+
+        public bool? ZeroFill { get; set; }
+
+        public byte? Filler { get; set; }
+
+        static DecimalConverterBuilder()
+        {
+            AddEntry(typeof(decimal), (b, t) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
+            AddEntry(typeof(decimal?), (b, t) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
+        }
+
+        private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)
+        {
+            return new DecimalConverter(
+                Length,
+                Scale,
+                UseGrouping ?? context.GetParameter<bool>(Parameter.Grouping) ? GroupingSize : 0,
+                Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
+                ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
+                Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                type);
+        }
     }
 }

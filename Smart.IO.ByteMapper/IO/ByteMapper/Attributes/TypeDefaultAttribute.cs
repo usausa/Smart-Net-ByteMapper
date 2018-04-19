@@ -76,11 +76,24 @@
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class TypeZeroFillAttribute : Attribute, ITypeDefaultAttribute
     {
-        public string Key => Parameter.NumberPadding;
+        public string Key => Parameter.ZeroFill;
 
         public object Value { get; }
 
         public TypeZeroFillAttribute(bool value)
+        {
+            Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeGroupingFillAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.Grouping;
+
+        public object Value { get; }
+
+        public TypeGroupingFillAttribute(bool value)
         {
             Value = value;
         }

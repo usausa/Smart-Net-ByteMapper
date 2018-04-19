@@ -89,6 +89,11 @@
             return syntax.TypeDefault(Parameter.ZeroFill, value);
         }
 
+        public static ITypeConfigSyntax<T> TypeGroupingGrouping<T>(this ITypeConfigSyntax<T> syntax, bool value)
+        {
+            return syntax.TypeDefault(Parameter.Grouping, value);
+        }
+
         public static ITypeConfigSyntax<T> TypeFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.Filler, value);
