@@ -249,5 +249,14 @@
             syntax.Map(expression);
             return expression;
         }
+
+        // String
+
+        public static IMapAsciiSyntax Ascii(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapAsciiExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
     }
 }
