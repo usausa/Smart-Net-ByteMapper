@@ -55,6 +55,11 @@
                 throw new ArgumentOutOfRangeException(nameof(length));
             }
 
+            if ((scale != 0) && (scale + 1 >= length))
+            {
+                throw new ArgumentException($"Invalid scale. length=[{length}], scale=[{scale}]");
+            }
+
             builder.Length = length;
             builder.Scale = scale;
         }

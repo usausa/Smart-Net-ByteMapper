@@ -333,7 +333,6 @@
 
         public static bool IsDecimalLimited64Applicable(int length, byte scale, int groupSize)
         {
-            // must (length >= 0) && (scale >= 0) && (groupSize >= 0) && (scale + 1 < length)
             return length - (scale > 0 ? 1 : 0) - (groupSize > 0 ? (length - scale - 1) / groupSize : 0) <= 19;
         }
 
