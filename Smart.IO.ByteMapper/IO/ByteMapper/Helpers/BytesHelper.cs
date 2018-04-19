@@ -331,13 +331,13 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
-        public static bool IsDecimal64BitApplicable(int length, int scale, int groupSize)
+        public static bool IsDecimalLimited64Applicable(int length, int scale, int groupSize)
         {
             // must (length >= 0) && (scale >= 0) && (groupSize >= 0) && (scale + 1 < length)
             return length - (scale > 0 ? 1 : 0) - (groupSize > 0 ? (length - scale - 1) / groupSize : 0) <= 19;
         }
 
-        public static unsafe bool TryParseDecimalLimited64Bit(byte[] bytes, int index, int length, out decimal value)
+        public static unsafe bool TryParseDecimalLimited64(byte[] bytes, int index, int length, out decimal value)
         {
             fixed (byte* pBytes = &bytes[index])
             {
@@ -351,7 +351,7 @@
 
                 if (i == length)
                 {
-                    return true;
+                    return false;
                 }
 
                 var negative = *(pBytes + i) == Minus;
@@ -400,7 +400,7 @@
             }
         }
 
-        public static unsafe void FormatDecimalLimited64Bit(
+        public static unsafe void FormatDecimalLimited64(
             byte[] bytes,
             int offset,
             int length,

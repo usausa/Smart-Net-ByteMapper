@@ -21,6 +21,16 @@
             Assert.True(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
             Assert.Equal(-1234567890123456789L, value);
 
+            // Padded
+            buffer = Encoding.ASCII.GetBytes("0001234567890123456789");
+            Assert.True(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
+            Assert.Equal(1234567890123456789L, value);
+
+            // Padded Negative
+            buffer = Encoding.ASCII.GetBytes("-0001234567890123456789");
+            Assert.True(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
+            Assert.Equal(-1234567890123456789L, value);
+
             // Zero
             buffer = Encoding.ASCII.GetBytes("0");
             Assert.True(BytesHelper.TryParseInt64(buffer, 0, buffer.Length, out value));
