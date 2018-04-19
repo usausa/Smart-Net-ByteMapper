@@ -10,9 +10,15 @@
 
         public const string TextPadding = nameof(Parameter) + "." + nameof(TextPadding);
 
+        public const string NumberPadding = nameof(Parameter) + "." + nameof(NumberPadding);
+
+        public const string ZeroFill = nameof(Parameter) + "." + nameof(ZeroFill);
+
         public const string Filler = nameof(Parameter) + "." + nameof(Filler);
 
         public const string TextFiller = nameof(Parameter) + "." + nameof(TextFiller);
+
+        public const string NumberFiller = nameof(Parameter) + "." + nameof(NumberFiller);
 
         public const string Endian = nameof(Parameter) + "." + nameof(Endian);
 

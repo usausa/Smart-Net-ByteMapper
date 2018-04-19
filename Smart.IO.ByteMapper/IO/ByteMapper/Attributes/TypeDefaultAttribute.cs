@@ -61,6 +61,32 @@
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeNumberPaddingAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.NumberPadding;
+
+        public object Value { get; }
+
+        public TypeNumberPaddingAttribute(Padding value)
+        {
+            Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeZeroFillAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.NumberPadding;
+
+        public object Value { get; }
+
+        public TypeZeroFillAttribute(bool value)
+        {
+            Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class TypeFillerAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key => Parameter.Filler;
@@ -81,6 +107,19 @@
         public object Value { get; }
 
         public TypeTextFillerAttribute(byte value)
+        {
+            Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeNumberFillerAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.NumberFiller;
+
+        public object Value { get; }
+
+        public TypeNumberFillerAttribute(byte value)
         {
             Value = value;
         }

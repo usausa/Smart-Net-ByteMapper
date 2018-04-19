@@ -29,6 +29,16 @@
             return config.AddParameter(Parameter.TextPadding, value);
         }
 
+        public static MapperFactoryConfig DefaultNumberPadding(this MapperFactoryConfig config, Padding value)
+        {
+            return config.AddParameter(Parameter.NumberPadding, value);
+        }
+
+        public static MapperFactoryConfig DefaultZeroFill(this MapperFactoryConfig config, bool value)
+        {
+            return config.AddParameter(Parameter.ZeroFill, value);
+        }
+
         public static MapperFactoryConfig DefaultFiller(this MapperFactoryConfig config, byte value)
         {
             return config.AddParameter(Parameter.Filler, value);
@@ -37,6 +47,11 @@
         public static MapperFactoryConfig DefaultTextFiller(this MapperFactoryConfig config, byte value)
         {
             return config.AddParameter(Parameter.TextFiller, value);
+        }
+
+        public static MapperFactoryConfig DefaultNumberFiller(this MapperFactoryConfig config, byte value)
+        {
+            return config.AddParameter(Parameter.NumberFiller, value);
         }
 
         public static MapperFactoryConfig DefaultEndian(this MapperFactoryConfig config, Endian value)

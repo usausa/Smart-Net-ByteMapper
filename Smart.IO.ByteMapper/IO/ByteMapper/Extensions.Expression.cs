@@ -79,6 +79,16 @@
             return syntax.TypeDefault(Parameter.TextPadding, value);
         }
 
+        public static ITypeConfigSyntax<T> TypeNumberPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
+        {
+            return syntax.TypeDefault(Parameter.NumberPadding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeZeroFill<T>(this ITypeConfigSyntax<T> syntax, bool value)
+        {
+            return syntax.TypeDefault(Parameter.ZeroFill, value);
+        }
+
         public static ITypeConfigSyntax<T> TypeFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.Filler, value);
@@ -87,6 +97,11 @@
         public static ITypeConfigSyntax<T> TypeTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.TextFiller, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.NumberFiller, value);
         }
 
         public static ITypeConfigSyntax<T> TypeEndian<T>(this ITypeConfigSyntax<T> syntax, Endian value)

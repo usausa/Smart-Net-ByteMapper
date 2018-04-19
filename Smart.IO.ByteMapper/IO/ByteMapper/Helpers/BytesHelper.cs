@@ -214,22 +214,22 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zeroPadding)
+        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill)
         {
-            FormatInt64(bytes, index, length, value, padding, zeroPadding);
+            FormatInt64(bytes, index, length, value, padding, zerofill);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zeroPadding)
+        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill)
         {
-            FormatInt64(bytes, index, length, value, padding, zeroPadding);
+            FormatInt64(bytes, index, length, value, padding, zerofill);
         }
 
-        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zeroPadding)
+        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill)
         {
             fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || zeroPadding)
+                if ((padding == Padding.Left) || zerofill)
                 {
                     var i = length - 1;
 
@@ -256,7 +256,7 @@
                         }
                     }
 
-                    if (zeroPadding)
+                    if (zerofill)
                     {
                         while (i >= (negative ? 1 : 0))
                         {
