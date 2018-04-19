@@ -7,6 +7,8 @@
     {
         private const byte Space = (byte)' ';
         private const byte Minus = (byte)'-';
+        private const byte Dot = (byte)'.';
+        private const byte Comma = (byte)',';
         private const byte Num0 = (byte)'0';
 
         private const char FormatYear = 'y';
@@ -19,6 +21,8 @@
 
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
+
+        private const int NegativeBitFlag = unchecked((int)0x80000000);
 
         //--------------------------------------------------------------------------------
         // Enum
@@ -171,10 +175,10 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, out long value)
         {
-            value = 0L;
-
             fixed (byte* pBytes = &bytes[index])
             {
+                value = 0L;
+
                 var i = 0;
                 while ((i < length) && (*(pBytes + i) == Space))
                 {
@@ -327,7 +331,372 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
-        // TODO
+        public static bool IsDecimal64BitApplicable(int length, int scale, int groupSize)
+        {
+            // must (length >= 0) && (scale >= 0) && (groupSize >= 0) && (scale + 1 < length)
+            return length - (scale > 0 ? 1 : 0) - (groupSize > 0 ? (length - scale - 1) / groupSize : 0) <= 19;
+        }
+
+        public static unsafe bool TryParseDecimalLimited64Bit(byte[] bytes, int index, int length, out decimal value)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                value = 0m;
+
+                var i = 0;
+                while ((i < length) && (*(pBytes + i) == Space))
+                {
+                    i++;
+                }
+
+                if (i == length)
+                {
+                    return true;
+                }
+
+                var negative = *(pBytes + i) == Minus;
+                i += negative ? 1 : 0;
+
+                var midlo = 0UL;
+                var count = 0;
+                var dotPos = -1;
+                while (i < length)
+                {
+                    var num = *(pBytes + i) - Num0;
+                    if ((num >= 0) && (num < 10))
+                    {
+                        midlo = (midlo * 10) + (ulong)num;
+                        count++;
+                    }
+                    else if ((*(pBytes + i) == Dot) && (dotPos == -1))
+                    {
+                        dotPos = count;
+                    }
+                    else if (*(pBytes + i) != Comma)
+                    {
+                        while ((i < length) && (*(pBytes + i) == Space))
+                        {
+                            i++;
+                        }
+
+                        break;
+                    }
+
+                    i++;
+                }
+
+                if (i != length)
+                {
+                    return false;
+                }
+
+                value = new decimal(
+                    (int)(midlo & 0xFFFFFFFF),
+                    (int)((midlo >> 32) & 0xFFFFFFFF),
+                    0,
+                    negative,
+                    (byte)(dotPos < 0 ? 0 : (count - dotPos)));
+                return true;
+            }
+        }
+
+        public static unsafe void FormatDecimalLimited64Bit(
+            byte[] bytes,
+            int offset,
+            int length,
+            decimal value,
+            byte scale,
+            Padding padding,
+            bool fillZero,
+            int groupingSize)
+        {
+            var bits = Decimal.GetBits(value);
+            var negative = (bits[3] & NegativeBitFlag) != 0;
+            var decimalScale = (bits[3] >> 16) & 0x7F;
+            var decimalNum = ((ulong)(bits[1] & 0x00000000FFFFFFFF) << 32) + (ulong)(bits[0] & 0x00000000FFFFFFFF);
+
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                if ((padding == Padding.Left) || fillZero)
+                {
+                    var i = length - 1;
+                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MinValue;
+                    var groupingCount = 0;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i--) = Num0;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        FixDecimalScale(ref decimalNum, decimalScale - scale);
+                    }
+
+                    if (decimalNum > UInt32.MaxValue)
+                    {
+                        while (i >= 0)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i--) = (byte)(Num0 + (decimalNum % 10));
+
+                            decimalNum /= 10;
+
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i--) = Dot;
+
+                                if (decimalNum == 0)
+                                {
+                                    *(pBytes + i--) = Num0;
+                                }
+                            }
+
+                            if (decimalNum <= UInt32.MaxValue)
+                            {
+                                break;
+                            }
+
+                            if (decimalNum == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (decimalNum > 0)
+                    {
+                        var decimalNum2 = (uint)decimalNum;
+                        while (i >= 0)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i--) = (byte)(Num0 + (decimalNum2 % 10));
+
+                            decimalNum2 /= 10;
+
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i--) = Dot;
+
+                                if (decimalNum2 == 0)
+                                {
+                                    *(pBytes + i--) = Num0;
+                                }
+                            }
+
+                            if (decimalNum2 == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (fillZero)
+                    {
+                        var end = negative ? 1 : 0;
+                        while (i >= end)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+
+                                groupingCount = 0;
+                            }
+
+                            if (i >= end)
+                            {
+                                *(pBytes + i--) = Num0;
+                            }
+
+                            groupingCount++;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = Minus;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i--) = Minus;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i--) = Space;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+                    var dotPos = scale > 0 ? scale : Int32.MinValue;
+                    var groupingCount = 0;
+
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < scale - decimalScale; j++)
+                        {
+                            *(pBytes + i++) = Num0;
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        FixDecimalScale(ref decimalNum, decimalScale - scale);
+                    }
+
+                    if (decimalNum > UInt32.MaxValue)
+                    {
+                        while (i < length)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i++) = Comma;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i++) = (byte)(Num0 + (decimalNum % 10));
+
+                            decimalNum /= 10;
+
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i++) = Dot;
+
+                                if (decimalNum == 0)
+                                {
+                                    *(pBytes + i++) = Num0;
+                                }
+                            }
+
+                            if (decimalNum <= UInt32.MaxValue)
+                            {
+                                break;
+                            }
+
+                            if (decimalNum == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (decimalNum > 0)
+                    {
+                        var decimalNum2 = (uint)decimalNum;
+                        while (i < length)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i++) = Comma;
+
+                                groupingCount = 0;
+                            }
+
+                            *(pBytes + i++) = (byte)(Num0 + (decimalNum2 % 10));
+
+                            decimalNum2 /= 10;
+
+                            if (i > dotPos)
+                            {
+                                groupingCount++;
+                            }
+
+                            if (i == dotPos)
+                            {
+                                *(pBytes + i++) = Dot;
+
+                                if (decimalNum2 == 0)
+                                {
+                                    *(pBytes + i++) = Num0;
+                                }
+                            }
+
+                            if (decimalNum2 == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i - 1);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = Space;
+                    }
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void FixDecimalScale(ref ulong value, int diff)
+        {
+            if ((value <= UInt32.MaxValue) && (diff <= 9))
+            {
+                var pow = 10U;
+                for (var i = 0; i < diff - 1; i++)
+                {
+                    pow *= 10;
+                }
+
+                value = (uint)value / pow;
+            }
+            else if (diff <= 19)
+            {
+                var pow = 10UL;
+                for (var i = 0; i < diff - 1; i++)
+                {
+                    pow *= 10;
+                }
+
+                value = value / pow;
+            }
+            else
+            {
+                for (var i = 0; i < diff; i++)
+                {
+                    value /= 10;
+                }
+            }
+        }
 
         //--------------------------------------------------------------------------------
         // DateTime
