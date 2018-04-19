@@ -87,13 +87,13 @@
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public sealed class TypeGroupingFillAttribute : Attribute, ITypeDefaultAttribute
+    public sealed class TypeUseGroupingAttribute : Attribute, ITypeDefaultAttribute
     {
-        public string Key => Parameter.Grouping;
+        public string Key => Parameter.UseGrouping;
 
         public object Value { get; }
 
-        public TypeGroupingFillAttribute(bool value)
+        public TypeUseGroupingAttribute(bool value)
         {
             Value = value;
         }

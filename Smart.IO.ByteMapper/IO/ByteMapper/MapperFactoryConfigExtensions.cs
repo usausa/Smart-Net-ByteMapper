@@ -39,9 +39,9 @@
             return config.AddParameter(Parameter.ZeroFill, value);
         }
 
-        public static MapperFactoryConfig DefaultGrouping(this MapperFactoryConfig config, bool value)
+        public static MapperFactoryConfig DefaultUseGrouping(this MapperFactoryConfig config, bool value)
         {
-            return config.AddParameter(Parameter.Grouping, value);
+            return config.AddParameter(Parameter.UseGrouping, value);
         }
 
         public static MapperFactoryConfig DefaultFiller(this MapperFactoryConfig config, byte value)

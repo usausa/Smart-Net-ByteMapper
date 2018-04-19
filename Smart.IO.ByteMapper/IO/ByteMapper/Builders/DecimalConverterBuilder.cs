@@ -31,7 +31,7 @@
             return new DecimalConverter(
                 Length,
                 Scale,
-                UseGrouping ?? context.GetParameter<bool>(Parameter.Grouping) ? GroupingSize : 0,
+                UseGrouping ?? context.GetParameter<bool>(Parameter.UseGrouping) ? GroupingSize : 0,
                 Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
                 ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
                 Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
