@@ -765,7 +765,14 @@
 
                 try
                 {
-                    value = new DateTime(year, month, day, hour, minute, second, milisecond);
+                    if (milisecond == 0)
+                    {
+                        value = new DateTime(year, month, day, hour, minute, second);
+                    }
+                    else
+                    {
+                        value = new DateTime(year, month, day, hour, minute, second, milisecond);
+                    }
                     return true;
                 }
                 catch (ArgumentOutOfRangeException)
