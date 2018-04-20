@@ -1,6 +1,9 @@
 ﻿namespace Smart.IO.ByteMapper.Helpers
 {
+    //using System;
+    //using System.Collections.Generic;
     using System.Globalization;
+    //using System.Linq;
     using System.Text;
 
     using Xunit;
@@ -101,6 +104,12 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -1234567890123456.78m, 2, 3, Padding.Left, false);
             Assert.Equal(expected, buffer);
 
+            // Zero
+            expected = Encoding.ASCII.GetBytes(" 0");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Left, false);
+            Assert.Equal(expected, buffer);
+
             // Max grouping
             expected = Encoding.ASCII.GetBytes("  999,999,999,999,999,999");
             buffer = new byte[expected.Length];
@@ -113,10 +122,22 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -999999999999999999m, 0, 3, Padding.Left, false);
             Assert.Equal(expected, buffer);
 
-            // Zero
-            expected = Encoding.ASCII.GetBytes(" 0");
+            // 32bit
+            expected = Encoding.ASCII.GetBytes(" 4294967295");
             buffer = new byte[expected.Length];
-            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Left, false);
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967295m, 0, -1, Padding.Left, false);
+            Assert.Equal(expected, buffer);
+
+            // 32bit+1
+            expected = Encoding.ASCII.GetBytes(" 4294967296");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967296m, 0, -1, Padding.Left, false);
+            Assert.Equal(expected, buffer);
+
+            // 64bit
+            expected = Encoding.ASCII.GetBytes(" 18446744073709551615");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 18446744073709551615m, 0, -1, Padding.Left, false);
             Assert.Equal(expected, buffer);
 
             // TODO
@@ -135,6 +156,12 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -1234567890123456.78m, 2, 3, Padding.Left, true);
             Assert.Equal(expected, buffer);
 
+            // Zero
+            expected = Encoding.ASCII.GetBytes("00");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Left, true);
+            Assert.Equal(expected, buffer);
+
             // Max grouping
             expected = Encoding.ASCII.GetBytes("0,999,999,999,999,999,999");
             buffer = new byte[expected.Length];
@@ -147,10 +174,22 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -999999999999999999m, 0, 3, Padding.Left, true);
             Assert.Equal(expected, buffer);
 
-            // Zero
-            expected = Encoding.ASCII.GetBytes("00");
+            // 32bit
+            expected = Encoding.ASCII.GetBytes("04294967295");
             buffer = new byte[expected.Length];
-            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Left, true);
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967295m, 0, -1, Padding.Left, true);
+            Assert.Equal(expected, buffer);
+
+            // 32bit+1
+            expected = Encoding.ASCII.GetBytes("04294967296");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967296m, 0, -1, Padding.Left, true);
+            Assert.Equal(expected, buffer);
+
+            // 64bit
+            expected = Encoding.ASCII.GetBytes("018446744073709551615");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 18446744073709551615m, 0, -1, Padding.Left, true);
             Assert.Equal(expected, buffer);
 
             // TODO
@@ -169,6 +208,12 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -1234567890123456.78m, 2, 3, Padding.Right, false);
             Assert.Equal(expected, buffer);
 
+            // Zero
+            expected = Encoding.ASCII.GetBytes("0 ");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Right, false);
+            Assert.Equal(expected, buffer);
+
             // Max grouping
             expected = Encoding.ASCII.GetBytes("999,999,999,999,999,999  ");
             buffer = new byte[expected.Length];
@@ -181,19 +226,77 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, -999999999999999999m, 0, 3, Padding.Right, false);
             Assert.Equal(expected, buffer);
 
-            // Zero
-            expected = Encoding.ASCII.GetBytes("0 ");
+            // 32bit
+            expected = Encoding.ASCII.GetBytes("4294967295 ");
             buffer = new byte[expected.Length];
-            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0m, 0, -1, Padding.Right, false);
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967295m, 0, -1, Padding.Right, false);
+            Assert.Equal(expected, buffer);
+
+            // 32bit+1
+            expected = Encoding.ASCII.GetBytes("4294967296 ");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 4294967296m, 0, -1, Padding.Right, false);
+            Assert.Equal(expected, buffer);
+
+            // 64bit
+            expected = Encoding.ASCII.GetBytes("18446744073709551615 ");
+            buffer = new byte[expected.Length];
+            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 18446744073709551615m, 0, -1, Padding.Right, false);
             Assert.Equal(expected, buffer);
 
             // TODO
+
+            // TODO 小数点不足
+            // TODO 小数点多い、四捨五入
+            // TODO マイナスの以下パター
+            //            Assert.Equal("-0,123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
+            //            Assert.Equal("0,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
+            //            Assert.Equal("-,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
+            // TODO .位置が微妙な場合
         }
 
-        [Fact]
-        public void FormatDecimalGrouping()
-        {
-            // TODO 桁を変えつつ！
-        }
+        //[Fact]
+        //public void FormatDecimalScale()
+        //{
+        //    // TODO 桁を変えつつ！
+        //    var values = new[]
+        //    {
+        //        "0",
+        //        "999999999999999999",
+        //        "4294967295",
+        //        "4294967296",
+        //        "18446744073709551615",
+        //    };
+
+        //    foreach (var pair in values.SelectMany(Dotnize))
+        //    {
+        //        var value = Decimal.Parse(pair.Item1);
+
+        //        var expected = Encoding.ASCII.GetBytes(pair.Item1);
+        //        var buffer = new byte[expected.Length];
+
+        //        BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, pair.Item2, -1, Padding.Left, false);
+        //        Assert.Equal(expected, buffer);
+
+        //        BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, pair.Item2, -1, Padding.Right, false);
+        //        Assert.Equal(expected, buffer);
+        //    }
+        //}
+
+        //[Fact]
+        //public void FormatDecimalGrouping()
+        //{
+        //    // TODO 桁を変えつつ！
+        //}
+
+        //private static IEnumerable<Tuple<string, byte>> Dotnize(string value)
+        //{
+        //    for (var i = 1; i < value.Length; i++)
+        //    {
+        //        yield return Tuple.Create(value.Substring(0, i) + "." + value.Substring(i), (byte)(value.Length - i));
+        //    }
+
+        //    yield return Tuple.Create(value, (byte)0);
+        //}
     }
 }
