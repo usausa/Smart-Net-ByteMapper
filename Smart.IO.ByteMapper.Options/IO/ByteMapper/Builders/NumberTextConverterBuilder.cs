@@ -38,7 +38,7 @@
 
         private IMapConverter CreateIntTextConverter(Type type, IBuilderContext context)
         {
-            return new IntTextConverter(
+            return new Int32TextConverter(
                 Length,
                 Format,
                 Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
@@ -52,7 +52,7 @@
 
         private IMapConverter CreateLongTextConverter(Type type, IBuilderContext context)
         {
-            return new LongTextConverter(
+            return new Int64TextConverter(
                 Length,
                 Format,
                 Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
@@ -66,7 +66,7 @@
 
         private IMapConverter CreateShortTextConverter(Type type, IBuilderContext context)
         {
-            return new ShortTextConverter(
+            return new Int16TextConverter(
                 Length,
                 Format,
                 Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),

@@ -6,7 +6,7 @@
 
     using Smart.IO.ByteMapper.Helpers;
 
-    internal sealed class IntTextConverter : IMapConverter
+    internal sealed class Int32TextConverter : IMapConverter
     {
         private readonly int length;
 
@@ -28,7 +28,7 @@
 
         private readonly object defaultValue;
 
-        public IntTextConverter(
+        public Int32TextConverter(
             int length,
             string format,
             Encoding encoding,
@@ -82,7 +82,7 @@
         }
     }
 
-    internal sealed class LongTextConverter : IMapConverter
+    internal sealed class Int64TextConverter : IMapConverter
     {
         private readonly int length;
 
@@ -104,7 +104,7 @@
 
         private readonly object defaultValue;
 
-        public LongTextConverter(
+        public Int64TextConverter(
             int length,
             string format,
             Encoding encoding,
@@ -158,7 +158,7 @@
         }
     }
 
-    internal sealed class ShortTextConverter : IMapConverter
+    internal sealed class Int16TextConverter : IMapConverter
     {
         private readonly int length;
 
@@ -180,7 +180,7 @@
 
         private readonly object defaultValue;
 
-        public ShortTextConverter(
+        public Int16TextConverter(
             int length,
             string format,
             Encoding encoding,

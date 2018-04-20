@@ -54,11 +54,6 @@
 
         public IMapDecimalSyntax GroupingSize(int value)
         {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value));
-            }
-
             builder.GroupingSize = value;
             builder.UseGrouping = value > 0;
             return this;

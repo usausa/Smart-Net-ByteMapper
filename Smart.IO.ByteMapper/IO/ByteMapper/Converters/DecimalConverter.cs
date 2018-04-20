@@ -31,7 +31,7 @@
         {
             this.length = length;
             this.scale = scale;
-            this.groupingSize = groupingSize;
+            this.groupingSize = groupingSize <= 0 ? -1 : groupingSize;
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;

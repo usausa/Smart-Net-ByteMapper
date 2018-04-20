@@ -19,11 +19,6 @@
             get => throw new NotSupportedException();
             set
             {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(value));
-                }
-
                 builder.GroupingSize = value;
                 builder.UseGrouping = value > 0;
             }

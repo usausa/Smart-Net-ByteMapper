@@ -266,7 +266,7 @@
 
         // Integer
 
-        public static IMapIntegerSyntax IntegerText(this IMemberMapConfigSyntax syntax, int length)
+        public static IMapIntegerSyntax Integer(this IMemberMapConfigSyntax syntax, int length)
         {
             var expression = new MapIntegerExpression(length);
             syntax.Map(expression);
