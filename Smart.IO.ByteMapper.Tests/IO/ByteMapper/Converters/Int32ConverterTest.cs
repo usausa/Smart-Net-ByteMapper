@@ -1,14 +1,13 @@
-namespace Smart.IO.ByteMapper.Converters
+﻿namespace Smart.IO.ByteMapper.Converters
 {
     using System;
-    using System.Globalization;
     using System.Text;
 
     using Smart.IO.ByteMapper.Mock;
 
     using Xunit;
 
-    public class IntTextConverterTest
+    public class Int32ConverterTest
     {
         private const int Offset = 1;
 
@@ -20,33 +19,29 @@ namespace Smart.IO.ByteMapper.Converters
 
         private static readonly byte[] MinusBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("-1".PadLeft(Length, ' ')));
 
-        private readonly IntTextConverter intConverter;
+        private readonly Int32Converter int32Converter;
 
-        private readonly IntTextConverter nullableIntConverter;
+        private readonly Int32Converter nullableInt32Converter;
 
-        private readonly IntTextConverter enumConverter;
+        private readonly Int32Converter enumConverter;
 
-        private readonly IntTextConverter nullableEnumConverter;
+        private readonly Int32Converter nullableEnumConverter;
 
-        public IntTextConverterTest()
+        public Int32ConverterTest()
         {
-            intConverter = CreateConverter(typeof(int));
-            nullableIntConverter = CreateConverter(typeof(int?));
+            int32Converter = CreateConverter(typeof(int));
+            nullableInt32Converter = CreateConverter(typeof(int?));
             enumConverter = CreateConverter(typeof(IntEnum));
             nullableEnumConverter = CreateConverter(typeof(IntEnum?));
         }
 
-        private static IntTextConverter CreateConverter(Type type)
+        private static Int32Converter CreateConverter(Type type)
         {
-            return new IntTextConverter(
+            return new Int32Converter(
                 Length,
-                null,
-                Encoding.ASCII,
-                true,
                 Padding.Left,
+                false,
                 0x20,
-                NumberStyles.Integer,
-                NumberFormatInfo.InvariantInfo,
                 type);
         }
 
@@ -58,10 +53,10 @@ namespace Smart.IO.ByteMapper.Converters
         public void ReadToInt()
         {
             // Default
-            Assert.Equal(0, intConverter.Read(EmptyBytes, Offset));
+            Assert.Equal(0, int32Converter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal(1, intConverter.Read(ValueBytes, Offset));
+            Assert.Equal(1, int32Converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
@@ -70,7 +65,7 @@ namespace Smart.IO.ByteMapper.Converters
             var buffer = new byte[Length + Offset];
 
             // Value
-            intConverter.Write(buffer, Offset, 1);
+            int32Converter.Write(buffer, Offset, 1);
             Assert.Equal(ValueBytes, buffer);
         }
 
@@ -82,10 +77,10 @@ namespace Smart.IO.ByteMapper.Converters
         public void ReadToNullableInt()
         {
             // Null
-            Assert.Null(nullableIntConverter.Read(EmptyBytes, Offset));
+            Assert.Null(nullableInt32Converter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal(1, nullableIntConverter.Read(ValueBytes, Offset));
+            Assert.Equal(1, nullableInt32Converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
@@ -94,7 +89,7 @@ namespace Smart.IO.ByteMapper.Converters
             var buffer = new byte[Length + Offset];
 
             // Null
-            nullableIntConverter.Write(buffer, Offset, null);
+            nullableInt32Converter.Write(buffer, Offset, null);
             Assert.Equal(EmptyBytes, buffer);
         }
 

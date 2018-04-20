@@ -8,11 +8,11 @@ namespace Smart.IO.ByteMapper.Converters
 
     using Xunit;
 
-    public class ShortTextConverterTest
+    public class Int64TextConverterTest
     {
         private const int Offset = 1;
 
-        private const int Length = 4;
+        private const int Length = 10;
 
         private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
 
@@ -20,25 +20,25 @@ namespace Smart.IO.ByteMapper.Converters
 
         private static readonly byte[] MinusBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("-1".PadLeft(Length, ' ')));
 
-        private readonly ShortTextConverter shortConverter;
+        private readonly Int64TextConverter int64Converter;
 
-        private readonly ShortTextConverter nullableShortConverter;
+        private readonly Int64TextConverter nullableInt64Converter;
 
-        private readonly ShortTextConverter enumConverter;
+        private readonly Int64TextConverter enumConverter;
 
-        private readonly ShortTextConverter nullableEnumConverter;
+        private readonly Int64TextConverter nullableEnumConverter;
 
-        public ShortTextConverterTest()
+        public Int64TextConverterTest()
         {
-            shortConverter = CreateConverter(typeof(short));
-            nullableShortConverter = CreateConverter(typeof(short?));
-            enumConverter = CreateConverter(typeof(ShortEnum));
-            nullableEnumConverter = CreateConverter(typeof(ShortEnum?));
+            int64Converter = CreateConverter(typeof(long));
+            nullableInt64Converter = CreateConverter(typeof(long?));
+            enumConverter = CreateConverter(typeof(LongEnum));
+            nullableEnumConverter = CreateConverter(typeof(LongEnum?));
         }
 
-        private static ShortTextConverter CreateConverter(Type type)
+        private static Int64TextConverter CreateConverter(Type type)
         {
-            return new ShortTextConverter(
+            return new Int64TextConverter(
                 Length,
                 null,
                 Encoding.ASCII,
@@ -51,50 +51,50 @@ namespace Smart.IO.ByteMapper.Converters
         }
 
         //--------------------------------------------------------------------------------
-        // short
+        // long
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToShort()
+        public void ReadToLong()
         {
             // Default
-            Assert.Equal((short)0, shortConverter.Read(EmptyBytes, Offset));
+            Assert.Equal(0L, int64Converter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal((short)1, shortConverter.Read(ValueBytes, Offset));
+            Assert.Equal(1L, int64Converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteShortToBuffer()
+        public void WriteLongToBuffer()
         {
             var buffer = new byte[Length + Offset];
 
             // Value
-            shortConverter.Write(buffer, Offset, (short)1);
+            int64Converter.Write(buffer, Offset, 1L);
             Assert.Equal(ValueBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
-        // short?
+        // long?
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToNullableShort()
+        public void ReadToNullableLong()
         {
             // Null
-            Assert.Null(nullableShortConverter.Read(EmptyBytes, Offset));
+            Assert.Null(nullableInt64Converter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal((short)1, nullableShortConverter.Read(ValueBytes, Offset));
+            Assert.Equal(1L, nullableInt64Converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteNullShortToBuffer()
+        public void WriteNullLongToBuffer()
         {
             var buffer = new byte[Length + Offset];
 
             // Null
-            nullableShortConverter.Write(buffer, Offset, null);
+            nullableInt64Converter.Write(buffer, Offset, null);
             Assert.Equal(EmptyBytes, buffer);
         }
 
@@ -103,29 +103,29 @@ namespace Smart.IO.ByteMapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToShortEnum()
+        public void ReadToLongEnum()
         {
             // Default
-            Assert.Equal(ShortEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
+            Assert.Equal(LongEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal(ShortEnum.One, enumConverter.Read(ValueBytes, Offset));
+            Assert.Equal(LongEnum.One, enumConverter.Read(ValueBytes, Offset));
 
             // Undefined
-            Assert.Equal((ShortEnum)(-1), enumConverter.Read(MinusBytes, Offset));
+            Assert.Equal((LongEnum)(-1L), enumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteShortEnumToBuffer()
+        public void WriteLongEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
 
             // Value
-            enumConverter.Write(buffer, Offset, ShortEnum.One);
+            enumConverter.Write(buffer, Offset, LongEnum.One);
             Assert.Equal(ValueBytes, buffer);
 
             // Undefined
-            enumConverter.Write(buffer, Offset, (ShortEnum)(-1));
+            enumConverter.Write(buffer, Offset, (LongEnum)(-1));
             Assert.Equal(MinusBytes, buffer);
         }
 
@@ -134,20 +134,20 @@ namespace Smart.IO.ByteMapper.Converters
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToNullableShortEnum()
+        public void ReadToNullableLongEnum()
         {
             // Null
             Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
 
             // Value
-            Assert.Equal(ShortEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
+            Assert.Equal(LongEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
 
             // Undefined
-            Assert.Equal((ShortEnum)(-1), nullableEnumConverter.Read(MinusBytes, Offset));
+            Assert.Equal((LongEnum)(-1L), nullableEnumConverter.Read(MinusBytes, Offset));
         }
 
         [Fact]
-        public void WriteNullableShortEnumToBuffer()
+        public void WriteNullableLongEnumToBuffer()
         {
             var buffer = new byte[Length + Offset];
 
