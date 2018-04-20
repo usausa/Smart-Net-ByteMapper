@@ -1,55 +1,43 @@
 ﻿namespace Smart.IO.ByteMapper.Converters
 {
     using System;
-    using System.Globalization;
     using System.Text;
 
     using Smart.IO.ByteMapper.Mock;
 
     using Xunit;
 
-    public class DateTimeTextConverterTest
+    public class DateTimeConverterTest
     {
         private const int Offset = 1;
 
-        private const int Length = 14;
+        private const int Length = 17;
 
-        private const string Format = "yyyyMMddHHmmss";
+        private const string Format = "yyyyMMddHHmmssfff";
 
-        private const string ShortFormat = "yyyyMMdd";
-
-        private static readonly DateTime Value = new DateTime(2000, 12, 31, 12, 34, 56);
+        private static readonly DateTime Value = new DateTime(2000, 12, 31, 12, 34, 56, 789);
 
         private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456"));
+        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456789"));
 
-        private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
+        private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxxxxx"));
 
-        private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx"));
+        private readonly DateTimeConverter decimalConverter;
 
-        private readonly DateTimeTextConverter decimalConverter;
+        private readonly DateTimeConverter nullableDateTimeConverter;
 
-        private readonly DateTimeTextConverter nullableDateTimeConverter;
-
-        private readonly DateTimeTextConverter shortDecimalConverter;
-
-        public DateTimeTextConverterTest()
+        public DateTimeConverterTest()
         {
             decimalConverter = CreateConverter(typeof(DateTime), Format);
             nullableDateTimeConverter = CreateConverter(typeof(DateTime?), Format);
-            shortDecimalConverter = CreateConverter(typeof(DateTime), ShortFormat);
         }
 
-        private static DateTimeTextConverter CreateConverter(Type type, string format)
+        private static DateTimeConverter CreateConverter(Type type, string format)
         {
-            return new DateTimeTextConverter(
-                14,
+            return new DateTimeConverter(
                 format,
-                Encoding.ASCII,
                 0x20,
-                DateTimeStyles.None,
-                DateTimeFormatInfo.InvariantInfo,
                 type);
         }
 
@@ -78,10 +66,6 @@
             // Value
             decimalConverter.Write(buffer, Offset, Value);
             Assert.Equal(ValueBytes, buffer);
-
-            // Short
-            shortDecimalConverter.Write(buffer, Offset, Value);
-            Assert.Equal(ShortBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------

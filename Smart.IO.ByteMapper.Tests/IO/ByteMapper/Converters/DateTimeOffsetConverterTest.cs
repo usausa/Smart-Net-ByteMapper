@@ -1,55 +1,43 @@
 ﻿namespace Smart.IO.ByteMapper.Converters
 {
     using System;
-    using System.Globalization;
     using System.Text;
 
     using Smart.IO.ByteMapper.Mock;
 
     using Xunit;
 
-    public class DateTimeOffsetTextConverterTest
+    public class DateTimeOffsetConverterTest
     {
         private const int Offset = 1;
 
-        private const int Length = 14;
+        private const int Length = 17;
 
-        private const string Format = "yyyyMMddHHmmss";
+        private const string Format = "yyyyMMddHHmmssfff";
 
-        private const string ShortFormat = "yyyyMMdd";
-
-        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56));
+        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56, 789));
 
         private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456"));
+        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456789"));
 
-        private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
+        private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxxxxx"));
 
-        private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx"));
+        private readonly DateTimeOffsetConverter decimalConverter;
 
-        private readonly DateTimeOffsetTextConverter decimalConverter;
+        private readonly DateTimeOffsetConverter nullableDateTimeOffsetConverter;
 
-        private readonly DateTimeOffsetTextConverter nullableDateTimeOffsetConverter;
-
-        private readonly DateTimeOffsetTextConverter shortDecimalConverter;
-
-        public DateTimeOffsetTextConverterTest()
+        public DateTimeOffsetConverterTest()
         {
             decimalConverter = CreateConverter(typeof(DateTimeOffset), Format);
             nullableDateTimeOffsetConverter = CreateConverter(typeof(DateTimeOffset?), Format);
-            shortDecimalConverter = CreateConverter(typeof(DateTimeOffset), ShortFormat);
         }
 
-        private static DateTimeOffsetTextConverter CreateConverter(Type type, string format)
+        private static DateTimeOffsetConverter CreateConverter(Type type, string format)
         {
-            return new DateTimeOffsetTextConverter(
-                14,
+            return new DateTimeOffsetConverter(
                 format,
-                Encoding.ASCII,
                 0x20,
-                DateTimeStyles.None,
-                DateTimeFormatInfo.InvariantInfo,
                 type);
         }
 
@@ -78,10 +66,6 @@
             // Value
             decimalConverter.Write(buffer, Offset, Value);
             Assert.Equal(ValueBytes, buffer);
-
-            // Short
-            shortDecimalConverter.Write(buffer, Offset, Value);
-            Assert.Equal(ShortBytes, buffer);
         }
 
         //--------------------------------------------------------------------------------
