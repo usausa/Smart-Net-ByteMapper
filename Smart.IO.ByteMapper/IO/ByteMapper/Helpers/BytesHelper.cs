@@ -431,6 +431,7 @@
                     }
                     else if (scale < decimalScale)
                     {
+                        // TODO 四捨五入
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
@@ -454,14 +455,9 @@
                                 groupingCount++;
                             }
 
-                            if (i == dotPos)
+                            if ((i == dotPos) && (i >= 0))
                             {
                                 *(pBytes + i--) = Dot;
-
-                                if (decimalNum == 0)
-                                {
-                                    *(pBytes + i--) = Num0;
-                                }
                             }
 
                             if (decimalNum <= UInt32.MaxValue)
@@ -490,11 +486,11 @@
                             groupingCount++;
                         }
 
-                        if (i == dotPos)
+                        if ((i == dotPos) && (i >= 0))
                         {
                             *(pBytes + i--) = Dot;
 
-                            if (decimalNum2 == 0)
+                            if ((decimalNum2 == 0) && (i >= 0))
                             {
                                 *(pBytes + i--) = Num0;
                             }
@@ -559,6 +555,7 @@
                     }
                     else if (scale < decimalScale)
                     {
+                        // TODO 四捨五入
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
@@ -585,11 +582,6 @@
                             if (i == dotPos)
                             {
                                 *(pBytes + i++) = Dot;
-
-                                if (decimalNum == 0)
-                                {
-                                    *(pBytes + i++) = Num0;
-                                }
                             }
 
                             if (decimalNum <= UInt32.MaxValue)
@@ -618,11 +610,11 @@
                             groupingCount++;
                         }
 
-                        if (i == dotPos)
+                        if ((i == dotPos) && (i < length))
                         {
                             *(pBytes + i++) = Dot;
 
-                            if (decimalNum2 == 0)
+                            if ((decimalNum2 == 0) && (i < length))
                             {
                                 *(pBytes + i++) = Num0;
                             }
