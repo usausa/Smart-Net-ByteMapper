@@ -124,14 +124,44 @@
         [InlineData("0.4294967295", " 0.4294967295", 10, -1, Padding.Left, false)]
         [InlineData("0.4294967295", "00.4294967295", 10, -1, Padding.Left, true)]
         [InlineData("0.4294967295", "0.4294967295 ", 10, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("0.4294967295", ".4294967295", 10, -1, Padding.Left, false)]
+        [InlineData("0.4294967295", ".4294967295", 10, -1, Padding.Right, false)]
+        [InlineData("0.4294967295", "4294967295", 10, -1, Padding.Left, false)]
+        [InlineData("0.4294967295", "4294967295", 10, -1, Padding.Right, false)]
         // 32bit + 1 scale
         [InlineData("0.4294967296", " 0.4294967296", 10, -1, Padding.Left, false)]
         [InlineData("0.4294967296", "00.4294967296", 10, -1, Padding.Left, true)]
         [InlineData("0.4294967296", "0.4294967296 ", 10, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("0.4294967296", ".4294967296", 10, -1, Padding.Left, false)]
+        [InlineData("0.4294967296", ".4294967296", 10, -1, Padding.Right, false)]
+        [InlineData("0.4294967296", "4294967296", 10, -1, Padding.Left, false)]
+        [InlineData("0.4294967296", "4294967296", 10, -1, Padding.Right, false)]
         // 64bit
         [InlineData("18446744073709551615", "  18446744073709551615", 0, -1, Padding.Left, false)]
         [InlineData("18446744073709551615", "0018446744073709551615", 0, -1, Padding.Left, true)]
         [InlineData("18446744073709551615", "18446744073709551615  ", 0, -1, Padding.Right, false)]
+        // 64bit scale
+        [InlineData("0.18446744073709551615", " 0.18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "00.18446744073709551615", 20, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551615", "0.18446744073709551615 ", 20, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Right, false)]
+        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("1.23", "1.23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", ".23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", "23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", "1.23", 2, -1, Padding.Right, false)]
+        [InlineData("1.23", ".23", 2, -1, Padding.Right, false)]
+        [InlineData("1.23", "23", 2, -1, Padding.Right, false)]
+        // Scale shortage
+        [InlineData("0.123", " 0.12300", 5, -1, Padding.Left, false)]
+        [InlineData("0.123", "00.12300", 5, -1, Padding.Left, true)]
+        [InlineData("0.123", "0.12300 ", 5, -1, Padding.Right, false)]
         public void FormatDecimal(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
         {
             var value = Decimal.Parse(input);
@@ -141,18 +171,10 @@
             Assert.Equal(expected, buffer);
         }
 
-        //    // 64bit
-        //    expected = Encoding.ASCII.GetBytes(" 0.18446744073709551615");
-        //    BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, 0.18446744073709551615m, 20, -1, Padding.Left, false);
-
-        //    // TODO 小数点不足
-        //    // TODO 小数点多い、四捨五入
-
         //    // TODO マイナスの以下パター
         //    //            Assert.Equal("-0,123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
         //    //            Assert.Equal("0,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
         //    //            Assert.Equal("-,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    // TODO .位置が微妙な場合 32と64でちょうど切れる位置！
+        //    // TODO 3 小数点多い、四捨五入
     }
 }

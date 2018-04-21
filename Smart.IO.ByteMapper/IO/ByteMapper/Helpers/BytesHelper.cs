@@ -442,20 +442,17 @@
                             if (groupingCount == groupingSize)
                             {
                                 *(pBytes + i--) = Comma;
-
                                 groupingCount = 0;
                             }
 
                             *(pBytes + i--) = (byte)(Num0 + (decimalNum % 10));
-
                             decimalNum /= 10;
 
                             if (i < dotPos)
                             {
                                 groupingCount++;
                             }
-
-                            if ((i == dotPos) && (i >= 0))
+                            else if ((i == dotPos) && (i >= 0))
                             {
                                 *(pBytes + i--) = Dot;
                             }
@@ -473,20 +470,17 @@
                         if (groupingCount == groupingSize)
                         {
                             *(pBytes + i--) = Comma;
-
                             groupingCount = 0;
                         }
 
                         *(pBytes + i--) = (byte)(Num0 + (decimalNum2 % 10));
-
                         decimalNum2 /= 10;
 
                         if (i < dotPos)
                         {
                             groupingCount++;
                         }
-
-                        if ((i == dotPos) && (i >= 0))
+                        else if ((i == dotPos) && (i >= 0))
                         {
                             *(pBytes + i--) = Dot;
 
@@ -510,7 +504,6 @@
                             if (groupingCount == groupingSize)
                             {
                                 *(pBytes + i--) = Comma;
-
                                 groupingCount = 0;
                             }
 
@@ -566,20 +559,17 @@
                             if (groupingCount == groupingSize)
                             {
                                 *(pBytes + i++) = Comma;
-
                                 groupingCount = 0;
                             }
 
                             *(pBytes + i++) = (byte)(Num0 + (decimalNum % 10));
-
                             decimalNum /= 10;
 
                             if (i > dotPos)
                             {
                                 groupingCount++;
                             }
-
-                            if (i == dotPos)
+                            else if ((i == dotPos) && (i < length))
                             {
                                 *(pBytes + i++) = Dot;
                             }
@@ -597,20 +587,17 @@
                         if (groupingCount == groupingSize)
                         {
                             *(pBytes + i++) = Comma;
-
                             groupingCount = 0;
                         }
 
                         *(pBytes + i++) = (byte)(Num0 + (decimalNum2 % 10));
-
                         decimalNum2 /= 10;
 
                         if (i > dotPos)
                         {
                             groupingCount++;
                         }
-
-                        if ((i == dotPos) && (i < length))
+                        else if ((i == dotPos) && (i < length))
                         {
                             *(pBytes + i++) = Dot;
 
