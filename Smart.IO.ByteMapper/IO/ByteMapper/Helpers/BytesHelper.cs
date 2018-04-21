@@ -431,7 +431,6 @@
                     }
                     else if (scale < decimalScale)
                     {
-                        // TODO 四捨五入
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
@@ -560,7 +559,6 @@
                     }
                     else if (scale < decimalScale)
                     {
-                        // TODO 四捨五入
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
@@ -662,7 +660,7 @@
                 }
 
                 var pow = 1U;
-                var under = 0UL;
+                var under = exponent == 1 ? value % 10 : 0UL;
                 for (var i = 0; i < exponent; i++)
                 {
                     pow *= 10;
@@ -684,7 +682,7 @@
                 }
 
                 var pow = 1UL;
-                var under = 0UL;
+                var under = exponent == 1 ? value % 10 : 0UL;
                 for (var i = 0; i < exponent; i++)
                 {
                     pow *= 10;

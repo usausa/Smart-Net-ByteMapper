@@ -148,6 +148,10 @@
         [InlineData("0.4294967295", ".4294967295", 10, -1, Padding.Right, false)]
         [InlineData("0.4294967295", "4294967295", 10, -1, Padding.Left, false)]
         [InlineData("0.4294967295", "4294967295", 10, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("0.4294967295", " 0.429496730", 9, -1, Padding.Left, false)]
+        [InlineData("0.4294967295", "00.429496730", 9, -1, Padding.Left, true)]
+        [InlineData("0.4294967295", "0.429496730 ", 9, -1, Padding.Right, false)]
         // 32bit + 1 scale
         [InlineData("0.4294967296", " 0.4294967296", 10, -1, Padding.Left, false)]
         [InlineData("0.4294967296", "00.4294967296", 10, -1, Padding.Left, true)]
@@ -157,6 +161,10 @@
         [InlineData("0.4294967296", ".4294967296", 10, -1, Padding.Right, false)]
         [InlineData("0.4294967296", "4294967296", 10, -1, Padding.Left, false)]
         [InlineData("0.4294967296", "4294967296", 10, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("0.4294967296", " 0.429496730", 9, -1, Padding.Left, false)]
+        [InlineData("0.4294967296", "00.429496730", 9, -1, Padding.Left, true)]
+        [InlineData("0.4294967296", "0.429496730 ", 9, -1, Padding.Right, false)]
         // 64bit
         [InlineData("18446744073709551615", "  18446744073709551615", 0, -1, Padding.Left, false)]
         [InlineData("18446744073709551615", "0018446744073709551615", 0, -1, Padding.Left, true)]
@@ -170,6 +178,10 @@
         [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Right, false)]
         [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Left, false)]
         [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("0.18446744073709551615", " 0.1844674407370955162", 19, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "00.1844674407370955162", 19, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551615", "0.1844674407370955162 ", 19, -1, Padding.Right, false)]
         // Buffer short
         [InlineData("1.23", "1.23", 2, -1, Padding.Left, false)]
         [InlineData("1.23", ".23", 2, -1, Padding.Left, false)]
@@ -183,6 +195,15 @@
         [InlineData("-1.23", "-1.23", 2, -1, Padding.Right, false)]
         [InlineData("-1.23", "1.23", 2, -1, Padding.Right, false)]
         [InlineData("-1.23", ".23", 2, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("1.23456", "1.2346", 4, -1, Padding.Left, false)]
+        [InlineData("1.23456", "1.235", 3, -1, Padding.Left, false)]
+        [InlineData("1.23456", "1.23", 2, -1, Padding.Left, false)]
+        [InlineData("1.000000001", "1", 0, -1, Padding.Left, false)]
+        [InlineData("0.4294967295", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.4294967296", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.5000000001", "1", 0, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "0", 0, -1, Padding.Left, false)]
         // Scale shortage
         [InlineData("0.123", " 0.12300", 5, -1, Padding.Left, false)]
         [InlineData("0.123", "00.12300", 5, -1, Padding.Left, true)]
@@ -238,7 +259,5 @@
             BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
             Assert.Equal(expected, buffer);
         }
-
-        //    // TODO 3 小数点多い、四捨五入
     }
 }
