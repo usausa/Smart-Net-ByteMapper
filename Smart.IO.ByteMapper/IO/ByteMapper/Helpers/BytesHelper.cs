@@ -651,34 +651,51 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void FixDecimalScale(ref ulong value, int diff)
+        private static void FixDecimalScale(ref ulong value, int exponent)
         {
-            if ((value <= UInt32.MaxValue) && (diff <= 9))
+            if (value <= UInt32.MaxValue)
             {
-                var pow = 10U;
-                for (var i = 0; i < diff - 1; i++)
+                if (exponent >= 10)
+                {
+                    value = 0UL;
+                    return;
+                }
+
+                var pow = 1U;
+                var under = 0UL;
+                for (var i = 0; i < exponent; i++)
                 {
                     pow *= 10;
+                    if (i == exponent - 2)
+                    {
+                        under = ((uint)value / pow) % 10;
+                    }
                 }
 
                 value = (uint)value / pow;
-            }
-            else if (diff <= 19)
-            {
-                var pow = 10UL;
-                for (var i = 0; i < diff - 1; i++)
-                {
-                    pow *= 10;
-                }
-
-                value = value / pow;
+                value += under > 4 ? 1UL : 0;
             }
             else
             {
-                for (var i = 0; i < diff; i++)
+                if (exponent >= 20)
                 {
-                    value /= 10;
+                    value = 0UL;
+                    return;
                 }
+
+                var pow = 1UL;
+                var under = 0UL;
+                for (var i = 0; i < exponent; i++)
+                {
+                    pow *= 10;
+                    if (i == exponent - 2)
+                    {
+                        under = (value / pow) % 10;
+                    }
+                }
+
+                value = value / pow;
+                value += under > 4 ? 1UL : 0;
             }
         }
 
