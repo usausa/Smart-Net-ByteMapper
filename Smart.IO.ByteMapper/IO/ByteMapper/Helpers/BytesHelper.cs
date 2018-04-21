@@ -5,7 +5,6 @@
 
     public static class BytesHelper
     {
-        private const byte Space = (byte)' ';
         private const byte Minus = (byte)'-';
         private const byte Dot = (byte)'.';
         private const byte Comma = (byte)',';
@@ -157,30 +156,30 @@
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseInt16(byte[] bytes, int index, int length, out short value)
+        public static bool TryParseInt16(byte[] bytes, int index, int length, byte filler, out short value)
         {
-            var ret = TryParseInt64(bytes, index, length, out var longValue);
+            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
             value = (short)longValue;
             return ret;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseInt32(byte[] bytes, int index, int length, out int value)
+        public static bool TryParseInt32(byte[] bytes, int index, int length, byte filler, out int value)
         {
-            var ret = TryParseInt64(bytes, index, length, out var longValue);
+            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
             value = (int)longValue;
             return ret;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, out long value)
+        public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, byte filler, out long value)
         {
             fixed (byte* pBytes = &bytes[index])
             {
                 value = 0L;
 
                 var i = 0;
-                while ((i < length) && (*(pBytes + i) == Space))
+                while ((i < length) && (*(pBytes + i) == filler))
                 {
                     i++;
                 }
@@ -203,7 +202,7 @@
                     }
                     else
                     {
-                        while ((i < length) && (*(pBytes + i) == Space))
+                        while ((i < length) && (*(pBytes + i) == filler))
                         {
                             i++;
                         }
@@ -218,18 +217,18 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill)
+        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
         {
-            FormatInt64(bytes, index, length, value, padding, zerofill);
+            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill)
+        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
         {
-            FormatInt64(bytes, index, length, value, padding, zerofill);
+            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
         }
 
-        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill)
+        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
         {
             fixed (byte* pBytes = &bytes[index])
             {
@@ -281,7 +280,7 @@
 
                         while (i >= 0)
                         {
-                            *(pBytes + i--) = Space;
+                            *(pBytes + i--) = filler;
                         }
                     }
                 }
@@ -321,7 +320,7 @@
 
                     while (i < length)
                     {
-                        *(pBytes + i++) = Space;
+                        *(pBytes + i++) = filler;
                     }
                 }
             }
@@ -333,17 +332,17 @@
 
         public static bool IsDecimalLimited64Applicable(int length, byte scale, int groupSize)
         {
-            return length - (scale > 0 ? 1 : 0) - (groupSize > 0 ? (length - scale - 1) / groupSize : 0) <= 19;
+            return length <= 19 + (scale > 0 ? 1 : 0) + (groupSize > 0 ? (length - scale - 1) / groupSize : 0);
         }
 
-        public static unsafe bool TryParseDecimalLimited64(byte[] bytes, int index, int length, out decimal value)
+        public static unsafe bool TryParseDecimalLimited64(byte[] bytes, int index, int length, byte filler, out decimal value)
         {
             fixed (byte* pBytes = &bytes[index])
             {
                 value = 0m;
 
                 var i = 0;
-                while ((i < length) && (*(pBytes + i) == Space))
+                while ((i < length) && (*(pBytes + i) == filler))
                 {
                     i++;
                 }
@@ -373,7 +372,7 @@
                     }
                     else if (*(pBytes + i) != Comma)
                     {
-                        while ((i < length) && (*(pBytes + i) == Space))
+                        while ((i < length) && (*(pBytes + i) == filler))
                         {
                             i++;
                         }
@@ -407,7 +406,8 @@
             byte scale,
             int groupingSize,
             Padding padding,
-            bool zerofill)
+            bool zerofill,
+            byte filler)
         {
             var bits = Decimal.GetBits(value);
             var negative = (bits[3] & NegativeBitFlag) != 0;
@@ -541,7 +541,7 @@
 
                         while (i >= 0)
                         {
-                            *(pBytes + i--) = Space;
+                            *(pBytes + i--) = filler;
                         }
                     }
                 }
@@ -644,7 +644,7 @@
 
                     while (i < length)
                     {
-                        *(pBytes + i++) = Space;
+                        *(pBytes + i++) = filler;
                     }
                 }
             }
