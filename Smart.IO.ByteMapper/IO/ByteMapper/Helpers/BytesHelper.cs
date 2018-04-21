@@ -443,6 +443,11 @@
                             {
                                 *(pBytes + i--) = Comma;
                                 groupingCount = 0;
+
+                                if (i < 0)
+                                {
+                                    break;
+                                }
                             }
 
                             *(pBytes + i--) = (byte)(Num0 + (decimalNum % 10));
@@ -471,6 +476,11 @@
                         {
                             *(pBytes + i--) = Comma;
                             groupingCount = 0;
+
+                            if (i < 0)
+                            {
+                                break;
+                            }
                         }
 
                         *(pBytes + i--) = (byte)(Num0 + (decimalNum2 % 10));
@@ -505,12 +515,14 @@
                             {
                                 *(pBytes + i--) = Comma;
                                 groupingCount = 0;
+
+                                if (i < end)
+                                {
+                                    break;
+                                }
                             }
 
-                            if (i >= end)
-                            {
-                                *(pBytes + i--) = Num0;
-                            }
+                            *(pBytes + i--) = Num0;
 
                             groupingCount++;
                         }
@@ -560,6 +572,11 @@
                             {
                                 *(pBytes + i++) = Comma;
                                 groupingCount = 0;
+
+                                if (i >= length)
+                                {
+                                    break;
+                                }
                             }
 
                             *(pBytes + i++) = (byte)(Num0 + (decimalNum % 10));
@@ -588,6 +605,11 @@
                         {
                             *(pBytes + i++) = Comma;
                             groupingCount = 0;
+
+                            if (i >= length)
+                            {
+                                break;
+                            }
                         }
 
                         *(pBytes + i++) = (byte)(Num0 + (decimalNum2 % 10));
