@@ -273,6 +273,22 @@
             return expression;
         }
 
+        // Decimal
+
+        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapDecimalExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length, byte scale)
+        {
+            var expression = new MapDecimalExpression(length, scale);
+            syntax.Map(expression);
+            return expression;
+        }
+
         // DateTime
 
         public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)

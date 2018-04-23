@@ -332,7 +332,7 @@
 
         public static bool IsDecimalLimited64Applicable(int length, byte scale, int groupSize)
         {
-            return length <= 19 + (scale > 0 ? 1 : 0) + (groupSize > 0 ? (length - scale - 1) / groupSize : 0);
+            return length <= 18 + (scale > 0 ? 1 : 0) + (groupSize > 0 ? (18 - scale - 1) / groupSize : 0);
         }
 
         public static unsafe bool TryParseDecimalLimited64(byte[] bytes, int index, int length, byte filler, out decimal value)

@@ -35,7 +35,7 @@
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
-            defaultValue = type;
+            defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)

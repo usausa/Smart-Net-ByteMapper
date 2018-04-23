@@ -9,23 +9,25 @@
     public class BytesHelperDecimalTest
     {
         [Theory]
-        [InlineData("9.999999999999999999", true)]
-        [InlineData("1.0000000000000000000", false)]
-        [InlineData("999999999999999999.9", true)]
-        [InlineData("1000000000000000000.0", false)]
-        [InlineData("9999999999999999999", true)]
-        [InlineData("10000000000000000000", false)]
-        [InlineData("9,999,999,999,999,999,999", true)]
-        [InlineData("10,000,000,000,000,000,000", true)]
-        [InlineData("999,999,999,999,999,999.9", true)]
-        [InlineData("1,000,000,000,000,000,000.0", true)]
-        [InlineData("99,999,999,999,999,999.99", true)]
-        [InlineData("100,000,000,000,000,000.00", true)]
+        [InlineData("9.99999999999999999", true)]
+        [InlineData("1.000000000000000000", false)]
+        [InlineData("99999999999999999.9", true)]
+        [InlineData("100000000000000000.0", false)]
+        [InlineData("999999999999999999", true)]
+        [InlineData("1000000000000000000", false)]
+        [InlineData("999,999,999,999,999,999", true)]
+        [InlineData("1,000,000,000,000,000,000", false)]
+        [InlineData("99,999,999,999,999,999.9", true)]
+        [InlineData("100,000,000,000,000,000,000.0", false)]
+        [InlineData("9,999,999,999,999,999.99", true)]
+        [InlineData("10,000,000,000,000,000,000.00", false)]
+        [InlineData("999,999,999,999,999.999", true)]
+        [InlineData("1,000,000,000,000,000,000.000", false)]
         public void IsDecimalLimited64Applicable(string input, bool expected)
         {
             var length = input.Length;
             var dotIndex = input.LastIndexOf('.');
-            var scale = dotIndex >= 0 ? length - dotIndex : 0;
+            var scale = dotIndex >= 0 ? length - dotIndex - 1 : 0;
             var commaIndex = input.LastIndexOf(',');
             var groupSize = commaIndex >= 0 ? (dotIndex >= 0 ? dotIndex : length) - commaIndex - 1 : -1;
             Assert.Equal(expected, BytesHelper.IsDecimalLimited64Applicable(length, (byte)scale, groupSize));

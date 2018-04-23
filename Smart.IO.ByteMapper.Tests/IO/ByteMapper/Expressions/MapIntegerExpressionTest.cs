@@ -103,6 +103,35 @@
             Assert.Equal((short)2, obj.NullableShortValue);
             Assert.Equal(-2, obj.PaddingRightShortValue);
             Assert.Equal((short)2, obj.ZeroFillShortValue);
+
+            mapper.FromByte(
+                Encoding.ASCII.GetBytes(
+                    "    " +
+                    "____" +
+                    "    " +
+                    "0000" +
+                    "      " +
+                    "______" +
+                    "      " +
+                    "000000" +
+                    "  " +
+                    "__" +
+                    "  " +
+                    "00"),
+                obj);
+
+            Assert.Equal(0, obj.IntValue);
+            Assert.Null(obj.NullableIntValue);
+            Assert.Equal(0, obj.PaddingRightIntValue);
+            Assert.Equal(0, obj.ZeroFillIntValue);
+            Assert.Equal(0L, obj.LongValue);
+            Assert.Null(obj.NullableLongValue);
+            Assert.Equal(0L, obj.PaddingRightLongValue);
+            Assert.Equal(0L, obj.ZeroFillLongValue);
+            Assert.Equal((short)0, obj.ShortValue);
+            Assert.Null(obj.NullableShortValue);
+            Assert.Equal(0, obj.PaddingRightShortValue);
+            Assert.Equal((short)0, obj.ZeroFillShortValue);
         }
 
         //--------------------------------------------------------------------------------
