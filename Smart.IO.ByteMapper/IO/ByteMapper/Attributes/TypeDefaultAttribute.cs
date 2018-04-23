@@ -139,6 +139,19 @@
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeDateTimeKindAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => Parameter.DateTimeKind;
+
+        public object Value { get; }
+
+        public TypeDateTimeKindAttribute(DateTimeKind value)
+        {
+            Value = value;
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class TypeEndianAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key => Parameter.Endian;

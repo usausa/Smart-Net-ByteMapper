@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper
 {
+    using System;
     using System.Text;
 
     public static class MapperFactoryConfigExtensions
@@ -57,6 +58,11 @@
         public static MapperFactoryConfig DefaultNumberFiller(this MapperFactoryConfig config, byte value)
         {
             return config.AddParameter(Parameter.NumberFiller, value);
+        }
+
+        public static MapperFactoryConfig DefaultDateTimeKind(this MapperFactoryConfig config, DateTimeKind value)
+        {
+            return config.AddParameter(Parameter.DateTimeKind, value);
         }
 
         public static MapperFactoryConfig DefaultEndian(this MapperFactoryConfig config, Endian value)

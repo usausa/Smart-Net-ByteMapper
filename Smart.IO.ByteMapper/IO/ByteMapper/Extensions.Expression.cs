@@ -109,6 +109,11 @@
             return syntax.TypeDefault(Parameter.NumberFiller, value);
         }
 
+        public static ITypeConfigSyntax<T> TypeDateTimeKind<T>(this ITypeConfigSyntax<T> syntax, DateTimeKind value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeKind, value);
+        }
+
         public static ITypeConfigSyntax<T> TypeEndian<T>(this ITypeConfigSyntax<T> syntax, Endian value)
         {
             return syntax.TypeDefault(Parameter.Endian, value);
@@ -294,6 +299,13 @@
         public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)
         {
             var expression = new MapDateTimeExpression(format);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format, DateTimeKind kind)
+        {
+            var expression = new MapDateTimeExpression(format, kind);
             syntax.Map(expression);
             return expression;
         }

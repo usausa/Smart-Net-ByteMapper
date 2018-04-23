@@ -22,6 +22,8 @@
 
         public const string NumberFiller = nameof(Parameter) + "." + nameof(NumberFiller);
 
+        public const string DateTimeKind = nameof(Parameter) + "." + nameof(DateTimeKind);
+
         public const string Endian = nameof(Parameter) + "." + nameof(Endian);
 
         public const string TrueValue = nameof(Parameter) + "." + nameof(TrueValue);

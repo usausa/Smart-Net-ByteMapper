@@ -23,6 +23,17 @@
             builder.Format = format;
         }
 
+        public MapDateTimeExpression(string format, DateTimeKind kind)
+        {
+            if (String.IsNullOrEmpty(format))
+            {
+                throw new ArgumentException("Invalid format", nameof(format));
+            }
+
+            builder.Format = format;
+            builder.DateTimeKind = kind;
+        }
+
         //--------------------------------------------------------------------------------
         // Syntax
         //--------------------------------------------------------------------------------

@@ -701,7 +701,7 @@
         // DateTime
         //--------------------------------------------------------------------------------
 
-        public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, out DateTime value)
+        public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, DateTimeKind kind, out DateTime value)
         {
             fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
@@ -766,8 +766,8 @@
                 try
                 {
                     value = milisecond == 0
-                        ? new DateTime(year, month, day, hour, minute, second)
-                        : new DateTime(year, month, day, hour, minute, second, milisecond);
+                        ? new DateTime(year, month, day, hour, minute, second, kind)
+                        : new DateTime(year, month, day, hour, minute, second, milisecond, kind);
                     return true;
                 }
                 catch (ArgumentOutOfRangeException)

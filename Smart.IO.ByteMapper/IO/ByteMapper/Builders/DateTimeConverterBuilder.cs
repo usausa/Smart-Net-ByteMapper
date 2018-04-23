@@ -8,6 +8,8 @@
     {
         public string Format { get; set; }
 
+        public DateTimeKind? DateTimeKind { get; set; }
+
         public byte? Filler { get; set; }
 
         static DateTimeConverterBuilder()
@@ -22,6 +24,7 @@
         {
             return new DateTimeConverter(
                 Format,
+                DateTimeKind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 type);
         }
@@ -30,6 +33,7 @@
         {
             return new DateTimeOffsetConverter(
                 Format,
+                DateTimeKind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 type);
         }

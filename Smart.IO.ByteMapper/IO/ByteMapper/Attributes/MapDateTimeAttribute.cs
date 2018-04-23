@@ -20,6 +20,13 @@
             builder.Format = format;
         }
 
+        public MapDateTimeAttribute(int offset, string format, DateTimeKind kind)
+            : base(offset)
+        {
+            builder.Format = format;
+            builder.DateTimeKind = kind;
+        }
+
         public override IMapConverterBuilder GetConverterBuilder()
         {
             return builder;

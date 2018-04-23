@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Attributes
 {
+    using System;
     using System.Globalization;
     using System.Text;
 
@@ -73,6 +74,7 @@
         [TypeFiller((byte)'*')]
         [TypeTextFiller((byte)'_')]
         [TypeNumberFiller((byte)'_')]
+        [TypeDateTimeKind(DateTimeKind.Local)]
         [TypeEndian(Endian.Little)]
         [TypeTrueValue((byte)'Y')]
         [TypeFalseValue((byte)'N')]

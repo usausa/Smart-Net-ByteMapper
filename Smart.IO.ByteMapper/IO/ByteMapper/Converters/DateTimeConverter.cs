@@ -8,20 +8,23 @@
     {
         private readonly string format;
 
+        private readonly DateTimeKind kind;
+
         private readonly byte filler;
 
         private readonly object defaultValue;
 
-        public DateTimeConverter(string format, byte filler, Type type)
+        public DateTimeConverter(string format, DateTimeKind kind, byte filler, Type type)
         {
             this.format = format;
+            this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.TryParseDateTime(buffer, index, format, out var result)
+            return BytesHelper.TryParseDateTime(buffer, index, format, kind, out var result)
                 ? result
                 : defaultValue;
         }
@@ -43,20 +46,23 @@
     {
         private readonly string format;
 
+        private readonly DateTimeKind kind;
+
         private readonly byte filler;
 
         private readonly object defaultValue;
 
-        public DateTimeOffsetConverter(string format, byte filler, Type type)
+        public DateTimeOffsetConverter(string format, DateTimeKind kind, byte filler, Type type)
         {
             this.format = format;
+            this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.TryParseDateTime(buffer, index, format, out var result)
+            return BytesHelper.TryParseDateTime(buffer, index, format, kind, out var result)
                 ? (DateTimeOffset)result
                 : defaultValue;
         }

@@ -32,6 +32,7 @@
             this.DefaultUseGrouping(false);
             this.DefaultTextFiller(0x20);
             this.DefaultNumberFiller(0x20);
+            this.DefaultDateTimeKind(DateTimeKind.Local);
             this.DefaultEndian(Endian.Big);
             this.DefaultTrueValue(0x31);
             this.DefaultFalseValue(0x30);
