@@ -37,7 +37,7 @@
         {
             return new DateTimeOffsetConverter(
                 format,
-                DateTimeKind.Local,
+                DateTimeKind.Unspecified,
                 0x20,
                 type);
         }

@@ -20,14 +20,14 @@
                 .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultTextFiller(0x20)
-                .DefaultDateTimeKind(DateTimeKind.Local)
+                .DefaultDateTimeKind(DateTimeKind.Unspecified)
                 .Also(config =>
                 {
                     config
                         .CreateMapByExpression<DateTimeExpressionObject>(60)
                         .ForMember(
                             x => x.DateTimeValue,
-                            m => m.DateTime("yyyyMMdd", DateTimeKind.Local))
+                            m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
                         .ForMember(
                             x => x.NullableDateTimeValue,
                             m => m.DateTime("yyyyMMdd"))
@@ -36,7 +36,7 @@
                             m => m.DateTime("yyyyMMddHHmmss").Filler((byte)'_'))
                         .ForMember(
                             x => x.DateTimeOffsetValue,
-                            m => m.DateTime("yyyyMMdd", DateTimeKind.Local))
+                            m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
                         .ForMember(
                             x => x.NullableDateTimeOffsetValue,
                             m => m.DateTime("yyyyMMdd"))
@@ -96,7 +96,7 @@
         public void CoverageFix()
         {
             Assert.Throws<ArgumentException>(() => new MapDateTimeExpression(null));
-            Assert.Throws<ArgumentException>(() => new MapDateTimeExpression(null, DateTimeKind.Local));
+            Assert.Throws<ArgumentException>(() => new MapDateTimeExpression(null, DateTimeKind.Unspecified));
         }
 
         //--------------------------------------------------------------------------------

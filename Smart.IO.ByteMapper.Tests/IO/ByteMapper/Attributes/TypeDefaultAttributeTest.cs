@@ -74,7 +74,7 @@
         [TypeFiller((byte)'*')]
         [TypeTextFiller((byte)'_')]
         [TypeNumberFiller((byte)'_')]
-        [TypeDateTimeKind(DateTimeKind.Local)]
+        [TypeDateTimeKind(DateTimeKind.Unspecified)]
         [TypeEndian(Endian.Little)]
         [TypeTrueValue((byte)'Y')]
         [TypeFalseValue((byte)'N')]

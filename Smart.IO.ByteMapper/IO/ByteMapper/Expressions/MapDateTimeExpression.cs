@@ -31,7 +31,7 @@
             }
 
             builder.Format = format;
-            builder.DateTimeKind = kind;
+            builder.Kind = kind;
         }
 
         //--------------------------------------------------------------------------------

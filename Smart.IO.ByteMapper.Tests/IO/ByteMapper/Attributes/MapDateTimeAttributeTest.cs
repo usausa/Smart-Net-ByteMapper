@@ -17,7 +17,7 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultTextFiller(0x20)
-                .DefaultDateTimeKind(DateTimeKind.Local)
+                .DefaultDateTimeKind(DateTimeKind.Unspecified)
                 .CreateMapByAttribute<DateTimeAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<DateTimeAttributeObject>();
@@ -84,7 +84,7 @@
         [Map(60)]
         internal class DateTimeAttributeObject
         {
-            [MapDateTime(0, "yyyyMMdd", DateTimeKind.Local)]
+            [MapDateTime(0, "yyyyMMdd", DateTimeKind.Unspecified)]
             public DateTime DateTimeValue { get; set; }
 
             [MapDateTime(8, "yyyyMMdd")]
@@ -93,7 +93,7 @@
             [MapDateTime(16, "yyyyMMddHHmmss", Filler = (byte)'_')]
             public DateTime? CustomDateTimeValue { get; set; }
 
-            [MapDateTime(30, "yyyyMMdd", DateTimeKind.Local)]
+            [MapDateTime(30, "yyyyMMdd", DateTimeKind.Unspecified)]
             public DateTimeOffset DateTimeOffsetValue { get; set; }
 
             [MapDateTime(38, "yyyyMMdd")]

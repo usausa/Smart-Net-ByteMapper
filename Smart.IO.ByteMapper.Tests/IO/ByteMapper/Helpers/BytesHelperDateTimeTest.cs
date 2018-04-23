@@ -12,47 +12,47 @@
         {
             // Default
             var buffer = Encoding.ASCII.GetBytes("21991231235959999");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Local, out var value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out var value));
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 999), value);
 
             // Date only
             buffer = Encoding.ASCII.GetBytes("21991231");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMdd", DateTimeKind.Local, out value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMdd", DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(2199, 12, 31), value);
 
             // Short ms
             buffer = Encoding.ASCII.GetBytes("219912312359591");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssf", DateTimeKind.Local, out value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssf", DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 100), value);
 
             // Long ms
             buffer = Encoding.ASCII.GetBytes("219912312359591  ");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Local, out value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 100), value);
 
             // Space
             buffer = Encoding.ASCII.GetBytes("   1 1 1 0 0 0000");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Local, out value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(1, 1, 1, 0, 0, 0, 0), value);
 
             // Format & trim
             buffer = Encoding.ASCII.GetBytes(" 2199/12/31 23:59:59.123 ");
-            Assert.True(BytesHelper.TryParseDateTime(buffer, 1, "yyyy/MM/dd HH:mm:ss.fff", DateTimeKind.Local, out value));
+            Assert.True(BytesHelper.TryParseDateTime(buffer, 1, "yyyy/MM/dd HH:mm:ss.fff", DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 123), value);
 
             // Failed
 
             // Empty
             buffer = Encoding.ASCII.GetBytes("        ");
-            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHH", DateTimeKind.Local, out value));
+            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMddHH", DateTimeKind.Unspecified, out value));
 
             // Invalid format
             buffer = Encoding.ASCII.GetBytes("21991231");
-            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "xxxxxxxx", DateTimeKind.Local, out value));
+            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "xxxxxxxx", DateTimeKind.Unspecified, out value));
 
             // Invalid value
             buffer = Encoding.ASCII.GetBytes("20009999");
-            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMdd", DateTimeKind.Local, out value));
+            Assert.False(BytesHelper.TryParseDateTime(buffer, 0, "yyyyMMdd", DateTimeKind.Unspecified, out value));
         }
 
         [Fact]
