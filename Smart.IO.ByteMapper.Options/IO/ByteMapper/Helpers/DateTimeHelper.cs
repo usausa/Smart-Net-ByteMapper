@@ -171,7 +171,7 @@
                 var num = *(pBytes + i) - Num0;
                 if ((num >= 0) && (num < 10))
                 {
-                    value = (value << 3) + (value << 1) + num;
+                    value = (value * 10) + num;
                 }
                 else if (num != -16)
                 {
@@ -193,11 +193,11 @@
             do
             {
                 var num = *(pBytes + i) - Num0;
-                if ((num > 0) && (num < 10) && (index < Miliseconds.Length))
+                if ((num >= 0) && (num < 10) && (index < Miliseconds.Length))
                 {
                     value += Miliseconds[index] * num;
                 }
-                else if ((num != 0) && (num != -16))
+                else if (num != -16)
                 {
                     return -1;
                 }
@@ -272,6 +272,7 @@
                             }
                         }
 
+                        // TODO optimize
                         for (var j = i + append; j >= i; j--)
                         {
                             *(pBytes + j) = (byte)(Num0 + (value % 10));
@@ -282,6 +283,7 @@
                     }
                     else
                     {
+                        // TODO optimize & max3
                         while (true)
                         {
                             var div = value / pow;

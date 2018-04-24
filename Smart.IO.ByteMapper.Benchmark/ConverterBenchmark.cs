@@ -193,8 +193,8 @@
 
             var numberTextDecimal18Builder = new NumberTextConverterBuilder { Length = 18 };
             numberTextDecimal18Converter = numberTextDecimal18Builder.CreateConverter(context, typeof(decimal));
-            numberTextDecimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
-            numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 20, FixedAlignment.Right);
+            numberTextDecimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 19, FixedAlignment.Right);
+            numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 19, FixedAlignment.Right);
 
             // DateTime
             var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8 };
@@ -240,10 +240,10 @@
             decimal8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Decimal.ToString(CultureInfo.InvariantCulture), 10, FixedAlignment.Right);
             decimal8ZeroBuffer = SjisEncoding.GetFixedBytes("0.00", 10, FixedAlignment.Right);
 
-            var decimal18Builder = new DecimalConverterBuilder { Length = 20, Scale = 3 };
+            var decimal18Builder = new DecimalConverterBuilder { Length = 19, Scale = 3 };
             decimal18Converter = decimal18Builder.CreateConverter(context, typeof(decimal));
-            decimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 20, FixedAlignment.Right);
-            decimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 20, FixedAlignment.Right);
+            decimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 19, FixedAlignment.Right);
+            decimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 19, FixedAlignment.Right);
 
             // DateTime
             var dateTime8Builder = new DateTimeConverterBuilder { Format = "yyyyMMdd" };

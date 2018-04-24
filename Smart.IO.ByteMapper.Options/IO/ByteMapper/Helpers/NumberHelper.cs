@@ -61,7 +61,7 @@
                     var num = *(pBytes + i) - Num0;
                     if ((num >= 0) && (num < 10))
                     {
-                        value = (value << 3) + (value << 1) + num;
+                        value = (value * 10) + num;
                         i++;
                     }
                     else
@@ -227,7 +227,7 @@
                     var num = *(pBytes + i) - Num0;
                     if ((num >= 0) && (num < 10))
                     {
-                        midlo = (midlo << 3) + (midlo << 1) + (ulong)num;
+                        midlo = (midlo * 10) + (ulong)num;
                         count++;
                     }
                     else if ((*(pBytes + i) == Dot) && (dotPos == -1))
