@@ -24,7 +24,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.TryParseDateTime(buffer, index, format, kind, out var result)
+            return DateTimeHelper.TryParseDateTime(buffer, index, format, kind, out var result)
                 ? result
                 : defaultValue;
         }
@@ -37,7 +37,7 @@
             }
             else
             {
-                BytesHelper.FormatDateTime(buffer, index, format, (DateTime)value);
+                DateTimeHelper.FormatDateTime(buffer, index, format, (DateTime)value);
             }
         }
     }
@@ -62,7 +62,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.TryParseDateTime(buffer, index, format, kind, out var result)
+            return DateTimeHelper.TryParseDateTime(buffer, index, format, kind, out var result)
                 ? (DateTimeOffset)result
                 : defaultValue;
         }
@@ -75,7 +75,7 @@
             }
             else
             {
-                BytesHelper.FormatDateTime(buffer, index, format, ((DateTimeOffset)value).DateTime);
+                DateTimeHelper.FormatDateTime(buffer, index, format, ((DateTimeOffset)value).DateTime);
             }
         }
     }

@@ -33,7 +33,7 @@
                 BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            return BytesHelper.GetAsciiString(buffer, start, count);
+            return EncodingHelper.GetAsciiString(buffer, start, count);
         }
 
         public void Write(byte[] buffer, int index, object value)
@@ -44,7 +44,7 @@
             }
             else
             {
-                BytesHelper.CopyBytes(BytesHelper.GetAsciiBytes((string)value), buffer, index, length, padding, filler);
+                BytesHelper.CopyBytes(EncodingHelper.GetAsciiBytes((string)value), buffer, index, length, padding, filler);
             }
         }
     }

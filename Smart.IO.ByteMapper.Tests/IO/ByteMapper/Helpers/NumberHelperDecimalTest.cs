@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class BytesHelperDecimalTest
+    public class NumberHelperDecimalTest
     {
         [Theory]
         [InlineData("9.99999999999999999", true)]
@@ -30,7 +30,7 @@
             var scale = dotIndex >= 0 ? length - dotIndex - 1 : 0;
             var commaIndex = input.LastIndexOf(',');
             var groupSize = commaIndex >= 0 ? (dotIndex >= 0 ? dotIndex : length) - commaIndex - 1 : -1;
-            Assert.Equal(expected, BytesHelper.IsDecimalLimited64Applicable(length, (byte)scale, groupSize));
+            Assert.Equal(expected, NumberHelper.IsDecimalLimited64Applicable(length, (byte)scale, groupSize));
         }
 
         [Fact]
@@ -38,74 +38,74 @@
         {
             // Default
             var buffer = Encoding.ASCII.GetBytes("1,234,567,890,123,456.78");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out var value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out var value));
             Assert.Equal(1234567890123456.78m, value);
 
             // Negative
             buffer = Encoding.ASCII.GetBytes("-1,234,567,890,123,456.78");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(-1234567890123456.78m, value);
 
             // Max
             buffer = Encoding.ASCII.GetBytes("999,999,999,999,999,999");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(999999999999999999m, value);
 
             // Max Negative
             buffer = Encoding.ASCII.GetBytes("-999,999,999,999,999,999");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(-999999999999999999m, value);
 
             // Zero
             buffer = Encoding.ASCII.GetBytes("0");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0m, value);
 
             // Zero Negative
             buffer = Encoding.ASCII.GetBytes("-0");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0m, value);
 
             // 32bit
             buffer = Encoding.ASCII.GetBytes(0xFFFFFFFF.ToString(CultureInfo.InvariantCulture));
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0xFFFFFFFF, value);
 
             // 32bit+1
             buffer = Encoding.ASCII.GetBytes(0x100000000.ToString(CultureInfo.InvariantCulture));
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0x100000000, value);
 
             // 64bit
             buffer = Encoding.ASCII.GetBytes(0xFFFFFFFFFFFFFFFF.ToString(CultureInfo.InvariantCulture));
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0xFFFFFFFFFFFFFFFF, value);
 
             // Trim
             buffer = Encoding.ASCII.GetBytes(" 1234567890123456.78 ");
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(1234567890123456.78m, value);
 
             // Failed
 
             // Empty
             buffer = Encoding.ASCII.GetBytes("                  ");
-            Assert.False(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
             // Overflow
             buffer = Encoding.ASCII.GetBytes(((decimal)0xFFFFFFFFFFFFFFFF + 1).ToString(CultureInfo.InvariantCulture));
-            Assert.True(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.NotEqual((decimal)0xFFFFFFFFFFFFFFFF + 1, value);
 
             // Invalid Value
             buffer = Encoding.ASCII.GetBytes("1,234,567,8 90,123,456.78");
-            Assert.False(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
             buffer = Encoding.ASCII.GetBytes("a1,234,567,890,123,456.78");
-            Assert.False(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
             buffer = Encoding.ASCII.GetBytes("1,234,567,890,123,456.78a");
-            Assert.False(BytesHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
         }
 
         [Theory]
@@ -258,7 +258,7 @@
             var value = Decimal.Parse(input);
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
-            BytesHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
+            NumberHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
             Assert.Equal(expected, buffer);
         }
     }

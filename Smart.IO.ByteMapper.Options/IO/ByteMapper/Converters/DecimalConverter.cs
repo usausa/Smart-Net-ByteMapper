@@ -40,7 +40,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return BytesHelper.TryParseDecimalLimited64(buffer, index, length, filler, out var result) ? result : defaultValue;
+            return NumberHelper.TryParseDecimalLimited64(buffer, index, length, filler, out var result) ? result : defaultValue;
         }
 
         public void Write(byte[] buffer, int index, object value)
@@ -51,7 +51,7 @@
             }
             else
             {
-                BytesHelper.FormatDecimalLimited64(buffer, index, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
+                NumberHelper.FormatDecimalLimited64(buffer, index, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
             }
         }
     }

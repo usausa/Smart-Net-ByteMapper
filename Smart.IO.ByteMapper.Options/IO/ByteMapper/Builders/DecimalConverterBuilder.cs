@@ -30,7 +30,7 @@
         private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)
         {
             var groupingSize = UseGrouping ?? context.GetParameter<bool>(OptionsParameter.UseGrouping) ? GroupingSize : 0;
-            if (!BytesHelper.IsDecimalLimited64Applicable(Length, Scale, groupingSize))
+            if (!NumberHelper.IsDecimalLimited64Applicable(Length, Scale, groupingSize))
             {
                 throw new InvalidOperationException($"Parameter is invalid. length=[{Length}], scale=[{Scale}], groupingSize=[{groupingSize}]");
             }

@@ -59,6 +59,37 @@
         private byte[] text20Wide10Buffer;
         private byte[] text20EmptyBuffer;
 
+        private IMapConverter numberTextShort4Converter;
+        private byte[] numberTextShort4ZeroBuffer;
+        private byte[] numberTextShort4MaxBuffer;
+
+        private IMapConverter numberTextInt8Converter;
+        private byte[] numberTextInt8ZeroBuffer;
+        private byte[] numberTextInt8MaxBuffer;
+
+        private IMapConverter numberTextLong18Converter;
+        private byte[] numberTextLong18ZeroBuffer;
+        private byte[] numberTextLong18MaxBuffer;
+
+        private IMapConverter numberTextDecimal8Converter;
+        private byte[] numberTextDecimal8ZeroBuffer;
+        private byte[] numberTextDecimal8MaxBuffer;
+
+        private IMapConverter numberTextDecimal18Converter;
+        private byte[] numberTextDecimal18ZeroBuffer;
+        private byte[] numberTextDecimal18MaxBuffer;
+
+        private IMapConverter dateTimeText8Converter;
+        private byte[] dateTimeText8Buffer;
+
+        private IMapConverter dateTimeText14Converter;
+        private byte[] dateTimeText14Buffer;
+
+        private IMapConverter dateTimeText17Converter;
+        private byte[] dateTimeText17Buffer;
+
+        // Options
+
         private IMapConverter text13Converter;
         private IMapConverter ascii13Converter;
         private byte[] ascii13Buffer;
@@ -91,37 +122,6 @@
 
         private IMapConverter dateTime17Converter;
         private byte[] dateTime17Buffer;
-
-        // Options
-
-        private IMapConverter numberTextShort4Converter;
-        private byte[] numberTextShort4ZeroBuffer;
-        private byte[] numberTextShort4MaxBuffer;
-
-        private IMapConverter numberTextInt8Converter;
-        private byte[] numberTextInt8ZeroBuffer;
-        private byte[] numberTextInt8MaxBuffer;
-
-        private IMapConverter numberTextLong18Converter;
-        private byte[] numberTextLong18ZeroBuffer;
-        private byte[] numberTextLong18MaxBuffer;
-
-        private IMapConverter numberTextDecimal8Converter;
-        private byte[] numberTextDecimal8ZeroBuffer;
-        private byte[] numberTextDecimal8MaxBuffer;
-
-        private IMapConverter numberTextDecimal18Converter;
-        private byte[] numberTextDecimal18ZeroBuffer;
-        private byte[] numberTextDecimal18MaxBuffer;
-
-        private IMapConverter dateTimeText8Converter;
-        private byte[] dateTimeText8Buffer;
-
-        private IMapConverter dateTimeText14Converter;
-        private byte[] dateTimeText14Buffer;
-
-        private IMapConverter dateTimeText17Converter;
-        private byte[] dateTimeText17Buffer;
 
         private static IBuilderContext CreateBuilderContext()
         {
@@ -170,6 +170,47 @@
             text20Wide10Buffer = SjisEncoding.GetFixedBytes(Text20Wide5, 20);
             text20EmptyBuffer = SjisEncoding.GetFixedBytes(Text20Empty, 20);
 
+            // Number
+            var numberTextShort4Builder = new NumberTextConverterBuilder { Length = 4 };
+            numberTextShort4Converter = numberTextShort4Builder.CreateConverter(context, typeof(short));
+            numberTextShort4MaxBuffer = SjisEncoding.GetFixedBytes(Length4Integer.ToString(CultureInfo.InvariantCulture), 4, FixedAlignment.Right);
+            numberTextShort4ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 4, FixedAlignment.Right);
+
+            var numberTextInt8Builder = new NumberTextConverterBuilder { Length = 8 };
+            numberTextInt8Converter = numberTextInt8Builder.CreateConverter(context, typeof(int));
+            numberTextInt8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Integer.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
+            numberTextInt8ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
+
+            var numberTextLong18Builder = new NumberTextConverterBuilder { Length = 18 };
+            numberTextLong18Converter = numberTextLong18Builder.CreateConverter(context, typeof(long));
+            numberTextLong18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Integer.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
+            numberTextLong18ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
+
+            var numberTextDecimal8Builder = new NumberTextConverterBuilder { Length = 8 };
+            numberTextDecimal8Converter = numberTextDecimal8Builder.CreateConverter(context, typeof(decimal));
+            numberTextDecimal8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Decimal.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
+            numberTextDecimal8ZeroBuffer = SjisEncoding.GetFixedBytes("0.00", 10, FixedAlignment.Right);
+
+            var numberTextDecimal18Builder = new NumberTextConverterBuilder { Length = 18 };
+            numberTextDecimal18Converter = numberTextDecimal18Builder.CreateConverter(context, typeof(decimal));
+            numberTextDecimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
+            numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 20, FixedAlignment.Right);
+
+            // DateTime
+            var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8 };
+            dateTimeText8Converter = dateTimeText8Builder.CreateConverter(context, typeof(DateTime));
+            dateTimeText8Buffer = SjisEncoding.GetFixedBytes(DateTime8.ToString("yyyyMMdd"), 8);
+
+            var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14 };
+            dateTimeText14Converter = dateTimeText14Builder.CreateConverter(context, typeof(DateTime));
+            dateTimeText14Buffer = SjisEncoding.GetFixedBytes(DateTime14.ToString("yyyyMMddHHmmss"), 14);
+
+            var dateTimeText17Builder = new DateTimeTextConverterBuilder { Length = 17 };
+            dateTimeText17Converter = dateTimeText17Builder.CreateConverter(context, typeof(DateTime));
+            dateTimeText17Buffer = SjisEncoding.GetFixedBytes(DateTime17.ToString("yyyyMMddHHmmssfff"), 17);
+
+            // Options
+
             // ASCII
             var text13Builder = new TextConverterBuilder { Length = 13, Encoding = Encoding.ASCII };
             text13Converter = text13Builder.CreateConverter(context, typeof(string));
@@ -216,47 +257,6 @@
             var dateTime17Builder = new DateTimeConverterBuilder { Format = "yyyyMMddHHmmssfff" };
             dateTime17Converter = dateTime17Builder.CreateConverter(context, typeof(DateTime));
             dateTime17Buffer = SjisEncoding.GetFixedBytes(DateTime17.ToString("yyyyMMddHHmmssfff"), 17);
-
-            // Options
-
-            // Number
-            var numberTextShort4Builder = new NumberTextConverterBuilder { Length = 4 };
-            numberTextShort4Converter = numberTextShort4Builder.CreateConverter(context, typeof(short));
-            numberTextShort4MaxBuffer = SjisEncoding.GetFixedBytes(Length4Integer.ToString(CultureInfo.InvariantCulture), 4, FixedAlignment.Right);
-            numberTextShort4ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 4, FixedAlignment.Right);
-
-            var numberTextInt8Builder = new NumberTextConverterBuilder { Length = 8 };
-            numberTextInt8Converter = numberTextInt8Builder.CreateConverter(context, typeof(int));
-            numberTextInt8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Integer.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
-            numberTextInt8ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
-
-            var numberTextLong18Builder = new NumberTextConverterBuilder { Length = 18 };
-            numberTextLong18Converter = numberTextLong18Builder.CreateConverter(context, typeof(long));
-            numberTextLong18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Integer.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
-            numberTextLong18ZeroBuffer = SjisEncoding.GetFixedBytes(ZeroInteger.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
-
-            var numberTextDecimal8Builder = new NumberTextConverterBuilder { Length = 8 };
-            numberTextDecimal8Converter = numberTextDecimal8Builder.CreateConverter(context, typeof(decimal));
-            numberTextDecimal8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Decimal.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
-            numberTextDecimal8ZeroBuffer = SjisEncoding.GetFixedBytes("0.00", 10, FixedAlignment.Right);
-
-            var numberTextDecimal18Builder = new NumberTextConverterBuilder { Length = 18 };
-            numberTextDecimal18Converter = numberTextDecimal18Builder.CreateConverter(context, typeof(decimal));
-            numberTextDecimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 18, FixedAlignment.Right);
-            numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 20, FixedAlignment.Right);
-
-            // DateTime
-            var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8 };
-            dateTimeText8Converter = dateTimeText8Builder.CreateConverter(context, typeof(DateTime));
-            dateTimeText8Buffer = SjisEncoding.GetFixedBytes(DateTime8.ToString("yyyyMMdd"), 8);
-
-            var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14 };
-            dateTimeText14Converter = dateTimeText14Builder.CreateConverter(context, typeof(DateTime));
-            dateTimeText14Buffer = SjisEncoding.GetFixedBytes(DateTime14.ToString("yyyyMMddHHmmss"), 14);
-
-            var dateTimeText17Builder = new DateTimeTextConverterBuilder { Length = 17 };
-            dateTimeText17Converter = dateTimeText17Builder.CreateConverter(context, typeof(DateTime));
-            dateTimeText17Buffer = SjisEncoding.GetFixedBytes(DateTime17.ToString("yyyyMMddHHmmssfff"), 17);
         }
 
         //--------------------------------------------------------------------------------
@@ -314,6 +314,92 @@
         {
             text20Converter.Read(text20EmptyBuffer, 0);
         }
+
+        // Number
+
+        [Benchmark]
+        public void ReadNumberTextShort4Zero()
+        {
+            numberTextShort4Converter.Read(numberTextShort4ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextShort4Max()
+        {
+            numberTextShort4Converter.Read(numberTextShort4MaxBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextInt8Zero()
+        {
+            numberTextInt8Converter.Read(numberTextInt8ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextInt8Max()
+        {
+            numberTextInt8Converter.Read(numberTextInt8MaxBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextLong18Zero()
+        {
+            numberTextLong18Converter.Read(numberTextLong18ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextLong18Max()
+        {
+            numberTextLong18Converter.Read(numberTextLong18MaxBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextDecimal8Zero()
+        {
+            numberTextDecimal8Converter.Read(numberTextDecimal8ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextDecimal8Max()
+        {
+            numberTextDecimal8Converter.Read(numberTextDecimal8MaxBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextDecimal18Zero()
+        {
+            numberTextDecimal18Converter.Read(numberTextDecimal18ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextDecimal18Max()
+        {
+            numberTextDecimal18Converter.Read(numberTextDecimal18MaxBuffer, 0);
+        }
+
+        // DateTime
+
+        [Benchmark]
+        public void ReadDateTimeText8()
+        {
+            dateTimeText8Converter.Read(dateTimeText8Buffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadDateTimeText14()
+        {
+            dateTimeText14Converter.Read(dateTimeText14Buffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadDateTimeText17()
+        {
+            dateTimeText17Converter.Read(dateTimeText17Buffer, 0);
+        }
+
+        //--------------------------------------------------------------------------------
+        // Read.Options
+        //--------------------------------------------------------------------------------
 
         // ASCII
 
@@ -413,88 +499,6 @@
             dateTime17Converter.Read(dateTime17Buffer, 0);
         }
 
-        // Number
-
-        [Benchmark]
-        public void ReadNumberTextShort4Zero()
-        {
-            numberTextShort4Converter.Read(numberTextShort4ZeroBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextShort4Max()
-        {
-            numberTextShort4Converter.Read(numberTextShort4MaxBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextInt8Zero()
-        {
-            numberTextInt8Converter.Read(numberTextInt8ZeroBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextInt8Max()
-        {
-            numberTextInt8Converter.Read(numberTextInt8MaxBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextLong18Zero()
-        {
-            numberTextLong18Converter.Read(numberTextLong18ZeroBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextLong18Max()
-        {
-            numberTextLong18Converter.Read(numberTextLong18MaxBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextDecimal8Zero()
-        {
-            numberTextDecimal8Converter.Read(numberTextDecimal8ZeroBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextDecimal8Max()
-        {
-            numberTextDecimal8Converter.Read(numberTextDecimal8MaxBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextDecimal18Zero()
-        {
-            numberTextDecimal18Converter.Read(numberTextDecimal18ZeroBuffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadNumberTextDecimal18Max()
-        {
-            numberTextDecimal18Converter.Read(numberTextDecimal18MaxBuffer, 0);
-        }
-
-        // DateTime
-
-        [Benchmark]
-        public void ReadDateTimeText8()
-        {
-            dateTimeText8Converter.Read(dateTimeText8Buffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadDateTimeText14()
-        {
-            dateTimeText14Converter.Read(dateTimeText14Buffer, 0);
-        }
-
-        [Benchmark]
-        public void ReadDateTimeText17()
-        {
-            dateTimeText17Converter.Read(dateTimeText17Buffer, 0);
-        }
-
         //--------------------------------------------------------------------------------
         // Write
         //--------------------------------------------------------------------------------
@@ -550,6 +554,92 @@
         {
             text20Converter.Write(text20EmptyBuffer, 0, Text20Empty);
         }
+
+        // Number
+
+        [Benchmark]
+        public void WriteNumberTextShort4Zero()
+        {
+            numberTextShort4Converter.Write(numberTextShort4ZeroBuffer, 0, ZeroShort);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextShort4Max()
+        {
+            numberTextShort4Converter.Write(numberTextShort4MaxBuffer, 0, Length4Integer);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextInt8Zero()
+        {
+            numberTextInt8Converter.Write(numberTextInt8ZeroBuffer, 0, ZeroInteger);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextInt8Max()
+        {
+            numberTextInt8Converter.Write(numberTextInt8MaxBuffer, 0, Length8Integer);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextLong18Zero()
+        {
+            numberTextLong18Converter.Write(numberTextLong18ZeroBuffer, 0, ZeroLong);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextLong18Max()
+        {
+            numberTextLong18Converter.Write(numberTextLong18MaxBuffer, 0, Length18Integer);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextDecimal8Zero()
+        {
+            numberTextDecimal8Converter.Write(numberTextDecimal8ZeroBuffer, 0, ZeroDecimal);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextDecimal8Max()
+        {
+            numberTextDecimal8Converter.Write(numberTextDecimal8MaxBuffer, 0, Length8Decimal);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextDecimal18Zero()
+        {
+            numberTextDecimal18Converter.Write(numberTextDecimal18ZeroBuffer, 0, ZeroDecimal);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextDecimal18Max()
+        {
+            numberTextDecimal18Converter.Write(numberTextDecimal18MaxBuffer, 0, Length18Decimal);
+        }
+
+        // DateTime
+
+        [Benchmark]
+        public void WriteDateTimeText8()
+        {
+            dateTimeText8Converter.Write(dateTimeText8Buffer, 0, DateTime14);
+        }
+
+        [Benchmark]
+        public void WriteDateTimeText14()
+        {
+            dateTimeText14Converter.Write(dateTimeText14Buffer, 0, DateTime14);
+        }
+
+        [Benchmark]
+        public void WriteDateTimeText17()
+        {
+            dateTimeText17Converter.Write(dateTimeText17Buffer, 0, DateTime14);
+        }
+
+        //--------------------------------------------------------------------------------
+        // Write.Options
+        //--------------------------------------------------------------------------------
 
         // ASCII
 
@@ -647,88 +737,6 @@
         public void WriteDateTime17()
         {
             dateTime17Converter.Write(dateTime17Buffer, 0, DateTime17);
-        }
-
-        // Number
-
-        [Benchmark]
-        public void WriteNumberTextShort4Zero()
-        {
-            numberTextShort4Converter.Write(numberTextShort4ZeroBuffer, 0, ZeroShort);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextShort4Max()
-        {
-            numberTextShort4Converter.Write(numberTextShort4MaxBuffer, 0, Length4Integer);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextInt8Zero()
-        {
-            numberTextInt8Converter.Write(numberTextInt8ZeroBuffer, 0, ZeroInteger);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextInt8Max()
-        {
-            numberTextInt8Converter.Write(numberTextInt8MaxBuffer, 0, Length8Integer);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextLong18Zero()
-        {
-            numberTextLong18Converter.Write(numberTextLong18ZeroBuffer, 0, ZeroLong);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextLong18Max()
-        {
-            numberTextLong18Converter.Write(numberTextLong18MaxBuffer, 0, Length18Integer);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextDecimal8Zero()
-        {
-            numberTextDecimal8Converter.Write(numberTextDecimal8ZeroBuffer, 0, ZeroDecimal);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextDecimal8Max()
-        {
-            numberTextDecimal8Converter.Write(numberTextDecimal8MaxBuffer, 0, Length8Decimal);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextDecimal18Zero()
-        {
-            numberTextDecimal18Converter.Write(numberTextDecimal18ZeroBuffer, 0, ZeroDecimal);
-        }
-
-        [Benchmark]
-        public void WriteNumberTextDecimal18Max()
-        {
-            numberTextDecimal18Converter.Write(numberTextDecimal18MaxBuffer, 0, Length18Decimal);
-        }
-
-        // DateTime
-
-        [Benchmark]
-        public void WriteDateTimeText8()
-        {
-            dateTimeText8Converter.Write(dateTimeText8Buffer, 0, DateTime14);
-        }
-
-        [Benchmark]
-        public void WriteDateTimeText14()
-        {
-            dateTimeText14Converter.Write(dateTimeText14Buffer, 0, DateTime14);
-        }
-
-        [Benchmark]
-        public void WriteDateTimeText17()
-        {
-            dateTimeText17Converter.Write(dateTimeText17Buffer, 0, DateTime14);
         }
     }
 }
