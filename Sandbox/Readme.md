@@ -99,6 +99,19 @@
 
 ----
 
+## Reverse
+
+|          Method |     Mean |     Error |    StdDev | Allocated |
+|---------------- |---------:|----------:|----------:|----------:|
+|        Reverse4 | 2.840 ns | 0.6022 ns | 0.0340 ns |       0 B |
+|  ReverseUnsafe4 | 2.967 ns | 0.4509 ns | 0.0255 ns |       0 B |
+|        Reverse8 | 6.564 ns | 0.6297 ns | 0.0356 ns |       0 B |
+|  ReverseUnsafe8 | 6.183 ns | 0.4885 ns | 0.0276 ns |       0 B |
+|       Reverse16 | 9.556 ns | 0.2764 ns | 0.0156 ns |       0 B |
+| ReverseUnsafe16 | 8.568 ns | 1.2655 ns | 0.0715 ns |       0 B |
+
+----
+
 ## Encoding
 
 |              Method |     Mean |    Error |    StdDev |  Gen 0 | Allocated |

@@ -1396,6 +1396,43 @@
         }
 
         //--------------------------------------------------------------------------------
+        // Rverse
+        //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void Reverse(byte[] bytes, int index, int length)
+        {
+            var start = index;
+            var end = index + length - 1;
+            while (start < end)
+            {
+                var tmp = bytes[start];
+                bytes[start] = bytes[end];
+                bytes[end] = tmp;
+                start++;
+                end--;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe void ReverseUnsafe(byte[] bytes, int index, int length)
+        {
+            fixed (byte* ptr = &bytes[index])
+            {
+                var start = ptr;
+                var end = ptr + length - 1;
+                while (start < end)
+                {
+                    var tmp = *start;
+                    *start = *end;
+                    *end = tmp;
+                    start++;
+                    end--;
+                }
+            }
+        }
+
+        //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
 
