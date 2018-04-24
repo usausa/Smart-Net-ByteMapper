@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
+    using System.Runtime.CompilerServices;
 
     internal static class DateTimeHelper
     {
@@ -14,6 +15,24 @@
         private const char FormatSecond = 's';
         private const char FormatMilisecond = 'f';
 
+        private const long TicksPerMillisecond = 10000;
+        private const long TicksPerSecond = TicksPerMillisecond * 1000;
+        private const long TicksPerMinute = TicksPerSecond * 60;
+        private const long TicksPerHour = TicksPerMinute * 60;
+        private const long TicksPerDay = TicksPerHour * 24;
+
+        private static readonly int[] DaysToMonth365 =
+        {
+            0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
+        };
+
+        private static readonly int[] DaysToMonth366 =
+        {
+            0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
+        };
+
+        private static readonly int[] Miliseconds = { 100, 10, 1 };
+
         //--------------------------------------------------------------------------------
         // DateTime
         //--------------------------------------------------------------------------------
@@ -23,76 +42,172 @@
             fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
             {
-                var year = 0;
-                var month = 0;
-                var day = 0;
+                var year = 1;
+                var month = 1;
+                var day = 1;
                 var hour = 0;
                 var minute = 0;
                 var second = 0;
                 var milisecond = 0;
-                var msPow = 100;
 
                 var length = format.Length;
-                for (var i = 0; i < length; i++)
+                var i = 0;
+                while (i < length)
                 {
-                    var num = *(pBytes + i) - Num0;
-                    if ((num >= 0) && (num < 10))
+                    var c = *(pFormat + i);
+                    if (c == FormatYear)
                     {
-                        var c = *(pFormat + i);
-                        if (c == FormatYear)
-                        {
-                            year = (year * 10) + num;
-                        }
-                        else if (c == FormatMonth)
-                        {
-                            month = (month * 10) + num;
-                        }
-                        else if (c == FormatDay)
-                        {
-                            day = (day * 10) + num;
-                        }
-                        else if (c == FormatHour)
-                        {
-                            hour = (hour * 10) + num;
-                        }
-                        else if (c == FormatMinute)
-                        {
-                            minute = (minute * 10) + num;
-                        }
-                        else if (c == FormatSecond)
-                        {
-                            second = (second * 10) + num;
-                        }
-                        else if (c == FormatMilisecond)
-                        {
-                            milisecond = milisecond + (num * msPow);
-                            msPow /= 10;
-                        }
-                        else
+                        // Year
+                        year = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if ((year > 9999) || (year < 1))
                         {
                             value = default;
                             return false;
                         }
                     }
-                    else if (*(pFormat + i) == FormatMilisecond)
+                    else if (c == FormatMonth)
                     {
-                        msPow /= 10;
+                        // Month
+                        month = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if ((month < 1) || (month > 12))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == FormatDay)
+                    {
+                        // Day
+                        day = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if (day < 1)
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == FormatHour)
+                    {
+                        // Hour
+                        hour = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if ((hour < 0) || (hour > 23))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == FormatMinute)
+                    {
+                        // Minute
+                        minute = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if ((minute < 0) || (minute > 59))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == FormatSecond)
+                    {
+                        // Second
+                        second = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if ((second < 0) || (second > 59))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == FormatMilisecond)
+                    {
+                        // Milisecond
+                        milisecond = ParseDateTimeMilisecond(pBytes, pFormat, length, ref i);
+                        if (milisecond < 0)
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (c == *(pBytes + i))
+                    {
+                        i++;
+                    }
+                    else
+                    {
+                        value = default;
+                        return false;
                     }
                 }
 
-                try
+                if (year == 0)
                 {
-                    value = milisecond == 0
-                        ? new DateTime(year, month, day, hour, minute, second, kind)
-                        : new DateTime(year, month, day, hour, minute, second, milisecond, kind);
-                    return true;
+                    year = DateTime.Now.Year;
                 }
-                catch (ArgumentOutOfRangeException)
+
+                var days = DateTime.IsLeapYear(year) ? DaysToMonth366 : DaysToMonth365;
+
+                if (day > days[month] - days[month - 1])
                 {
                     value = default;
                     return false;
                 }
+
+                var y = year - 1;
+                var ticks = (((y * 365) + (y / 4) - (y / 100) + (y / 400)) + days[month - 1] + (day - 1)) * TicksPerDay;
+                ticks += (((long)hour * 3600) + ((long)minute * 60) + second) * TimeSpan.TicksPerSecond;
+                if (milisecond > 0)
+                {
+                    ticks += milisecond * TicksPerMillisecond;
+                }
+
+                value = new DateTime(ticks, kind);
+                return true;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe int ParseDateTimePart(byte* pBytes, char* pFormat, char c, int limit, ref int i)
+        {
+            var value = 0;
+            do
+            {
+                var num = *(pBytes + i) - Num0;
+                if ((num >= 0) && (num < 10))
+                {
+                    value = (value << 3) + (value << 1) + num;
+                }
+                else if (num != -16)
+                {
+                    return -1;
+                }
+
+                i++;
+            }
+            while ((i < limit) && (*(pFormat + i) == c));
+
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe int ParseDateTimeMilisecond(byte* pBytes, char* pFormat, int limit, ref int i)
+        {
+            var index = 0;
+            var value = 0;
+            do
+            {
+                var num = *(pBytes + i) - Num0;
+                if ((num > 0) && (num < 10) && (index < Miliseconds.Length))
+                {
+                    value += Miliseconds[index] * num;
+                }
+                else if ((num != 0) && (num != -16))
+                {
+                    return -1;
+                }
+
+                index++;
+                i++;
+            }
+            while ((i < limit) && (*(pFormat + i) == FormatMilisecond));
+
+            return value;
         }
 
         public static unsafe void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
