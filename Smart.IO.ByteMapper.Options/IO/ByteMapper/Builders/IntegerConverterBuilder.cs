@@ -28,9 +28,9 @@
         {
             return new Int32Converter(
                 Length,
-                Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
                 type);
         }
 
@@ -38,9 +38,9 @@
         {
             return new Int64Converter(
                 Length,
-                Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
                 type);
         }
 
@@ -48,9 +48,9 @@
         {
             return new Int16Converter(
                 Length,
-                Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
                 type);
         }
     }

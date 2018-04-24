@@ -15,6 +15,7 @@
         public void MapByDateTimeAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeKind(DateTimeKind.Unspecified)

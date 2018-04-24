@@ -16,7 +16,6 @@
         public void MapByDateTimeTextExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
-                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultTrim(true)
                 .DefaultTextFiller(0x20)

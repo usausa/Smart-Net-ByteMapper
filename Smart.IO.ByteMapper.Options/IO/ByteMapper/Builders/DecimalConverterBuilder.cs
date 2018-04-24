@@ -29,7 +29,7 @@
 
         private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)
         {
-            var groupingSize = UseGrouping ?? context.GetParameter<bool>(Parameter.UseGrouping) ? GroupingSize : 0;
+            var groupingSize = UseGrouping ?? context.GetParameter<bool>(OptionsParameter.UseGrouping) ? GroupingSize : 0;
             if (!BytesHelper.IsDecimalLimited64Applicable(Length, Scale, groupingSize))
             {
                 throw new InvalidOperationException($"Parameter is invalid. length=[{Length}], scale=[{Scale}], groupingSize=[{groupingSize}]");
@@ -39,9 +39,9 @@
                 Length,
                 Scale,
                 groupingSize,
-                Padding ?? context.GetParameter<Padding>(Parameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(Parameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(Parameter.NumberFiller),
+                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
                 type);
         }
     }

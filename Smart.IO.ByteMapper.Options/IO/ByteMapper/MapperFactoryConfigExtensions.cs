@@ -1,70 +1,42 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
-    using System.Globalization;
-    using System.Text;
 
     public static class OptionsMapperFactoryConfigExtensions
     {
         public static MapperFactoryConfig UseOptionsDefault(this MapperFactoryConfig config)
         {
-            config.DefaultDateTimeTextEncoding(Encoding.ASCII);
-            config.DefaultDateTimeTextProvider(CultureInfo.InvariantCulture);
-            config.DefaultDateTimeTextStyle(DateTimeStyles.None);
-
-            config.DefaultNumberTextEncoding(Encoding.ASCII);
-            config.DefaultNumberTextProvider(CultureInfo.InvariantCulture);
-            config.DefaultNumberTextNumberStyle(NumberStyles.Integer);
-            config.DefaultNumberTextDecimalStyle(NumberStyles.Number);
-            config.DefaultNumberTextPadding(Padding.Left);
-            config.DefaultNumberTextFiller(0x20);
-
+            config.DefaultNumberPadding(Padding.Right);
+            config.DefaultZeroFill(false);
+            config.DefaultUseGrouping(false);
+            config.DefaultNumberFiller(0x20);
+            config.DefaultDateTimeKind(DateTimeKind.Unspecified);
             return config;
         }
 
-        public static MapperFactoryConfig DefaultDateTimeTextEncoding(this MapperFactoryConfig config, Encoding value)
+        public static MapperFactoryConfig DefaultNumberPadding(this MapperFactoryConfig config, Padding value)
         {
-            return config.AddParameter(DateTimeTextParameter.Encoding, value);
+            return config.AddParameter(OptionsParameter.NumberPadding, value);
         }
 
-        public static MapperFactoryConfig DefaultDateTimeTextProvider(this MapperFactoryConfig config, IFormatProvider value)
+        public static MapperFactoryConfig DefaultZeroFill(this MapperFactoryConfig config, bool value)
         {
-            return config.AddParameter(DateTimeTextParameter.Provider, value);
+            return config.AddParameter(OptionsParameter.ZeroFill, value);
         }
 
-        public static MapperFactoryConfig DefaultDateTimeTextStyle(this MapperFactoryConfig config, DateTimeStyles value)
+        public static MapperFactoryConfig DefaultUseGrouping(this MapperFactoryConfig config, bool value)
         {
-            return config.AddParameter(DateTimeTextParameter.Style, value);
+            return config.AddParameter(OptionsParameter.UseGrouping, value);
         }
 
-        public static MapperFactoryConfig DefaultNumberTextEncoding(this MapperFactoryConfig config, Encoding value)
+        public static MapperFactoryConfig DefaultNumberFiller(this MapperFactoryConfig config, byte value)
         {
-            return config.AddParameter(NumberTextParameter.Encoding, value);
+            return config.AddParameter(OptionsParameter.NumberFiller, value);
         }
 
-        public static MapperFactoryConfig DefaultNumberTextProvider(this MapperFactoryConfig config, IFormatProvider value)
+        public static MapperFactoryConfig DefaultDateTimeKind(this MapperFactoryConfig config, DateTimeKind value)
         {
-            return config.AddParameter(NumberTextParameter.Provider, value);
-        }
-
-        public static MapperFactoryConfig DefaultNumberTextNumberStyle(this MapperFactoryConfig config, NumberStyles value)
-        {
-            return config.AddParameter(NumberTextParameter.NumberStyle, value);
-        }
-
-        public static MapperFactoryConfig DefaultNumberTextDecimalStyle(this MapperFactoryConfig config, NumberStyles value)
-        {
-            return config.AddParameter(NumberTextParameter.DecimalStyle, value);
-        }
-
-        public static MapperFactoryConfig DefaultNumberTextPadding(this MapperFactoryConfig config, Padding value)
-        {
-            return config.AddParameter(NumberTextParameter.Padding, value);
-        }
-
-        public static MapperFactoryConfig DefaultNumberTextFiller(this MapperFactoryConfig config, byte value)
-        {
-            return config.AddParameter(NumberTextParameter.Filler, value);
+            return config.AddParameter(OptionsParameter.DateTimeKind, value);
         }
     }
 }

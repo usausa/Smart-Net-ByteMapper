@@ -15,6 +15,7 @@
         public void MapByAsciiExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
+                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)

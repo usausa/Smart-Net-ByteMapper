@@ -1,8 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
-    using System.Globalization;
-    using System.Text;
 
     using Smart.IO.ByteMapper.Expressions;
 
@@ -14,76 +12,81 @@
 
         // Default
 
-        public static ITypeConfigSyntax<T> TypeDateTimeTextEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        public static ITypeConfigSyntax<T> TypeNumberPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
         {
-            return syntax.TypeDefault(DateTimeTextParameter.Encoding, value);
+            return syntax.TypeDefault(OptionsParameter.NumberPadding, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeDateTimeTextProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        public static ITypeConfigSyntax<T> TypeZeroFill<T>(this ITypeConfigSyntax<T> syntax, bool value)
         {
-            return syntax.TypeDefault(DateTimeTextParameter.Provider, value);
+            return syntax.TypeDefault(OptionsParameter.ZeroFill, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeDateTimeTextStyle<T>(this ITypeConfigSyntax<T> syntax, DateTimeStyles value)
+        public static ITypeConfigSyntax<T> TypeUseGrouping<T>(this ITypeConfigSyntax<T> syntax, bool value)
         {
-            return syntax.TypeDefault(DateTimeTextParameter.Style, value);
+            return syntax.TypeDefault(OptionsParameter.UseGrouping, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeNumberTextEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        public static ITypeConfigSyntax<T> TypeNumberFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
-            return syntax.TypeDefault(NumberTextParameter.Encoding, value);
+            return syntax.TypeDefault(OptionsParameter.NumberFiller, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeNumberTextProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        public static ITypeConfigSyntax<T> TypeDateTimeKind<T>(this ITypeConfigSyntax<T> syntax, DateTimeKind value)
         {
-            return syntax.TypeDefault(NumberTextParameter.Provider, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberTextNumberStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
-        {
-            return syntax.TypeDefault(NumberTextParameter.NumberStyle, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberTextDecimalStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
-        {
-            return syntax.TypeDefault(NumberTextParameter.DecimalStyle, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberTextPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
-        {
-            return syntax.TypeDefault(NumberTextParameter.Padding, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
-        {
-            return syntax.TypeDefault(NumberTextParameter.Filler, value);
+            return syntax.TypeDefault(OptionsParameter.DateTimeKind, value);
         }
 
         //--------------------------------------------------------------------------------
         // Member
         //--------------------------------------------------------------------------------
 
+        // Ascii
+
+        public static IMapAsciiSyntax Ascii(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapAsciiExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        // Integer
+
+        public static IMapIntegerSyntax Integer(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapIntegerExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        // Decimal
+
+        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapDecimalExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length, byte scale)
+        {
+            var expression = new MapDecimalExpression(length, scale);
+            syntax.Map(expression);
+            return expression;
+        }
+
         // DateTime
 
-        public static IMapDateTimeTextSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
+        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)
         {
-            var expression = new MapDateTimeTextExpression(length, format);
+            var expression = new MapDateTimeExpression(format);
             syntax.Map(expression);
             return expression;
         }
 
-        // Number
-
-        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
+        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format, DateTimeKind kind)
         {
-            var expression = new MapNumberTextTextExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
-        {
-            var expression = new MapNumberTextTextExpression(length, format);
+            var expression = new MapDateTimeExpression(format, kind);
             syntax.Map(expression);
             return expression;
         }

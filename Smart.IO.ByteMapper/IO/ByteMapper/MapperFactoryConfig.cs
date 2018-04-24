@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
     using System.Text;
 
@@ -26,16 +27,22 @@
             this.DefaultEncoding(Encoding.ASCII);
             this.DefaultTrim(true);
             this.DefaultTextPadding(Padding.Right);
-            this.DefaultNumberPadding(Padding.Right);
-            this.DefaultZeroFill(false);
             this.DefaultFiller(0x20);
-            this.DefaultUseGrouping(false);
             this.DefaultTextFiller(0x20);
-            this.DefaultNumberFiller(0x20);
-            this.DefaultDateTimeKind(DateTimeKind.Unspecified);
             this.DefaultEndian(Endian.Big);
             this.DefaultTrueValue(0x31);
             this.DefaultFalseValue(0x30);
+
+            this.DefaultDateTimeTextEncoding(Encoding.ASCII);
+            this.DefaultDateTimeTextProvider(CultureInfo.InvariantCulture);
+            this.DefaultDateTimeTextStyle(DateTimeStyles.None);
+
+            this.DefaultNumberTextEncoding(Encoding.ASCII);
+            this.DefaultNumberTextProvider(CultureInfo.InvariantCulture);
+            this.DefaultNumberTextNumberStyle(NumberStyles.Integer);
+            this.DefaultNumberTextDecimalStyle(NumberStyles.Number);
+            this.DefaultNumberTextPadding(Padding.Left);
+            this.DefaultNumberTextFiller(0x20);
         }
 
         public MapperFactoryConfig Configure(Action<ComponentConfig> action)

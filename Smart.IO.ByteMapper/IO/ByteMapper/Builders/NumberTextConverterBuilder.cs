@@ -41,12 +41,12 @@
             return new Int32TextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                Padding ?? context.GetParameter<Padding>(NumberTextParameter.Padding),
-                Filler ?? context.GetParameter<byte>(NumberTextParameter.Filler),
-                Style ?? context.GetParameter<NumberStyles>(NumberTextParameter.NumberStyle),
-                Provider ?? context.GetParameter<IFormatProvider>(NumberTextParameter.Provider),
+                Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+                Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
+                Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
+                Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
                 type);
         }
 
@@ -55,12 +55,12 @@
             return new Int64TextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                Padding ?? context.GetParameter<Padding>(NumberTextParameter.Padding),
-                Filler ?? context.GetParameter<byte>(NumberTextParameter.Filler),
-                Style ?? context.GetParameter<NumberStyles>(NumberTextParameter.NumberStyle),
-                Provider ?? context.GetParameter<IFormatProvider>(NumberTextParameter.Provider),
+                Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+                Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
+                Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
+                Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
                 type);
         }
 
@@ -69,12 +69,12 @@
             return new Int16TextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                Padding ?? context.GetParameter<Padding>(NumberTextParameter.Padding),
-                Filler ?? context.GetParameter<byte>(NumberTextParameter.Filler),
-                Style ?? context.GetParameter<NumberStyles>(NumberTextParameter.NumberStyle),
-                Provider ?? context.GetParameter<IFormatProvider>(NumberTextParameter.Provider),
+                Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+                Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
+                Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
+                Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
                 type);
         }
 
@@ -83,12 +83,12 @@
             return new DecimalTextConverter(
                 Length,
                 Format,
-                Encoding ?? context.GetParameter<Encoding>(NumberTextParameter.Encoding),
+                Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
                 Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                Padding ?? context.GetParameter<Padding>(NumberTextParameter.Padding),
-                Filler ?? context.GetParameter<byte>(NumberTextParameter.Filler),
-                Style ?? context.GetParameter<NumberStyles>(NumberTextParameter.DecimalStyle),
-                Provider ?? context.GetParameter<IFormatProvider>(NumberTextParameter.Provider),
+                Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+                Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
+                Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextDecimalStyle),
+                Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
                 type);
         }
     }

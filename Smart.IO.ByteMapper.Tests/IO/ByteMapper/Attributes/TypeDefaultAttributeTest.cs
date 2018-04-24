@@ -16,7 +16,6 @@
         public void MapUseTypeDefaultAttribute()
         {
             var mapperFactory = new MapperFactoryConfig()
-                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultEncoding(Encoding.UTF8)
                 .DefaultTrim(false)

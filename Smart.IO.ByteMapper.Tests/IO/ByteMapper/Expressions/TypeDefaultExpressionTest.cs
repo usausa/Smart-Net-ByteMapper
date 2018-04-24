@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
+    using System;
     using System.Globalization;
     using System.Text;
 
@@ -49,6 +50,7 @@
                     .TypeFiller((byte)'*')
                     .TypeTextFiller((byte)'_')
                     .TypeNumberFiller((byte)'_')
+                    .TypeDateTimeKind(DateTimeKind.Unspecified)
                     .TypeEndian(Endian.Little)
                     .TypeTrueValue((byte)'Y')
                     .TypeFalseValue((byte)'N')

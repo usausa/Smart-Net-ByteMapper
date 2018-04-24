@@ -16,7 +16,6 @@
         public void MapByNumberTextExpression()
         {
             var mapperFactory = new MapperFactoryConfig()
-                .UseOptionsDefault()
                 .DefaultDelimiter(null)
                 .DefaultTrim(true)
                 .DefaultNumberTextEncoding(Encoding.ASCII)

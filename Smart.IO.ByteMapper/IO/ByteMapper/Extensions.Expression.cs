@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
+    using System.Globalization;
     using System.Text;
 
     using Smart.IO.ByteMapper.Expressions;
@@ -103,21 +104,6 @@
             return syntax.TypeDefault(Parameter.TextPadding, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeNumberPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
-        {
-            return syntax.TypeDefault(Parameter.NumberPadding, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeZeroFill<T>(this ITypeConfigSyntax<T> syntax, bool value)
-        {
-            return syntax.TypeDefault(Parameter.ZeroFill, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeUseGrouping<T>(this ITypeConfigSyntax<T> syntax, bool value)
-        {
-            return syntax.TypeDefault(Parameter.UseGrouping, value);
-        }
-
         public static ITypeConfigSyntax<T> TypeFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.Filler, value);
@@ -126,16 +112,6 @@
         public static ITypeConfigSyntax<T> TypeTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.TextFiller, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeNumberFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
-        {
-            return syntax.TypeDefault(Parameter.NumberFiller, value);
-        }
-
-        public static ITypeConfigSyntax<T> TypeDateTimeKind<T>(this ITypeConfigSyntax<T> syntax, DateTimeKind value)
-        {
-            return syntax.TypeDefault(Parameter.DateTimeKind, value);
         }
 
         public static ITypeConfigSyntax<T> TypeEndian<T>(this ITypeConfigSyntax<T> syntax, Endian value)
@@ -151,6 +127,51 @@
         public static ITypeConfigSyntax<T> TypeFalseValue<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.FalseValue, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeTextEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeTextEncoding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeTextProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeTextProvider, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeDateTimeTextStyle<T>(this ITypeConfigSyntax<T> syntax, DateTimeStyles value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeTextStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextEncoding<T>(this ITypeConfigSyntax<T> syntax, Encoding value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextEncoding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextProvider<T>(this ITypeConfigSyntax<T> syntax, IFormatProvider value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextProvider, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextNumberStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextNumberStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextDecimalStyle<T>(this ITypeConfigSyntax<T> syntax, NumberStyles value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextDecimalStyle, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextPadding<T>(this ITypeConfigSyntax<T> syntax, Padding value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextPadding, value);
+        }
+
+        public static ITypeConfigSyntax<T> TypeNumberTextFiller<T>(this ITypeConfigSyntax<T> syntax, byte value)
+        {
+            return syntax.TypeDefault(Parameter.NumberTextFiller, value);
         }
 
         // Type
@@ -284,52 +305,27 @@
             return expression;
         }
 
-        // Ascii
-
-        public static IMapAsciiSyntax Ascii(this IMemberMapConfigSyntax syntax, int length)
-        {
-            var expression = new MapAsciiExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        // Integer
-
-        public static IMapIntegerSyntax Integer(this IMemberMapConfigSyntax syntax, int length)
-        {
-            var expression = new MapIntegerExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        // Decimal
-
-        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length)
-        {
-            var expression = new MapDecimalExpression(length);
-            syntax.Map(expression);
-            return expression;
-        }
-
-        public static IMapDecimalSyntax Decimal(this IMemberMapConfigSyntax syntax, int length, byte scale)
-        {
-            var expression = new MapDecimalExpression(length, scale);
-            syntax.Map(expression);
-            return expression;
-        }
-
         // DateTime
 
-        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format)
+        public static IMapDateTimeTextSyntax DateTimeText(this IMemberMapConfigSyntax syntax, int length, string format)
         {
-            var expression = new MapDateTimeExpression(format);
+            var expression = new MapDateTimeTextExpression(length, format);
             syntax.Map(expression);
             return expression;
         }
 
-        public static IMapDateTimeSyntax DateTime(this IMemberMapConfigSyntax syntax, string format, DateTimeKind kind)
+        // Number
+
+        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length)
         {
-            var expression = new MapDateTimeExpression(format, kind);
+            var expression = new MapNumberTextTextExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
+        public static IMapNumberTextSyntax NumberText(this IMemberMapConfigSyntax syntax, int length, string format)
+        {
+            var expression = new MapNumberTextTextExpression(length, format);
             syntax.Map(expression);
             return expression;
         }
