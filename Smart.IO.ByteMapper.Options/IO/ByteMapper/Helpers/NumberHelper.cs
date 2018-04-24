@@ -569,7 +569,7 @@
         private static unsafe void ReverseBytes(byte* ptr, int length)
         {
             var start = ptr;
-            var end = ptr + length;
+            var end = ptr + length - 1;
             while (start < end)
             {
                 var tmp = *start;
