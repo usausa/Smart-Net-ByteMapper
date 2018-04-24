@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapByteExpressionTest
@@ -15,12 +13,8 @@
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<ByteExpressionObject>(1)
-                        .ForMember(x => x.ByteValue, m => m.Byte());
-                })
+                .CreateMapByExpression<ByteExpressionObject>(1, config => config
+                    .ForMember(x => x.ByteValue, m => m.Byte()))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<ByteExpressionObject>();
 

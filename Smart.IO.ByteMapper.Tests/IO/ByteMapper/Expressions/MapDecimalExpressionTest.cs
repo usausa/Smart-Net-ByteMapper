@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapDecimalExpressionTest
@@ -22,15 +20,11 @@
                 .DefaultZeroFill(false)
                 .DefaultNumberPadding(Padding.Left)
                 .DefaultNumberFiller(0x20)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<DecimalExpressionObject>(28)
-                        .ForMember(x => x.DecimalValue, m => m.Decimal(10, 2).UseGrouping(true).GroupingSize(3))
-                        .ForMember(x => x.NullableDecimalValue, m => m.Decimal(6).Filler((byte)'_'))
-                        .ForMember(x => x.PaddingRightDecimalValue, m => m.Decimal(6).Padding(Padding.Right))
-                        .ForMember(x => x.ZeroFillDecimalValue, m => m.Decimal(6).ZeroFill(true));
-                })
+                .CreateMapByExpression<DecimalExpressionObject>(28, config => config
+                    .ForMember(x => x.DecimalValue, m => m.Decimal(10, 2).UseGrouping(true).GroupingSize(3))
+                    .ForMember(x => x.NullableDecimalValue, m => m.Decimal(6).Filler((byte)'_'))
+                    .ForMember(x => x.PaddingRightDecimalValue, m => m.Decimal(6).Padding(Padding.Right))
+                    .ForMember(x => x.ZeroFillDecimalValue, m => m.Decimal(6).ZeroFill(true)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<DecimalExpressionObject>();
 

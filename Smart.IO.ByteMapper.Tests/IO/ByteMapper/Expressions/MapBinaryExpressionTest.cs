@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapBinaryExpressionTest
@@ -16,17 +14,13 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<BinaryExpressionObject>(28)
-                        .ForMember(x => x.BigEndianIntValue, m => m.Binary())
-                        .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
-                        .ForMember(x => x.BigEndianLongValue, m => m.Binary())
-                        .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
-                        .ForMember(x => x.BigEndianShortValue, m => m.Binary())
-                        .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little));
-                })
+                .CreateMapByExpression<BinaryExpressionObject>(28, config => config
+                    .ForMember(x => x.BigEndianIntValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianLongValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianShortValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BinaryExpressionObject>();
 

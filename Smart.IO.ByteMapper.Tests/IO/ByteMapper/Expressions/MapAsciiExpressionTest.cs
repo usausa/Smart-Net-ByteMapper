@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapAsciiExpressionTest
@@ -21,17 +19,13 @@
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<AsciiExpressionObject>(8)
-                        .ForMember(
-                            x => x.StringValue,
-                            m => m.Ascii(4))
-                        .ForMember(
-                            x => x.CustomStringValue,
-                            m => m.Ascii(4).Trim(false).Padding(Padding.Left).Filler((byte)'_'));
-                })
+                .CreateMapByExpression<AsciiExpressionObject>(8, config => config
+                    .ForMember(
+                        x => x.StringValue,
+                        m => m.Ascii(4))
+                    .ForMember(
+                        x => x.CustomStringValue,
+                        m => m.Ascii(4).Trim(false).Padding(Padding.Left).Filler((byte)'_')))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<AsciiExpressionObject>();
 

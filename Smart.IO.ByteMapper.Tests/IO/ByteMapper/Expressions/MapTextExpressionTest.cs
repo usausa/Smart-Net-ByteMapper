@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapTextExpressionTest
@@ -22,17 +20,9 @@
                 .DefaultTrim(true)
                 .DefaultTextPadding(Padding.Right)
                 .DefaultTextFiller(0x20)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<TextExpressionObject>(8)
-                        .ForMember(
-                            x => x.StringValue,
-                            m => m.Text(4))
-                        .ForMember(
-                            x => x.CustomStringValue,
-                            m => m.Text(4).Encoding(Encoding.ASCII).Trim(false).Padding(Padding.Left).Filler((byte)'_'));
-                })
+                .CreateMapByExpression<TextExpressionObject>(8, config => config
+                    .ForMember(x => x.StringValue, m => m.Text(4))
+                    .ForMember(x => x.CustomStringValue, m => m.Text(4).Encoding(Encoding.ASCII).Trim(false).Padding(Padding.Left).Filler((byte)'_')))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<TextExpressionObject>();
 

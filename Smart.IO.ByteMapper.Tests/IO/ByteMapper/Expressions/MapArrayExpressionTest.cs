@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapArrayExpressionTest
@@ -19,13 +17,9 @@
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x00)
                 .DefaultEndian(Endian.Big)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<ArrayExpressionObject>(19)
-                        .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
-                        .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF));
-                })
+                .CreateMapByExpression<ArrayExpressionObject>(19, config => config
+                    .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
+                    .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<ArrayExpressionObject>();
 

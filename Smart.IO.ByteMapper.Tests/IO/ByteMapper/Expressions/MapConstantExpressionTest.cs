@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapConstantExpressionTest
@@ -18,14 +16,10 @@
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(0x0D, 0x0A)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<ConstExpressionObject>(6)
-                        .UseDelimitter(true)
-                        .Constant(0, new byte[] { 0x31, 0x32 })
-                        .Constant(new byte[] { 0x33, 0x34 });
-                })
+                .CreateMapByExpression<ConstExpressionObject>(6, config => config
+                    .UseDelimitter(true)
+                    .Constant(0, new byte[] { 0x31, 0x32 })
+                    .Constant(new byte[] { 0x33, 0x34 }))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<ConstExpressionObject>();
 

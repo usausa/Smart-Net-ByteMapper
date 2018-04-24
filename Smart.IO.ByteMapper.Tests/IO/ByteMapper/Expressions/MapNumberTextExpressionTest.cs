@@ -4,8 +4,6 @@
     using System.Globalization;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapNumberTextExpressionTest
@@ -27,31 +25,27 @@
                 .DefaultNumberTextDecimalStyle(NumberStyles.Any)
                 .DefaultNumberTextPadding(Padding.Left)
                 .DefaultNumberTextFiller(0x20)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<NumberTextExpressionObject>(54)
-                        .ForMember(x => x.IntValue, m => m.NumberText(4))
-                        .ForMember(x => x.NullableIntValue, m => m.NumberText(4))
-                        .ForMember(
-                            x => x.CustomIntValue,
-                            m => m.NumberText(4, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.LongValue, m => m.NumberText(6))
-                        .ForMember(x => x.NullableLongValue, m => m.NumberText(6))
-                        .ForMember(
-                            x => x.CustomLongValue,
-                            m => m.NumberText(6, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.ShortValue, m => m.NumberText(2))
-                        .ForMember(x => x.NullableShortValue, m => m.NumberText(2))
-                        .ForMember(
-                            x => x.CustomShortValue,
-                            m => m.NumberText(2, "D1").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
-                        .ForMember(x => x.DecimalValue, m => m.NumberText(6))
-                        .ForMember(x => x.NullableDecimalValue, m => m.NumberText(6))
-                        .ForMember(
-                            x => x.CustomDecimalValue,
-                            m => m.NumberText(6, "0.00").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture));
-                })
+                .CreateMapByExpression<NumberTextExpressionObject>(54, config => config
+                    .ForMember(x => x.IntValue, m => m.NumberText(4))
+                    .ForMember(x => x.NullableIntValue, m => m.NumberText(4))
+                    .ForMember(
+                        x => x.CustomIntValue,
+                        m => m.NumberText(4, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                    .ForMember(x => x.LongValue, m => m.NumberText(6))
+                    .ForMember(x => x.NullableLongValue, m => m.NumberText(6))
+                    .ForMember(
+                        x => x.CustomLongValue,
+                        m => m.NumberText(6, "D2").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                    .ForMember(x => x.ShortValue, m => m.NumberText(2))
+                    .ForMember(x => x.NullableShortValue, m => m.NumberText(2))
+                    .ForMember(
+                        x => x.CustomShortValue,
+                        m => m.NumberText(2, "D1").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture))
+                    .ForMember(x => x.DecimalValue, m => m.NumberText(6))
+                    .ForMember(x => x.NullableDecimalValue, m => m.NumberText(6))
+                    .ForMember(
+                        x => x.CustomDecimalValue,
+                        m => m.NumberText(6, "0.00").Encoding(Encoding.ASCII).Trim(true).Padding(Padding.Right).Filler((byte)'_').Style(NumberStyles.Any).Provider(CultureInfo.InvariantCulture)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<NumberTextExpressionObject>();
 

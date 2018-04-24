@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapDateTimeExpressionTest
@@ -21,29 +19,25 @@
                 .DefaultDelimiter(null)
                 .DefaultTextFiller(0x20)
                 .DefaultDateTimeKind(DateTimeKind.Unspecified)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<DateTimeExpressionObject>(60)
-                        .ForMember(
-                            x => x.DateTimeValue,
-                            m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
-                        .ForMember(
-                            x => x.NullableDateTimeValue,
-                            m => m.DateTime("yyyyMMdd"))
-                        .ForMember(
-                            x => x.CustomDateTimeValue,
-                            m => m.DateTime("yyyyMMddHHmmss").Filler((byte)'_'))
-                        .ForMember(
-                            x => x.DateTimeOffsetValue,
-                            m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
-                        .ForMember(
-                            x => x.NullableDateTimeOffsetValue,
-                            m => m.DateTime("yyyyMMdd"))
-                        .ForMember(
-                            x => x.CustomDateTimeOffsetValue,
-                            m => m.DateTime("yyyyMMddHHmmss").Filler((byte)'_'));
-                })
+                .CreateMapByExpression<DateTimeExpressionObject>(60, config => config
+                    .ForMember(
+                        x => x.DateTimeValue,
+                        m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
+                    .ForMember(
+                        x => x.NullableDateTimeValue,
+                        m => m.DateTime("yyyyMMdd"))
+                    .ForMember(
+                        x => x.CustomDateTimeValue,
+                        m => m.DateTime("yyyyMMddHHmmss").Filler((byte)'_'))
+                    .ForMember(
+                        x => x.DateTimeOffsetValue,
+                        m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))
+                    .ForMember(
+                        x => x.NullableDateTimeOffsetValue,
+                        m => m.DateTime("yyyyMMdd"))
+                    .ForMember(
+                        x => x.CustomDateTimeOffsetValue,
+                        m => m.DateTime("yyyyMMddHHmmss").Filler((byte)'_')))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<DateTimeExpressionObject>();
 

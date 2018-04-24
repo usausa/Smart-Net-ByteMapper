@@ -11,46 +11,70 @@
         // ByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperFactoryConfig config, int size)
+        public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, int size, Action<ITypeConfigSyntax<T>> action)
         {
-            return config.CreateMapByExpression<T>(size, null);
+            return config.CreateMapByExpression(size, null, action);
         }
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperFactoryConfig config, int size, string profile)
+        public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, int size, string profile, Action<ITypeConfigSyntax<T>> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var expression = new TypeConfigExpression<T>(typeof(T), profile, size);
+            action(expression);
             config.AddMappingFactory(expression);
-            return expression;
+            return config;
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperFactoryConfig config, Type type, int size)
+        public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, Action<ITypeConfigSyntax<object>> action)
         {
-            return config.CreateMapByExpression(type, size, null);
+            return config.CreateMapByExpression(type, size, null, action);
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, string profile)
+        public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, string profile, Action<ITypeConfigSyntax<object>> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var expression = new TypeConfigExpression<object>(type, profile, size);
+            action(expression);
             config.AddMappingFactory(expression);
-            return expression;
+            return config;
         }
 
         //--------------------------------------------------------------------------------
         // ByteMapperProfile
         //--------------------------------------------------------------------------------
 
-        public static ITypeConfigSyntax<T> CreateMapByExpression<T>(this MapperProfile profile, int size)
+        public static MapperProfile CreateMapByExpression<T>(this MapperProfile profile, int size, Action<ITypeConfigSyntax<T>> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var expression = new TypeConfigExpression<T>(typeof(T), profile.Name, size);
+            action(expression);
             profile.AddMappingFactory(expression);
-            return expression;
+            return profile;
         }
 
-        public static ITypeConfigSyntax<object> CreateMapByExpression(this MapperProfile profile, Type type, int size)
+        public static MapperProfile CreateMapByExpression(this MapperProfile profile, Type type, int size, Action<ITypeConfigSyntax<object>> action)
         {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
             var expression = new TypeConfigExpression<object>(type, profile.Name, size);
+            action(expression);
             profile.AddMappingFactory(expression);
-            return expression;
+            return profile;
         }
 
         //--------------------------------------------------------------------------------

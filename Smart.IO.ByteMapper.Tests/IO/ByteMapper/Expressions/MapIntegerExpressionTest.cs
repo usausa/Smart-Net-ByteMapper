@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapIntegerExpressionTest
@@ -22,23 +20,19 @@
                 .DefaultZeroFill(false)
                 .DefaultNumberPadding(Padding.Left)
                 .DefaultNumberFiller(0x20)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<IntegerExpressionObject>(48)
-                        .ForMember(x => x.IntValue, m => m.Integer(4))
-                        .ForMember(x => x.NullableIntValue, m => m.Integer(4).Filler((byte)'_'))
-                        .ForMember(x => x.PaddingRightIntValue, m => m.Integer(4).Padding(Padding.Right))
-                        .ForMember(x => x.ZeroFillIntValue, m => m.Integer(4).ZeroFill(true))
-                        .ForMember(x => x.LongValue, m => m.Integer(6))
-                        .ForMember(x => x.NullableLongValue, m => m.Integer(6).Filler((byte)'_'))
-                        .ForMember(x => x.PaddingRightLongValue, m => m.Integer(6).Padding(Padding.Right))
-                        .ForMember(x => x.ZeroFillLongValue, m => m.Integer(6).ZeroFill(true))
-                        .ForMember(x => x.ShortValue, m => m.Integer(2))
-                        .ForMember(x => x.NullableShortValue, m => m.Integer(2).Filler((byte)'_'))
-                        .ForMember(x => x.PaddingRightShortValue, m => m.Integer(2).Padding(Padding.Right))
-                        .ForMember(x => x.ZeroFillShortValue, m => m.Integer(2).ZeroFill(true));
-                })
+                .CreateMapByExpression<IntegerExpressionObject>(48, config => config
+                    .ForMember(x => x.IntValue, m => m.Integer(4))
+                    .ForMember(x => x.NullableIntValue, m => m.Integer(4).Filler((byte)'_'))
+                    .ForMember(x => x.PaddingRightIntValue, m => m.Integer(4).Padding(Padding.Right))
+                    .ForMember(x => x.ZeroFillIntValue, m => m.Integer(4).ZeroFill(true))
+                    .ForMember(x => x.LongValue, m => m.Integer(6))
+                    .ForMember(x => x.NullableLongValue, m => m.Integer(6).Filler((byte)'_'))
+                    .ForMember(x => x.PaddingRightLongValue, m => m.Integer(6).Padding(Padding.Right))
+                    .ForMember(x => x.ZeroFillLongValue, m => m.Integer(6).ZeroFill(true))
+                    .ForMember(x => x.ShortValue, m => m.Integer(2))
+                    .ForMember(x => x.NullableShortValue, m => m.Integer(2).Filler((byte)'_'))
+                    .ForMember(x => x.PaddingRightShortValue, m => m.Integer(2).Padding(Padding.Right))
+                    .ForMember(x => x.ZeroFillShortValue, m => m.Integer(2).ZeroFill(true)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<IntegerExpressionObject>();
 

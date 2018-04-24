@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapBooleanExpressionTest
@@ -28,15 +26,11 @@
                 .DefaultFiller(Filler)
                 .DefaultTrueValue(True)
                 .DefaultFalseValue(False)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<BooleanExpressionObject>(4)
-                        .ForMember(x => x.BooleanValue, m => m.Boolean())
-                        .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
-                        .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))
-                        .ForMember(x => x.CustomNullableBooleanValue, m => m.Boolean(Yes, No, Filler));
-                })
+                .CreateMapByExpression<BooleanExpressionObject>(4, config => config
+                    .ForMember(x => x.BooleanValue, m => m.Boolean())
+                    .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
+                    .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))
+                    .ForMember(x => x.CustomNullableBooleanValue, m => m.Boolean(Yes, No, Filler)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BooleanExpressionObject>();
 

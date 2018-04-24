@@ -3,8 +3,6 @@
     using System.Globalization;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class TypeDefaultExpressionTest
@@ -40,37 +38,34 @@
                 .DefaultDateTimeTextEncoding(Encoding.UTF8)
                 .DefaultDateTimeTextProvider(CultureInfo.CurrentCulture)
                 .DefaultDateTimeTextStyle(DateTimeStyles.None)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<TypeDefaultExpressionObject>(10)
-                        .TypeDelimiter(0x0D, 0x0A)
-                        .TypeEncoding(Encoding.ASCII)
-                        .TypeTrim(true)
-                        .TypeTextPadding(Padding.Left)
-                        .TypeNumberPadding(Padding.Right)
-                        .TypeZeroFill(true)
-                        .TypeUseGrouping(false)
-                        .TypeFiller((byte)'*')
-                        .TypeTextFiller((byte)'_')
-                        .TypeNumberFiller((byte)'_')
-                        .TypeEndian(Endian.Little)
-                        .TypeTrueValue((byte)'Y')
-                        .TypeFalseValue((byte)'N')
-                        .TypeNumberTextEncoding(Encoding.ASCII)
-                        .TypeNumberTextProvider(CultureInfo.InvariantCulture)
-                        .TypeNumberTextNumberStyle(NumberStyles.Any)
-                        .TypeNumberTextDecimalStyle(NumberStyles.Any)
-                        .TypeNumberTextPadding(Padding.Right)
-                        .TypeNumberTextFiller((byte)'_')
-                        .TypeDateTimeTextEncoding(Encoding.ASCII)
-                        .TypeDateTimeTextProvider(CultureInfo.InvariantCulture)
-                        .TypeDateTimeTextStyle(DateTimeStyles.None)
-                        .ForMember(x => x.IntValue, 0, m => m.NumberText(2))
-                        .ForMember(x => x.DecimalValue, 2, m => m.NumberText(2))
-                        .ForMember(x => x.StringValue, 4, m => m.Text(2))
-                        .ForMember(x => x.BoolValue, 6, m => m.Boolean());
-                }).ToMapperFactory();
+                .CreateMapByExpression<TypeDefaultExpressionObject>(10, config => config
+                    .TypeDelimiter(0x0D, 0x0A)
+                    .TypeEncoding(Encoding.ASCII)
+                    .TypeTrim(true)
+                    .TypeTextPadding(Padding.Left)
+                    .TypeNumberPadding(Padding.Right)
+                    .TypeZeroFill(true)
+                    .TypeUseGrouping(false)
+                    .TypeFiller((byte)'*')
+                    .TypeTextFiller((byte)'_')
+                    .TypeNumberFiller((byte)'_')
+                    .TypeEndian(Endian.Little)
+                    .TypeTrueValue((byte)'Y')
+                    .TypeFalseValue((byte)'N')
+                    .TypeNumberTextEncoding(Encoding.ASCII)
+                    .TypeNumberTextProvider(CultureInfo.InvariantCulture)
+                    .TypeNumberTextNumberStyle(NumberStyles.Any)
+                    .TypeNumberTextDecimalStyle(NumberStyles.Any)
+                    .TypeNumberTextPadding(Padding.Right)
+                    .TypeNumberTextFiller((byte)'_')
+                    .TypeDateTimeTextEncoding(Encoding.ASCII)
+                    .TypeDateTimeTextProvider(CultureInfo.InvariantCulture)
+                    .TypeDateTimeTextStyle(DateTimeStyles.None)
+                    .ForMember(x => x.IntValue, 0, m => m.NumberText(2))
+                    .ForMember(x => x.DecimalValue, 2, m => m.NumberText(2))
+                    .ForMember(x => x.StringValue, 4, m => m.Text(2))
+                    .ForMember(x => x.BoolValue, 6, m => m.Boolean()))
+                .ToMapperFactory();
             var mapper = mapperFactory.Create<TypeDefaultExpressionObject>();
 
             var buffer = new byte[mapper.Size];

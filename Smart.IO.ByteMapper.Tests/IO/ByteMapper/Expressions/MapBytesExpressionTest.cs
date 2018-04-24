@@ -2,8 +2,6 @@
 {
     using System;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapBytesExpressionTest
@@ -18,13 +16,9 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0x30)
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<BytesAttributeObject>(8)
-                        .ForMember(x => x.BytesValue, m => m.Bytes(4))
-                        .ForMember(x => x.CustomBytesValue, m => m.Bytes(4).Filler(0x30));
-                })
+                .CreateMapByExpression<BytesAttributeObject>(8, config => config
+                    .ForMember(x => x.BytesValue, m => m.Bytes(4))
+                    .ForMember(x => x.CustomBytesValue, m => m.Bytes(4).Filler(0x30)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BytesAttributeObject>();
 

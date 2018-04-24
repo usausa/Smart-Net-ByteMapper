@@ -3,8 +3,6 @@
     using System;
     using System.Text;
 
-    using Smart.Functional;
-
     using Xunit;
 
     public class MapFillerExpressionTest
@@ -19,16 +17,12 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller((byte)' ')
-                .Also(config =>
-                {
-                    config
-                        .CreateMapByExpression<FillerExpressionObject>(4)
-                        .AutoFiller(true)
-                        .Filler(0, 1)
-                        .Filler(1, 1, (byte)'0')
-                        .Filler(1)
-                        .Filler(1, (byte)'_');
-                })
+                .CreateMapByExpression<FillerExpressionObject>(4, config => config
+                    .AutoFiller(true)
+                    .Filler(0, 1)
+                    .Filler(1, 1, (byte)'0')
+                    .Filler(1)
+                    .Filler(1, (byte)'_'))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<FillerExpressionObject>();
 

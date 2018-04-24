@@ -18,8 +18,8 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0xCC)
-                .Also(config => config.CreateMapByExpression<MapNullFillerObject>(2).NullFiller(0xFF))
-                .Also(config => config.CreateMapByExpression<DefaultNullFillerObject>(2))
+                .CreateMapByExpression<MapNullFillerObject>(2, c => c.NullFiller(0xFF))
+                .CreateMapByExpression<DefaultNullFillerObject>(2, c => { })
                 .ToMapperFactory();
             var mapMapper = mapperFactory.Create<MapNullFillerObject>();
             var defaultMapper = mapperFactory.Create<DefaultNullFillerObject>();
@@ -48,9 +48,9 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultFiller(0xCC)
-                .Also(config => config.CreateMapByExpression<TypeFillerObject>(2).AutoFiller(true).TypeFiller(0xFF))
-                .Also(config => config.CreateMapByExpression<DefaultFillerObject>(2).AutoFiller(true))
-                .Also(config => config.CreateMapByExpression<NoFillerObject>(2).AutoFiller(false))
+                .CreateMapByExpression<TypeFillerObject>(2, c => c.AutoFiller(true).TypeFiller(0xFF))
+                .CreateMapByExpression<DefaultFillerObject>(2, c => c.AutoFiller(true))
+                .CreateMapByExpression<NoFillerObject>(2, c => c.AutoFiller(false))
                 .ToMapperFactory();
             var typeMapper = mapperFactory.Create<TypeFillerObject>();
             var defaultMapper = mapperFactory.Create<DefaultFillerObject>();
@@ -88,12 +88,9 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultFiller(0x00)
                 .DefaultDelimiter(0xCC)
-                .Also(config =>
-                    config.CreateMapByExpression<TypeDelimitterObject>(2).AutoFiller(false).UseDelimitter(0xFF))
-                .Also(config => config.CreateMapByExpression<DefaultDelimitterObject>(2).AutoFiller(false)
-                    .UseDelimitter(true))
-                .Also(config =>
-                    config.CreateMapByExpression<NoDelimitterObject>(2).AutoFiller(false).UseDelimitter(null))
+                .CreateMapByExpression<TypeDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(0xFF))
+                .CreateMapByExpression<DefaultDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(true))
+                .CreateMapByExpression<NoDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(null))
                 .ToMapperFactory();
             var typeMapper = mapperFactory.Create<TypeDelimitterObject>();
             var defaultMapper = mapperFactory.Create<DefaultDelimitterObject>();
@@ -130,27 +127,27 @@
         {
             // Map
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).Constant(-1, Array.Empty<byte>())));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.Constant(-1, Array.Empty<byte>())));
 
             // ForMember
             Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).ForMember("x", -1, null)));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", -1, null)));
             Assert.Throws<ArgumentNullException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).ForMember("x", null)));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", null)));
             Assert.Throws<ArgumentException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).ForMember("x", m => { })));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", m => { })));
             Assert.Throws<InvalidOperationException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).ForMember(x => x.IntValue, m => { })));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember(x => x.IntValue, m => { })));
             Assert.Throws<ByteMapperException>(() =>
-                new MapperFactoryConfig().Also(c => c.CreateMapByExpression<DummyObject>(0).ForMember(x => x.IntValue, m => m.Boolean())));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember(x => x.IntValue, m => m.Boolean())));
 
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .Also(config =>
                 {
-                    config.CreateMapByExpression<DummyObject>(5)
+                    config.CreateMapByExpression<DummyObject>(5, c => c
                         .ForMember(nameof(DummyObject.IntValue), 0, m => m.Binary())
-                        .ForMember(nameof(DummyObject.BoolValue), m => m.Boolean());
+                        .ForMember(nameof(DummyObject.BoolValue), m => m.Boolean()));
                 })
                 .ToMapperFactory();
             Assert.NotNull(mapperFactory.Create<DummyObject>());
