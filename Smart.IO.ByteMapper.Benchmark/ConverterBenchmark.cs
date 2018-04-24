@@ -197,15 +197,15 @@
             numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 19, FixedAlignment.Right);
 
             // DateTime
-            var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8 };
+            var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8, Format = "yyyyMMdd" };
             dateTimeText8Converter = dateTimeText8Builder.CreateConverter(context, typeof(DateTime));
             dateTimeText8Buffer = SjisEncoding.GetFixedBytes(DateTime8.ToString("yyyyMMdd"), 8);
 
-            var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14 };
+            var dateTimeText14Builder = new DateTimeTextConverterBuilder { Length = 14, Format = "yyyyMMddHHmmss" };
             dateTimeText14Converter = dateTimeText14Builder.CreateConverter(context, typeof(DateTime));
             dateTimeText14Buffer = SjisEncoding.GetFixedBytes(DateTime14.ToString("yyyyMMddHHmmss"), 14);
 
-            var dateTimeText17Builder = new DateTimeTextConverterBuilder { Length = 17 };
+            var dateTimeText17Builder = new DateTimeTextConverterBuilder { Length = 17, Format = "yyyyMMddHHmmssfff" };
             dateTimeText17Converter = dateTimeText17Builder.CreateConverter(context, typeof(DateTime));
             dateTimeText17Buffer = SjisEncoding.GetFixedBytes(DateTime17.ToString("yyyyMMddHHmmssfff"), 17);
 
