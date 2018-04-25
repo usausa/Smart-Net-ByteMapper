@@ -6,10 +6,14 @@
     internal static class NumberHelper
     {
         private const byte Minus = (byte)'-';
+        private const byte Num0 = (byte)'0';
         private const byte Dot = (byte)'.';
         private const byte Comma = (byte)',';
-        private const byte Num0 = (byte)'0';
+        private const int DotDiff = Dot - Num0;
+        private const int CommaDiff = Comma - Num0;
 
+        private const int Int32MinValueDiv10 = Int32.MinValue / 10;
+        private const byte Int32MinValueMod10 = Num0 + -(Int32.MinValue % 10);
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
 
@@ -83,13 +87,105 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
         {
-            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
+            FormatInt32(bytes, index, length, value, padding, zerofill, filler);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
         {
-            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
+            fixed (byte* pBytes = &bytes[index])
+            {
+                if ((padding == Padding.Left) || zerofill)
+                {
+                    var i = length - 1;
+
+                    if ((value == Int32.MinValue) && (i >= 0))
+                    {
+                        *(pBytes + i--) = Int32MinValueMod10;
+                        value = Int32MinValueDiv10;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (zerofill)
+                    {
+                        while (i >= (negative ? 1 : 0))
+                        {
+                            *(pBytes + i--) = Num0;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = Minus;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i--) = Minus;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i--) = filler;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+
+                    if ((value == Int32.MinValue) && (i < length))
+                    {
+                        *(pBytes + i++) = Int32MinValueMod10;
+                        value = Int32MinValueDiv10;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = (byte)(Num0 + (value % 10));
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+                }
+            }
         }
 
         public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
@@ -230,11 +326,11 @@
                         midlo = (midlo * 10) + (ulong)num;
                         count++;
                     }
-                    else if ((*(pBytes + i) == Dot) && (dotPos == -1))
+                    else if ((num == DotDiff) && (dotPos == -1))
                     {
                         dotPos = count;
                     }
-                    else if (*(pBytes + i) != Comma)
+                    else if (num != CommaDiff)
                     {
                         while ((i < length) && (*(pBytes + i) == filler))
                         {
