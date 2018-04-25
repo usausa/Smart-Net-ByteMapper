@@ -11,24 +11,29 @@
         public void TryParaseDateTime()
         {
             var buffer = Encoding.ASCII.GetBytes("21991231235959999");
-            var ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", out var value);
+            var ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out var value);
             Assert.True(ret);
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 999), value);
 
             buffer = Encoding.ASCII.GetBytes("219912312359591");
-            ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssf", out value);
+            ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssf", DateTimeKind.Unspecified, out value);
             Assert.True(ret);
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 100), value);
 
             buffer = Encoding.ASCII.GetBytes("   1 1 1 0 0 0000");
-            ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", out value);
+            ret = ByteHelper.TryParseDateTime(buffer, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out value);
             Assert.True(ret);
             Assert.Equal(new DateTime(1, 1, 1, 0, 0, 0, 0), value);
 
             buffer = Encoding.ASCII.GetBytes(" 2199/12/31 23:59:59.123 ");
-            ret = ByteHelper.TryParseDateTime(buffer, 1, "yyyy/MM/dd HH:mm:ss.fff", out value);
+            ret = ByteHelper.TryParseDateTime(buffer, 1, "yyyy/MM/dd HH:mm:ss.fff", DateTimeKind.Unspecified, out value);
             Assert.True(ret);
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 123), value);
+
+            buffer = Encoding.ASCII.GetBytes("18");
+            ret = ByteHelper.TryParseDateTime(buffer, 0, "yy", DateTimeKind.Unspecified, out value);
+            Assert.True(ret);
+            Assert.Equal(new DateTime(2018, 1, 1), value);
         }
 
         [Fact]

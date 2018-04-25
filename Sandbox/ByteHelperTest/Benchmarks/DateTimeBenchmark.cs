@@ -22,7 +22,7 @@
         [Benchmark]
         public void ParseCustom()
         {
-            ByteHelper.TryParseDateTime(Bytes, 0, "yyyyMMddHHmmss", out var _);
+            ByteHelper.TryParseDateTime(Bytes, 0, "yyyyMMddHHmmss", DateTimeKind.Unspecified, out _);
         }
 
         [Benchmark]
