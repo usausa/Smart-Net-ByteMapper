@@ -6,6 +6,14 @@ namespace ByteHelperTest
 
     public static class ByteHelper
     {
+        private const byte Minus = (byte)'-';
+        //private const byte Dot = (byte)'.';
+        //private const byte Comma = (byte)',';
+        private const byte Num0 = (byte)'0';
+
+        private const long Int64MinValueDiv10 = Int64.MinValue / 10;
+        private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
+
         //--------------------------------------------------------------------------------
         // Fill
         //--------------------------------------------------------------------------------
@@ -348,20 +356,30 @@ namespace ByteHelperTest
             }
         }
 
-        public static unsafe void FormatInt64(byte[] bytes, int offset, int length, long value, Padding padding, bool withZero)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
         {
-            fixed (byte* pBytes = &bytes[offset])
+            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        {
+            FormatInt64(bytes, index, length, value, padding, zerofill, filler);
+        }
+
+        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+        {
+            fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || withZero)
+                if ((padding == Padding.Left) || zerofill)
                 {
                     var i = length - 1;
 
                     if ((value == Int64.MinValue) && (i >= 0))
                     {
-                        *(pBytes + i) = 0x38;
-                        i--;
-
-                        value = -922337203685477580;
+                        *(pBytes + i--) = Int64MinValueMod10;
+                        value = Int64MinValueDiv10;
                     }
 
                     var negative = value < 0;
@@ -372,8 +390,7 @@ namespace ByteHelperTest
 
                     while (i >= 0)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (value % 10));
-                        i--;
+                        *(pBytes + i--) = (byte)(Num0 + (value % 10));
 
                         value /= 10;
                         if (value == 0)
@@ -382,31 +399,28 @@ namespace ByteHelperTest
                         }
                     }
 
-                    if (withZero)
+                    if (zerofill)
                     {
                         while (i >= (negative ? 1 : 0))
                         {
-                            *(pBytes + i) = 0x30;
-                            i--;
+                            *(pBytes + i--) = Num0;
                         }
 
                         if (negative && (i >= 0))
                         {
-                            *pBytes = 0x2D;
+                            *pBytes = Minus;
                         }
                     }
                     else
                     {
                         if (negative && (i >= 0))
                         {
-                            *(pBytes + i) = 0x2D;
-                            i--;
+                            *(pBytes + i--) = Minus;
                         }
 
                         while (i >= 0)
                         {
-                            *(pBytes + i) = 0x20;
-                            i--;
+                            *(pBytes + i--) = filler;
                         }
                     }
                 }
@@ -416,10 +430,8 @@ namespace ByteHelperTest
 
                     if ((value == Int64.MinValue) && (i < length))
                     {
-                        *(pBytes + i) = 0x38;
-                        i++;
-
-                        value = -922337203685477580;
+                        *(pBytes + i++) = Int64MinValueMod10;
+                        value = Int64MinValueDiv10;
                     }
 
                     var negative = value < 0;
@@ -430,8 +442,7 @@ namespace ByteHelperTest
 
                     while (i < length)
                     {
-                        *(pBytes + i) = (byte)(0x30 + (value % 10));
-                        i++;
+                        *(pBytes + i++) = (byte)(Num0 + (value % 10));
 
                         value /= 10;
                         if (value == 0)
@@ -442,25 +453,14 @@ namespace ByteHelperTest
 
                     if (negative && (i < length))
                     {
-                        *(pBytes + i) = 0x2D;
-                        i++;
+                        *(pBytes + i++) = Minus;
                     }
 
-                    var start = pBytes;
-                    var end = pBytes + i - 1;
-                    while (start < end)
-                    {
-                        var tmp = *start;
-                        *start = *end;
-                        *end = tmp;
-                        start++;
-                        end--;
-                    }
+                    ReverseBytes(pBytes, i);
 
                     while (i < length)
                     {
-                        *(pBytes + i) = 0x20;
-                        i++;
+                        *(pBytes + i++) = filler;
                     }
                 }
             }
@@ -685,7 +685,7 @@ namespace ByteHelperTest
 
         //        }
 
-        //        // TODO
+        //        // ...
         //    }
         //}
 
@@ -1235,8 +1235,6 @@ namespace ByteHelperTest
         // DateTime
         //--------------------------------------------------------------------------------
 
-        private const byte Num0 = (byte)'0';
-
         private const char FormatYear = 'y';
         private const char FormatMonth = 'M';
         private const char FormatDay = 'd';
@@ -1442,45 +1440,51 @@ namespace ByteHelperTest
             return value;
         }
 
-        public static unsafe void FormatDateTime(byte[] bytes, int offset, string format, DateTime dateTime)
+        public static unsafe void FormatDateTime(byte[] bytes, int index, string format, DateTime dateTime)
         {
-            fixed (byte* pBytes = &bytes[offset])
+            fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
             {
                 var length = format.Length;
                 for (var i = 0; i < length; i++)
                 {
-                    var c = *(pFormat + i);
-
                     var pow = 0;
                     int value;
-                    switch (c)
+
+                    var c = *(pFormat + i);
+                    if (c == FormatYear)
                     {
-                        case 'y':
-                            value = dateTime.Year;
-                            break;
-                        case 'M':
-                            value = dateTime.Month;
-                            break;
-                        case 'd':
-                            value = dateTime.Day;
-                            break;
-                        case 'H':
-                            value = dateTime.Hour;
-                            break;
-                        case 'm':
-                            value = dateTime.Minute;
-                            break;
-                        case 's':
-                            value = dateTime.Second;
-                            break;
-                        case 'f':
-                            value = dateTime.Millisecond;
-                            pow = 100;
-                            break;
-                        default:
-                            *(pBytes + i) = (byte)c;
-                            continue;
+                        value = dateTime.Year;
+                    }
+                    else if (c == FormatMonth)
+                    {
+                        value = dateTime.Month;
+                    }
+                    else if (c == FormatDay)
+                    {
+                        value = dateTime.Day;
+                    }
+                    else if (c == FormatHour)
+                    {
+                        value = dateTime.Hour;
+                    }
+                    else if (c == FormatMinute)
+                    {
+                        value = dateTime.Minute;
+                    }
+                    else if (c == FormatSecond)
+                    {
+                        value = dateTime.Second;
+                    }
+                    else if (c == FormatMilisecond)
+                    {
+                        value = dateTime.Millisecond;
+                        pow = 100;
+                    }
+                    else
+                    {
+                        *(pBytes + i) = (byte)c;
+                        continue;
                     }
 
                     if (pow == 0)
@@ -1498,9 +1502,10 @@ namespace ByteHelperTest
                             }
                         }
 
+                        // TODO optimize
                         for (var j = i + append; j >= i; j--)
                         {
-                            *(pBytes + j) = (byte)(0x30 + (value % 10));
+                            *(pBytes + j) = (byte)(Num0 + (value % 10));
                             value /= 10;
                         }
 
@@ -1508,13 +1513,14 @@ namespace ByteHelperTest
                     }
                     else
                     {
+                        // TODO optimize & max3
                         while (true)
                         {
                             var div = value / pow;
                             value = value % pow;
                             pow /= 10;
 
-                            *(pBytes + i) = (byte)(0x30 + div);
+                            *(pBytes + i) = (byte)(Num0 + div);
 
                             var next = i + 1;
                             if ((next < length) && (*(pFormat + next) == c))
@@ -1569,6 +1575,21 @@ namespace ByteHelperTest
                     start++;
                     end--;
                 }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void ReverseBytes(byte* ptr, int length)
+        {
+            var start = ptr;
+            var end = ptr + length - 1;
+            while (start < end)
+            {
+                var tmp = *start;
+                *start = *end;
+                *end = tmp;
+                start++;
+                end--;
             }
         }
 

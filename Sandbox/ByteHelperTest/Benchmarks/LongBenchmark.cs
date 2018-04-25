@@ -51,7 +51,7 @@
         public void FormatCustom8()
         {
             var buffer = new byte[8];
-            ByteHelper.FormatInt64(buffer, 0, buffer.Length, Value8, Padding.Left, true);
+            ByteHelper.FormatInt64(buffer, 0, buffer.Length, Value8, Padding.Left, true, 0x30);
         }
 
         [Benchmark]
@@ -64,7 +64,7 @@
         public void FormatCustom19()
         {
             var buffer = new byte[19];
-            ByteHelper.FormatInt64(buffer, 0, buffer.Length, Value19, Padding.Left, true);
+            ByteHelper.FormatInt64(buffer, 0, buffer.Length, Value19, Padding.Left, true, 0x30);
         }
     }
 }
