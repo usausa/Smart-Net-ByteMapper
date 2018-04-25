@@ -180,7 +180,7 @@
                         *(pBytes + i++) = Minus;
                     }
 
-                    ReverseBytes(pBytes, i - 1);
+                    ReverseBytes(pBytes, i);
 
                     while (i < length)
                     {
@@ -502,7 +502,7 @@
                         *(pBytes + i++) = Minus;
                     }
 
-                    ReverseBytes(pBytes, i - 1);
+                    ReverseBytes(pBytes, i);
 
                     while (i < length)
                     {
