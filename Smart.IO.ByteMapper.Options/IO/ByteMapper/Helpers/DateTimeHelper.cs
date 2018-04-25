@@ -58,7 +58,13 @@
                     if (c == FormatYear)
                     {
                         // Year
+                        var prev = i;
                         year = ParseDateTimePart(pBytes, pFormat, c, length, ref i);
+                        if (i - prev == 2)
+                        {
+                            year += 2000;
+                        }
+
                         if ((year > 9999) || (year < 1))
                         {
                             value = default;
