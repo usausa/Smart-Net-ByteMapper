@@ -18,4 +18,10 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Smart.IO.ByteMapper.AspNetCore\Smart.IO.ByteMapper.AspNetCore.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
+  </ItemGroup>
+
 </Project>

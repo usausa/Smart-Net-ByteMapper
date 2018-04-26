@@ -5,6 +5,9 @@
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
+    using Smart.AspNetCore.Formatters;
+    using Smart.IO.ByteMapper;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -17,7 +20,14 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            // TODO
+            var mapperFactory = new MapperFactoryConfig()
+                .ToMapperFactory();
+
+            services.AddMvc(options =>
+            {
+                options.OutputFormatters.Add(new ByteMapperOutputFormatter(mapperFactory));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
