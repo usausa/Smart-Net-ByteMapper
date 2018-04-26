@@ -31,8 +31,6 @@
             0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
         };
 
-        private static readonly int[] Miliseconds = { 100, 10, 1 };
-
         //--------------------------------------------------------------------------------
         // DateTime
         //--------------------------------------------------------------------------------
@@ -172,6 +170,8 @@
         private static unsafe int ParseDateTimePart(byte* pBytes, char* pFormat, char c, int limit, ref int i)
         {
             var value = 0;
+
+            // TODO 1st specialize
             do
             {
                 var num = *(pBytes + i) - Num0;
@@ -194,14 +194,27 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe int ParseDateTimeMilisecond(byte* pBytes, char* pFormat, int limit, ref int i)
         {
-            var index = 0;
             var value = 0;
+            var index = 0;
+
+            // TODO 1st specialize
             do
             {
                 var num = *(pBytes + i) - Num0;
-                if ((num >= 0) && (num < 10) && (index < Miliseconds.Length))
+                if ((num >= 0) && (num < 10))
                 {
-                    value += Miliseconds[index] * num;
+                    if (index == 0)
+                    {
+                        value = num * 100;
+                    }
+                    else if (index == 1)
+                    {
+                        value += num * 10;
+                    }
+                    else if (index == 2)
+                    {
+                        value += num;
+                    }
                 }
                 else if (num != -16)
                 {
@@ -222,98 +235,95 @@
             fixed (char* pFormat = format)
             {
                 var length = format.Length;
-                for (var i = 0; i < length; i++)
+                var i = 0;
+                while (i < length)
                 {
-                    var pow = 0;
-                    int value;
-
                     var c = *(pFormat + i);
                     if (c == FormatYear)
                     {
-                        value = dateTime.Year;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Year, length, ref i);
                     }
                     else if (c == FormatMonth)
                     {
-                        value = dateTime.Month;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Month, length, ref i);
                     }
                     else if (c == FormatDay)
                     {
-                        value = dateTime.Day;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Day, length, ref i);
                     }
                     else if (c == FormatHour)
                     {
-                        value = dateTime.Hour;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Hour, length, ref i);
                     }
                     else if (c == FormatMinute)
                     {
-                        value = dateTime.Minute;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Minute, length, ref i);
                     }
                     else if (c == FormatSecond)
                     {
-                        value = dateTime.Second;
+                        FormatDateTimePart(pBytes, pFormat, c, dateTime.Second, length, ref i);
                     }
                     else if (c == FormatMilisecond)
                     {
-                        value = dateTime.Millisecond;
-                        pow = 100;
+                        FormatDateTimeMilisecond(pBytes, pFormat, dateTime.Millisecond, length, ref i);
                     }
                     else
                     {
-                        *(pBytes + i) = (byte)c;
-                        continue;
-                    }
-
-                    if (pow == 0)
-                    {
-                        var append = 0;
-                        for (var j = i + 1; j < length; j++)
-                        {
-                            if (*(pFormat + j) == c)
-                            {
-                                append++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        // TODO optimize
-                        for (var j = i + append; j >= i; j--)
-                        {
-                            *(pBytes + j) = (byte)(Num0 + (value % 10));
-                            value /= 10;
-                        }
-
-                        i += append;
-                    }
-                    else
-                    {
-                        // TODO optimize & max3
-                        while (true)
-                        {
-                            var div = value / pow;
-                            value = value % pow;
-                            pow /= 10;
-
-                            *(pBytes + i) = (byte)(Num0 + div);
-
-                            var next = i + 1;
-                            if ((next < length) && (*(pFormat + next) == c))
-                            {
-                                if (pow == 0)
-                                {
-                                    throw new FormatException("Invalid format.");
-                                }
-
-                                i = next;
-                                continue;
-                            }
-
-                            break;
-                        }
+                        *(pBytes + i++) = (byte)c;
                     }
                 }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void FormatDateTimePart(byte* pBytes, char* pFormat, char c, int value, int limit, ref int i)
+        {
+            var length = 1;
+            for (var j = i + 1; (j < limit) && (*(pFormat + j) == c); j++)
+            {
+                length++;
+            }
+
+            var offset = i + length - 1;
+            for (var j = 0; j < length - 1; j++)
+            {
+                OperationHelper.DivMod10Signed(value, out var div, out var mod);
+                *(pBytes + offset--) = (byte)(Num0 + mod);
+                value = div;
+            }
+
+            *(pBytes + offset) = (byte)(Num0 + value);
+
+            i += length;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void FormatDateTimeMilisecond(byte* pBytes, char* pFormat, int value, int limit, ref int i)
+        {
+            var length = 1;
+            for (var j = i + 1; (j < limit) && (*(pFormat + j) == FormatMilisecond); j++)
+            {
+                length++;
+            }
+
+            if (length > 3)
+            {
+                throw new FormatException("Invalid format.");
+            }
+
+            *(pBytes + i++) = (byte)(Num0 + (value / 100));
+            value = value % 100;
+
+            if (length > 1)
+            {
+                OperationHelper.DivMod10Signed(value, out var div, out var mod);
+                *(pBytes + i++) = (byte)(Num0 + div);
+                value = mod;
+            }
+
+            if (length > 2)
+            {
+                *(pBytes + i++) = (byte)(Num0 + value);
             }
         }
     }
