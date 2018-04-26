@@ -23,7 +23,7 @@
 
             // Named
             Assert.NotNull(new MapperFactoryConfig()
-                .CreateMapByExpression<SimpleObject>(0, "test", c => { })
+                .CreateMapByExpression<SimpleObject>("test", 0, c => { })
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
@@ -37,7 +37,7 @@
 
             // Type Named
             Assert.NotNull(new MapperFactoryConfig()
-                .CreateMapByExpression(typeof(SimpleObject), 0, "test", c => { })
+                .CreateMapByExpression(typeof(SimpleObject), "test", 0, c => { })
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
@@ -70,6 +70,22 @@
                 .AddProfile(new NamedProfile("test", profile => profile.CreateMapByExpression(typeof(SimpleObject), 0, c => { })))
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
+        }
+
+        //--------------------------------------------------------------------------------
+        // Fix
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void CoverageFix()
+        {
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByExpression<SimpleObject>(0, null));
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByExpression<SimpleObject>("test", 0, null));
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByExpression(typeof(SimpleObject), 0, null));
+            Assert.Throws<ArgumentNullException>(() => new MapperFactoryConfig().CreateMapByExpression(typeof(SimpleObject), "test", 0, null));
+
+            Assert.Throws<ArgumentNullException>(() => new AnonymousProfile(p => p.CreateMapByExpression<SimpleObject>(0, null)));
+            Assert.Throws<ArgumentNullException>(() => new AnonymousProfile(p => p.CreateMapByExpression(typeof(SimpleObject), 0, null)));
         }
 
         //--------------------------------------------------------------------------------

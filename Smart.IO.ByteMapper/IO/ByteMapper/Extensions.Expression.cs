@@ -14,10 +14,10 @@
 
         public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, int size, Action<ITypeConfigSyntax<T>> action)
         {
-            return config.CreateMapByExpression(size, null, action);
+            return config.CreateMapByExpression(null, size, action);
         }
 
-        public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, int size, string profile, Action<ITypeConfigSyntax<T>> action)
+        public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, string profile, int size, Action<ITypeConfigSyntax<T>> action)
         {
             if (action == null)
             {
@@ -32,10 +32,10 @@
 
         public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, Action<ITypeConfigSyntax<object>> action)
         {
-            return config.CreateMapByExpression(type, size, null, action);
+            return config.CreateMapByExpression(type, null, size, action);
         }
 
-        public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, int size, string profile, Action<ITypeConfigSyntax<object>> action)
+        public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, string profile, int size, Action<ITypeConfigSyntax<object>> action)
         {
             if (action == null)
             {
