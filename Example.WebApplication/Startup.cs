@@ -1,5 +1,7 @@
 ﻿namespace Example.WebApplication
 {
+    using Example.WebApplication.Models;
+
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -22,11 +24,15 @@
         {
             // TODO
             var mapperFactory = new MapperFactoryConfig()
+                .CreateMapByExpression<SampleData>(10, c => { })
                 .ToMapperFactory();
 
             services.AddMvc(options =>
             {
-                options.OutputFormatters.Add(new ByteMapperOutputFormatter(mapperFactory));
+                var outputFormatter = new ByteMapperOutputFormatter(mapperFactory);
+                outputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
+                options.OutputFormatters.Add(outputFormatter);
+                options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixrecord");
             });
         }
 

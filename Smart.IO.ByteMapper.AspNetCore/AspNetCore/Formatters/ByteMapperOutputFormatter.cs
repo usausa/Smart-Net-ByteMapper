@@ -1,55 +1,55 @@
 ﻿namespace Smart.AspNetCore.Formatters
 {
-    using System;
-    using System.Collections.Generic;
-    using System.IO;
+    using System.Collections;
     using System.Threading.Tasks;
 
-    using Microsoft.AspNetCore.Mvc.ApiExplorer;
     using Microsoft.AspNetCore.Mvc.Formatters;
 
     using Smart.IO.ByteMapper;
 
-    public class ByteMapperOutputFormatter : IOutputFormatter, IApiResponseTypeMetadataProvider
+    public class ByteMapperOutputFormatter : OutputFormatter
     {
-        private const string ContentType = "application/x-record";
-
-        // TODO DI?
         private readonly MapperFactory mapperFactory;
 
+        private readonly string profile;
+
+        // TODO buffersize
+
         public ByteMapperOutputFormatter(MapperFactory mapperFactory)
+            : this(mapperFactory, null)
+        {
+        }
+
+        public ByteMapperOutputFormatter(MapperFactory mapperFactory, string profile)
         {
             this.mapperFactory = mapperFactory;
+            this.profile = profile;
         }
 
-        public IReadOnlyList<string> GetSupportedContentTypes(string contentType, Type objectType)
+        public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
-            return new[] { ContentType };
-        }
-
-        public bool CanWriteResult(OutputFormatterCanWriteContext context)
-        {
-            // TODO strategy, mapper reuse?
-            return true;
-        }
-
-        public async Task WriteAsync(OutputFormatterWriteContext context)
-        {
-            // TODO
             if (context.Object == null)
             {
                 return;
             }
 
-            // TODO single or multiple element type / generic argments 0
-            //if (context.ObjectType == typeof(object))
+            var type = TypeHelper.GetEnumerableElementType(context.ObjectType);
+            var multiple = type != null;
+            type = type ?? context.ObjectType;
 
-            // TODO get maper
+            var mapper = mapperFactory.Create(type, profile);
+            var stream = context.HttpContext.Response.Body;
 
-            // TODO Write with loop
-            var streamWriter = new StreamWriter(context.HttpContext.Response.Body);
-            await streamWriter.WriteAsync("test");
-            await streamWriter.FlushAsync();
+            if (multiple)
+            {
+                await mapper.ToStreamMultipleAsync(stream, (IEnumerable)context.Object);
+            }
+            else
+            {
+                await mapper.ToStreamAsync(stream, context.Object);
+            }
+
+            await stream.FlushAsync();
         }
     }
 }

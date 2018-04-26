@@ -7,7 +7,7 @@
     [Route("api/[controller]")]
     public class MapController : Controller
     {
-        [Produces("application/x-record")]
+        [Produces("text/x-fixrecord")]
         [HttpGet]
         public SampleData[] Get()
         {
