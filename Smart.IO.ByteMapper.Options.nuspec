@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Usa.Smart.IO.ByteMapper.Options</id>
-    <version>1.0.0-beta3</version>
+    <version>1.0.0-beta4</version>
     <title>Smart.IO.ByteMapper.Options .NET</title>
     <authors>machi_pon</authors>
     <owners>machi_pon</owners>
@@ -15,11 +15,11 @@
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="Usa.Smart.Core" version="1.5.3" />
-        <dependency id="Usa.Smart.IO.ByteMapper" version="1.0.0-beta3" />
+        <dependency id="Usa.Smart.IO.ByteMapper" version="1.0.0-beta4" />
       </group>
       <group targetFramework="net462">
         <dependency id="Usa.Smart.Core" version="1.5.3" />
-        <dependency id="Usa.Smart.IO.ByteMapper" version="1.0.0-beta3" />
+        <dependency id="Usa.Smart.IO.ByteMapper" version="1.0.0-beta4" />
       </group>
     </dependencies>
     <tags>smart io mapper</tags>
