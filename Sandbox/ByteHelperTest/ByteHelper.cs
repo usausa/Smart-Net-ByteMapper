@@ -1259,8 +1259,6 @@ namespace ByteHelperTest
             0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
         };
 
-        private static readonly int[] Miliseconds = { 100, 10, 1 };
-
         public static unsafe bool TryParseDateTime(byte[] bytes, int index, string format, DateTimeKind kind, out DateTime value)
         {
             fixed (byte* pBytes = &bytes[index])
@@ -1396,9 +1394,10 @@ namespace ByteHelperTest
         private static unsafe int ParseDateTimePart(byte* pBytes, char* pFormat, char c, int limit, ref int i)
         {
             var value = 0;
+
             do
             {
-                var num = *(pBytes + i) - Num0;
+                var num = *(pBytes + i++) - Num0;
                 if ((num >= 0) && (num < 10))
                 {
                     value = (value * 10) + num;
@@ -1407,8 +1406,6 @@ namespace ByteHelperTest
                 {
                     return -1;
                 }
-
-                i++;
             }
             while ((i < limit) && (*(pFormat + i) == c));
 
@@ -1418,14 +1415,26 @@ namespace ByteHelperTest
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe int ParseDateTimeMilisecond(byte* pBytes, char* pFormat, int limit, ref int i)
         {
-            var index = 0;
             var value = 0;
+            var index = 0;
+
             do
             {
-                var num = *(pBytes + i) - Num0;
-                if ((num >= 0) && (num < 10) && (index < Miliseconds.Length))
+                var num = *(pBytes + i++) - Num0;
+                if ((num >= 0) && (num < 10))
                 {
-                    value += Miliseconds[index] * num;
+                    if (index == 0)
+                    {
+                        value = num * 100;
+                    }
+                    else if (index == 1)
+                    {
+                        value += num * 10;
+                    }
+                    else if (index == 2)
+                    {
+                        value += num;
+                    }
                 }
                 else if (num != -16)
                 {
@@ -1433,7 +1442,6 @@ namespace ByteHelperTest
                 }
 
                 index++;
-                i++;
             }
             while ((i < limit) && (*(pFormat + i) == FormatMilisecond));
 
@@ -1486,47 +1494,6 @@ namespace ByteHelperTest
             }
         }
 
-        private class Entry
-        {
-            public int Div { get; }
-
-            public int Mod { get; }
-
-            public Entry(int div, int mod)
-            {
-                Div = div;
-                Mod = mod;
-            }
-        }
-
-        private const int ModEntryMax = 100;
-
-        private static readonly Entry[] DivMods10Entry = new Entry[ModEntryMax];
-
-        static ByteHelper()
-        {
-            for (var i = 0; i < ModEntryMax; i++)
-            {
-                DivMods10Entry[i] = new Entry(Div10Signed(i), i % 10);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void DivMod10(int value, out int div, out int mod)
-        {
-            if (value < ModEntryMax)
-            {
-                var entry = DivMods10Entry[value];
-                div = entry.Div;
-                mod = entry.Mod;
-            }
-            else
-            {
-                div = Div10Signed(value);
-                mod = value % 10;
-            }
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void FormatDateTimePart(byte* pBytes, char* pFormat, char c, int value, int limit, ref int i)
         {
@@ -1576,6 +1543,47 @@ namespace ByteHelperTest
             if (length > 2)
             {
                 *(pBytes + i++) = (byte)(Num0 + value);
+            }
+        }
+
+        private class Entry
+        {
+            public int Div { get; }
+
+            public int Mod { get; }
+
+            public Entry(int div, int mod)
+            {
+                Div = div;
+                Mod = mod;
+            }
+        }
+
+        private const int ModEntryMax = 100;
+
+        private static readonly Entry[] DivMods10Entry = new Entry[ModEntryMax];
+
+        static ByteHelper()
+        {
+            for (var i = 0; i < ModEntryMax; i++)
+            {
+                DivMods10Entry[i] = new Entry(Div10Signed(i), i % 10);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void DivMod10(int value, out int div, out int mod)
+        {
+            if (value < ModEntryMax)
+            {
+                var entry = DivMods10Entry[value];
+                div = entry.Div;
+                mod = entry.Mod;
+            }
+            else
+            {
+                div = Div10Signed(value);
+                mod = value % 10;
             }
         }
 
