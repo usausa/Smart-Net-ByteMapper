@@ -40,7 +40,7 @@
             fixed (byte* pBytes = &bytes[index])
             fixed (char* pFormat = format)
             {
-                var year = 1;
+                var year = 0;
                 var month = 1;
                 var day = 1;
                 var hour = 0;
@@ -171,10 +171,9 @@
         {
             var value = 0;
 
-            // TODO 1st specialize
             do
             {
-                var num = *(pBytes + i) - Num0;
+                var num = *(pBytes + i++) - Num0;
                 if ((num >= 0) && (num < 10))
                 {
                     value = (value * 10) + num;
@@ -183,8 +182,6 @@
                 {
                     return -1;
                 }
-
-                i++;
             }
             while ((i < limit) && (*(pFormat + i) == c));
 
@@ -197,10 +194,9 @@
             var value = 0;
             var index = 0;
 
-            // TODO 1st specialize
             do
             {
-                var num = *(pBytes + i) - Num0;
+                var num = *(pBytes + i++) - Num0;
                 if ((num >= 0) && (num < 10))
                 {
                     if (index == 0)
@@ -222,7 +218,6 @@
                 }
 
                 index++;
-                i++;
             }
             while ((i < limit) && (*(pFormat + i) == FormatMilisecond));
 
