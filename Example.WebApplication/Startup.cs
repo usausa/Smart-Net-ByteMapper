@@ -1,5 +1,7 @@
 ﻿namespace Example.WebApplication
 {
+    using System.Text;
+
     using Example.WebApplication.Models;
 
     using Microsoft.AspNetCore.Builder;
@@ -9,6 +11,8 @@
 
     using Smart.AspNetCore.Formatters;
     using Smart.IO.ByteMapper;
+
+    using Swashbuckle.AspNetCore.Swagger;
 
     public class Startup
     {
@@ -22,9 +26,20 @@
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             var mapperFactory = new MapperFactoryConfig()
-                .CreateMapByExpression<SampleData>(10, c => { })
+                .UseOptionsDefault()
+                .DefaultEncoding(Encoding.GetEncoding(932))
+                .CreateMapByExpression<SampleData>(59, c => c
+                    .ForMember(x => x.Code, m => m.Ascii(13))
+                    .ForMember(x => x.Name, m => m.Text(20))
+                    .ForMember(x => x.Qty, m => m.Integer(6))
+                    .ForMember(x => x.Price, m => m.Decimal(10, 2))
+                    .ForMember(x => x.Date, m => m.DateTime("yyyyMMdd")))
+                .CreateMapByExpression<SampleData>("short", 35, c => c
+                    .ForMember(x => x.Code, m => m.Ascii(13))
+                    .ForMember(x => x.Name, m => m.Text(20)))
                 .ToMapperFactory();
 
             services.AddMvc(options =>
@@ -33,6 +48,12 @@
                 outputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
                 options.OutputFormatters.Add(outputFormatter);
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixrecord");
+            });
+
+            // Swagger
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("example", new Info { Title = "Example API", Version = "v1" });
             });
         }
 
@@ -56,6 +77,13 @@
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
+            });
+
+            // Swagger
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/example/swagger.json", "Example API");
             });
         }
     }

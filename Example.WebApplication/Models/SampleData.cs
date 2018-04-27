@@ -8,7 +8,9 @@
 
         public string Name { get; set; }
 
-        public int Amount { get; set; }
+        public int Qty { get; set; }
+
+        public decimal Price { get; set; }
 
         public DateTime? Date { get; set; }
     }
