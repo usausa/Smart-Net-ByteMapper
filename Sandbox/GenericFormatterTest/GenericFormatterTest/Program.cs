@@ -1,6 +1,7 @@
 ﻿namespace GenericFormatterTest
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
 
     using Smart.IO.ByteMapper;
@@ -10,18 +11,18 @@
         public static void Main(string[] args)
         {
         }
+
+        // TODO GeericInstanceを作るヘルパー、判定ルーチン
     }
 
     // MEMO
     // IEでは駄目、何回か処理される
-
-    // TODO 本物はasyncで実装か
-
-    // TODO GeericInstanceを作るヘルパー
+    // 本物はasyncで実装か
+    // TODO Outputの方も？
 
     public interface IInputReader
     {
-        bool Read(Stream stream, long? length, out object value);
+        object Read(Stream stream, long? length);
     }
 
     public sealed class SingleInputReader<T> : IInputReader
@@ -36,10 +37,17 @@
             this.factory = factory;
         }
 
-        public bool Read(Stream stream, long? length, out object value)
+        public object Read(Stream stream, long? length)
         {
-            // TODO 失敗の条件？
-            throw new NotImplementedException();
+            var buffer = new byte[typeMapper.Size];
+            if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
+            {
+                return default;
+            }
+
+            var target = (T)factory();
+            typeMapper.FromByte(buffer, 0, target);
+            return target;
         }
     }
 
@@ -55,10 +63,38 @@
             this.factory = factory;
         }
 
-        public bool Read(Stream stream, long? length, out object value)
+        public object Read(Stream stream, long? length)
         {
-            // TODO contentLength
-            throw new NotImplementedException();
+            if (length.HasValue)
+            {
+                var array = new T[length.Value / typeMapper.Size];
+
+                var index = 0;
+                var buffer = new byte[typeMapper.Size];
+                while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+                {
+                    var target = (T)factory();
+                    typeMapper.FromByte(buffer, 0, target);
+                    array[index] = target;
+                    index++;
+                }
+
+                return array;
+            }
+            else
+            {
+                var list = new List<T>();
+
+                var buffer = new byte[typeMapper.Size];
+                while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+                {
+                    var target = (T)factory();
+                    typeMapper.FromByte(buffer, 0, target);
+                    list.Add(target);
+                }
+
+                return list.ToArray();
+            }
         }
     }
 
@@ -74,9 +110,19 @@
             this.factory = factory;
         }
 
-        public bool Read(Stream stream, long? length, out object value)
+        public object Read(Stream stream, long? length)
         {
-            throw new NotImplementedException();
+            var list = length.HasValue ? new List<T>((int)(length.Value / typeMapper.Size)) : new List<T>();
+
+            var buffer = new byte[typeMapper.Size];
+            while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+            {
+                var target = (T)factory();
+                typeMapper.FromByte(buffer, 0, target);
+                list.Add(target);
+            }
+
+            return list;
         }
     }
 }

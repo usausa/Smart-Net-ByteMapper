@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Smart.IO.ByteMapper.Options
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ByteMapper", "ByteMapper", "{D02E54C5-A6DB-4928-B68D-19BB5640E5A8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D299C9C7-C1F8-42C9-8A90-74A00CC91711}"
+	ProjectSection(SolutionItems) = preProject
+		GenericFormatterTest.sln.DotSettings = GenericFormatterTest.sln.DotSettings
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
