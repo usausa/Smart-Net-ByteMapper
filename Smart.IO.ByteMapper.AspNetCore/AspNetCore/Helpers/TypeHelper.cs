@@ -1,4 +1,4 @@
-﻿namespace Smart.AspNetCore.Formatters
+﻿namespace Smart.AspNetCore.Helpers
 {
     using System;
     using System.Collections.Generic;

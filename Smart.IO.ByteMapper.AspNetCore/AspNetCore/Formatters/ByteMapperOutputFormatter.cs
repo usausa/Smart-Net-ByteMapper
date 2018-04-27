@@ -5,25 +5,16 @@
 
     using Microsoft.AspNetCore.Mvc.Formatters;
 
+    using Smart.AspNetCore.Helpers;
     using Smart.IO.ByteMapper;
 
     public class ByteMapperOutputFormatter : OutputFormatter
     {
         private readonly MapperFactory mapperFactory;
 
-        private readonly string profile;
-
-        // TODO buffersize
-
         public ByteMapperOutputFormatter(MapperFactory mapperFactory)
-            : this(mapperFactory, null)
-        {
-        }
-
-        public ByteMapperOutputFormatter(MapperFactory mapperFactory, string profile)
         {
             this.mapperFactory = mapperFactory;
-            this.profile = profile;
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
@@ -32,6 +23,8 @@
             {
                 return;
             }
+
+            var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : null;
 
             var type = TypeHelper.GetEnumerableElementType(context.ObjectType);
             var multiple = type != null;

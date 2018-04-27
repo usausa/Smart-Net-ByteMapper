@@ -4,10 +4,13 @@
 
     using Microsoft.AspNetCore.Mvc;
 
+    using Smart.AspNetCore.Filters;
+
     [Route("api/[controller]")]
     public class MapController : Controller
     {
         [Produces("text/x-fixrecord")]
+        [ByteMapperProfile("test")]
         [HttpGet]
         public SampleData[] Get()
         {

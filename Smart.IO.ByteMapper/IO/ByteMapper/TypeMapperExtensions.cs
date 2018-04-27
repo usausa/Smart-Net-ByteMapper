@@ -188,7 +188,6 @@
 
         public static void ToStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
         {
-            // TODO buffer
             var buffer = new byte[mapper.Size];
             foreach (var target in source)
             {
@@ -199,7 +198,6 @@
 
         public static async Task ToStreamMultipleAsync<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
         {
-            // TODO buffer
             var buffer = new byte[mapper.Size];
             foreach (var target in source)
             {
@@ -270,7 +268,6 @@
 
         public static void ToStreamMultiple(this ITypeMapper mapper, Stream stream, IEnumerable source)
         {
-            // TODO buffer
             var buffer = new byte[mapper.Size];
             foreach (var target in source)
             {
@@ -281,7 +278,6 @@
 
         public static async Task ToStreamMultipleAsync(this ITypeMapper mapper, Stream stream, IEnumerable source)
         {
-            // TODO buffer
             var buffer = new byte[mapper.Size];
             foreach (var target in source)
             {
