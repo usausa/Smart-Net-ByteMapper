@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Mvc.Filters;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ByteMapperProfileAttribute : ResultFilterAttribute
+    public class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
     {
         private readonly string profile;
 
@@ -14,7 +14,7 @@
             this.profile = profile;
         }
 
-        public override void OnResultExecuting(ResultExecutingContext context)
+        public void OnAuthorization(AuthorizationFilterContext context)
         {
             context.HttpContext.Items[Consts.ProfileKey] = profile;
         }
