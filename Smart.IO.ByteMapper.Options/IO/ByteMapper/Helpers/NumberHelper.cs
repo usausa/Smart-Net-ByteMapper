@@ -384,9 +384,15 @@
 
                     if (scale > decimalScale)
                     {
-                        for (var j = 0; j < scale - decimalScale; j++)
+                        // TODO i check & dot check
+                        for (var j = 0; j < (scale - decimalScale) && (i >= 0); j++)
                         {
                             *(pBytes + i--) = Num0;
+
+                            if ((i == dotPos) && (i >= 0))
+                            {
+                                *(pBytes + i--) = Dot;
+                            }
                         }
                     }
                     else if (scale < decimalScale)
@@ -510,11 +516,17 @@
                     var dotPos = scale > 0 ? scale : Int32.MinValue;
                     var groupingCount = 0;
 
+                    // TODO i check & dot check
                     if (scale > decimalScale)
                     {
-                        for (var j = 0; j < scale - decimalScale; j++)
+                        for (var j = 0; j < (scale - decimalScale) && (i < length); j++)
                         {
                             *(pBytes + i++) = Num0;
+
+                            if ((i == dotPos) && (i < length))
+                            {
+                                *(pBytes + i++) = Dot;
+                            }
                         }
                     }
                     else if (scale < decimalScale)

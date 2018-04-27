@@ -6,7 +6,7 @@
     {
         public static MapperFactoryConfig UseOptionsDefault(this MapperFactoryConfig config)
         {
-            config.DefaultNumberPadding(Padding.Right);
+            config.DefaultNumberPadding(Padding.Left);
             config.DefaultZeroFill(false);
             config.DefaultUseGrouping(false);
             config.DefaultNumberFiller(0x20);
