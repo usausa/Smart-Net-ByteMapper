@@ -12,7 +12,11 @@
         {
         }
 
-        // TODO GeericInstanceを作るヘルパー、判定ルーチン
+        private static IInputReader CreateReader(Type type)
+        {
+            // TODO GeericInstanceを作るヘルパー、判定ルーチン
+            return null;
+        }
     }
 
     // MEMO
@@ -27,39 +31,39 @@
 
     public sealed class SingleInputReader<T> : IInputReader
     {
-        private readonly ITypeMapper<T> typeMapper;
+        private readonly ITypeMapper<T> mapper;
 
         private readonly Func<object> factory;
 
         public SingleInputReader(MapperFactory mapperFactory, Func<object> factory)
         {
-            typeMapper = mapperFactory.Create<T>();
+            mapper = mapperFactory.Create<T>();
             this.factory = factory;
         }
 
         public object Read(Stream stream, long? length)
         {
-            var buffer = new byte[typeMapper.Size];
+            var buffer = new byte[mapper.Size];
             if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
             {
                 return default;
             }
 
             var target = (T)factory();
-            typeMapper.FromByte(buffer, 0, target);
+            mapper.FromByte(buffer, 0, target);
             return target;
         }
     }
 
     public sealed class ArrayInputReader<T> : IInputReader
     {
-        private readonly ITypeMapper<T> typeMapper;
+        private readonly ITypeMapper<T> mapper;
 
         private readonly Func<object> factory;
 
         public ArrayInputReader(MapperFactory mapperFactory, Func<object> factory)
         {
-            typeMapper = mapperFactory.Create<T>();
+            mapper = mapperFactory.Create<T>();
             this.factory = factory;
         }
 
@@ -67,14 +71,14 @@
         {
             if (length.HasValue)
             {
-                var array = new T[length.Value / typeMapper.Size];
+                var array = new T[length.Value / mapper.Size];
 
                 var index = 0;
-                var buffer = new byte[typeMapper.Size];
+                var buffer = new byte[mapper.Size];
                 while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
                 {
                     var target = (T)factory();
-                    typeMapper.FromByte(buffer, 0, target);
+                    mapper.FromByte(buffer, 0, target);
                     array[index] = target;
                     index++;
                 }
@@ -85,11 +89,11 @@
             {
                 var list = new List<T>();
 
-                var buffer = new byte[typeMapper.Size];
+                var buffer = new byte[mapper.Size];
                 while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
                 {
                     var target = (T)factory();
-                    typeMapper.FromByte(buffer, 0, target);
+                    mapper.FromByte(buffer, 0, target);
                     list.Add(target);
                 }
 
@@ -100,25 +104,25 @@
 
     public sealed class ListInputReader<T> : IInputReader
     {
-        private readonly ITypeMapper<T> typeMapper;
+        private readonly ITypeMapper<T> mapper;
 
         private readonly Func<object> factory;
 
         public ListInputReader(MapperFactory mapperFactory, Func<object> factory)
         {
-            typeMapper = mapperFactory.Create<T>();
+            mapper = mapperFactory.Create<T>();
             this.factory = factory;
         }
 
         public object Read(Stream stream, long? length)
         {
-            var list = length.HasValue ? new List<T>((int)(length.Value / typeMapper.Size)) : new List<T>();
+            var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : new List<T>();
 
-            var buffer = new byte[typeMapper.Size];
+            var buffer = new byte[mapper.Size];
             while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
             {
                 var target = (T)factory();
-                typeMapper.FromByte(buffer, 0, target);
+                mapper.FromByte(buffer, 0, target);
                 list.Add(target);
             }
 
