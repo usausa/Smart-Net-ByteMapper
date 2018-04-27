@@ -47,6 +47,9 @@
                 var outputFormatter = new ByteMapperOutputFormatter(mapperFactory);
                 outputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
                 options.OutputFormatters.Add(outputFormatter);
+                var inputFormatter = new ByteMapperInputFormatter(mapperFactory);
+                inputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
+                options.InputFormatters.Add(inputFormatter);
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixrecord");
             });
 

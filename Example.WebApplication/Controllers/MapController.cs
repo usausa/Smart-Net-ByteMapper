@@ -72,6 +72,15 @@
             return CreateDummyData();
         }
 
-        // TODO input
+        [HttpPost]
+        public IActionResult Upload([FromBody] SampleData[] values)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
     }
 }
