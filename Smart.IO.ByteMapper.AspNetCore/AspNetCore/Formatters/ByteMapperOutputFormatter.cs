@@ -5,7 +5,6 @@
 
     using Microsoft.AspNetCore.Mvc.Formatters;
 
-    using Smart.AspNetCore.Helpers;
     using Smart.IO.ByteMapper;
 
     public class ByteMapperOutputFormatter : OutputFormatter

@@ -12,9 +12,9 @@
     {
         private readonly IDictionary<string, object> parameters;
 
-        private readonly IDictionary<MapKey, IMappingFactory> mappingFactories;
+        private readonly IDictionary<MapperKey, IMappingFactory> mappingFactories;
 
-        private readonly ThreadsafeHashArrayMap<MapKey, object> cache = new ThreadsafeHashArrayMap<MapKey, object>();
+        private readonly ThreadsafeHashArrayMap<MapperKey, object> cache = new ThreadsafeHashArrayMap<MapperKey, object>();
 
         public IComponentContainer Components { get; }
 
@@ -28,7 +28,7 @@
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
             mappingFactories = config.ResolveMappingFactories()
-                .ToDictionary(x => new MapKey(x.Type, x.Name ?? Names.Default), x => x);
+                .ToDictionary(x => new MapperKey(x.Type, x.Name ?? Names.Default), x => x);
         }
 
         public ITypeMapper Create(Type type)
@@ -66,7 +66,7 @@
         private ITypeMapper<T> CreateInternal<T>(string profile)
         {
             var type = typeof(T);
-            var key = new MapKey(type, profile ?? Names.Default);
+            var key = new MapperKey(type, profile ?? Names.Default);
             if (!cache.TryGetValue(key, out var mapper))
             {
                 mapper = cache.AddIfNotExist(key, CreateMapper<T>);
@@ -75,11 +75,11 @@
             return (ITypeMapper<T>)mapper;
         }
 
-        private ITypeMapper<T> CreateMapper<T>(MapKey key)
+        private ITypeMapper<T> CreateMapper<T>(MapperKey key)
         {
             if (!mappingFactories.TryGetValue(key, out var mappingFactory))
             {
-                throw new ByteMapperException($"Mapper entry is not exist. type=[{key.Type.FullName}], name=[{key.Name}]");
+                throw new ByteMapperException($"Mapper entry is not exist. type=[{key.Type.FullName}], profile=[{key.Profile}]");
             }
 
             var mapping = mappingFactory.Create(Components, parameters);

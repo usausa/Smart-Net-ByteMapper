@@ -1,4 +1,4 @@
-﻿namespace Smart.AspNetCore.Helpers
+﻿namespace Smart.AspNetCore.Formatters
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +11,18 @@
 
         private static readonly Type ListType = typeof(IList<>);
 
+        public static bool IsEnumerableType(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var genericType = type.GetGenericTypeDefinition();
+                return (genericType == EnumerableType) || (genericType == CollectionType) || (genericType == ListType);
+            }
+
+            return false;
+        }
+
+        // TODO remove
         public static Type GetEnumerableElementType(Type type)
         {
             // Array

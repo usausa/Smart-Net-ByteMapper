@@ -2,16 +2,16 @@
 {
     using System;
 
-    internal sealed class MapKey
+    public sealed class MapperKey
     {
         public Type Type { get; }
 
-        public string Name { get; }
+        public string Profile { get; }
 
-        public MapKey(Type type, string name)
+        public MapperKey(Type type, string profile)
         {
             Type = type;
-            Name = name;
+            Profile = profile;
         }
 
         public override bool Equals(object obj)
@@ -26,9 +26,9 @@
                 return true;
             }
 
-            if (obj is MapKey other)
+            if (obj is MapperKey other)
             {
-                return Type == other.Type && Name == other.Name;
+                return Type == other.Type && Profile == other.Profile;
             }
 
             return false;
@@ -37,7 +37,7 @@
         public override int GetHashCode()
         {
             var hash = Type.GetHashCode();
-            hash = hash ^ Name.GetHashCode();
+            hash = hash ^ Profile.GetHashCode();
             return hash;
         }
     }
