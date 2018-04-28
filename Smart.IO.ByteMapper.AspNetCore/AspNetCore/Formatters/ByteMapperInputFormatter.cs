@@ -21,7 +21,7 @@
 
         private static readonly Type[] RederConstructorTypes = { typeof(MapperFactory), typeof(string), typeof(Func<object>) };
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> defaultCahce = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
+        private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> readerCache = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
 
         private readonly MapperFactory mapperFactory;
 
@@ -42,7 +42,7 @@
         {
             var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : null;
 
-            var reader = defaultCahce.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
+            var reader = readerCache.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
 
             var request = context.HttpContext.Response;
 
@@ -75,12 +75,12 @@
             return SingleReaderType.MakeGenericType(type);
         }
 
-        public interface IInputReader
+        private interface IInputReader
         {
             object Read(Stream stream, long? length);
         }
 
-        public sealed class SingleInputReader<T> : IInputReader
+        private sealed class SingleInputReader<T> : IInputReader
         {
             private readonly ITypeMapper<T> mapper;
 
@@ -106,7 +106,7 @@
             }
         }
 
-        public sealed class ArrayInputReader<T> : IInputReader
+        private sealed class ArrayInputReader<T> : IInputReader
         {
             private readonly ITypeMapper<T> mapper;
 
@@ -153,7 +153,7 @@
             }
         }
 
-        public sealed class ListInputReader<T> : IInputReader
+        private sealed class ListInputReader<T> : IInputReader
         {
             private readonly ITypeMapper<T> mapper;
 
