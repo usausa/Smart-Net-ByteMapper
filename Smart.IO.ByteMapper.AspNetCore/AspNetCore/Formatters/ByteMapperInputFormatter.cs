@@ -19,8 +19,6 @@
 
         private static readonly Type ListReaderType = typeof(ListInputReader<>);
 
-        private static readonly Type[] RederConstructorTypes = { typeof(MapperFactory), typeof(string), typeof(Func<object>) };
-
         private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> readerCache = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
 
         private readonly MapperFactory mapperFactory;
@@ -38,26 +36,32 @@
             this.delegateFactory = delegateFactory ?? DelegateFactory.Default;
         }
 
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
+        public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
-            var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : null;
+            try
+            {
+                var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : Profile.Default;
 
-            var reader = readerCache.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
+                var reader = readerCache.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
 
-            var request = context.HttpContext.Response;
+                var request = context.HttpContext.Request;
 
-            var model = reader.Read(request.Body, request.ContentLength);
+                var model = await reader.ReadAsync(request.Body, request.ContentLength);
 
-            return InputFormatterResult.SuccessAsync(model);
+                return InputFormatterResult.Success(model);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         private IInputReader CreateReader(MapperKey key)
         {
             var readerType = ResolveReaderType(key.Type);
 
-            var factory = delegateFactory.CreateFactory0(readerType.GetConstructor(RederConstructorTypes));
-
-            return (IInputReader)Activator.CreateInstance(readerType, mapperFactory, key.Profile, factory);
+            return (IInputReader)Activator.CreateInstance(readerType, mapperFactory, key.Profile, delegateFactory);
         }
 
         private Type ResolveReaderType(Type type)
@@ -77,7 +81,7 @@
 
         private interface IInputReader
         {
-            object Read(Stream stream, long? length);
+            Task<object> ReadAsync(Stream stream, long? length);
         }
 
         private sealed class SingleInputReader<T> : IInputReader
@@ -86,16 +90,16 @@
 
             private readonly Func<object> factory;
 
-            public SingleInputReader(MapperFactory mapperFactory, string profile, Func<object> factory)
+            public SingleInputReader(MapperFactory mapperFactory, string profile, IDelegateFactory delegateFactory)
             {
                 mapper = mapperFactory.Create<T>(profile);
-                this.factory = factory;
+                factory = delegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
             }
 
-            public object Read(Stream stream, long? length)
+            public async Task<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = new byte[mapper.Size];
-                if (stream.Read(buffer, 0, buffer.Length) != buffer.Length)
+                if (await stream.ReadAsync(buffer, 0, buffer.Length) != buffer.Length)
                 {
                     return default;
                 }
@@ -112,13 +116,13 @@
 
             private readonly Func<object> factory;
 
-            public ArrayInputReader(MapperFactory mapperFactory, string profile, Func<object> factory)
+            public ArrayInputReader(MapperFactory mapperFactory, string profile, IDelegateFactory delegateFactory)
             {
                 mapper = mapperFactory.Create<T>(profile);
-                this.factory = factory;
+                factory = delegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
             }
 
-            public object Read(Stream stream, long? length)
+            public async Task<object> ReadAsync(Stream stream, long? length)
             {
                 if (length.HasValue)
                 {
@@ -126,7 +130,7 @@
 
                     var index = 0;
                     var buffer = new byte[mapper.Size];
-                    while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+                    while (await stream.ReadAsync(buffer, 0, buffer.Length) == buffer.Length)
                     {
                         var target = (T)factory();
                         mapper.FromByte(buffer, 0, target);
@@ -141,7 +145,7 @@
                     var list = new List<T>();
 
                     var buffer = new byte[mapper.Size];
-                    while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+                    while (await stream.ReadAsync(buffer, 0, buffer.Length) == buffer.Length)
                     {
                         var target = (T)factory();
                         mapper.FromByte(buffer, 0, target);
@@ -159,18 +163,18 @@
 
             private readonly Func<object> factory;
 
-            public ListInputReader(MapperFactory mapperFactory, string profile, Func<object> factory)
+            public ListInputReader(MapperFactory mapperFactory, string profile, IDelegateFactory delegateFactory)
             {
                 mapper = mapperFactory.Create<T>(profile);
-                this.factory = factory;
+                factory = delegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
             }
 
-            public object Read(Stream stream, long? length)
+            public async Task<object> ReadAsync(Stream stream, long? length)
             {
                 var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : new List<T>();
 
                 var buffer = new byte[mapper.Size];
-                while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
+                while (await stream.ReadAsync(buffer, 0, buffer.Length) == buffer.Length)
                 {
                     var target = (T)factory();
                     mapper.FromByte(buffer, 0, target);

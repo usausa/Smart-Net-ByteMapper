@@ -1,4 +1,6 @@
-﻿namespace GenericFormatterTest
+﻿using Smart.Reflection;
+
+namespace GenericFormatterTest
 {
     using System;
     using System.Collections.Generic;
@@ -23,6 +25,51 @@
     // IEでは駄目、何回か処理される
     // 本物はasyncで実装か
     // TODO Outputの方も？
+
+    public sealed class InpurReaderGenerator
+    {
+        private static readonly Type SingleReaderType = typeof(SingleInputReader<>);
+
+        private static readonly Type ArrayReaderType = typeof(ArrayInputReader<>);
+
+        private static readonly Type ListReaderType = typeof(ListInputReader<>);
+
+        private readonly MapperFactory mapperFactory;
+
+        public Func<Stream, long?, object> CreateReader(Type type)
+        {
+            var readerType = ResolveReaderType(type);
+
+            var reader = (IInputReader)Activator.CreateInstance(readerType, mapperFactory, DelegateFactory.Default.CreateFactory0(type.GetConstructor(Type.EmptyTypes)));
+
+            return reader.Read;
+        }
+
+        private Type ResolveReaderType(Type type)
+        {
+            if (type.IsArray)
+            {
+                return ArrayReaderType.MakeGenericType(type.GetElementType());
+            }
+
+            if (type.IsGenericType)
+            {
+                var genericType = type.GetGenericTypeDefinition();
+                if ((genericType == EnumerableType) || (genericType == CollectionType) || (genericType == ListType))
+                {
+                    return ListReaderType.MakeGenericType(type.GenericTypeArguments[0]);
+                }
+            }
+
+            return SingleReaderType.MakeGenericType(type);
+        }
+
+        private static readonly Type EnumerableType = typeof(IEnumerable<>);
+
+        private static readonly Type CollectionType = typeof(ICollection<>);
+
+        private static readonly Type ListType = typeof(IList<>);
+    }
 
     public interface IInputReader
     {
@@ -127,6 +174,36 @@
             }
 
             return list;
+        }
+    }
+
+    internal static class TypeHelper
+    {
+        private static readonly Type EnumerableType = typeof(IEnumerable<>);
+
+        private static readonly Type CollectionType = typeof(ICollection<>);
+
+        private static readonly Type ListType = typeof(IList<>);
+
+        public static Type GetEnumerableElementType(Type type)
+        {
+            // Array
+            if (type.IsArray)
+            {
+                return type.GetElementType();
+            }
+
+            // IEnumerable type
+            if (type.IsGenericType)
+            {
+                var genericType = type.GetGenericTypeDefinition();
+                if ((genericType == EnumerableType) || (genericType == CollectionType) || (genericType == ListType))
+                {
+                    return type.GenericTypeArguments[0];
+                }
+            }
+
+            return null;
         }
     }
 }

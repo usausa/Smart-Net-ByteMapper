@@ -28,7 +28,7 @@
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
             mappingFactories = config.ResolveMappingFactories()
-                .ToDictionary(x => new MapperKey(x.Type, x.Name ?? Names.Default), x => x);
+                .ToDictionary(x => new MapperKey(x.Type, x.Name ?? Profile.Default), x => x);
         }
 
         public ITypeMapper Create(Type type)
@@ -66,7 +66,7 @@
         private ITypeMapper<T> CreateInternal<T>(string profile)
         {
             var type = typeof(T);
-            var key = new MapperKey(type, profile ?? Names.Default);
+            var key = new MapperKey(type, profile ?? Profile.Default);
             if (!cache.TryGetValue(key, out var mapper))
             {
                 mapper = cache.AddIfNotExist(key, CreateMapper<T>);

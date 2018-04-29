@@ -1,4 +1,6 @@
-﻿namespace Example.WebApplication.Controllers
+﻿using System.Collections.Generic;
+
+namespace Example.WebApplication.Controllers
 {
     using System;
     using System.Linq;
@@ -45,21 +47,21 @@
 
         [Produces("text/x-fixrecord")]
         [HttpGet]
-        public SampleData[] List()
+        public SampleData[] GetList()
         {
             return CreateDummyData();
         }
 
         [Produces("text/x-fixrecord")]
         [HttpGet]
-        public SampleData[] Empty()
+        public SampleData[] GetEmpty()
         {
             return Array.Empty<SampleData>();
         }
 
         [Produces("text/x-fixrecord")]
         [HttpGet]
-        public SampleData Single()
+        public SampleData GetSingle()
         {
             return CreateDummyData().First();
         }
@@ -67,13 +69,47 @@
         [Produces("text/x-fixrecord")]
         [ByteMapperProfile("short")]
         [HttpGet]
-        public SampleData[] Profile()
+        public SampleData[] GetProfile()
         {
             return CreateDummyData();
         }
 
         [HttpPost]
-        public IActionResult Upload([FromBody] SampleData[] values)
+        public IActionResult PostArray([FromBody] SampleData[] values)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult PostEnumerable([FromBody] IEnumerable<SampleData> values)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult PostSingle([FromBody] SampleData value)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost]
+        [ByteMapperProfile("short")]
+        public IActionResult PostProfile([FromBody] SampleData[] values)
         {
             if (!ModelState.IsValid)
             {
