@@ -4,7 +4,6 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.IO;
-    using System.Threading.Tasks;
 
     public static class TypeMapperExtensions
     {
@@ -179,13 +178,6 @@
             stream.Write(buffer, 0, buffer.Length);
         }
 
-        public static Task ToStreamAsync<T>(this ITypeMapper<T> mapper, Stream stream, T target)
-        {
-            var buffer = new byte[mapper.Size];
-            mapper.ToByte(buffer, 0, target);
-            return stream.WriteAsync(buffer, 0, buffer.Length);
-        }
-
         public static void ToStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
         {
             var buffer = new byte[mapper.Size];
@@ -193,16 +185,6 @@
             {
                 mapper.ToByte(buffer, 0, target);
                 stream.Write(buffer, 0, buffer.Length);
-            }
-        }
-
-        public static async Task ToStreamMultipleAsync<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
-        {
-            var buffer = new byte[mapper.Size];
-            foreach (var target in source)
-            {
-                mapper.ToByte(buffer, 0, target);
-                await stream.WriteAsync(buffer, 0, buffer.Length);
             }
         }
 
@@ -259,13 +241,6 @@
             stream.Write(buffer, 0, buffer.Length);
         }
 
-        public static Task ToStreamAsync(this ITypeMapper mapper, Stream stream, object target)
-        {
-            var buffer = new byte[mapper.Size];
-            mapper.ToByte(buffer, 0, target);
-            return stream.WriteAsync(buffer, 0, buffer.Length);
-        }
-
         public static void ToStreamMultiple(this ITypeMapper mapper, Stream stream, IEnumerable source)
         {
             var buffer = new byte[mapper.Size];
@@ -273,16 +248,6 @@
             {
                 mapper.ToByte(buffer, 0, target);
                 stream.Write(buffer, 0, buffer.Length);
-            }
-        }
-
-        public static async Task ToStreamMultipleAsync(this ITypeMapper mapper, Stream stream, IEnumerable source)
-        {
-            var buffer = new byte[mapper.Size];
-            foreach (var target in source)
-            {
-                mapper.ToByte(buffer, 0, target);
-                await stream.WriteAsync(buffer, 0, buffer.Length);
             }
         }
     }
