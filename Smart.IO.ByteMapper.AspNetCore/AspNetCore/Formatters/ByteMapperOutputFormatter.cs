@@ -1,6 +1,7 @@
 ﻿namespace Smart.AspNetCore.Formatters
 {
     using System;
+    using System.Buffers;
     using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
@@ -18,11 +19,15 @@
 
         private readonly ThreadsafeHashArrayMap<MapperKey, IOutputWriter> writerCache = new ThreadsafeHashArrayMap<MapperKey, IOutputWriter>();
 
-        private readonly MapperFactory mapperFactory;
+        private readonly ByteMapperFormatterConfig config;
 
-        public ByteMapperOutputFormatter(MapperFactory mapperFactory)
+        public ByteMapperOutputFormatter(ByteMapperFormatterConfig config)
         {
-            this.mapperFactory = mapperFactory;
+            this.config = config;
+            foreach (var mediaType in config.SupportedMediaTypes)
+            {
+                SupportedMediaTypes.Add(mediaType);
+            }
         }
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
@@ -36,9 +41,10 @@
 
             var writer = writerCache.AddIfNotExist(new MapperKey(context.ObjectType, profile), CreateWriter);
 
+            //var stream = new BufferedStream(context.HttpContext.Response.Body, 8192);
             var stream = context.HttpContext.Response.Body;
 
-            await writer.WriteAsync(stream, context.Object);
+            writer.Write(stream, context.Object);
 
             await stream.FlushAsync();
         }
@@ -47,7 +53,7 @@
         {
             var writerType = ResolveWriterType(key.Type);
 
-            return (IOutputWriter)Activator.CreateInstance(writerType, mapperFactory, key.Profile);
+            return (IOutputWriter)Activator.CreateInstance(writerType, config, key.Profile);
         }
 
         private Type ResolveWriterType(Type type)
@@ -63,23 +69,33 @@
 
         private interface IOutputWriter
         {
-            Task WriteAsync(Stream stream, object model);
+            void Write(Stream stream, object model);
         }
 
         private sealed class SingleOutputWriter<T> : IOutputWriter
         {
             private readonly ITypeMapper<T> mapper;
 
-            public SingleOutputWriter(MapperFactory mapperFactory, string profile)
+            private readonly int bufferSize;
+
+            public SingleOutputWriter(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = mapperFactory.Create<T>(profile);
+                mapper = config.MapperFactory.Create<T>(profile);
+                bufferSize = mapper.Size;
             }
 
-            public async Task WriteAsync(Stream stream, object model)
+            public void Write(Stream stream, object model)
             {
-                var buffer = new byte[mapper.Size];
-                mapper.ToByte(buffer, 0, (T)model);
-                await stream.WriteAsync(buffer, 0, buffer.Length);
+                var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                try
+                {
+                    mapper.ToByte(buffer, 0, (T)model);
+                    stream.Write(buffer, 0, bufferSize);
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
+                }
             }
         }
 
@@ -87,18 +103,41 @@
         {
             private readonly ITypeMapper<T> mapper;
 
-            public EnumerableOutputWriter(MapperFactory mapperFactory, string profile)
+            private readonly int bufferSize;
+
+            public EnumerableOutputWriter(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = mapperFactory.Create<T>(profile);
+                mapper = config.MapperFactory.Create<T>(profile);
+                bufferSize = Math.Max(config.BufferSize, mapper.Size);
             }
 
-            public async Task WriteAsync(Stream stream, object model)
+            public void Write(Stream stream, object model)
             {
-                var buffer = new byte[mapper.Size];
-                foreach (var target in (IEnumerable<T>)model)
+                var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
+                try
                 {
-                    mapper.ToByte(buffer, 0, target);
-                    await stream.WriteAsync(buffer, 0, buffer.Length);
+                    var pos = 0;
+                    var limit = buffer.Length - mapper.Size;
+                    foreach (var target in (IEnumerable<T>)model)
+                    {
+                        mapper.ToByte(buffer, pos, target);
+
+                        pos += mapper.Size;
+                        if (pos > limit)
+                        {
+                            stream.Write(buffer, 0, pos);
+                            pos = 0;
+                        }
+                    }
+
+                    if (pos > 0)
+                    {
+                        stream.Write(buffer, 0, pos);
+                    }
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer);
                 }
             }
         }

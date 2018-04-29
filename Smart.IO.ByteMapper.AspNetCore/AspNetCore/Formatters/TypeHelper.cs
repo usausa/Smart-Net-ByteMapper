@@ -22,7 +22,6 @@
             return false;
         }
 
-        // TODO remove
         public static Type GetEnumerableElementType(Type type)
         {
             // Array

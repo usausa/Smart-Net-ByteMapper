@@ -44,12 +44,12 @@
 
             services.AddMvc(options =>
             {
-                var outputFormatter = new ByteMapperOutputFormatter(mapperFactory);
-                outputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
-                options.OutputFormatters.Add(outputFormatter);
-                var inputFormatter = new ByteMapperInputFormatter(mapperFactory);
-                inputFormatter.SupportedMediaTypes.Add("text/x-fixrecord");
-                options.InputFormatters.Add(inputFormatter);
+                var config = new ByteMapperFormatterConfig { MapperFactory = mapperFactory };
+                config.SupportedMediaTypes.Add("text/x-fixrecord");
+
+                options.OutputFormatters.Add(new ByteMapperOutputFormatter(config));
+                options.InputFormatters.Add(new ByteMapperInputFormatter(config));
+
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixrecord");
             });
 

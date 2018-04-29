@@ -13,6 +13,23 @@
     [Route("api/[controller]/[action]")]
     public class MapController : Controller
     {
+        private static readonly SampleData[] LargeValues = new SampleData[1000];
+
+        static MapController()
+        {
+            for (var i = 0; i < LargeValues.Length; i++)
+            {
+                LargeValues[i] = new SampleData
+                {
+                    Code = "1111111111111",
+                    Name = "あああああ",
+                    Qty = 123,
+                    Price = 100m,
+                    Date = DateTime.Today
+                };
+            }
+        }
+
         private static SampleData[] CreateDummyData()
         {
             return new[]
@@ -42,6 +59,13 @@
                     Date = null
                 },
             };
+        }
+
+        [Produces("text/x-fixrecord")]
+        [HttpGet]
+        public SampleData[] GetLarge()
+        {
+            return LargeValues;
         }
 
         [Produces("text/x-fixrecord")]
