@@ -384,7 +384,6 @@
 
                     if (scale > decimalScale)
                     {
-                        // TODO i check & dot check
                         for (var j = 0; j < (scale - decimalScale) && (i >= 0); j++)
                         {
                             *(pBytes + i--) = Num0;
@@ -516,7 +515,6 @@
                     var dotPos = scale > 0 ? scale : Int32.MinValue;
                     var groupingCount = 0;
 
-                    // TODO i check & dot check
                     if (scale > decimalScale)
                     {
                         for (var j = 0; j < (scale - decimalScale) && (i < length); j++)

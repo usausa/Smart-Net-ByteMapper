@@ -210,6 +210,9 @@
         [InlineData("0.123", " 0.12300", 5, -1, Padding.Left, false)]
         [InlineData("0.123", "00.12300", 5, -1, Padding.Left, true)]
         [InlineData("0.123", "0.12300 ", 5, -1, Padding.Right, false)]
+        [InlineData("1", ".0", 1, -1, Padding.Left, false)]
+        [InlineData("1", ".0", 1, -1, Padding.Left, true)]
+        [InlineData("1", ".0", 1, -1, Padding.Right, false)]
         // Grouping shortage
         [InlineData("1234", "1,234", 0, 3, Padding.Left, false)]
         [InlineData("1234", ",234", 0, 3, Padding.Left, false)]
