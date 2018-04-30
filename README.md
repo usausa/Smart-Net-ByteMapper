@@ -1,11 +1,108 @@
-# Smart.IO.ByteMapper .NET - byte mapper library for .NET
+﻿# Smart.ByteMapper .NET - byte array mapper library for .NET
 
-## What is this?
+## What is this ?
 
 * byte array <-> object mapper.
-* (under construction)
+* Configuration by attribute and expressions support.
+* Converter can be specified for each property.
+* Can change default setting for factory and type.
+* Supports different profiles for the same type.
+* ASP.NET Core integration.
+* Fast custom converter options exist.
+
+### Usage example
+
+```csharp
+// Data class
+public class ComplexData
+{
+    public string StringValue1 { get; set; }
+    public string StringValue2 { get; set; }
+    public string StringValue3 { get; set; }
+    public int IntValue1 { get; set; }
+    public int IntValue2 { get; set; }
+    public int? IntValue3 { get; set; }
+    public int? IntValue4 { get; set; }
+    public decimal DecimalValue1 { get; set; }
+    public decimal? DecimalValue2 { get; set; }
+    public bool BoolValue1 { get; set; }
+    public bool? BoolValue2 { get; set; }
+    public DateTime DateTimeValue1 { get; set; }
+    public DateTime? DateTimeValue2 { get; set; }
+}
+```
+
+```csharp
+// Configration by expression
+var mapperFactory = new MapperFactoryConfig()
+    .UseOptionsDefault()
+    .DefaultEncoding(Encoding.GetEncoding(932))
+    .CreateMapByExpression<ComplexData>(144, config => config
+        .ForMember(x => x.StringValue1, m => m.Text(20))
+        .ForMember(x => x.StringValue2, m => m.Text(20))
+        .ForMember(x => x.StringValue3, m => m.Text(20))
+        .ForMember(x => x.IntValue1, m => m.Integer(8))
+        .ForMember(x => x.IntValue2, m => m.Integer(8))
+        .ForMember(x => x.IntValue3, m => m.Integer(8))
+        .ForMember(x => x.IntValue4, m => m.Integer(8))
+        .ForMember(x => x.DecimalValue1, m => m.Decimal(10, 2))
+        .ForMember(x => x.DecimalValue2, m => m.Decimal(10, 2))
+        .ForMember(x => x.BoolValue1, m => m.Boolean())
+        .ForMember(x => x.BoolValue2, m => m.Boolean())
+        .ForMember(x => x.DateTimeValue1, m => m.DateTime("yyyyMMddHHmmss"))
+        .ForMember(x => x.DateTimeValue2, m => m.DateTime("yyyyMMddHHmmss")))
+    .ToMapperFactory();
+
+// Create type mapper
+var mapper = mapperFactory.Create<ComplexData>();
+```
+
+```csharp
+// Usage
+var buffer = new byte[mapper.Size];
+var data = new ComplexData
+{
+    StringValue1 = "XXXXXXXXXXXXXXXXXXXX",
+    StringValue2 = "あああああ",
+    StringValue3 = string.Empty,
+    IntValue1 = 1,
+    IntValue2 = 0,
+    IntValue3 = 1,
+    IntValue4 = null,
+    BoolValue1 = true,
+    BoolValue2 = null,
+    DecimalValue1 = 1.23m,
+    DecimalValue2 = null,
+    DateTimeValue1 = new DateTime(2000, 12, 31, 23, 59, 59, 999),
+    DateTimeValue2 = null
+};
+
+// object to byte array
+mapper.ToByte(buffer, 0, data);
+// buffer
+// [XXXXXXXXXXXXXXXXXXXXあああああ                                     1       0       1              1.23          1 20001231235959              \r\n]
+
+// byte array to object
+mapper.FromByte(buffer, 0, data);
+
+```
+
+Performance in this case.
+
+* 1,500,000 op/s byte array to object
+* 1,050,000 op/s object to byte array
+
+## NuGet
+
+| Id                                 | Note                       |
+|------------------------------------|----------------------------|
+| Usa.Smart.IO.ByteMapper            | Core libyrary              |
+| Usa.Smart.IO.ByteMapper.Options    | Optional converters        |
+| Usa.Smart.IO.ByteMapper.AspNetCore | ASP.NET Core integration   |
 
 ## Benchmark
+
+Converter benchmark in .NET Core 2.0.
 
 |                       Method |       Mean |       Error |     StdDev |  Gen 0 | Allocated |
 |----------------------------- |-----------:|------------:|-----------:|-------:|----------:|
@@ -83,6 +180,412 @@
 |              WriteDateTime14 |  76.149 ns |  14.6172 ns |  0.8259 ns | 0.0056 |      24 B |
 |              WriteDateTime17 | 103.888 ns |   7.1657 ns |  0.4049 ns | 0.0056 |      24 B |
 
-## Example
+## Map by Attribute
 
-(under construction)
+```csharp
+[Map(32, NullFiller = (byte)'_')]
+[TypeEncoding(932)]
+[TypeTrueValue((byte)'Y')]
+[TypeFalseValue((byte)'N')]
+public class Data
+{
+    [MapInteger(0, 8)]
+    public int IntValue { get; set; }
+
+    [MapDecimal(8, 10, 2, GroupingSize = 3)]
+    public int DecimalValue { get; set; }
+
+    [MapText(18, 10)]
+    public string StringValue { get; set; }
+
+    [MapBoolean(28)]
+    public bool BoolValue1 { get; set; }
+
+    [MapBoolean(29, NullValue = (byte)'-')]
+    public bool? BoolValue2 { get; set; }
+}
+```
+
+```csharp
+var mapperFactory = new MapperFactoryConfig()
+    .CreateMapByAttribute<Data>()
+    .ToMapperFactory();
+```
+
+## Map by Expression
+
+```csharp
+public class Data
+{
+    public int IntValue { get; set; }
+
+    public int DecimalValue { get; set; }
+
+    public string StringValue { get; set; }
+
+    public bool BoolValue1 { get; set; }
+
+    public bool? BoolValue2 { get; set; }
+}
+```
+
+```csharp
+var mapperFactory = new MapperFactoryConfig()
+    .CreateMapByExpression<Data>(32, config => config
+        .NullFiller((byte)'_')
+        .TypeEncoding(Encoding.GetEncoding(932))
+        .TypeTrueValue((byte)'Y')
+        .TypeTrueValue((byte)'N')
+        .ForMember(x => x.IntValue, m => m.Integer(8))
+        .ForMember(x => x.DecimalValue, m => m.Decimal(10, 2).GroupingSize(3))
+        .ForMember(x => x.StringValue, m => m.Text(10))
+        .ForMember(x => x.BoolValue1, m => m.Boolean())
+        .ForMember(x => x.BoolValue2, m => m.Boolean().Null((byte)'-')))
+    .ToMapperFactory();
+```
+
+## Converters
+
+| Converter             | Option | Supported Types                                          | Memo                                               |
+|-----------------------|--------|----------------------------------------------------------|----------------------------------------------------|
+| ArrayConverter        |        | T[]                                                      | Use with other converters                          |
+| BinaryCinverter       |        | int, long, short                                         | Support little endian and big endian               |
+| BooleanConverter      |        | bool, bool?                                              | Byte value to boolean                              |
+| ByteConverter         |        | byte                                                     | Use byte as it is                                  |
+| BytesConverter        |        | byte[]                                                   | Simple byte array copy                             |
+| DateTimeTextConverter |        | DateTime, DateTime?, DateTimeOffset, DateTimeOffset?     | Using Encoding and default format and parse method |
+| NumberTextConverter   |        | int, int?, long, long?, short, short?, decimal, decimal? | Using Encoding and default format and parse method |
+| TextConverter         |        | string                                                   | Using Encoding.GetString()/Encoding.GetBytes()     |
+| AsciiConverter        | ✅     | string                                                   | Using custom convert for ascii bytes               |
+| DateTimeConverter     | ✅     | DateTime, DateTime?, DateTimeOffset, DateTimeOffset?     | Using custom format and parse method               |
+| DecimalConverter      | ✅     | decimal, decimal?                                        | Using custom format and parse method               |
+| IntegerConverter      | ✅     | int, int?, long, long?, short, short?                    | Using custom format and parse method               |
+
+## Configuration
+
+Use the following method to set the default parameters.
+
+| Method                          | Option | Default value                | Memo                                                       |
+|---------------------------------|--------|------------------------------|------------------------------------------------------------|
+| DefaultDelimiter()              |        | 0x0D, 0x0A                   | Record delimiter                                           |
+| DefaultEncoding()               |        | Encoding.ASCII               | Used in TextConverter                                      |
+| DefaultTrim()                   |        | true                         | Used in TextConverter, AsciiConverter, NumberTextConverter |
+| DefaultTextPadding()            |        | Padding.Right                | Used in TextConverter, AsciiConverter                      |
+| DefaultFiller()                 |        | 0x20                         | Used in various converters                                 |
+| DefaultTextFiller()             |        | 0x20                         | Used in TextConverter, AsciiConverter                      |
+| DefaultEndian()                 |        | Endian.Big                   | Used in BinaryConverter                                    |
+| DefaultTrueValue()              |        | 0x31                         | Used in BooleanConverter                                   |
+| DefaultFalseValue()             |        | 0x30                         | Used in BooleanConverter                                   |
+| DefaultDateTimeTextEncoding()   |        | Encoding.ASCII               | Used in DateTimeTextConverter                              |
+| DefaultDateTimeTextProvider()   |        | CultureInfo.InvariantCulture | Used in DateTimeTextConverter                              |
+| DefaultDateTimeTextStyle()      |        | DateTimeStyles.None          | Used in DateTimeTextConverter                              |
+| DefaultNumberTextEncoding()     |        | Encoding.ASCII               | Used in NumberTextConverter                                |
+| DefaultNumberTextProvider()     |        | CultureInfo.InvariantCulture | Used in NumberTextConverter                                |
+| DefaultNumberTextNumberStyle()  |        | NumberStyles.Integer         | Used in NumberTextConverter                                |
+| DefaultNumberTextDecimalStyle() |        | NumberStyles.Number          | Used in NumberTextConverter                                |
+| DefaultNumberTextPadding()      |        | Padding.Left                 | Used in NumberTextConverter                                |
+| DefaultNumberTextFiller()       |        | 0x20                         | Used in NumberTextConverter                                |
+| DefaultNumberPadding()          | ✅     | Padding.Left                 | Used in NumberConverter, DecimalConverter                  |
+| DefaultZeroFill()               | ✅     | false                        | Used in NumberConverter, DecimalConverter                  |
+| DefaultUseGrouping()            | ✅     | false                        | Used in DecimalConverter                                   |
+| DefaultNumberFiller()           | ✅     | 0x20                         | Used in NumberConverter, DecimalConverter                  |
+| DefaultDateTimeKind()           | ✅     | DateTimeKind.Unspecified     | Used in DateTimeConverter                                  |
+## Profile
+
+```csharp
+var mapperFactory = new MapperFactoryConfig()
+    .CreateMapByExpression<SampleData>(59, c => c
+        .ForMember(x => x.Code, m => m.Ascii(13))
+        .ForMember(x => x.Name, m => m.Text(20))
+        .ForMember(x => x.Qty, m => m.Integer(6))
+        .ForMember(x => x.Price, m => m.Decimal(10, 2))
+        .ForMember(x => x.Date, m => m.DateTime("yyyyMMdd")))
+    .CreateMapByExpression<SampleData>("short", 35, c => c
+        .ForMember(x => x.Code, m => m.Ascii(13))
+        .ForMember(x => x.Name, m => m.Text(20)))
+    .ToMapperFactory();
+
+// default profile
+var mapper1 = mapperFactory.Create<SampleData>();
+
+// short profile
+var mapper2 = mapperFactory.Create<SampleData>("short");
+```
+
+## ASP.NET Core integration
+
+```csharp
+// Add formatter in Startup
+services.AddMvc(options =>
+{
+    var config = new ByteMapperFormatterConfig { MapperFactory = mapperFactory };
+    config.SupportedMediaTypes.Add("text/x-fixedrecord");
+    options.OutputFormatters.Add(new ByteMapperOutputFormatter(config));
+    options.InputFormatters.Add(new ByteMapperInputFormatter(config));
+});
+```
+
+```csharp
+// Controller method
+[Produces("text/x-fixedrecord")]
+[HttpGet]
+public SampleData[] GetArray()
+{
+    return new SampleData[] { ... };
+}
+
+[Produces("text/x-fixedrecord")]
+[HttpGet]
+public SampleData GetSingle()
+{
+    return new SampleData { ... };
+}
+
+[Produces("text/x-fixedrecord")]
+[ByteMapperProfile("short")]
+[HttpGet]
+public SampleData[] GetProfileArray()
+{
+    return new SampleData[] { ... };
+}
+
+[HttpPost]
+public IActionResult PostArray([FromBody] SampleData[] values)
+{
+    return Ok();
+}
+```
+
+## Implement custom converter
+
+### Converter
+
+Implement `IMapConverter`.
+
+```csharp
+public interface IMapConverter
+{
+    object Read(byte[] buffer, int index);
+
+    void Write(byte[] buffer, int index, object value);
+}
+```
+
+* Example
+
+```csharp
+internal sealed class MyBooleanConverter : IMapConverter
+{
+    private readonly byte trueValue;
+
+    private readonly byte falseValue;
+
+    public BooleanConverter(byte trueValue, byte falseValue)
+    {
+        this.trueValue = trueValue;
+        this.falseValue = falseValue;
+    }
+
+    public object Read(byte[] buffer, int index)
+    {
+        return buffer[index] == trueValue;
+    }
+
+    public void Write(byte[] buffer, int index, object value)
+    {
+        buffer[index] = (bool)value ? trueValue : falseValue;
+    }
+}
+```
+
+### ConverterBuilder
+
+Implement `IMapConverterBuilder`.
+
+```csharp
+public interface IMapConverterBuilder
+{
+    bool Match(Type type);
+
+    int CalcSize(Type type);
+
+    IMapConverter CreateConverter(IBuilderContext context, Type type);
+}
+```
+
+Helper class AbstractMapConverterBuilder is prepared, it is used as follows.
+
+* Example
+
+```csharp
+public sealed class MyBooleanConverterBuilder : AbstractMapConverterBuilder<BooleanConverterBuilder>
+{
+    public byte? TrueValue { get; set; }
+
+    public byte? FalseValue { get; set; }
+
+    static BooleanConverterBuilder()
+    {
+        AddEntry(typeof(bool), 1, (b, t, c) => b.CreateBooleanConverter(c));
+    }
+
+    private IMapConverter CreateBooleanConverter(IBuilderContext context)
+    {
+        return new MyBooleanConverter(
+            TrueValue ?? context.GetParameter<byte>(MyParameter.TrueValue),
+            FalseValue ?? context.GetParameter<byte>(MyParameter.FalseValue));
+    }
+}
+```
+
+### For Attribute
+
+Create a derived class of AbstractMemberMapAttribute that wraps Builder.
+
+* Example
+
+```csharp
+public sealed class MapMyBooleanAttribute : AbstractMemberMapAttribute
+{
+    private readonly MyBooleanConverterBuilder builder = new MyBooleanConverterBuilder();
+
+    public byte TrueValue
+    {
+        get => throw new NotSupportedException();
+        set => builder.TrueValue = value;
+    }
+
+    public byte FalseValue
+    {
+        get => throw new NotSupportedException();
+        set => builder.FalseValue = value;
+    }
+
+    public MapMyBooleanAttribute(int offset)
+        : base(offset)
+    {
+    }
+
+    public override IMapConverterBuilder GetConverterBuilder()
+    {
+        return builder;
+    }
+}
+```
+
+### For Expressions
+
+Implement `IMemberMapExpression`.
+
+```csharp
+public interface IMemberMapExpression
+{
+    IMapConverterBuilder GetMapConverterBuilder();
+}
+```
+
+* Example
+
+Declare the Syntax interface for the option and implement it with `IMemberMapExpression`.
+
+```csharp
+public interface IMapMyBooleanSyntax
+{
+    IMapMyBooleanSyntax True(byte value);
+
+    IMapMyBooleanSyntax False(byte value);
+}
+
+internal sealed class MapMyBooleanExpression : IMemberMapExpression, IMapMyBooleanSyntax
+{
+    private readonly MyBooleanConverterBuilder builder = new MyBooleanConverterBuilder();
+
+    public IMapMyBooleanSyntax True(byte value)
+    {
+        builder.TrueValue = value;
+        return this;
+    }
+
+    public IMapMyBooleanSyntax False(byte value)
+    {
+        builder.FalseValue = value;
+        return this;
+    }
+
+    IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
+    {
+        return builder;
+    }
+}
+```
+
+Also define extension methods.
+
+```csharp
+public static IMapMyBooleanSyntax MyBoolean(this IMemberMapConfigSyntax syntax)
+{
+    var expression = new MapMyBooleanExpression();
+    syntax.Map(expression);
+    return expression;
+}
+```
+
+### Default parameter
+
+If default parameters are used, the following definitions are also prepared.
+
+```csharp
+// Parameter definition
+public static class MyParameter
+{
+    public const string TrueValue = nameof(MyParameter) + "." + nameof(TrueValue);
+
+    public const string FalseValue = nameof(MyParameter) + "." + nameof(FalseValue);
+}
+```
+
+```csharp
+// Config default extension method
+public static MapperFactoryConfig DefaultTrueValue(this MapperFactoryConfig config, byte value)
+{
+    return config.AddMyParameter(MyParameter.TrueValue, value);
+}
+
+public static MapperFactoryConfig UseMyOptionsDefault(this MapperFactoryConfig config)
+{
+    this.DefaultTrueValue(0x31);
+    this.DefaultFalseValue(0x30);
+    return config;
+}
+```
+
+```csharp
+// Type default config for map by attribute
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+public sealed class TypeTrueValueAttribute : Attribute, ITypeDefaultAttribute
+{
+    public string Key => MyParameter.TrueValue;
+
+    public object Value { get; }
+
+    public TypeTrueValueAttribute(byte value)
+    {
+        Value = value;
+    }
+}
+```
+
+```csharp
+// Type default config for map by expressions
+public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> syntax, byte value)
+{
+    return syntax.TypeDefault(MyParameter.TrueValue, value);
+}
+```
+
+## Future
+
+* Performance improvements using Span.
+* Add over 19 digits decimal support to DecimalCoverter using BigInteger.
+* Add Double and Float support to DecimalCoverter.
+* Add fast UTF-16 converter support.
