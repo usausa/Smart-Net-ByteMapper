@@ -1,4 +1,4 @@
-﻿# Smart.ByteMapper .NET - byte array mapper library for .NET
+﻿# Smart.IO.ByteMapper .NET - byte array mapper library for .NET
 
 ## What is this ?
 
