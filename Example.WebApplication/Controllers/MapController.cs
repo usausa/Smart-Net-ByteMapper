@@ -70,9 +70,16 @@
 
         [Produces("text/x-fixedrecord")]
         [HttpGet]
-        public SampleData[] GetList()
+        public SampleData[] GetArray()
         {
             return CreateDummyData();
+        }
+
+        [Produces("text/x-fixedrecord")]
+        [HttpGet]
+        public IEnumerable<SampleData> GetList()
+        {
+            return new List<SampleData>(CreateDummyData());
         }
 
         [Produces("text/x-fixedrecord")]

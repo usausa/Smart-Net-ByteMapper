@@ -2,24 +2,16 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     internal static class TypeHelper
     {
         private static readonly Type EnumerableType = typeof(IEnumerable<>);
 
-        private static readonly Type CollectionType = typeof(ICollection<>);
-
-        private static readonly Type ListType = typeof(IList<>);
-
         public static bool IsEnumerableType(Type type)
         {
-            if (type.IsGenericType)
-            {
-                var genericType = type.GetGenericTypeDefinition();
-                return (genericType == EnumerableType) || (genericType == CollectionType) || (genericType == ListType);
-            }
-
-            return false;
+            return new[] { type }.Where(x => x.IsInterface).Concat(type.GetInterfaces())
+                .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == EnumerableType);
         }
 
         public static Type GetEnumerableElementType(Type type)
@@ -31,13 +23,9 @@
             }
 
             // IEnumerable type
-            if (type.IsGenericType)
+            if (IsEnumerableType(type))
             {
-                var genericType = type.GetGenericTypeDefinition();
-                if ((genericType == EnumerableType) || (genericType == CollectionType) || (genericType == ListType))
-                {
-                    return type.GenericTypeArguments[0];
-                }
+                return type.GenericTypeArguments[0];
             }
 
             return null;

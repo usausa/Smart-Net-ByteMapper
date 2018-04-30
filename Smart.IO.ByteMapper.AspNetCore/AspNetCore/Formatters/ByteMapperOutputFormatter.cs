@@ -41,7 +41,6 @@
 
             var writer = writerCache.AddIfNotExist(new MapperKey(context.ObjectType, profile), CreateWriter);
 
-            //var stream = new BufferedStream(context.HttpContext.Response.Body, 8192);
             var stream = context.HttpContext.Response.Body;
 
             writer.Write(stream, context.Object);
