@@ -180,6 +180,8 @@ Converter benchmark in .NET Core 2.0.
 |              WriteDateTime14 |  76.149 ns |  14.6172 ns |  0.8259 ns | 0.0056 |      24 B |
 |              WriteDateTime17 | 103.888 ns |   7.1657 ns |  0.4049 ns | 0.0056 |      24 B |
 
+WriteDecimal18Max is later than WriteNumberTextDecimal18Max, but it improves in `.NET Core 2.1`.
+
 ## Map by Attribute
 
 ```csharp
