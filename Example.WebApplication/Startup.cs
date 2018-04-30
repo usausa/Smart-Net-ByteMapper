@@ -45,12 +45,12 @@
             services.AddMvc(options =>
             {
                 var config = new ByteMapperFormatterConfig { MapperFactory = mapperFactory };
-                config.SupportedMediaTypes.Add("text/x-fixrecord");
+                config.SupportedMediaTypes.Add("text/x-fixedrecord");
 
                 options.OutputFormatters.Add(new ByteMapperOutputFormatter(config));
                 options.InputFormatters.Add(new ByteMapperInputFormatter(config));
 
-                options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixrecord");
+                options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
             });
 
             // Swagger

@@ -61,35 +61,35 @@
             };
         }
 
-        [Produces("text/x-fixrecord")]
+        [Produces("text/x-fixedrecord")]
         [HttpGet]
         public SampleData[] GetLarge()
         {
             return LargeValues;
         }
 
-        [Produces("text/x-fixrecord")]
+        [Produces("text/x-fixedrecord")]
         [HttpGet]
         public SampleData[] GetList()
         {
             return CreateDummyData();
         }
 
-        [Produces("text/x-fixrecord")]
+        [Produces("text/x-fixedrecord")]
         [HttpGet]
         public SampleData[] GetEmpty()
         {
             return Array.Empty<SampleData>();
         }
 
-        [Produces("text/x-fixrecord")]
+        [Produces("text/x-fixedrecord")]
         [HttpGet]
         public SampleData GetSingle()
         {
             return CreateDummyData().First();
         }
 
-        [Produces("text/x-fixrecord")]
+        [Produces("text/x-fixedrecord")]
         [ByteMapperProfile("short")]
         [HttpGet]
         public SampleData[] GetProfile()
