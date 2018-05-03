@@ -16,14 +16,20 @@
             this.filler = filler;
         }
 
-        public object Read(byte[] buffer, int index)
+        public unsafe object Read(byte[] buffer, int index)
         {
             var bytes = new byte[length];
-            Buffer.BlockCopy(buffer, index, bytes, 0, length);
+
+            fixed (byte* pSrc = &buffer[index])
+            fixed (byte* pDst = &bytes[0])
+            {
+                Buffer.MemoryCopy(pSrc, pDst, length, length);
+            }
+
             return bytes;
         }
 
-        public void Write(byte[] buffer, int index, object value)
+        public unsafe void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
@@ -32,14 +38,7 @@
             else
             {
                 var bytes = (byte[])value;
-                if (bytes.Length >= length)
-                {
-                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
-                }
-                else
-                {
-                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
-                }
+                BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
             }
         }
     }

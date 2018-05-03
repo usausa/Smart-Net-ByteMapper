@@ -6,6 +6,8 @@
     {
         private readonly int offset;
 
+        private readonly int length;
+
         private readonly byte[] content;
 
         public bool CanRead => false;
@@ -15,6 +17,7 @@
         public ConstantMapper(int offset, byte[] content)
         {
             this.offset = offset;
+            length = content.Length;
             this.content = content;
         }
 
@@ -23,9 +26,13 @@
             throw new NotSupportedException();
         }
 
-        public void Write(byte[] buffer, int index, object target)
+        public unsafe void Write(byte[] buffer, int index, object target)
         {
-            Buffer.BlockCopy(content, 0, buffer, index + offset, content.Length);
+            fixed (byte* pSrc = &content[0])
+            fixed (byte* pDst = &buffer[index + offset])
+            {
+                Buffer.MemoryCopy(pSrc, pDst, length, length);
+            }
         }
     }
 }

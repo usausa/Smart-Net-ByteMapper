@@ -4,10 +4,17 @@
 
     public static class TestBytes
     {
-        public static byte[] Offset(int offset, byte[] bytes)
+        public static unsafe byte[] Offset(int offset, byte[] bytes)
         {
-            var buffer = new byte[offset + bytes.Length];
-            Buffer.BlockCopy(bytes, 0, buffer, offset, bytes.Length);
+            var length = bytes.Length;
+            var buffer = new byte[offset + length];
+
+            fixed (byte* pSrc = &bytes[0])
+            fixed (byte* pDst = &buffer[offset])
+            {
+                Buffer.MemoryCopy(pSrc, pDst, length, length);
+            }
+
             return buffer;
         }
     }

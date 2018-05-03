@@ -51,7 +51,7 @@
             return defaultValue;
         }
 
-        public void Write(byte[] buffer, int index, object value)
+        public unsafe void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
@@ -60,14 +60,7 @@
             else
             {
                 var bytes = encoding.GetBytes(((DateTime)value).ToString(format, provider));
-                if (bytes.Length >= length)
-                {
-                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
-                }
-                else
-                {
-                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
-                }
+                BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
             }
         }
     }
@@ -117,7 +110,7 @@
             return defaultValue;
         }
 
-        public void Write(byte[] buffer, int index, object value)
+        public unsafe void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
@@ -126,14 +119,7 @@
             else
             {
                 var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider));
-                if (bytes.Length >= length)
-                {
-                    Buffer.BlockCopy(bytes, 0, buffer, index, length);
-                }
-                else
-                {
-                    BytesHelper.CopyPadRight(bytes, buffer, index, length, filler);
-                }
+                BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
             }
         }
     }

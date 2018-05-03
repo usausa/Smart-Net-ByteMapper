@@ -33,20 +33,6 @@
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyPadRight(byte[] bytes, byte[] buffer, int index, int length, byte filler)
-        {
-            Buffer.BlockCopy(bytes, 0, buffer, index, bytes.Length);
-            Fill(buffer, index + bytes.Length, length - bytes.Length, filler);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyPadLeft(byte[] bytes, byte[] buffer, int index, int length, byte filler)
-        {
-            Buffer.BlockCopy(bytes, 0, buffer, index + length - bytes.Length, bytes.Length);
-            Fill(buffer, index, length - bytes.Length, filler);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void TrimRange(byte[] buffer, ref int start, ref int size, Padding padding, byte filler)
         {
             if (padding == Padding.Left)
@@ -68,19 +54,39 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
+        public static unsafe void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
         {
             if (bytes.Length >= length)
             {
-                Buffer.BlockCopy(bytes, 0, buffer, index, length);
+                fixed (byte* pSrc = &bytes[0])
+                fixed (byte* pDst = &buffer[index])
+                {
+                    Buffer.MemoryCopy(pSrc, pDst, length, length);
+                }
             }
             else if (padding == Padding.Right)
             {
-                CopyPadRight(bytes, buffer, index, length, filler);
+                var size = bytes.Length;
+
+                fixed (byte* pSrc = &bytes[0])
+                fixed (byte* pDst = &buffer[index])
+                {
+                    Buffer.MemoryCopy(pSrc, pDst, size, size);
+                }
+
+                Fill(buffer, index + bytes.Length, length - bytes.Length, filler);
             }
             else
             {
-                CopyPadLeft(bytes, buffer, index, length, filler);
+                var size = bytes.Length;
+
+                fixed (byte* pSrc = &bytes[0])
+                fixed (byte* pDst = &buffer[index + length - size])
+                {
+                    Buffer.MemoryCopy(pSrc, pDst, size, size);
+                }
+
+                Fill(buffer, index, length - size, filler);
             }
         }
     }
