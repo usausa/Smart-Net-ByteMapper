@@ -14,10 +14,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <group targetFramework="netstandard2.0">
-        <dependency id="Usa.Smart.Core" version="1.5.3" />
+        <dependency id="Usa.Smart.Core" version="1.5.5" />
       </group>
       <group targetFramework="net462">
-        <dependency id="Usa.Smart.Core" version="1.5.3" />
+        <dependency id="Usa.Smart.Core" version="1.5.5" />
       </group>
     </dependencies>
     <tags>smart io mapper</tags>
