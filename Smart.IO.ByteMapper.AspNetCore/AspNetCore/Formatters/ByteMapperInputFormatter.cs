@@ -76,14 +76,14 @@
         {
             private readonly ITypeMapper<T> mapper;
 
-            private readonly Func<object> factory;
+            private readonly Func<T> factory;
 
             private readonly int bufferSize;
 
             public SingleInputReader(ByteMapperFormatterConfig config, string profile)
             {
                 mapper = config.MapperFactory.Create<T>(profile);
-                factory = config.DelegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
+                factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = mapper.Size;
             }
 
@@ -97,7 +97,7 @@
                         return default;
                     }
 
-                    var target = (T)factory();
+                    var target = factory();
                     mapper.FromByte(buffer, 0, target);
                     return target;
                 }
@@ -112,7 +112,7 @@
         {
             private readonly ITypeMapper<T> mapper;
 
-            private readonly Func<object> factory;
+            private readonly Func<T> factory;
 
             private readonly int bufferSize;
 
@@ -121,7 +121,7 @@
             public ArrayInputReader(ByteMapperFormatterConfig config, string profile)
             {
                 mapper = config.MapperFactory.Create<T>(profile);
-                factory = config.DelegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
+                factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
@@ -142,7 +142,7 @@
                             var limit = read - mapper.Size;
                             for (var pos = 0; pos <= limit; pos += mapper.Size)
                             {
-                                var target = (T)factory();
+                                var target = factory();
                                 mapper.FromByte(buffer, pos, target);
                                 array[index] = target;
                                 index++;
@@ -161,7 +161,7 @@
                             var limit = read - mapper.Size;
                             for (var pos = 0; pos <= limit; pos += mapper.Size)
                             {
-                                var target = (T)factory();
+                                var target = factory();
                                 mapper.FromByte(buffer, pos, target);
                                 list.Add(target);
                             }
@@ -181,7 +181,7 @@
         {
             private readonly ITypeMapper<T> mapper;
 
-            private readonly Func<object> factory;
+            private readonly Func<T> factory;
 
             private readonly int bufferSize;
 
@@ -190,7 +190,7 @@
             public ListInputReader(ByteMapperFormatterConfig config, string profile)
             {
                 mapper = config.MapperFactory.Create<T>(profile);
-                factory = config.DelegateFactory.CreateFactory0(typeof(T).GetConstructor(Type.EmptyTypes));
+                factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
@@ -208,7 +208,7 @@
                         var limit = read - mapper.Size;
                         for (var pos = 0; pos <= limit; pos += mapper.Size)
                         {
-                            var target = (T)factory();
+                            var target = factory();
                             mapper.FromByte(buffer, pos, target);
                             list.Add(target);
                         }
