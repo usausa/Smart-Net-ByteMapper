@@ -38,6 +38,12 @@
         }
 
         [Benchmark]
+        public void ParseCustom8X()
+        {
+            ByteHelper.TryParseDecimalX(Bytes8, 0, Bytes8.Length, out var _);
+        }
+
+        [Benchmark]
         public void ParseCustomB8()
         {
             ByteHelper.TryParseDecimal2(Bytes8, 0, Bytes8.Length, out var _);
@@ -64,6 +70,12 @@
         }
 
         [Benchmark]
+        public void ParseCustom19X()
+        {
+            ByteHelper.TryParseDecimalX(Bytes19, 0, Bytes19.Length, out var _);
+        }
+
+        [Benchmark]
         public void ParseCustomB19()
         {
             ByteHelper.TryParseDecimal2(Bytes19, 0, Bytes19.Length, out var _);
@@ -87,6 +99,12 @@
         public void ParseCustom28()
         {
             ByteHelper.TryParseDecimal(Bytes28, 0, Bytes28.Length, out var _);
+        }
+
+        [Benchmark]
+        public void ParseCustom28X()
+        {
+            ByteHelper.TryParseDecimalX(Bytes28, 0, Bytes28.Length, out var _);
         }
 
         //[Benchmark]
