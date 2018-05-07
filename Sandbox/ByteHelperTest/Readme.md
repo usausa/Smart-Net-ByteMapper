@@ -112,6 +112,21 @@
 
 ----
 
+## Bit
+
+|            Method |     Mean |     Error |    StdDev | Allocated |
+|------------------ |---------:|----------:|----------:|----------:|
+|   FloatToUIntBit1 | 5.534 ns | 3.9423 ns | 0.2227 ns |       0 B |
+|   FloatToUIntBit2 | 1.793 ns | 1.5540 ns | 0.0878 ns |       0 B |
+|   UIntToFloatBit1 | 5.433 ns | 1.2301 ns | 0.0695 ns |       0 B |
+|   UIntToFloatBit2 | 1.734 ns | 0.9628 ns | 0.0544 ns |       0 B |
+| DoubleToULongBit1 | 5.068 ns | 2.7036 ns | 0.1528 ns |       0 B |
+| DoubleToULongBit2 | 1.703 ns | 0.7677 ns | 0.0434 ns |       0 B |
+| ULongToDoubleBit1 | 4.863 ns | 0.0807 ns | 0.0046 ns |       0 B |
+| ULongToDoubleBit2 | 3.597 ns | 2.2669 ns | 0.1281 ns |       0 B |
+
+----
+
 ## Encoding
 
 |              Method |     Mean |    Error |    StdDev |  Gen 0 | Allocated |

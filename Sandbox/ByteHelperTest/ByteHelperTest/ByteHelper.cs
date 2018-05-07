@@ -4,6 +4,7 @@ namespace ByteHelperTest
     using System;
     //using System.Numerics;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     public static class ByteHelper
     {
@@ -91,6 +92,82 @@ namespace ByteHelperTest
             }
 
             return array;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Convert
+        //--------------------------------------------------------------------------------
+
+        public static unsafe uint FloatToUIntBit1(float value)
+        {
+            var result = default(uint);
+            Buffer.MemoryCopy((byte*)&value, (byte*)&result, 4, 4);
+            return result;
+        }
+
+        public static unsafe ulong DoubleToULongBit1(double value)
+        {
+            var result = default(ulong);
+            Buffer.MemoryCopy((byte*)&value, (byte*)&result, 8, 8);
+            return result;
+        }
+
+        public static unsafe float UIntToFloatBit1(uint value)
+        {
+            var result = default(float);
+            Buffer.MemoryCopy((byte*)&value, (byte*)&result, 4, 4);
+            return result;
+        }
+
+        public static unsafe double ULongToDoubleBit1(ulong value)
+        {
+            var result = default(double);
+            Buffer.MemoryCopy((byte*)&value, (byte*)&result, 8, 8);
+            return result;
+        }
+
+        // Faster
+
+        public static uint FloatToUIntBit2(float value)
+        {
+            var bit = new FloatBit { FloatValue = value };
+            return bit.UIntValue;
+        }
+
+        public static ulong DoubleToULongBit2(double value)
+        {
+            var bit = new DoubleBit { DoubleValue = value };
+            return bit.ULongValue;
+        }
+
+        public static float UIntToFloatBit2(uint value)
+        {
+            var bit = new FloatBit { UIntValue = value };
+            return bit.FloatValue;
+        }
+
+        public static double DoubleToULongBit2(ulong value)
+        {
+            var bit = new DoubleBit { ULongValue = value };
+            return bit.ULongValue;
+        }
+
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private struct FloatBit
+        {
+            [FieldOffset(0)]
+            public float FloatValue;
+            [FieldOffset(0)]
+            public uint UIntValue;
+        }
+
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private struct DoubleBit
+        {
+            [FieldOffset(0)]
+            public double DoubleValue;
+            [FieldOffset(0)]
+            public ulong ULongValue;
         }
 
         //--------------------------------------------------------------------------------
