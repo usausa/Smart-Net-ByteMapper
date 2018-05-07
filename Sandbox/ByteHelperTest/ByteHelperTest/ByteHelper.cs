@@ -801,8 +801,7 @@ namespace ByteHelperTest
                 var overflow = IsOverflow(shift3, shift1);
                 lomid = shift1 + shift3;
 
-                // TODO exist ?
-                //var addCarry = !overflow && IsOverflow(lomid, value);
+                var addCarry = !overflow && IsOverflow(lomid, value);
                 lomid += value;
 
                 hi = (hi << 3) + (hi << 1) + carry2 + carry8;
@@ -811,11 +810,10 @@ namespace ByteHelperTest
                 {
                     hi++;
                 }
-
-                //else if (addCarry)
-                //{
-                //    hi++;
-                //}
+                else if (addCarry)
+                {
+                    hi++;
+                }
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

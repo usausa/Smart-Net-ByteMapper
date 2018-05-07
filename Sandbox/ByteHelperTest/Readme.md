@@ -62,19 +62,19 @@
 
 ### Parse
 
-|         Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
-|--------------- |----------:|-----------:|----------:|-------:|----------:|
-|  ParseDefault8 | 263.53 ns | 123.687 ns | 6.9885 ns | 0.0110 |      48 B |
-|   ParseCustom8 |  82.23 ns |  11.025 ns | 0.6230 ns |      - |       0 B |
-|  ParseCustom8X |  23.78 ns |   3.528 ns | 0.1993 ns |      - |       0 B |
-|  ParseCustomB8 |  20.77 ns |   1.775 ns | 0.1003 ns |      - |       0 B |
-| ParseDefault19 | 456.56 ns |  80.058 ns | 4.5235 ns | 0.0167 |      72 B |
-|  ParseCustom19 | 177.27 ns |  14.005 ns | 0.7913 ns |      - |       0 B |
-| ParseCustom19X |  47.37 ns |   7.869 ns | 0.4446 ns |      - |       0 B |
-| ParseCustomB19 |  33.74 ns |   4.338 ns | 0.2451 ns |      - |       0 B |
-| ParseDefault28 | 661.46 ns |  91.143 ns | 5.1498 ns | 0.0200 |      88 B |
-|  ParseCustom28 | 255.38 ns |  45.880 ns | 2.5923 ns |      - |       0 B |
-| ParseCustom28X |  73.44 ns |  11.921 ns | 0.6736 ns |      - |       0 B |
+|          Method |      Mean |      Error |    StdDev |  Gen 0 | Allocated |
+|---------------- |----------:|-----------:|----------:|-------:|----------:|
+|   ParseDefault8 | 247.12 ns |  47.502 ns | 2.6840 ns | 0.0110 |      48 B |
+|    ParseCustom8 |  82.14 ns |   5.824 ns | 0.3290 ns |      - |       0 B |
+|   ParseCustom8X |  25.73 ns |   3.392 ns | 0.1916 ns |      - |       0 B |
+|   ParseCustomB8 |  25.72 ns | 144.815 ns | 8.1823 ns |      - |       0 B |
+|  ParseDefault19 | 454.80 ns |  20.927 ns | 1.1824 ns | 0.0167 |      72 B |
+|   ParseCustom19 | 177.24 ns |  25.952 ns | 1.4664 ns |      - |       0 B |
+|  ParseCustom19X |  52.56 ns |   5.046 ns | 0.2851 ns |      - |       0 B |
+|  ParseCustomB19 |  33.46 ns |   6.144 ns | 0.3471 ns |      - |       0 B |
+|  ParseDefault28 | 656.71 ns |  29.138 ns | 1.6463 ns | 0.0200 |      88 B |
+|   ParseCustom28 | 258.03 ns |  41.224 ns | 2.3293 ns |      - |       0 B |
+|  ParseCustom28X |  83.47 ns |   2.200 ns | 0.1243 ns |      - |       0 B |
 
 ### Format
 
