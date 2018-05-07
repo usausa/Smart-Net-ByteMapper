@@ -2,6 +2,7 @@
 namespace ByteHelperTest
 {
     using System;
+    //using System.Numerics;
     using System.Runtime.CompilerServices;
 
     public static class ByteHelper
@@ -474,7 +475,7 @@ namespace ByteHelperTest
         {
             value = 0m;
 
-            var mantissa = default(DecimalMantissa);
+            var mantissa = default(DecimalMantissaInt3);
             fixed (byte* pBytes = &bytes[index])
             {
                 var i = 0;
@@ -539,7 +540,7 @@ namespace ByteHelperTest
             }
         }
 
-        private struct DecimalMantissa
+        private struct DecimalMantissaInt3
         {
             public int Lo { get; private set; }
 
@@ -628,66 +629,7 @@ namespace ByteHelperTest
             }
         }
 
-        //public static unsafe void FormatDecimal(byte[] bytes, int offset, int length, decimal value, Padding padding, bool withZero)
-        //{
-        //    // TODO これだと遅すぎる
-        //    fixed (byte* pBytes = &bytes[offset])
-        //    {
-        //        if ((padding == Padding.Left) || withZero)
-        //        {
-        //            var i = length - 1;
-
-        //            var negative = value < 0;
-        //            if (negative)
-        //            {
-        //                value = -value;
-        //            }
-
-        //            while (i >= 0)
-        //            {
-        //                *(pBytes + i) = (byte)(0x30 + (value % 10));
-        //                i--;
-
-        //                value = decimal.Floor(value / 10);
-        //                if (value == 0m)
-        //                {
-        //                    break;
-        //                }
-        //            }
-
-        //            if (withZero)
-        //            {
-        //                while (i >= (negative ? 1 : 0))
-        //                {
-        //                    *(pBytes + i) = 0x30;
-        //                    i--;
-        //                }
-
-        //                if (negative && (i >= 0))
-        //                {
-        //                    *pBytes = 0x2D;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                if (negative && (i >= 0))
-        //                {
-        //                    *(pBytes + i) = 0x2D;
-        //                    i--;
-        //                }
-
-        //                while (i >= 0)
-        //                {
-        //                    *(pBytes + i) = 0x20;
-        //                    i--;
-        //                }
-        //            }
-
-        //        }
-
-        //        // ...
-        //    }
-        //}
+        // TODO DecimalMantissa ver2
 
         // TypeB
 
@@ -753,6 +695,131 @@ namespace ByteHelperTest
                 return true;
             }
         }
+
+        // TODO Slow
+        //public static unsafe bool TryParseDecimal3(byte[] bytes, int index, int length, out decimal value)
+        //{
+        //    value = 0m;
+
+        //    fixed (byte* pBytes = &bytes[index])
+        //    {
+        //        var i = 0;
+        //        while ((i < length) && (*(pBytes + i) == ' '))
+        //        {
+        //            i++;
+        //        }
+
+        //        if (i == length)
+        //        {
+        //            return true;
+        //        }
+
+        //        var negative = *(pBytes + i) == '-';
+        //        i += negative ? 1 : 0;
+
+        //        var nantissa = BigInteger.Zero;
+        //        var count = 0;
+        //        var dotPos = -1;
+        //        while (i < length)
+        //        {
+        //            var num = *(pBytes + i) - 0x30;
+        //            if ((num >= 0) && (num < 10))
+        //            {
+        //                nantissa = (nantissa * 10) + num;
+        //                count++;
+        //            }
+        //            else if ((*(pBytes + i) == '.') && (dotPos == -1))
+        //            {
+        //                dotPos = count;
+        //            }
+        //            else if (*(pBytes + i) != ',')
+        //            {
+        //                while ((i < length) && (*(pBytes + i) == ' '))
+        //                {
+        //                    i++;
+        //                }
+
+        //                break;
+        //            }
+
+        //            i++;
+        //        }
+
+        //        if (i != length)
+        //        {
+        //            return false;
+        //        }
+
+        //        value = new decimal(
+        //            (int)(uint)(nantissa & 0xFFFFFFFF),
+        //            (int)(uint)((nantissa >> 32) & 0xFFFFFFFF),
+        //            (int)(uint)((nantissa >> 64) & 0xFFFFFFFF),
+        //            negative,
+        //            (byte)(dotPos == -1 ? 0 : (count - dotPos)));
+        //        return true;
+        //    }
+        //}
+
+        // TODO Slow
+        //public static unsafe void FormatDecimal(byte[] bytes, int offset, int length, decimal value, Padding padding, bool withZero)
+        //{
+        //    fixed (byte* pBytes = &bytes[offset])
+        //    {
+        //        if ((padding == Padding.Left) || withZero)
+        //        {
+        //            var i = length - 1;
+
+        //            var negative = value < 0;
+        //            if (negative)
+        //            {
+        //                value = -value;
+        //            }
+
+        //            while (i >= 0)
+        //            {
+        //                *(pBytes + i) = (byte)(0x30 + (value % 10));
+        //                i--;
+
+        //                value = decimal.Floor(value / 10);
+        //                if (value == 0m)
+        //                {
+        //                    break;
+        //                }
+        //            }
+
+        //            if (withZero)
+        //            {
+        //                while (i >= (negative ? 1 : 0))
+        //                {
+        //                    *(pBytes + i) = 0x30;
+        //                    i--;
+        //                }
+
+        //                if (negative && (i >= 0))
+        //                {
+        //                    *pBytes = 0x2D;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                if (negative && (i >= 0))
+        //                {
+        //                    *(pBytes + i) = 0x2D;
+        //                    i--;
+        //                }
+
+        //                while (i >= 0)
+        //                {
+        //                    *(pBytes + i) = 0x20;
+        //                    i--;
+        //                }
+        //            }
+
+        //        }
+
+        //        // ...
+        //    }
+        //}
 
         private const int NegativeBitFlag = unchecked((int)0x80000000);
 

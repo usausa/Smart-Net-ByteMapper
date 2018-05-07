@@ -43,6 +43,12 @@
             ByteHelper.TryParseDecimal2(Bytes8, 0, Bytes8.Length, out var _);
         }
 
+        //[Benchmark]
+        //public void ParseCustomC8()
+        //{
+        //    ByteHelper.TryParseDecimal3(Bytes8, 0, Bytes8.Length, out var _);
+        //}
+
         // 19
 
         [Benchmark]
@@ -63,6 +69,12 @@
             ByteHelper.TryParseDecimal2(Bytes19, 0, Bytes19.Length, out var _);
         }
 
+        //[Benchmark]
+        //public void ParseCustomC19()
+        //{
+        //    ByteHelper.TryParseDecimal3(Bytes19, 0, Bytes19.Length, out var _);
+        //}
+
         // 28
 
         [Benchmark]
@@ -81,6 +93,12 @@
         //public void ParseCustomB28()
         //{
         //    // Not supported
+        //}
+
+        //[Benchmark]
+        //public void ParseCustomC28()
+        //{
+        //    ByteHelper.TryParseDecimal3(Bytes28, 0, Bytes28.Length, out var _);
         //}
 
         // Format
