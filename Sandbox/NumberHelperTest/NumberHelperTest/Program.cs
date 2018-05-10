@@ -13,10 +13,6 @@
     {
         public static void Main(string[] args)
         {
-            var b = new Benchmark();
-            b.Setup();
-            b.ULongUseTable();
-
             BenchmarkRunner.Run<Benchmark>();
         }
     }
@@ -76,43 +72,45 @@
         // Core 2.0 : 70s
         // Core 2.1 : 20s
         [Benchmark]
-        public void ULongUseTable()
+        public unsafe void ULongUseTable()
         {
-            UseTable(work, UInt64.MaxValue);
+            fixed (byte* pBuffer = &work[0])
+            {
+                UseTable(pBuffer, UInt64.MaxValue);
+            }
         }
 
-        private static unsafe void UseTable(byte[] buffer, ulong value)
+        private static unsafe void UseTable(byte* pBuffer, ulong value)
         {
-            fixed (byte* pDst = &buffer[0])
             fixed (byte* pSrc = &Table[0])
             {
                 // 1
                 var mod = value % 10000;
                 value = value / 10000;
-                Buffer.MemoryCopy(pSrc + (mod * 4), pDst, 4, 4);
+                Buffer.MemoryCopy(pSrc + (mod * 4), pBuffer, 4, 4);
                 if (value > 0)
                 {
                     // 2
                     mod = value % 10000;
                     value = value / 10000;
-                    Buffer.MemoryCopy(pSrc + (mod * 4), pDst, 4, 4);
+                    Buffer.MemoryCopy(pSrc + (mod * 4), pBuffer + 4, 4, 4);
                     if (value > 0)
                     {
                         // 3
                         mod = value % 10000;
                         value = value / 10000;
-                        Buffer.MemoryCopy(pSrc + (mod * 4), pDst, 4, 4);
+                        Buffer.MemoryCopy(pSrc + (mod * 4), pBuffer + 8, 4, 4);
                         if (value > 0)
                         {
                             // 4
                             mod = value % 10000;
                             value = value / 10000;
-                            Buffer.MemoryCopy(pSrc + (mod * 4), pDst, 4, 4);
+                            Buffer.MemoryCopy(pSrc + (mod * 4), pBuffer + 12, 4, 4);
                             if (value > 0)
                             {
                                 // 5
                                 mod = value % 10000;
-                                Buffer.MemoryCopy(pSrc + (mod * 4), pDst, 4, 4);
+                                Buffer.MemoryCopy(pSrc + (mod * 4), pBuffer + 16, 4, 4);
                             }
                         }
                     }
