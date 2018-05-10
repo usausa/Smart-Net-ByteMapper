@@ -1,9 +1,11 @@
 ﻿namespace ByteHelperTest
 {
     using System;
+    using System.Runtime.CompilerServices;
 
     public static class ByteHelper2
     {
+        // TODO to IntegerTable copy speed up ? 長さもわかるように？
         private const byte Zero = (byte)'0';
 
         public static unsafe void FormatDecimal0(
@@ -34,9 +36,29 @@
             IntegerTable.GetLongBuffer16(work + 16, hi);
 
             // TODO tune, reverse
-            for (var i = 0; i < length; i++)
+            fixed (byte* pBuffer = &bytes[offset])
             {
-                bytes[offset + i] = (byte)(work[i] + Zero);
+                for (var i = 0; i < length; i++)
+                {
+                    pBuffer[offset + i] = (byte)(work[i] + Zero);
+                }
+
+                ReverseBytes(pBuffer, length);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void ReverseBytes(byte* ptr, int length)
+        {
+            var start = ptr;
+            var end = ptr + length - 1;
+            while (start < end)
+            {
+                var tmp = *start;
+                *start = *end;
+                *end = tmp;
+                start++;
+                end--;
             }
         }
     }
