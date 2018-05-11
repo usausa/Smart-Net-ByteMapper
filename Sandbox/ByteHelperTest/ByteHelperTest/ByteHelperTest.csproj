@@ -39,10 +39,10 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>DecimalTable.Generate.tt</DependentUpon>
     </Compile>
-    <Compile Update="IntegerTable.Generate.cs">
+    <Compile Update="DigitTable.Generate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>IntegerTable.Generate.tt</DependentUpon>
+      <DependentUpon>DigitTable.Generate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -51,9 +51,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DecimalTable.Generate.cs</LastGenOutput>
     </None>
-    <None Update="IntegerTable.Generate.tt">
+    <None Update="DigitTable.Generate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>IntegerTable.Generate.cs</LastGenOutput>
+      <LastGenOutput>DigitTable.Generate.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
