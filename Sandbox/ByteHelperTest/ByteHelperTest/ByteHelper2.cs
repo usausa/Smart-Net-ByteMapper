@@ -7,21 +7,195 @@
     {
         private const byte Minus = (byte)'-';
         private const byte Num0 = (byte)'0';
-        private const byte Dot = (byte)'.';
-        private const byte Comma = (byte)',';
-        private const int DotDiff = Dot - Num0;
-        private const int CommaDiff = Comma - Num0;
+        //private const byte Dot = (byte)'.';
+        //private const byte Comma = (byte)',';
+        //private const int DotDiff = Dot - Num0;
+        //private const int CommaDiff = Comma - Num0;
 
         private const int Int32MinValueDiv10 = Int32.MinValue / 10;
         private const byte Int32MinValueMod10 = Num0 + -(Int32.MinValue % 10);
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
 
-        private const int NegativeBitFlag = unchecked((int)0x80000000);
+        //private const int NegativeBitFlag = unchecked((int)0x80000000);
 
         //--------------------------------------------------------------------------------
-        // Decimal
+        // Integer
         //--------------------------------------------------------------------------------
+
+        // Int32
+
+        public static unsafe void FormatInt32Old(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                if ((padding == Padding.Left) || zerofill)
+                {
+                    var i = length - 1;
+
+                    if ((value == Int32.MinValue) && (i >= 0))
+                    {
+                        *(pBytes + i--) = Int32MinValueMod10;
+                        value = Int32MinValueDiv10;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (zerofill)
+                    {
+                        while (i >= (negative ? 1 : 0))
+                        {
+                            *(pBytes + i--) = Num0;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = Minus;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i--) = Minus;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i--) = filler;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+
+                    if ((value == Int32.MinValue) && (i < length))
+                    {
+                        *(pBytes + i++) = Int32MinValueMod10;
+                        value = Int32MinValueDiv10;
+                    }
+
+                    var negative = value < 0;
+                    if (negative)
+                    {
+                        value = -value;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = (byte)(Num0 + (value % 10));
+
+                        value /= 10;
+                        if (value == 0)
+                        {
+                            break;
+                        }
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+                }
+            }
+        }
+
+        public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                var i = 0;
+
+                if ((value == Int32.MinValue) && (i < length))
+                {
+                    *(pBytes + i++) = Int32MinValueMod10;
+                    value = Int32MinValueDiv10;
+                }
+
+                var negative = value < 0;
+                if (negative)
+                {
+                    value = -value;
+                }
+
+                var work = stackalloc byte[12];
+                var writed = DigitTable.GetIntBuffer12(work, value);
+
+                // TODO copy and reverse to 1byte
+                var copy = writed > length - i ? length - i : writed;
+                Buffer.MemoryCopy(work, pBytes + i, copy, copy);
+                i += copy;
+
+                if (zerofill)
+                {
+                    var max = negative ? length - 1 : length;
+                    while (i < max)
+                    {
+                        *(pBytes + i++) = Num0;
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, length);
+                }
+                else if (padding == Padding.Left)
+                {
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+
+                    ReverseBytes(pBytes, length);
+                }
+                else
+                {
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+                }
+            }
+        }
+
+        // Int 64
 
         public static unsafe void FormatInt64Old(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
         {
@@ -139,7 +313,7 @@
                     value = -value;
                 }
 
-                // Work 20
+                // TODO copy and reverse to 1byte
                 var work = stackalloc byte[20];
                 var writed = DigitTable.GetLongBuffer20(work, value);
 
