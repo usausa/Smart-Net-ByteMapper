@@ -38,6 +38,7 @@
 
                 // 3
                 offset = (value % 10000) * 5;
+
                 length = *(pSrc + offset + 4);
                 Buffer.MemoryCopy(pSrc + offset, pBuffer + 8, length, length);
                 return 8 + length;
@@ -90,6 +91,9 @@
                 Buffer.MemoryCopy(pSrc + offset, pBuffer + 8, 4, 4);
 
                 // 4
+                offset = (value % 10000) * 5;
+                value = value / 10000;
+
                 if (value == 0)
                 {
                     length = *(pSrc + offset + 4);
