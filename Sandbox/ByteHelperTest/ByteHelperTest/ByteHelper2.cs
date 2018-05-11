@@ -1,4 +1,6 @@
-﻿namespace ByteHelperTest
+﻿using System.Diagnostics;
+
+namespace ByteHelperTest
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -399,7 +401,7 @@
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
 
-            var work = stackalloc byte[30];
+            var work = stackalloc byte[29];
             var workSize = 0;
             var workPointer = 0;
 
@@ -419,18 +421,19 @@
                 }
             }
 
-            if (workSize <= decimalScale)
-            {
-                // TODO ?
-                workSize++;
-            }
-
+            // Fix Scale
             if (scale < decimalScale)
             {
                 workPointer = decimalScale - scale;
                 if (work[workPointer - 1] > 4)
                 {
+                    // TODO
                     var i = workPointer;
+                    if (i == workSize)
+                    {
+                        workSize++;
+                    }
+
                     while (i < workSize)
                     {
                         if (work[i] == 9)
@@ -468,6 +471,7 @@
                         }
                     }
 
+                    // TODO 描画範囲を決めて、その中で処理
                     // 数値部分
                     while ((workPointer < workSize) && (i >= 0))
                     {
@@ -489,6 +493,16 @@
                             groupingCount++;
                         }
                         else if ((i == dotPos) && (i >= 0))
+                        {
+                            *(pBytes + i--) = Dot;
+                        }
+                    }
+
+                    // TODO 上に統合
+                    for (var j = 0; j <= decimalScale - workSize && i >= 0; j++)
+                    {
+                        *(pBytes + i--) = Num0;
+                        if ((i == dotPos) && (i >= 0))
                         {
                             *(pBytes + i--) = Dot;
                         }
@@ -575,6 +589,16 @@
                             groupingCount++;
                         }
                         else if ((i == dotPos) && (i < length))
+                        {
+                            *(pBytes + i++) = Dot;
+                        }
+                    }
+
+                    // TODO
+                    for (var j = 0; j <= decimalScale - workSize && i < length; j++)
+                    {
+                        *(pBytes + i++) = Num0;
+                        if ((i == dotPos) && (i < length))
                         {
                             *(pBytes + i++) = Dot;
                         }
