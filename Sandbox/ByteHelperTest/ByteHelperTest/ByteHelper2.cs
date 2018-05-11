@@ -399,32 +399,51 @@
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
 
-            var workSize = 0;
             var work = stackalloc byte[30];
+            var workSize = 0;
+            var workPointer = 0;
 
             while (lo > 0)
             {
-                work[index + workSize++] = (byte)(Num0 + (lo % 10));
+                work[index + workSize++] = (byte)(lo % 10);
                 lo /= 10;
             }
 
             if (hi > 0)
             {
-                while (workSize < 15)
-                {
-                    work[index + workSize++] = Num0;
-                }
-
+                workSize = 15;
                 while (hi > 0)
                 {
-                    work[index + workSize++] = (byte)(Num0 + (hi % 10));
+                    work[index + workSize++] = (byte)(hi % 10);
                     hi /= 10;
                 }
             }
 
-            if (workSize <= scale)
+            if (workSize <= decimalScale)
             {
-                work[index + workSize++] = Num0;
+                // TODO ?
+                workSize++;
+            }
+
+            if (scale < decimalScale)
+            {
+                workPointer = decimalScale - scale;
+                if (work[workPointer - 1] > 4)
+                {
+                    var i = workPointer;
+                    while (i < workSize)
+                    {
+                        if (work[i] == 9)
+                        {
+                            work[i++] = 0;
+                        }
+                        else
+                        {
+                            work[i] += 1;
+                            break;
+                        }
+                    }
+                }
             }
 
             fixed (byte* pBytes = &bytes[index])
@@ -434,7 +453,6 @@
                     var i = length - 1;
                     var dotPos = scale > 0 ? length - scale - 1 : Int32.MaxValue;
                     var groupingCount = 0;
-                    var workPointer = 0;
 
                     // 小数点以下
                     if (scale > decimalScale)
@@ -448,10 +466,6 @@
                                 *(pBytes + i--) = Dot;
                             }
                         }
-                    }
-                    else if (scale < decimalScale)
-                    {
-                        workPointer = decimalScale - scale;
                     }
 
                     // 数値部分
@@ -468,7 +482,7 @@
                             }
                         }
 
-                        *(pBytes + i--) = work[workPointer++];
+                        *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
 
                         if (i < dotPos)
                         {
@@ -479,8 +493,6 @@
                             *(pBytes + i--) = Dot;
                         }
                     }
-
-                    // TODO 小数点補完？
 
                     // 残分
                     if (zerofill)
@@ -527,7 +539,6 @@
                     var i = 0;
                     var dotPos = scale > 0 ? scale : Int32.MinValue;
                     var groupingCount = 0;
-                    var workPointer = 0;
 
                     // 小数点以下
                     if (scale > decimalScale)
@@ -541,10 +552,6 @@
                                 *(pBytes + i++) = Dot;
                             }
                         }
-                    }
-                    else if (scale < decimalScale)
-                    {
-                        workPointer = decimalScale - scale;
                     }
 
                     // 数値部分
@@ -561,7 +568,7 @@
                             }
                         }
 
-                        *(pBytes + i++) = work[workPointer++];
+                        *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
 
                         if (i > dotPos)
                         {
@@ -572,8 +579,6 @@
                             *(pBytes + i++) = Dot;
                         }
                     }
-
-                    // TODO 小数点補完？
 
                     if (negative && (i < length))
                     {

@@ -13,19 +13,19 @@
 
         // Format
 
-        //[Benchmark]
-        //public void FormatDefault8()
-        //{
-        //    var buffer = new byte[8];
-        //    ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value8);
-        //}
+        [Benchmark]
+        public void FormatDefault8()
+        {
+            var buffer = new byte[8];
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value8, 0, -1, Padding.Left, false, 0x20);
+        }
 
-        //[Benchmark]
-        //public void FormatDefault19()
-        //{
-        //    var buffer = new byte[19];
-        //    ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value19);
-        //}
+        [Benchmark]
+        public void FormatDefault19()
+        {
+            var buffer = new byte[19];
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value19, 0, -1, Padding.Left, false, 0x20);
+        }
 
         [Benchmark]
         public void FormatDefault28()

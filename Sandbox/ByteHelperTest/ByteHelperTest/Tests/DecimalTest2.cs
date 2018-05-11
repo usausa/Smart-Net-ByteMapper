@@ -157,10 +157,13 @@
         [InlineData("18446744073709551615", "5", 0, 1, Padding.Right, false)]
         public void FormatDecimal(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
         {
+            // TODO 0.00xxxxxxxxxxxxxxxxxxxxxxxxxx ?
             var value = Decimal.Parse(input);
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
             ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
+            //var actual = Encoding.ASCII.GetString(buffer);
+            //Assert.Equal(output, actual);
             Assert.Equal(expected, buffer);
         }
     }
