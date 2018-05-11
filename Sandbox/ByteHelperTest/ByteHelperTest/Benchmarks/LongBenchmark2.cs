@@ -16,13 +16,6 @@
         public bool ZeroFill { get; set; }
 
         [Benchmark]
-        public void FormatOld8()
-        {
-            var buffer = new byte[8];
-            ByteHelper2.FormatInt64(buffer, 0, buffer.Length, Value8, Padding, ZeroFill, 0x30);
-        }
-
-        [Benchmark]
         public void Format8()
         {
             var buffer = new byte[8];
@@ -30,10 +23,10 @@
         }
 
         [Benchmark]
-        public void FormatOld19()
+        public void FormatWithTable8()
         {
-            var buffer = new byte[19];
-            ByteHelper2.FormatInt64(buffer, 0, buffer.Length, Value19, Padding, ZeroFill, 0x30);
+            var buffer = new byte[8];
+            ByteHelper2.FormatInt64WithTable(buffer, 0, buffer.Length, Value8, Padding, ZeroFill, 0x30);
         }
 
         [Benchmark]
@@ -41,6 +34,13 @@
         {
             var buffer = new byte[19];
             ByteHelper2.FormatInt64(buffer, 0, buffer.Length, Value19, Padding, ZeroFill, 0x30);
+        }
+
+        [Benchmark]
+        public void Format19WithTable()
+        {
+            var buffer = new byte[19];
+            ByteHelper2.FormatInt64WithTable(buffer, 0, buffer.Length, Value19, Padding, ZeroFill, 0x30);
         }
     }
 }

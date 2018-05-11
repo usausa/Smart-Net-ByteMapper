@@ -25,7 +25,78 @@
 
         // Int32
 
-        public static unsafe void FormatInt32Old(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        public static unsafe void FormatInt32WithTable(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                var i = 0;
+
+                if ((value == Int32.MinValue) && (i < length))
+                {
+                    *(pBytes + i++) = Int32MinValueMod10;
+                    value = Int32MinValueDiv10;
+                }
+
+                var negative = value < 0;
+                if (negative)
+                {
+                    value = -value;
+                }
+
+                var work = stackalloc byte[12];
+                var writed = DigitTable.GetIntBuffer12(work, value);
+
+                var copy = writed > length - i ? length - i : writed;
+                Buffer.MemoryCopy(work, pBytes + i, copy, copy);
+                i += copy;
+
+                if (zerofill)
+                {
+                    var max = negative ? length - 1 : length;
+                    while (i < max)
+                    {
+                        *(pBytes + i++) = Num0;
+                    }
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, length);
+                }
+                else if (padding == Padding.Left)
+                {
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+
+                    ReverseBytes(pBytes, length);
+                }
+                else
+                {
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+                }
+            }
+        }
+
+        public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
         {
             fixed (byte* pBytes = &bytes[index])
             {
@@ -123,80 +194,9 @@
             }
         }
 
-        public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
-        {
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = 0;
-
-                if ((value == Int32.MinValue) && (i < length))
-                {
-                    *(pBytes + i++) = Int32MinValueMod10;
-                    value = Int32MinValueDiv10;
-                }
-
-                var negative = value < 0;
-                if (negative)
-                {
-                    value = -value;
-                }
-
-                var work = stackalloc byte[12];
-                var writed = DigitTable.GetIntBuffer12(work, value);
-
-                var copy = writed > length - i ? length - i : writed;
-                Buffer.MemoryCopy(work, pBytes + i, copy, copy);
-                i += copy;
-
-                if (zerofill)
-                {
-                    var max = negative ? length - 1 : length;
-                    while (i < max)
-                    {
-                        *(pBytes + i++) = Num0;
-                    }
-
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, length);
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
-                    }
-
-                    ReverseBytes(pBytes, length);
-                }
-                else
-                {
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
-                    }
-                }
-            }
-        }
-
         // Int 64
 
-        public static unsafe void FormatInt64Old(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
         {
             fixed (byte* pBytes = &bytes[index])
             {
@@ -294,7 +294,7 @@
             }
         }
 
-        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+        public static unsafe void FormatInt64WithTable(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
         {
             fixed (byte* pBytes = &bytes[index])
             {
@@ -369,7 +369,75 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
-        public static unsafe void FormatDecimal0(
+        public static unsafe void FormatDecimal(
+            byte[] bytes,
+            int offset,
+            int length,
+            decimal value)
+        {
+            var bits = Decimal.GetBits(value);
+
+            var lo = 0L;
+            var hi = 0L;
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
+            DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
+
+            fixed (byte* pBytes = &bytes[offset])
+            {
+                var writed = 0;
+
+                // Lo
+                while ((lo > 0) && (writed < length))
+                {
+                    pBytes[offset + writed] = (byte)((lo % 10) + 0x30);
+                    lo /= 10;
+                    writed++;
+                }
+
+                var last = length < 16 ? length : 16;
+                while (writed < last)
+                {
+                    pBytes[offset + writed] = 0x30;
+                    writed++;
+                }
+
+                // Hi
+                while ((hi > 0) && (writed < length))
+                {
+                    pBytes[offset + writed] = (byte)((hi % 10) + 0x30);
+                    hi /= 10;
+                    writed++;
+                }
+
+                last = length < 29 ? length : 29;
+                while (writed < last)
+                {
+                    pBytes[offset + writed] = 0x30;
+                    writed++;
+                }
+
+                // Etc
+                while (writed < length)
+                {
+                    pBytes[offset + writed] = 0x30;
+                    writed++;
+                }
+
+                ReverseBytes(pBytes, length);
+            }
+        }
+
+        public static unsafe void FormatDecimalWithTable(
             byte[] bytes,
             int offset,
             int length,

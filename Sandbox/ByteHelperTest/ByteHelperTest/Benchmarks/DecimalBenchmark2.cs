@@ -14,24 +14,45 @@
         // Format
 
         [Benchmark]
-        public void FormatDefaultA8()
+        public void FormatDefault8()
         {
             var buffer = new byte[8];
-            ByteHelper2.FormatDecimal0(buffer, 0, buffer.Length, Value8);
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value8);
         }
 
         [Benchmark]
-        public void FormatDefaultA19()
+        public void FormatDefault19()
         {
             var buffer = new byte[19];
-            ByteHelper2.FormatDecimal0(buffer, 0, buffer.Length, Value19);
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value19);
         }
 
         [Benchmark]
-        public void FormatDefaultA28()
+        public void FormatDefault28()
         {
             var buffer = new byte[28];
-            ByteHelper2.FormatDecimal0(buffer, 0, buffer.Length, Value28);
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value28);
+        }
+
+        [Benchmark]
+        public void FormatDefault8WithTable()
+        {
+            var buffer = new byte[8];
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value8);
+        }
+
+        [Benchmark]
+        public void FormatDefault19WithTable()
+        {
+            var buffer = new byte[19];
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value19);
+        }
+
+        [Benchmark]
+        public void FormatDefault28WithTable()
+        {
+            var buffer = new byte[28];
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value28);
         }
     }
 }
