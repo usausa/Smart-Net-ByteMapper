@@ -7,8 +7,8 @@
     {
         private const byte Minus = (byte)'-';
         private const byte Num0 = (byte)'0';
-        //private const byte Dot = (byte)'.';
-        //private const byte Comma = (byte)',';
+        private const byte Dot = (byte)'.';
+        private const byte Comma = (byte)',';
         //private const int DotDiff = Dot - Num0;
         //private const int CommaDiff = Comma - Num0;
 
@@ -17,7 +17,7 @@
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
 
-        //private const int NegativeBitFlag = unchecked((int)0x80000000);
+        private const int NegativeBitFlag = unchecked((int)0x80000000);
 
         //--------------------------------------------------------------------------------
         // Integer
@@ -371,11 +371,18 @@
 
         public static unsafe void FormatDecimal(
             byte[] bytes,
-            int offset,
+            int index,
             int length,
-            decimal value)
+            decimal value,
+            byte scale,
+            int groupingSize,
+            Padding padding,
+            bool zerofill,
+            byte filler)
         {
             var bits = Decimal.GetBits(value);
+            var negative = (bits[3] & NegativeBitFlag) != 0;
+            var decimalScale = (bits[3] >> 16) & 0x7F;
 
             var lo = 0L;
             var hi = 0L;
@@ -392,91 +399,237 @@
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
 
-            fixed (byte* pBytes = &bytes[offset])
+            var workSize = 0;
+            var work = stackalloc byte[30];
+
+            while (lo > 0)
             {
-                var writed = 0;
+                work[index + workSize++] = (byte)(Num0 + (lo % 10));
+                lo /= 10;
+            }
 
-                // Lo
-                while ((lo > 0) && (writed < length))
+            if (hi > 0)
+            {
+                while (workSize < 15)
                 {
-                    pBytes[offset + writed] = (byte)((lo % 10) + 0x30);
-                    lo /= 10;
-                    writed++;
+                    work[index + workSize++] = Num0;
                 }
 
-                var last = length < 16 ? length : 16;
-                while (writed < last)
+                while (hi > 0)
                 {
-                    pBytes[offset + writed] = 0x30;
-                    writed++;
-                }
-
-                // Hi
-                while ((hi > 0) && (writed < length))
-                {
-                    pBytes[offset + writed] = (byte)((hi % 10) + 0x30);
+                    work[index + workSize++] = (byte)(Num0 + (hi % 10));
                     hi /= 10;
-                    writed++;
                 }
-
-                last = length < 29 ? length : 29;
-                while (writed < last)
-                {
-                    pBytes[offset + writed] = 0x30;
-                    writed++;
-                }
-
-                // Etc
-                while (writed < length)
-                {
-                    pBytes[offset + writed] = 0x30;
-                    writed++;
-                }
-
-                ReverseBytes(pBytes, length);
             }
-        }
 
-        public static unsafe void FormatDecimalWithTable(
-            byte[] bytes,
-            int offset,
-            int length,
-            decimal value)
-        {
-            var bits = Decimal.GetBits(value);
-
-            var lo = 0L;
-            var hi = 0L;
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
-
-            var work = stackalloc byte[32];
-            var writed = DigitTable.GetLongBuffer16(work, lo);
-            writed += DigitTable.GetLongBuffer16(work + 16, hi);
-
-            fixed (byte* pBytes = &bytes[offset])
+            if (workSize <= scale)
             {
-                var copy = writed > length ? length : writed;
-                Buffer.MemoryCopy(work, pBytes, copy, copy);
+                work[index + workSize++] = Num0;
+            }
 
-                for (var i = writed; i < length; i++)
+            fixed (byte* pBytes = &bytes[index])
+            {
+                if ((padding == Padding.Left) || zerofill)
                 {
-                    pBytes[offset + i] = 0x30;
-                }
+                    var i = length - 1;
+                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MaxValue;
+                    var groupingCount = 0;
+                    var workPointer = 0;
 
-                ReverseBytes(pBytes, length);
+                    // 小数点以下
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < (scale - decimalScale) && (i >= 0); j++)
+                        {
+                            *(pBytes + i--) = Num0;
+
+                            if ((i == dotPos) && (i >= 0))
+                            {
+                                *(pBytes + i--) = Dot;
+                            }
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        workPointer = decimalScale - scale;
+                    }
+
+                    // 数値部分
+                    while ((workPointer < workSize) && (i >= 0))
+                    {
+                        if (groupingCount == groupingSize)
+                        {
+                            *(pBytes + i--) = Comma;
+                            groupingCount = 0;
+
+                            if (i < 0)
+                            {
+                                break;
+                            }
+                        }
+
+                        *(pBytes + i--) = work[workPointer++];
+
+                        if (i < dotPos)
+                        {
+                            groupingCount++;
+                        }
+                        else if ((i == dotPos) && (i >= 0))
+                        {
+                            *(pBytes + i--) = Dot;
+                        }
+                    }
+
+                    // TODO 小数点補完？
+
+                    // 残分
+                    if (zerofill)
+                    {
+                        var end = negative ? 1 : 0;
+                        while (i >= end)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+                                groupingCount = 0;
+
+                                if (i < end)
+                                {
+                                    break;
+                                }
+                            }
+
+                            *(pBytes + i--) = Num0;
+
+                            groupingCount++;
+                        }
+
+                        if (negative && (i >= 0))
+                        {
+                            *pBytes = Minus;
+                        }
+                    }
+                    else
+                    {
+                        if (negative && (i >= 0))
+                        {
+                            *(pBytes + i--) = Minus;
+                        }
+
+                        while (i >= 0)
+                        {
+                            *(pBytes + i--) = filler;
+                        }
+                    }
+                }
+                else
+                {
+                    var i = 0;
+                    var dotPos = scale > 0 ? scale : Int32.MinValue;
+                    var groupingCount = 0;
+                    var workPointer = 0;
+
+                    // 小数点以下
+                    if (scale > decimalScale)
+                    {
+                        for (var j = 0; j < (scale - decimalScale) && (i < length); j++)
+                        {
+                            *(pBytes + i++) = Num0;
+
+                            if ((i == dotPos) && (i < length))
+                            {
+                                *(pBytes + i++) = Dot;
+                            }
+                        }
+                    }
+                    else if (scale < decimalScale)
+                    {
+                        workPointer = decimalScale - scale;
+                    }
+
+                    // 数値部分
+                    while ((workPointer < workSize) && (i < length))
+                    {
+                        if (groupingCount == groupingSize)
+                        {
+                            *(pBytes + i++) = Comma;
+                            groupingCount = 0;
+
+                            if (i >= length)
+                            {
+                                break;
+                            }
+                        }
+
+                        *(pBytes + i++) = work[workPointer++];
+
+                        if (i > dotPos)
+                        {
+                            groupingCount++;
+                        }
+                        else if ((i == dotPos) && (i < length))
+                        {
+                            *(pBytes + i++) = Dot;
+                        }
+                    }
+
+                    // TODO 小数点補完？
+
+                    if (negative && (i < length))
+                    {
+                        *(pBytes + i++) = Minus;
+                    }
+
+                    ReverseBytes(pBytes, i);
+
+                    while (i < length)
+                    {
+                        *(pBytes + i++) = filler;
+                    }
+                }
             }
         }
+
+        //public static unsafe void FormatDecimalWithTable(
+        //    byte[] bytes,
+        //    int offset,
+        //    int length,
+        //    decimal value)
+        //{
+        //    var bits = Decimal.GetBits(value);
+
+        //    var lo = 0L;
+        //    var hi = 0L;
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
+        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
+
+        //    var work = stackalloc byte[32];
+        //    var writed = DigitTable.GetLongBuffer16(work, lo);
+        //    writed += DigitTable.GetLongBuffer16(work + 16, hi);
+
+        //    fixed (byte* pBytes = &bytes[offset])
+        //    {
+        //        var copy = writed > length ? length : writed;
+        //        Buffer.MemoryCopy(work, pBytes, copy, copy);
+
+        //        for (var i = writed; i < length; i++)
+        //        {
+        //            pBytes[offset + i] = 0x30;
+        //        }
+
+        //        ReverseBytes(pBytes, length);
+        //    }
+        //}
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void ReverseBytes(byte* ptr, int length)

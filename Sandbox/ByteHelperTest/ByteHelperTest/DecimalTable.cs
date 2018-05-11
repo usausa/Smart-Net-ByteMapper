@@ -11,9 +11,9 @@
 
             int carry;
             var value = lo + Table[baseIndex];
-            if (value > 10000000000000000L)
+            if (value > 1000000000000000L)
             {
-                lo = value - 10000000000000000L;
+                lo = value - 1000000000000000L;
                 carry = 1;
             }
             else
@@ -23,9 +23,9 @@
             }
 
             value = hi + Table[baseIndex + 1] + carry;
-            if (value > 10000000000000000L)
+            if (value > 1000000000000000L)
             {
-                hi = value - 10000000000000000L;
+                hi = value - 1000000000000000L;
             }
             else
             {

@@ -31,8 +31,8 @@
             {
                 for (var digit = 0; digit < 29; digit++)
                 {
-                    var block = digit / 16;
-                    var exponent = digit % 16;
+                    var block = digit / 15;
+                    var exponent = digit % 15;
 
                     var v = (long)digitValues[bit][digit];
 
@@ -50,14 +50,14 @@
                     {
                         var index = (bitBlock << 9) + (blockValue << 1) + block;
                         var newValue = workTable[index] + v;
-                        if (newValue < 10000000000000000L)
+                        if (newValue < 1000000000000000L)
                         {
                             workTable[index] = newValue;
                             v = 0;
                         }
                         else
                         {
-                            workTable[index] = newValue - 10000000000000000L;
+                            workTable[index] = newValue - 1000000000000000L;
                             v = 1;
                             block++;
                         }
