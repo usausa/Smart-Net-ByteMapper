@@ -144,7 +144,6 @@
                 var work = stackalloc byte[12];
                 var writed = DigitTable.GetIntBuffer12(work, value);
 
-                // TODO copy and reverse to 1byte
                 var copy = writed > length - i ? length - i : writed;
                 Buffer.MemoryCopy(work, pBytes + i, copy, copy);
                 i += copy;
@@ -313,7 +312,6 @@
                     value = -value;
                 }
 
-                // TODO copy and reverse to 1byte
                 var work = stackalloc byte[20];
                 var writed = DigitTable.GetLongBuffer20(work, value);
 
