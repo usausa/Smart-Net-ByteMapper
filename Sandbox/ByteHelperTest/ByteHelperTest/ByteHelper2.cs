@@ -401,7 +401,7 @@ namespace ByteHelperTest
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
             DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
 
-            var work = stackalloc byte[29];
+            var work = stackalloc byte[30];
             var workSize = 0;
             var workPointer = 0;
 
@@ -427,13 +427,12 @@ namespace ByteHelperTest
                 workPointer = decimalScale - scale;
                 if (work[workPointer - 1] > 4)
                 {
-                    // TODO
-                    var i = workPointer;
-                    if (i == workSize)
+                    if (workPointer == workSize)
                     {
                         workSize++;
                     }
 
+                    var i = workPointer;
                     while (i < workSize)
                     {
                         if (work[i] == 9)
