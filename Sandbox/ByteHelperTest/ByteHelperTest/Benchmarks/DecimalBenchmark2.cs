@@ -39,14 +39,14 @@
         public void FormatCustomLimited19_8()
         {
             var buffer = new byte[9];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true, -1);
+            ByteHelper2.FormatDecimalLimited64(buffer, 0, buffer.Length, Value8, 2, -1, Padding.Left, true, 0x20);
         }
 
         [Benchmark]
         public void FormatCustomLimited19_19()
         {
             var buffer = new byte[22];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true, -1);
+            ByteHelper2.FormatDecimalLimited64(buffer, 0, buffer.Length, Value19, 3, -1, Padding.Left, true, 0x20);
         }
 
         // Custom
@@ -69,28 +69,7 @@
         public void FormatCustom28()
         {
             var buffer = new byte[28];
-            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value28, 2, -1, Padding.Left, false, 0x20);
+            ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value28, 3, -1, Padding.Left, false, 0x20);
         }
-
-        //[Benchmark]
-        //public void FormatCustom8WithTable()
-        //{
-        //    var buffer = new byte[8];
-        //    ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value8);
-        //}
-
-        //[Benchmark]
-        //public void FormatCustom19WithTable()
-        //{
-        //    var buffer = new byte[19];
-        //    ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value19);
-        //}
-
-        //[Benchmark]
-        //public void FormatCustom28WithTable()
-        //{
-        //    var buffer = new byte[28];
-        //    ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, Value28);
-        //}
     }
 }
