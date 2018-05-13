@@ -156,10 +156,12 @@
         [InlineData("18446744073709551615", ",5", 0, 1, Padding.Right, false)]
         [InlineData("18446744073709551615", "5", 0, 1, Padding.Right, false)]
         // TODO 0.00xxxxxxxxxxxxxxxxxxxxxxxxxx ? 127パターンも
-        //[InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
-        //[InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
-        //[InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
-        [InlineData("0.01234", "0.01234", 5, -1, Padding.Left, false)]
+        [InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
+        [InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
+        [InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
+        [InlineData("0.01", " 0.01", 2, -1, Padding.Left, false)]
+        [InlineData("0.01", "00.01", 2, -1, Padding.Left, true)]
+        [InlineData("0.01", "0.01 ", 2, -1, Padding.Right, false)]
         public void FormatDecimal(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
         {
             var value = Decimal.Parse(input);

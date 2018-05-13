@@ -15,12 +15,6 @@
 
         private static readonly byte[] Bytes28 = Encoding.ASCII.GetBytes("12345678901234567890123456.78");
 
-        private static readonly decimal Value8 = 123456.78m;
-
-        private static readonly decimal Value19 = 12345678901234567.89m;
-
-        private static readonly decimal Value28 = 12345678901234567890123456.78m;
-
         // Parse
 
         // 8
@@ -118,46 +112,5 @@
         //{
         //    ByteHelper.TryParseDecimal3(Bytes28, 0, Bytes28.Length, out var _);
         //}
-
-        // Format
-
-        [Benchmark]
-        public void FormatDefault8()
-        {
-            Encoding.ASCII.GetBytes(Value8.ToString("000000.00"));
-        }
-
-        [Benchmark]
-        public void FormatCustomB8()
-        {
-            var buffer = new byte[9];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true, -1);
-        }
-
-        [Benchmark]
-        public void FormatCustomC8()
-        {
-            var buffer = new byte[9];
-            ByteHelper.FormatDecimal3(buffer, 0, buffer.Length, Value8, 2, Padding.Left, true);
-        }
-
-        [Benchmark]
-        public void FormatDefault19()
-        {
-            Encoding.ASCII.GetBytes(Value19.ToString("000000000000000000.000"));
-        }
-
-        [Benchmark]
-        public void FormatCustomB19()
-        {
-            var buffer = new byte[22];
-            ByteHelper.FormatDecimal2(buffer, 0, buffer.Length, Value19, 3, Padding.Left, true, -1);
-        }
-
-        [Benchmark]
-        public void FormatDefault28()
-        {
-            Encoding.ASCII.GetBytes(Value28.ToString("000000000000000000000000000.000"));
-        }
     }
 }

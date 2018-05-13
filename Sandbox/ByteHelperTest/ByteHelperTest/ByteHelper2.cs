@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace ByteHelperTest
+﻿namespace ByteHelperTest
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -453,57 +451,64 @@ namespace ByteHelperTest
                 if ((padding == Padding.Left) || zerofill)
                 {
                     var i = length - 1;
-                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MaxValue;
-                    var groupingCount = 0;
 
-                    // 小数点以下
-                    if (scale > decimalScale)
+                    if (decimalScale > 0)
                     {
-                        for (var j = 0; j < (scale - decimalScale) && (i >= 0); j++)
+                        var dotPos = scale > 0 ? length - scale - 1 : Int32.MaxValue;
+
+                        // 小数点以下補足
+                        var completion = scale - decimalScale;
+                        while ((completion > 0) && (i >= 0))
                         {
                             *(pBytes + i--) = Num0;
-
-                            if ((i == dotPos) && (i >= 0))
-                            {
-                                *(pBytes + i--) = Dot;
-                            }
+                            completion--;
                         }
-                    }
 
-                    // TODO 描画範囲を決めて、その中で処理
-                    // 数値部分
-                    while ((workPointer < workSize) && (i >= 0))
-                    {
-                        if (groupingCount == groupingSize)
+                        // 小数点以下
+                        while ((i > dotPos) && (i >= 0))
                         {
-                            *(pBytes + i--) = Comma;
-                            groupingCount = 0;
-
-                            if (i < 0)
+                            if (workPointer < workSize)
                             {
-                                break;
+                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                            }
+                            else
+                            {
+                                *(pBytes + i--) = Num0;
                             }
                         }
 
-                        *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-
-                        if (i < dotPos)
-                        {
-                            groupingCount++;
-                        }
-                        else if ((i == dotPos) && (i >= 0))
+                        if (i == dotPos)
                         {
                             *(pBytes + i--) = Dot;
                         }
                     }
 
-                    // TODO 上に統合
-                    for (var j = 0; j <= decimalScale - workSize && i >= 0; j++)
+                    var groupingCount = 0;
+
+                    // TODO ?
+                    // 整数部
+                    if ((workPointer == workSize) && (i >= 0))
                     {
                         *(pBytes + i--) = Num0;
-                        if ((i == dotPos) && (i >= 0))
+                    }
+                    else
+                    {
+                        while ((workPointer < workSize) && (i >= 0))
                         {
-                            *(pBytes + i--) = Dot;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+                                groupingCount = 0;
+
+                                if (i < 0)
+                                {
+                                    break;
+                                }
+                            }
+
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+
+                            groupingCount++;
                         }
                     }
 
@@ -550,56 +555,70 @@ namespace ByteHelperTest
                 else
                 {
                     var i = 0;
-                    var dotPos = scale > 0 ? scale : Int32.MinValue;
-                    var groupingCount = 0;
 
-                    // 小数点以下
-                    if (scale > decimalScale)
+                    if (decimalScale > 0)
                     {
-                        for (var j = 0; j < (scale - decimalScale) && (i < length); j++)
+                        var dotPos = scale > 0 ? scale : Int32.MinValue;
+
+                        // 小数点以下
+                        var completion = scale - decimalScale;
+                        while ((completion > 0) && (i < length))
                         {
                             *(pBytes + i++) = Num0;
-
-                            if ((i == dotPos) && (i < length))
-                            {
-                                *(pBytes + i++) = Dot;
-                            }
+                            completion--;
                         }
-                    }
 
-                    // 数値部分
-                    while ((workPointer < workSize) && (i < length))
-                    {
-                        if (groupingCount == groupingSize)
+                        // 小数点以下
+                        while ((i < dotPos) && (i < length))
                         {
-                            *(pBytes + i++) = Comma;
-                            groupingCount = 0;
-
-                            if (i >= length)
+                            if (workPointer < workSize)
                             {
-                                break;
+                                *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
+                            }
+                            else
+                            {
+                                *(pBytes + i++) = Num0;
                             }
                         }
 
-                        *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
-
-                        if (i > dotPos)
+                        if (i == dotPos)
                         {
-                            groupingCount++;
-                        }
-                        else if ((i == dotPos) && (i < length))
-                        {
-                            *(pBytes + i++) = Dot;
+                            *(pBytes + i--) = Dot;
                         }
                     }
 
-                    // TODO
-                    for (var j = 0; j <= decimalScale - workSize && i < length; j++)
+                    var groupingCount = 0;
+
+                    // 整数部
+                    if ((workPointer == workSize) && (i < length))
                     {
                         *(pBytes + i++) = Num0;
-                        if ((i == dotPos) && (i < length))
+                    }
+
+                    // TODO ?
+                    // 整数部
+                    if ((workPointer == workSize) && (i >= 0))
+                    {
+                        *(pBytes + i--) = Num0;
+                    }
+                    else
+                    {
+                        while ((workPointer < workSize) && (i < length))
                         {
-                            *(pBytes + i++) = Dot;
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i++) = Comma;
+                                groupingCount = 0;
+
+                                if (i >= length)
+                                {
+                                    break;
+                                }
+                            }
+
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+
+                            groupingCount++;
                         }
                     }
 

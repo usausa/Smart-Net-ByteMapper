@@ -1054,7 +1054,7 @@ namespace ByteHelperTest
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
-                    if (decimalNum > UInt32.MaxValue)
+                    if (decimalNum > Int64.MaxValue)
                     {
                         while (i >= 0)
                         {
@@ -1085,7 +1085,7 @@ namespace ByteHelperTest
                             }
 
                             // MEMO tune
-                            if (decimalNum <= UInt32.MaxValue)
+                            if (decimalNum <= Int64.MaxValue)
                             {
                                 break;
                             }
@@ -1100,7 +1100,7 @@ namespace ByteHelperTest
                     // MEMO tune
                     if (decimalNum > 0)
                     {
-                        var decimalNum2 = (uint)decimalNum;
+                        var decimalNum2 = (long)decimalNum;
                         while (i >= 0)
                         {
                             if (groupingCount == groupingSize)
@@ -1196,7 +1196,8 @@ namespace ByteHelperTest
                         FixDecimalScale(ref decimalNum, decimalScale - scale);
                     }
 
-                    if (decimalNum > UInt32.MaxValue)
+                    //if (decimalNum > UInt32.MaxValue)
+                    if (decimalNum > Int64.MaxValue)
                     {
                         while (i < length)
                         {
@@ -1227,7 +1228,8 @@ namespace ByteHelperTest
                             }
 
                             // MEMO tune
-                            if (decimalNum <= UInt32.MaxValue)
+                            //if (decimalNum <= UInt32.MaxValue)
+                            if (decimalNum <= Int64.MaxValue)
                             {
                                 break;
                             }
@@ -1242,7 +1244,7 @@ namespace ByteHelperTest
                     // MEMO tune
                     if (decimalNum > 0)
                     {
-                        var decimalNum2 = (uint)decimalNum;
+                        var decimalNum2 = (long)decimalNum;
                         while (i < length)
                         {
                             if (groupingCount == groupingSize)
