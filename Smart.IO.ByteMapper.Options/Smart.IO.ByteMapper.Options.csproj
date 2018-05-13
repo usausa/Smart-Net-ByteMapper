@@ -28,4 +28,23 @@
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="IO\ByteMapper\Helpers\NumberHelper.Generate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>NumberHelper.Generate.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="IO\ByteMapper\Helpers\NumberHelper.Generate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NumberHelper.Generate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

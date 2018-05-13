@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    internal static class NumberHelper
+    internal static partial class NumberHelper
     {
         private const byte Minus = (byte)'-';
         private const byte Num0 = (byte)'0';
@@ -374,34 +374,96 @@
             var decimalScale = (bits[3] >> 16) & 0x7F;
             var decimalNum = ((ulong)(bits[1] & 0x00000000FFFFFFFF) << 32) + (ulong)(bits[0] & 0x00000000FFFFFFFF);
 
+            var work = stackalloc byte[30];
+            var workSize = 0;
+            var workPointer = 0;
+
+            while (decimalNum > Int64.MaxValue)
+            {
+                work[workSize++] = (byte)(decimalNum % 10);
+                decimalNum /= 10;
+            }
+
+            var decimalNum2 = (long)decimalNum;
+            while (decimalNum2 > 0)
+            {
+                work[workSize++] = (byte)(decimalNum2 % 10);
+                decimalNum2 /= 10;
+            }
+
+            // Fix Scale
+            if (scale < decimalScale)
+            {
+                workPointer = decimalScale - scale;
+                if (work[workPointer - 1] > 4)
+                {
+                    var i = workPointer;
+                    var carry = true;
+                    while (carry && (i < workSize))
+                    {
+                        if (work[i] == 9)
+                        {
+                            work[i++] = 0;
+                        }
+                        else
+                        {
+                            work[i] += 1;
+                            carry = false;
+                        }
+                    }
+
+                    if (carry)
+                    {
+                        workSize++;
+                        work[i] = 1;
+                    }
+                }
+            }
+
             fixed (byte* pBytes = &bytes[index])
             {
                 if ((padding == Padding.Left) || zerofill)
                 {
                     var i = length - 1;
-                    var dotPos = scale > 0 ? length - scale - 1 : Int32.MaxValue;
-                    var groupingCount = 0;
 
-                    if (scale > decimalScale)
+                    if (scale > 0)
                     {
-                        for (var j = 0; j < (scale - decimalScale) && (i >= 0); j++)
+                        var dotPos = length - scale - 1;
+
+                        var completion = scale - decimalScale;
+                        while ((completion > 0) && (i >= 0))
                         {
                             *(pBytes + i--) = Num0;
+                            completion--;
+                        }
 
-                            if ((i == dotPos) && (i >= 0))
+                        while ((i > dotPos) && (i >= 0))
+                        {
+                            if (workPointer < workSize)
                             {
-                                *(pBytes + i--) = Dot;
+                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                            }
+                            else
+                            {
+                                *(pBytes + i--) = Num0;
                             }
                         }
-                    }
-                    else if (scale < decimalScale)
-                    {
-                        FixDecimalScale(ref decimalNum, decimalScale - scale);
+
+                        if ((i == dotPos) && (i >= 0))
+                        {
+                            *(pBytes + i--) = Dot;
+                        }
                     }
 
-                    if (decimalNum > UInt32.MaxValue)
+                    var groupingCount = 0;
+
+                    if ((workPointer == workSize) && (i >= 0))
                     {
-                        while (i >= 0)
+                        *(pBytes + i--) = Num0;
+                    }
+                    else
+                    {
+                        while ((workPointer < workSize) && (i >= 0))
                         {
                             if (groupingCount == groupingSize)
                             {
@@ -414,59 +476,9 @@
                                 }
                             }
 
-                            *(pBytes + i--) = (byte)(Num0 + (decimalNum % 10));
-                            decimalNum /= 10;
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
 
-                            if (i < dotPos)
-                            {
-                                groupingCount++;
-                            }
-                            else if ((i == dotPos) && (i >= 0))
-                            {
-                                *(pBytes + i--) = Dot;
-                            }
-
-                            if (decimalNum <= UInt32.MaxValue)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    var decimalNum2 = (uint)decimalNum;
-                    while (i >= 0)
-                    {
-                        if (groupingCount == groupingSize)
-                        {
-                            *(pBytes + i--) = Comma;
-                            groupingCount = 0;
-
-                            if (i < 0)
-                            {
-                                break;
-                            }
-                        }
-
-                        *(pBytes + i--) = (byte)(Num0 + (decimalNum2 % 10));
-                        decimalNum2 /= 10;
-
-                        if (i < dotPos)
-                        {
                             groupingCount++;
-                        }
-                        else if ((i == dotPos) && (i >= 0))
-                        {
-                            *(pBytes + i--) = Dot;
-
-                            if ((decimalNum2 == 0) && (i >= 0))
-                            {
-                                *(pBytes + i--) = Num0;
-                            }
-                        }
-
-                        if (decimalNum2 == 0)
-                        {
-                            break;
                         }
                     }
 
@@ -512,29 +524,45 @@
                 else
                 {
                     var i = 0;
-                    var dotPos = scale > 0 ? scale : Int32.MinValue;
-                    var groupingCount = 0;
 
-                    if (scale > decimalScale)
+                    if (scale > 0)
                     {
-                        for (var j = 0; j < (scale - decimalScale) && (i < length); j++)
+                        var dotPos = scale;
+
+                        var completion = scale - decimalScale;
+                        while ((completion > 0) && (i < length))
                         {
                             *(pBytes + i++) = Num0;
+                            completion--;
+                        }
 
-                            if ((i == dotPos) && (i < length))
+                        while ((i < dotPos) && (i < length))
+                        {
+                            if (workPointer < workSize)
                             {
-                                *(pBytes + i++) = Dot;
+                                *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
+                            }
+                            else
+                            {
+                                *(pBytes + i++) = Num0;
                             }
                         }
-                    }
-                    else if (scale < decimalScale)
-                    {
-                        FixDecimalScale(ref decimalNum, decimalScale - scale);
+
+                        if ((i == dotPos) && (i < length))
+                        {
+                            *(pBytes + i++) = Dot;
+                        }
                     }
 
-                    if (decimalNum > UInt32.MaxValue)
+                    var groupingCount = 0;
+
+                    if ((workPointer == workSize) && (i < length))
                     {
-                        while (i < length)
+                        *(pBytes + i++) = Num0;
+                    }
+                    else
+                    {
+                        while ((workPointer < workSize) && (i < length))
                         {
                             if (groupingCount == groupingSize)
                             {
@@ -547,59 +575,9 @@
                                 }
                             }
 
-                            *(pBytes + i++) = (byte)(Num0 + (decimalNum % 10));
-                            decimalNum /= 10;
+                            *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
 
-                            if (i > dotPos)
-                            {
-                                groupingCount++;
-                            }
-                            else if ((i == dotPos) && (i < length))
-                            {
-                                *(pBytes + i++) = Dot;
-                            }
-
-                            if (decimalNum <= UInt32.MaxValue)
-                            {
-                                break;
-                            }
-                        }
-                    }
-
-                    var decimalNum2 = (uint)decimalNum;
-                    while (i < length)
-                    {
-                        if (groupingCount == groupingSize)
-                        {
-                            *(pBytes + i++) = Comma;
-                            groupingCount = 0;
-
-                            if (i >= length)
-                            {
-                                break;
-                            }
-                        }
-
-                        *(pBytes + i++) = (byte)(Num0 + (decimalNum2 % 10));
-                        decimalNum2 /= 10;
-
-                        if (i > dotPos)
-                        {
                             groupingCount++;
-                        }
-                        else if ((i == dotPos) && (i < length))
-                        {
-                            *(pBytes + i++) = Dot;
-
-                            if ((decimalNum2 == 0) && (i < length))
-                            {
-                                *(pBytes + i++) = Num0;
-                            }
-                        }
-
-                        if (decimalNum2 == 0)
-                        {
-                            break;
                         }
                     }
 
@@ -615,55 +593,6 @@
                         *(pBytes + i++) = filler;
                     }
                 }
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void FixDecimalScale(ref ulong value, int exponent)
-        {
-            if (value <= UInt32.MaxValue)
-            {
-                if (exponent >= 10)
-                {
-                    value = 0UL;
-                    return;
-                }
-
-                var pow = 1U;
-                var under = exponent == 1 ? value % 10 : 0UL;
-                for (var i = 0; i < exponent; i++)
-                {
-                    pow *= 10;
-                    if (i == exponent - 2)
-                    {
-                        under = ((uint)value / pow) % 10;
-                    }
-                }
-
-                value = (uint)value / pow;
-                value += under > 4 ? 1UL : 0;
-            }
-            else
-            {
-                if (exponent >= 20)
-                {
-                    value = 0UL;
-                    return;
-                }
-
-                var pow = 1UL;
-                var under = exponent == 1 ? value % 10 : 0UL;
-                for (var i = 0; i < exponent; i++)
-                {
-                    pow *= 10;
-                    if (i == exponent - 2)
-                    {
-                        under = (value / pow) % 10;
-                    }
-                }
-
-                value = value / pow;
-                value += under > 4 ? 1UL : 0;
             }
         }
 
