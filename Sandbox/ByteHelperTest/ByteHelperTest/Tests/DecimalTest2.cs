@@ -20,6 +20,9 @@
         [InlineData("0", " 0", 0, -1, Padding.Left, false)]
         [InlineData("0", "00", 0, -1, Padding.Left, true)]
         [InlineData("0", "0 ", 0, -1, Padding.Right, false)]
+        [InlineData("0", " 0.0", 1, -1, Padding.Left, false)]
+        [InlineData("0", "00.0", 1, -1, Padding.Left, true)]
+        [InlineData("0", "0.0 ", 1, -1, Padding.Right, false)]
         // Max grouping
         [InlineData("999999999999999999", "  999,999,999,999,999,999", 0, 3, Padding.Left, false)]
         [InlineData("999999999999999999", "0,999,999,999,999,999,999", 0, 3, Padding.Left, true)]
@@ -32,6 +35,13 @@
         [InlineData("0.999999999999999999", "  0.999999999999999999", 18, -1, Padding.Left, false)]
         [InlineData("0.999999999999999999", "000.999999999999999999", 18, -1, Padding.Left, true)]
         [InlineData("0.999999999999999999", "0.999999999999999999  ", 18, -1, Padding.Right, false)]
+        // Scale
+        [InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
+        [InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
+        [InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
+        [InlineData("0.01", " 0.01", 2, -1, Padding.Left, false)]
+        [InlineData("0.01", "00.01", 2, -1, Padding.Left, true)]
+        [InlineData("0.01", "0.01 ", 2, -1, Padding.Right, false)]
         // 32bit
         [InlineData("4294967295", "  4294967295", 0, -1, Padding.Left, false)]
         [InlineData("4294967295", "004294967295", 0, -1, Padding.Left, true)]
@@ -155,23 +165,13 @@
         [InlineData("18446744073709551615", "5", 0, 1, Padding.Left, false)]
         [InlineData("18446744073709551615", ",5", 0, 1, Padding.Right, false)]
         [InlineData("18446744073709551615", "5", 0, 1, Padding.Right, false)]
-        // TODO 0.00xxxxxxxxxxxxxxxxxxxxxxxxxx ? 127パターンも
-        //[InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
-        //[InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
-        //[InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
-        //[InlineData("0.01", " 0.01", 2, -1, Padding.Left, false)]
-        //[InlineData("0.01", "00.01", 2, -1, Padding.Left, true)]
-        //[InlineData("0.01", "0.01 ", 2, -1, Padding.Right, false)]
         public void FormatDecimal(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
         {
             var value = Decimal.Parse(input);
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
             ByteHelper2.FormatDecimal(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
-            var actual = Encoding.ASCII.GetString(buffer);
-            System.Diagnostics.Debug.WriteLine(actual);
-            Assert.Equal(output, actual);
-            //Assert.Equal(expected, buffer);
+            Assert.Equal(expected, buffer);
         }
     }
 }

@@ -272,10 +272,7 @@
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
             NumberHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
-            var actual = Encoding.ASCII.GetString(buffer);
-            System.Diagnostics.Debug.WriteLine(actual);
-            Assert.Equal(output, actual);
-            //Assert.Equal(expected, buffer);
+            Assert.Equal(expected, buffer);
         }
     }
 }
