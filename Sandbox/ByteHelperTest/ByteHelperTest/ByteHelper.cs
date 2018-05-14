@@ -825,69 +825,6 @@ namespace ByteHelperTest
 
         // TypeB
 
-        public static unsafe bool TryParseDecimal2(byte[] bytes, int index, int length, out decimal value)
-        {
-            value = 0m;
-
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = 0;
-                while ((i < length) && (*(pBytes + i) == ' '))
-                {
-                    i++;
-                }
-
-                if (i == length)
-                {
-                    return true;
-                }
-
-                var negative = *(pBytes + i) == '-';
-                i += negative ? 1 : 0;
-
-                var midlo = 0UL;
-                var count = 0;
-                var dotPos = -1;
-                while (i < length)
-                {
-                    var num = *(pBytes + i) - 0x30;
-                    if ((num >= 0) && (num < 10))
-                    {
-                        midlo = (midlo * 10) + (ulong)num;
-                        count++;
-                    }
-                    else if ((*(pBytes + i) == '.') && (dotPos == -1))
-                    {
-                        dotPos = count;
-                    }
-                    else if (*(pBytes + i) != ',')
-                    {
-                        while ((i < length) && (*(pBytes + i) == ' '))
-                        {
-                            i++;
-                        }
-
-                        break;
-                    }
-
-                    i++;
-                }
-
-                if (i != length)
-                {
-                    return false;
-                }
-
-                value = new decimal(
-                    (int)(midlo & 0xFFFFFFFF),
-                    (int)((midlo >> 32) & 0xFFFFFFFF),
-                    0,
-                    negative,
-                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
-                return true;
-            }
-        }
-
         // TODO Slow
         //public static unsafe bool TryParseDecimal3(byte[] bytes, int index, int length, out decimal value)
         //{

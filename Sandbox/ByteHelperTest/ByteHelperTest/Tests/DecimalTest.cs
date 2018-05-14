@@ -47,57 +47,6 @@
             Assert.False(ret);
         }
 
-        [Fact]
-        public void TryParseDecimalB19()
-        {
-            var buffer = Encoding.ASCII.GetBytes("12345678901234567.89");
-            var ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out var value);
-            Assert.True(ret);
-            Assert.Equal(12345678901234567.89m, value);
-
-            buffer = Encoding.ASCII.GetBytes("-12345678901234567.89");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(-12345678901234567.89m, value);
-
-            buffer = Encoding.ASCII.GetBytes("12,345,678,901,234,567.89");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(12345678901234567.89m, value);
-
-            buffer = Encoding.ASCII.GetBytes("-12,345,678,901,234,567.89");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(-12345678901234567.89m, value);
-
-            buffer = Encoding.ASCII.GetBytes("0");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(0m, value);
-
-            buffer = Encoding.ASCII.GetBytes("-0");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(0m, value);
-
-            buffer = Encoding.ASCII.GetBytes(" 12345678901234567.89 ");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.True(ret);
-            Assert.Equal(12345678901234567.89m, value);
-
-            buffer = Encoding.ASCII.GetBytes("1234567890 1234567.89");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.False(ret);
-
-            buffer = Encoding.ASCII.GetBytes("a12345678901234567.89");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.False(ret);
-
-            buffer = Encoding.ASCII.GetBytes("12345678901234567.89a");
-            ret = ByteHelper.TryParseDecimal2(buffer, 0, buffer.Length, out value);
-            Assert.False(ret);
-        }
-
         //[Fact]
         //public void FormatDecimal2()
         //{

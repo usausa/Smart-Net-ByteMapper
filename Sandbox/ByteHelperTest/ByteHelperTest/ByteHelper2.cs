@@ -9,8 +9,8 @@
         private const byte Num0 = (byte)'0';
         private const byte Dot = (byte)'.';
         private const byte Comma = (byte)',';
-        //private const int DotDiff = Dot - Num0;
-        //private const int CommaDiff = Comma - Num0;
+        private const int DotDiff = Dot - Num0;
+        private const int CommaDiff = Comma - Num0;
 
         private const int Int32MinValueDiv10 = Int32.MinValue / 10;
         private const byte Int32MinValueMod10 = Num0 + -(Int32.MinValue % 10);
@@ -369,16 +369,101 @@
         // Decimal
         //--------------------------------------------------------------------------------
 
+        public static unsafe bool TryParseDecimalLimited64(byte[] bytes, int index, int length, byte filler, out decimal value)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                value = 0m;
+
+                var i = 0;
+                while ((i < length) && (*(pBytes + i) == filler))
+                {
+                    i++;
+                }
+
+                if (i == length)
+                {
+                    return false;
+                }
+
+                var negative = *(pBytes + i) == Minus;
+                i += negative ? 1 : 0;
+
+                var midlo = 0UL;
+                var count = 0;
+                var dotPos = -1;
+                while (i < length)
+                {
+                    var num = *(pBytes + i) - Num0;
+                    if ((num >= 0) && (num < 10))
+                    {
+                        if (count >= 18)
+                        {
+                            if (dotPos == -1)
+                            {
+                                return false;
+                            }
+
+                            if (num > 4)
+                            {
+                                midlo += 1;
+                            }
+
+                            break;
+                        }
+
+                        midlo = (midlo * 10) + (ulong)num;
+                        count++;
+                    }
+                    else if ((num == DotDiff) && (dotPos == -1))
+                    {
+                        dotPos = count;
+                    }
+                    else if (num == CommaDiff)
+                    {
+                        if (dotPos != -1)
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        while ((i < length) && (*(pBytes + i) == filler))
+                        {
+                            i++;
+                        }
+
+                        if (i != length)
+                        {
+                            return false;
+                        }
+
+                        break;
+                    }
+
+                    i++;
+                }
+
+                value = new decimal(
+                    (int)(midlo & 0xFFFFFFFF),
+                    (int)((midlo >> 32) & 0xFFFFFFFF),
+                    0,
+                    negative,
+                    (byte)(dotPos < 0 ? 0 : (count - dotPos)));
+                return true;
+            }
+        }
+
         public static unsafe void FormatDecimalLimited64(
-    byte[] bytes,
-    int index,
-    int length,
-    decimal value,
-    byte scale,
-    int groupingSize,
-    Padding padding,
-    bool zerofill,
-    byte filler)
+            byte[] bytes,
+            int index,
+            int length,
+            decimal value,
+            byte scale,
+            int groupingSize,
+            Padding padding,
+            bool zerofill,
+            byte filler)
         {
             var bits = Decimal.GetBits(value);
             var negative = (bits[3] & NegativeBitFlag) != 0;
