@@ -28,16 +28,10 @@
 
         private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)
         {
-            var groupingSize = UseGrouping ?? context.GetParameter<bool>(OptionsParameter.UseGrouping) ? GroupingSize : 0;
-            if (Length > 18)
-            {
-                throw new InvalidOperationException($"Parameter is invalid. length=[{Length}], scale=[{Scale}], groupingSize=[{groupingSize}]");
-            }
-
             return new DecimalConverter(
                 Length,
                 Scale,
-                groupingSize,
+                UseGrouping ?? context.GetParameter<bool>(OptionsParameter.UseGrouping) ? GroupingSize : 0,
                 Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
                 ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
                 Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
