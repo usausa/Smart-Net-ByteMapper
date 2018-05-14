@@ -36,22 +36,6 @@
         // Custom
 
         [Benchmark]
-        public void FormatCustomLimited19_8()
-        {
-            var buffer = new byte[9];
-            ByteHelper2.FormatDecimalLimited64(buffer, 0, buffer.Length, Value8, 2, -1, Padding.Left, true, 0x20);
-        }
-
-        [Benchmark]
-        public void FormatCustomLimited19_19()
-        {
-            var buffer = new byte[22];
-            ByteHelper2.FormatDecimalLimited64(buffer, 0, buffer.Length, Value19, 3, -1, Padding.Left, true, 0x20);
-        }
-
-        // Custom
-
-        [Benchmark]
         public void FormatCustom8()
         {
             var buffer = new byte[8];

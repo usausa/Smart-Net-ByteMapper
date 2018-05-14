@@ -1,181 +1,104 @@
 ﻿namespace ByteHelperTest.Tests
 {
+    using System.Globalization;
     using System.Text;
 
     using Xunit;
 
     public class DecimalTest
     {
-        //[Fact]
-        //public void TryParseDecimal28()
-        //{
-        //    var buffer = Encoding.ASCII.GetBytes("12345678901234567890123456.78");
-        //    var ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out var value);
-        //    Assert.True(ret);
-        //    Assert.Equal(12345678901234567890123456.78m, value);
+        [Fact]
+        public void ParseDecimal()
+        {
+            // Default
+            var buffer = Encoding.ASCII.GetBytes("1,234,567,890,123,456.78");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out var value));
+            Assert.Equal(1234567890123456.78m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("-12345678901234567890123456.78");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.True(ret);
-        //    Assert.Equal(-12345678901234567890123456.78m, value);
+            // Negative
+            buffer = Encoding.ASCII.GetBytes("-1,234,567,890,123,456.78");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(-1234567890123456.78m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("0");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.True(ret);
-        //    Assert.Equal(0m, value);
+            // Max
+            buffer = Encoding.ASCII.GetBytes("99,999,999,999,999,999");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(99999999999999999m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("-0");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.True(ret);
-        //    Assert.Equal(0m, value);
+            // Max Negative
+            buffer = Encoding.ASCII.GetBytes("-99,999,999,999,999,999");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(-99999999999999999m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes(" 12345678901234567890123456.78 ");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.True(ret);
-        //    Assert.Equal(12345678901234567890123456.78m, value);
+            // Zero
+            buffer = Encoding.ASCII.GetBytes("0");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("1234567890 1234567890123456.78");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.False(ret);
+            // Zero Negative
+            buffer = Encoding.ASCII.GetBytes("-0");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0m, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("a12345678901234567890123456.78");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.False(ret);
+            // 32bit
+            buffer = Encoding.ASCII.GetBytes(0xFFFFFFFF.ToString(CultureInfo.InvariantCulture));
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0xFFFFFFFF, value);
 
-        //    buffer = Encoding.ASCII.GetBytes("12345678901234567890123456.78a");
-        //    ret = ByteHelper.TryParseDecimal(buffer, 0, buffer.Length, out value);
-        //    Assert.False(ret);
-        //}
+            // 32bit+1
+            buffer = Encoding.ASCII.GetBytes(0x100000000.ToString(CultureInfo.InvariantCulture));
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0x100000000, value);
 
-        //[Fact]
-        //public void FormatDecimal2()
-        //{
-        //    var buffer = new byte[32];
+            // Trim
+            buffer = Encoding.ASCII.GetBytes(" 1234567890123456.78 ");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(1234567890123456.78m, value);
 
-        //    // TODO
+            // Max
+            buffer = Encoding.ASCII.GetBytes("79228162514264337593543950335");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    // Left
+            // Round
+            buffer = Encoding.ASCII.GetBytes("0.99999999999999999999999999995");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(1.0000000000000000000000000000m, value);
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 1234567m, 0, Padding.Left, false, -1);
-        //    Assert.Equal("   1234567", Encoding.ASCII.GetString(buffer, 0, 10));
+            buffer = Encoding.ASCII.GetBytes("0.99999999999999999999999999994");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0.9999999999999999999999999999m, value);
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 2, Padding.Left, false, -1);
-        //    Assert.Equal("  12345.67", Encoding.ASCII.GetString(buffer, 0, 10));
+            // Dot only
+            buffer = Encoding.ASCII.GetBytes("1.");
+            Assert.True(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(1m, value);
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, -12345.67m, 2, Padding.Left, false, -1);
-        //    Assert.Equal(" -12345.67", Encoding.ASCII.GetString(buffer, 0, 10));
+            // Failed
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 3, Padding.Left, false, -1);
-        //    Assert.Equal(" 12345.670", Encoding.ASCII.GetString(buffer, 0, 10));
+            // Empty
+            buffer = Encoding.ASCII.GetBytes("                  ");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 1, Padding.Left, false, -1);
-        //    Assert.Equal("   12345.6", Encoding.ASCII.GetString(buffer, 0, 10));
+            // Multiple dot
+            buffer = Encoding.ASCII.GetBytes("1..");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    // Zero
+            // Overflow
+            buffer = Encoding.ASCII.GetBytes("79228162514264337593543950336");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 1234567m, 0, Padding.Left, true, -1);
-        //    Assert.Equal("0001234567", Encoding.ASCII.GetString(buffer, 0, 10));
+            // Invalid Value
+            buffer = Encoding.ASCII.GetBytes("1,234.567,89");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 2, Padding.Left, true, -1);
-        //    Assert.Equal("0012345.67", Encoding.ASCII.GetString(buffer, 0, 10));
+            buffer = Encoding.ASCII.GetBytes("1,234,567,8 90,123,456.78");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, -12345.67m, 2, Padding.Left, true, -1);
-        //    Assert.Equal("-012345.67", Encoding.ASCII.GetString(buffer, 0, 10));
+            buffer = Encoding.ASCII.GetBytes("a1,234,567,890,123,456.78");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 3, Padding.Left, true, -1);
-        //    Assert.Equal("012345.670", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 1, Padding.Left, true, -1);
-        //    Assert.Equal("00012345.6", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    // Right
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 1234567m, 0, Padding.Right, false, -1);
-        //    Assert.Equal("1234567   ", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 2, Padding.Right, false, -1);
-        //    Assert.Equal("12345.67  ", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, -12345.67m, 2, Padding.Right, false, -1);
-        //    Assert.Equal("-12345.67 ", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 3, Padding.Right, false, -1);
-        //    Assert.Equal("12345.670 ", Encoding.ASCII.GetString(buffer, 0, 10));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 10, 12345.67m, 1, Padding.Right, false, -1);
-        //    Assert.Equal("12345.6   ", Encoding.ASCII.GetString(buffer, 0, 10));
-        //}
-
-        //[Fact]
-        //public void FormatDecimal2Grouping()
-        //{
-        //    var buffer = new byte[32];
-
-        //    // Left
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Left, false, 3);
-        //    Assert.Equal("   123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Left, false, 3);
-        //    Assert.Equal("  -123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Left, false, 4);
-        //    Assert.Equal("    12,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Left, false, 4);
-        //    Assert.Equal("   -12,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    // Zero
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Left, true, 3);
-        //    Assert.Equal("00,123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Left, true, 3);
-        //    Assert.Equal("-0,123,456,789,012,345,678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Left, true, 4);
-        //    Assert.Equal("0,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Left, true, 4);
-        //    Assert.Equal("-,0012,3456,7890,1234,5678", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    // Right
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Right, false, 3);
-        //    Assert.Equal("123,456,789,012,345,678   ", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Right, false, 3);
-        //    Assert.Equal("-123,456,789,012,345,678  ", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, 123456789012345678m, 0, Padding.Right, false, 4);
-        //    Assert.Equal("12,3456,7890,1234,5678    ", Encoding.ASCII.GetString(buffer, 0, 26));
-
-        //    buffer.Fill(0, buffer.Length, 0);
-        //    ByteHelper.FormatDecimal2(buffer, 0, 26, -123456789012345678m, 0, Padding.Right, false, 4);
-        //    Assert.Equal("-12,3456,7890,1234,5678   ", Encoding.ASCII.GetString(buffer, 0, 26));
-        //}
+            buffer = Encoding.ASCII.GetBytes("1,234,567,890,123,456.78a");
+            Assert.False(ByteHelper2.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+        }
     }
 }
