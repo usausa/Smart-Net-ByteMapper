@@ -548,280 +548,163 @@ namespace ByteHelperTest
         // Decimal
         //--------------------------------------------------------------------------------
 
-        public static unsafe bool TryParseDecimal(byte[] bytes, int index, int length, out decimal value)
-        {
-            value = 0m;
+        //public static unsafe bool TryParseDecimal(byte[] bytes, int index, int length, out decimal value)
+        //{
+        //    value = 0m;
 
-            var mantissa = default(DecimalMantissaInt3);
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = 0;
-                while ((i < length) && (*(pBytes + i) == ' '))
-                {
-                    i++;
-                }
+        //    var mantissa = default(DecimalMantissaInt3);
+        //    fixed (byte* pBytes = &bytes[index])
+        //    {
+        //        var i = 0;
+        //        while ((i < length) && (*(pBytes + i) == ' '))
+        //        {
+        //            i++;
+        //        }
 
-                if (i == length)
-                {
-                    return true;
-                }
+        //        if (i == length)
+        //        {
+        //            return true;
+        //        }
 
-                var negative = *(pBytes + i) == '-';
-                i += negative ? 1 : 0;
+        //        var negative = *(pBytes + i) == '-';
+        //        i += negative ? 1 : 0;
 
-                var count = 0;
-                var dotPos = -1;
-                while (i < length)
-                {
-                    var num = *(pBytes + i) - 0x30;
-                    if ((num >= 0) && (num < 10))
-                    {
-                        if (mantissa.Multiply10AndAdd(num))
-                        {
-                            count++;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }
-                    else if ((*(pBytes + i) == '.') && (dotPos == -1))
-                    {
-                        dotPos = count;
-                    }
-                    else if (*(pBytes + i) != ',')
-                    {
-                        while ((i < length) && (*(pBytes + i) == ' '))
-                        {
-                            i++;
-                        }
+        //        var count = 0;
+        //        var dotPos = -1;
+        //        while (i < length)
+        //        {
+        //            var num = *(pBytes + i) - 0x30;
+        //            if ((num >= 0) && (num < 10))
+        //            {
+        //                if (mantissa.Multiply10AndAdd(num))
+        //                {
+        //                    count++;
+        //                }
+        //                else
+        //                {
+        //                    return false;
+        //                }
+        //            }
+        //            else if ((*(pBytes + i) == '.') && (dotPos == -1))
+        //            {
+        //                dotPos = count;
+        //            }
+        //            else if (*(pBytes + i) != ',')
+        //            {
+        //                while ((i < length) && (*(pBytes + i) == ' '))
+        //                {
+        //                    i++;
+        //                }
 
-                        break;
-                    }
+        //                break;
+        //            }
 
-                    i++;
-                }
+        //            i++;
+        //        }
 
-                if (i != length)
-                {
-                    return false;
-                }
+        //        if (i != length)
+        //        {
+        //            return false;
+        //        }
 
-                value = new decimal(
-                    mantissa.Lo,
-                    mantissa.Mid,
-                    mantissa.Hi,
-                    negative,
-                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
-                return true;
-            }
-        }
+        //        value = new decimal(
+        //            mantissa.Lo,
+        //            mantissa.Mid,
+        //            mantissa.Hi,
+        //            negative,
+        //            (byte)(dotPos == -1 ? 0 : (count - dotPos)));
+        //        return true;
+        //    }
+        //}
 
-        private struct DecimalMantissaInt3
-        {
-            public int Lo { get; private set; }
+        //private struct DecimalMantissaInt3
+        //{
+        //    public int Lo { get; private set; }
 
-            public int Mid { get; private set; }
+        //    public int Mid { get; private set; }
 
-            public int Hi { get; private set; }
+        //    public int Hi { get; private set; }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public bool Multiply10AndAdd(int value)
-            {
-                var lo = Lo;
-                var mid = Mid;
-                var hi = Hi;
+        //    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //    public bool Multiply10AndAdd(int value)
+        //    {
+        //        var lo = Lo;
+        //        var mid = Mid;
+        //        var hi = Hi;
 
-                var lo8 = Lo;
-                var mid8 = Mid;
-                var hi8 = Hi;
+        //        var lo8 = Lo;
+        //        var mid8 = Mid;
+        //        var hi8 = Hi;
 
-                var carryLo2 = ShiftWithCarry(ref lo, 1);
-                var carryMid2 = ShiftWithCarry(ref mid, 1);
-                if (ShiftWithCarry(ref hi, 1) > 0)
-                {
-                    return false;
-                }
+        //        var carryLo2 = ShiftWithCarry(ref lo, 1);
+        //        var carryMid2 = ShiftWithCarry(ref mid, 1);
+        //        if (ShiftWithCarry(ref hi, 1) > 0)
+        //        {
+        //            return false;
+        //        }
 
-                mid = mid | carryLo2;
-                hi = hi | carryMid2;
+        //        mid = mid | carryLo2;
+        //        hi = hi | carryMid2;
 
-                var carryLo8 = ShiftWithCarry(ref lo8, 3);
-                var carryMid8 = ShiftWithCarry(ref mid8, 3);
-                if (ShiftWithCarry(ref hi8, 3) > 0)
-                {
-                    return false;
-                }
+        //        var carryLo8 = ShiftWithCarry(ref lo8, 3);
+        //        var carryMid8 = ShiftWithCarry(ref mid8, 3);
+        //        if (ShiftWithCarry(ref hi8, 3) > 0)
+        //        {
+        //            return false;
+        //        }
 
-                mid8 = mid8 | carryLo8;
-                hi8 = hi8 | carryMid8;
+        //        mid8 = mid8 | carryLo8;
+        //        hi8 = hi8 | carryMid8;
 
-                var carryLo = AddWithCarry(ref lo, lo8, 0);
-                var carryMid = AddWithCarry(ref mid, mid8, carryLo);
-                if (AddWithCarry(ref hi, hi8, carryMid) > 0)
-                {
-                    return false;
-                }
+        //        var carryLo = AddWithCarry(ref lo, lo8, 0);
+        //        var carryMid = AddWithCarry(ref mid, mid8, carryLo);
+        //        if (AddWithCarry(ref hi, hi8, carryMid) > 0)
+        //        {
+        //            return false;
+        //        }
 
-                var carry = AddWithCarry(ref lo, value);
-                carry = AddWithCarry(ref mid, carry);
-                if (AddWithCarry(ref hi, carry) > 0)
-                {
-                    return false;
-                }
+        //        var carry = AddWithCarry(ref lo, value);
+        //        carry = AddWithCarry(ref mid, carry);
+        //        if (AddWithCarry(ref hi, carry) > 0)
+        //        {
+        //            return false;
+        //        }
 
-                Lo = lo;
-                Mid = mid;
-                Hi = hi;
+        //        Lo = lo;
+        //        Mid = mid;
+        //        Hi = hi;
 
-                return true;
-            }
+        //        return true;
+        //    }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static int AddWithCarry(ref int value, int add)
-            {
-                var l = (ulong)(uint)value;
-                l += (ulong)add;
-                value = (int)(l & 0xFFFFFFFF);
-                return (int)((l >> 32) & 0xFFFFFFFF);
-            }
+        //    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //    private static int AddWithCarry(ref int value, int add)
+        //    {
+        //        var l = (ulong)(uint)value;
+        //        l += (ulong)add;
+        //        value = (int)(l & 0xFFFFFFFF);
+        //        return (int)((l >> 32) & 0xFFFFFFFF);
+        //    }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static int AddWithCarry(ref int value, int add1, int add2)
-            {
-                var l = (ulong)(uint)value;
-                l += (uint)add1;
-                l += (uint)add2;
-                value = (int)(l & 0xFFFFFFFF);
-                return (int)((l >> 32) & 0xFFFFFFFF);
-            }
+        //    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //    private static int AddWithCarry(ref int value, int add1, int add2)
+        //    {
+        //        var l = (ulong)(uint)value;
+        //        l += (uint)add1;
+        //        l += (uint)add2;
+        //        value = (int)(l & 0xFFFFFFFF);
+        //        return (int)((l >> 32) & 0xFFFFFFFF);
+        //    }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static int ShiftWithCarry(ref int value, int bit)
-            {
-                var l = (ulong)(uint)value;
-                l = l << bit;
-                value = (int)(l & 0xFFFFFFFF);
-                return (int)((l >> 32) & 0xFFFFFFFF);
-            }
-        }
-
-        public static unsafe bool TryParseDecimalX(byte[] bytes, int index, int length, out decimal value)
-        {
-            value = 0m;
-
-            var mantissa = default(DecimalMantissa);
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = 0;
-                while ((i < length) && (*(pBytes + i) == ' '))
-                {
-                    i++;
-                }
-
-                if (i == length)
-                {
-                    return true;
-                }
-
-                var negative = *(pBytes + i) == '-';
-                i += negative ? 1 : 0;
-
-                var count = 0;
-                var dotPos = -1;
-                while (i < length)
-                {
-                    var num = *(pBytes + i) - 0x30;
-                    if ((num >= 0) && (num < 10))
-                    {
-                        mantissa.Multiply10AndAdd((ulong)num);
-                        count++;
-                    }
-                    else if ((*(pBytes + i) == '.') && (dotPos == -1))
-                    {
-                        dotPos = count;
-                    }
-                    else if (*(pBytes + i) != ',')
-                    {
-                        while ((i < length) && (*(pBytes + i) == ' '))
-                        {
-                            i++;
-                        }
-
-                        break;
-                    }
-
-                    i++;
-                }
-
-                if (i != length)
-                {
-                    return false;
-                }
-
-                value = new decimal(
-                    mantissa.Lo,
-                    mantissa.Mid,
-                    mantissa.Hi,
-                    negative,
-                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
-                return true;
-            }
-        }
-
-        public struct DecimalMantissa
-        {
-            private const ulong Threshold = 1_000_000_000_000_000_000UL;
-
-            private ulong lomid;
-
-            private uint hi;
-
-            public int Lo => (int)(lomid & 0xFFFFFFFF);
-
-            public int Mid => (int)((lomid >> 32) & 0xFFFFFFFF);
-
-            public int Hi => (int)hi;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Multiply10AndAdd(ulong value)
-            {
-                if ((hi == 0) && (lomid <= Threshold))
-                {
-                    lomid = (lomid * 10) + value;
-                    return;
-                }
-
-                var carry2 = (uint)((lomid >> 63) & 0x00000001);
-                var carry8 = (uint)((lomid >> 61) & 0x00000007);
-
-                var shift3 = lomid << 3;
-                var shift1 = lomid << 1;
-
-                var overflow = IsOverflow(shift3, shift1);
-                lomid = shift1 + shift3;
-
-                var addCarry = !overflow && IsOverflow(lomid, value);
-                lomid += value;
-
-                hi = (hi << 3) + (hi << 1) + carry2 + carry8;
-
-                if (overflow)
-                {
-                    hi++;
-                }
-                else if (addCarry)
-                {
-                    hi++;
-                }
-            }
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private bool IsOverflow(ulong value1, ulong value2)
-            {
-                return UInt64.MaxValue - value1 <= value2;
-            }
-        }
+        //    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //    private static int ShiftWithCarry(ref int value, int bit)
+        //    {
+        //        var l = (ulong)(uint)value;
+        //        l = l << bit;
+        //        value = (int)(l & 0xFFFFFFFF);
+        //        return (int)((l >> 32) & 0xFFFFFFFF);
+        //    }
+        //}
 
         // TypeB
 
