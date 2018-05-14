@@ -8,31 +8,6 @@
 
     public class NumberHelperDecimalTest
     {
-        [Theory]
-        [InlineData("9.99999999999999999", true)]
-        [InlineData("1.000000000000000000", false)]
-        [InlineData("99999999999999999.9", true)]
-        [InlineData("100000000000000000.0", false)]
-        [InlineData("999999999999999999", true)]
-        [InlineData("1000000000000000000", false)]
-        [InlineData("999,999,999,999,999,999", true)]
-        [InlineData("1,000,000,000,000,000,000", false)]
-        [InlineData("99,999,999,999,999,999.9", true)]
-        [InlineData("100,000,000,000,000,000,000.0", false)]
-        [InlineData("9,999,999,999,999,999.99", true)]
-        [InlineData("10,000,000,000,000,000,000.00", false)]
-        [InlineData("999,999,999,999,999.999", true)]
-        [InlineData("1,000,000,000,000,000,000.000", false)]
-        public void IsDecimalLimited64Applicable(string input, bool expected)
-        {
-            var length = input.Length;
-            var dotIndex = input.LastIndexOf('.');
-            var scale = dotIndex >= 0 ? length - dotIndex - 1 : 0;
-            var commaIndex = input.LastIndexOf(',');
-            var groupSize = commaIndex >= 0 ? (dotIndex >= 0 ? dotIndex : length) - commaIndex - 1 : -1;
-            Assert.Equal(expected, NumberHelper.IsDecimalLimited64Applicable(length, (byte)scale, groupSize));
-        }
-
         [Fact]
         public void ParseDecimal()
         {
@@ -47,14 +22,14 @@
             Assert.Equal(-1234567890123456.78m, value);
 
             // Max
-            buffer = Encoding.ASCII.GetBytes("999,999,999,999,999,999");
+            buffer = Encoding.ASCII.GetBytes("99,999,999,999,999,999");
             Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
-            Assert.Equal(999999999999999999m, value);
+            Assert.Equal(99999999999999999m, value);
 
             // Max Negative
-            buffer = Encoding.ASCII.GetBytes("-999,999,999,999,999,999");
+            buffer = Encoding.ASCII.GetBytes("-99,999,999,999,999,999");
             Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
-            Assert.Equal(-999999999999999999m, value);
+            Assert.Equal(-99999999999999999m, value);
 
             // Zero
             buffer = Encoding.ASCII.GetBytes("0");
@@ -76,15 +51,19 @@
             Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(0x100000000, value);
 
-            // 64bit
-            buffer = Encoding.ASCII.GetBytes(0xFFFFFFFFFFFFFFFF.ToString(CultureInfo.InvariantCulture));
-            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
-            Assert.Equal(0xFFFFFFFFFFFFFFFF, value);
-
             // Trim
             buffer = Encoding.ASCII.GetBytes(" 1234567890123456.78 ");
             Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
             Assert.Equal(1234567890123456.78m, value);
+
+            // Round
+            buffer = Encoding.ASCII.GetBytes("0.999999999999999995");
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(1.00000000000000000m, value);
+
+            buffer = Encoding.ASCII.GetBytes("0.999999999999999994");
+            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.Equal(0.99999999999999999m, value);
 
             // Failed
 
@@ -92,12 +71,14 @@
             buffer = Encoding.ASCII.GetBytes("                  ");
             Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
-            // Overflow
-            buffer = Encoding.ASCII.GetBytes(((decimal)0xFFFFFFFFFFFFFFFF + 1).ToString(CultureInfo.InvariantCulture));
-            Assert.True(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
-            Assert.NotEqual((decimal)0xFFFFFFFFFFFFFFFF + 1, value);
+            // Limit
+            buffer = Encoding.ASCII.GetBytes("1234567890123456789");
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
             // Invalid Value
+            buffer = Encoding.ASCII.GetBytes("1,234.567,89");
+            Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
+
             buffer = Encoding.ASCII.GetBytes("1,234,567,8 90,123,456.78");
             Assert.False(NumberHelper.TryParseDecimalLimited64(buffer, 0, buffer.Length, 0x20, out value));
 
@@ -132,14 +113,7 @@
         [InlineData("-999999999999999999", " -999,999,999,999,999,999", 0, 3, Padding.Left, false)]
         [InlineData("-999999999999999999", "-,999,999,999,999,999,999", 0, 3, Padding.Left, true)]
         [InlineData("-999999999999999999", "-999,999,999,999,999,999 ", 0, 3, Padding.Right, false)]
-        // Max scale
-        [InlineData("0.999999999999999999", "  0.999999999999999999", 18, -1, Padding.Left, false)]
-        [InlineData("0.999999999999999999", "000.999999999999999999", 18, -1, Padding.Left, true)]
-        [InlineData("0.999999999999999999", "0.999999999999999999  ", 18, -1, Padding.Right, false)]
         // Scale
-        [InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
-        [InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
-        [InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
         [InlineData("0.01", " 0.01", 2, -1, Padding.Left, false)]
         [InlineData("0.01", "00.01", 2, -1, Padding.Left, true)]
         [InlineData("0.01", "0.01 ", 2, -1, Padding.Right, false)]
@@ -177,23 +151,19 @@
         [InlineData("0.4294967296", " 0.429496730", 9, -1, Padding.Left, false)]
         [InlineData("0.4294967296", "00.429496730", 9, -1, Padding.Left, true)]
         [InlineData("0.4294967296", "0.429496730 ", 9, -1, Padding.Right, false)]
-        // 64bit
-        [InlineData("18446744073709551615", "  18446744073709551615", 0, -1, Padding.Left, false)]
-        [InlineData("18446744073709551615", "0018446744073709551615", 0, -1, Padding.Left, true)]
-        [InlineData("18446744073709551615", "18446744073709551615  ", 0, -1, Padding.Right, false)]
-        // 64bit scale
-        [InlineData("0.18446744073709551615", " 0.18446744073709551615", 20, -1, Padding.Left, false)]
-        [InlineData("0.18446744073709551615", "00.18446744073709551615", 20, -1, Padding.Left, true)]
-        [InlineData("0.18446744073709551615", "0.18446744073709551615 ", 20, -1, Padding.Right, false)]
+        // Parse time fixed
+        [InlineData("0.0999999999999999999", " 0.100000000000000000", 18, -1, Padding.Left, false)]
+        [InlineData("0.0999999999999999999", "00.100000000000000000", 18, -1, Padding.Left, true)]
+        [InlineData("0.0999999999999999999", "0.100000000000000000 ", 18, -1, Padding.Right, false)]
+        // Over scale
+        [InlineData("0.999999999999999999", " 1.00000000000000000", 17, -1, Padding.Left, false)]
+        [InlineData("0.999999999999999999", "01.00000000000000000", 17, -1, Padding.Left, true)]
+        [InlineData("0.999999999999999999", "1.00000000000000000 ", 17, -1, Padding.Right, false)]
         // Buffer short
-        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Left, false)]
-        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Right, false)]
-        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Left, false)]
-        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Right, false)]
-        // Scale short
-        [InlineData("0.18446744073709551615", " 0.1844674407370955162", 19, -1, Padding.Left, false)]
-        [InlineData("0.18446744073709551615", "00.1844674407370955162", 19, -1, Padding.Left, true)]
-        [InlineData("0.18446744073709551615", "0.1844674407370955162 ", 19, -1, Padding.Right, false)]
+        [InlineData("0.999999999999999999", ".00000000000000000", 17, -1, Padding.Left, false)]
+        [InlineData("0.999999999999999999", ".00000000000000000", 17, -1, Padding.Right, false)]
+        [InlineData("0.999999999999999999", "00000000000000000", 17, -1, Padding.Left, false)]
+        [InlineData("0.999999999999999999", "00000000000000000", 17, -1, Padding.Right, false)]
         // Buffer short
         [InlineData("1.23", "1.23", 2, -1, Padding.Left, false)]
         [InlineData("1.23", ".23", 2, -1, Padding.Left, false)]
@@ -262,16 +232,173 @@
         [InlineData("-1", "-01", 0, 3, Padding.Right, true)]
         [InlineData("-1", "-1", 0, 3, Padding.Right, true)]
         [InlineData("-1", "1", 0, 3, Padding.Right, true)]
-        [InlineData("18446744073709551615", ",5", 0, 1, Padding.Left, false)]
-        [InlineData("18446744073709551615", "5", 0, 1, Padding.Left, false)]
-        [InlineData("18446744073709551615", ",5", 0, 1, Padding.Right, false)]
-        [InlineData("18446744073709551615", "5", 0, 1, Padding.Right, false)]
+        [InlineData("123456789012345678", ",8", 0, 1, Padding.Left, false)]
+        [InlineData("123456789012345678", "8", 0, 1, Padding.Left, false)]
+        [InlineData("123456789012345678", ",8", 0, 1, Padding.Right, false)]
+        [InlineData("123456789012345678", "8", 0, 1, Padding.Right, false)]
+        public void FormatDecimalLimited64(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
+        {
+            var bytes = Encoding.ASCII.GetBytes(input);
+            NumberHelper.TryParseDecimalLimited64(bytes, 0, bytes.Length, (byte)' ', out var value);
+            var expected = Encoding.ASCII.GetBytes(output);
+            var buffer = new byte[expected.Length];
+            NumberHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
+            Assert.Equal(expected, buffer);
+        }
+
+        [Theory]
+        // Default grouping scale
+        [InlineData("1234567890123456789012345.6789", "  1,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, false)]
+        [InlineData("1234567890123456789012345.6789", "001,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, true)]
+        [InlineData("1234567890123456789012345.6789", "1,234,567,890,123,456,789,012,345.6789  ", 4, 3, Padding.Right, false)]
+        // Negative grouping scale
+        [InlineData("-1234567890123456789012345.6789", " -1,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, false)]
+        [InlineData("-1234567890123456789012345.6789", "-01,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, true)]
+        [InlineData("-1234567890123456789012345.6789", "-1,234,567,890,123,456,789,012,345.6789 ", 4, 3, Padding.Right, false)]
+        // Zero
+        [InlineData("0", " 0", 0, -1, Padding.Left, false)]
+        [InlineData("0", "00", 0, -1, Padding.Left, true)]
+        [InlineData("0", "0 ", 0, -1, Padding.Right, false)]
+        [InlineData("0", " 0.0", 1, -1, Padding.Left, false)]
+        [InlineData("0", "00.0", 1, -1, Padding.Left, true)]
+        [InlineData("0", "0.0 ", 1, -1, Padding.Right, false)]
+        // Max grouping
+        [InlineData("9999999999999999999999999999", "  9,999,999,999,999,999,999,999,999,999", 0, 3, Padding.Left, false)]
+        [InlineData("9999999999999999999999999999", "009,999,999,999,999,999,999,999,999,999", 0, 3, Padding.Left, true)]
+        [InlineData("9999999999999999999999999999", "9,999,999,999,999,999,999,999,999,999  ", 0, 3, Padding.Right, false)]
+        // Max Negative grouping
+        [InlineData("-9999999999999999999999999999", " -9,999,999,999,999,999,999,999,999,999", 0, 3, Padding.Left, false)]
+        [InlineData("-9999999999999999999999999999", "-09,999,999,999,999,999,999,999,999,999", 0, 3, Padding.Left, true)]
+        [InlineData("-9999999999999999999999999999", "-9,999,999,999,999,999,999,999,999,999 ", 0, 3, Padding.Right, false)]
+        // Scale
+        [InlineData("0.01", " 0.01", 2, -1, Padding.Left, false)]
+        [InlineData("0.01", "00.01", 2, -1, Padding.Left, true)]
+        [InlineData("0.01", "0.01 ", 2, -1, Padding.Right, false)]
+        // 64bit
+        [InlineData("18446744073709551615", "  18446744073709551615", 0, -1, Padding.Left, false)]
+        [InlineData("18446744073709551615", "0018446744073709551615", 0, -1, Padding.Left, true)]
+        [InlineData("18446744073709551615", "18446744073709551615  ", 0, -1, Padding.Right, false)]
+        // 64bit + 1
+        [InlineData("4294967296", "  4294967296", 0, -1, Padding.Left, false)]
+        [InlineData("18446744073709551616", "0018446744073709551616", 0, -1, Padding.Left, true)]
+        [InlineData("18446744073709551616", "18446744073709551616  ", 0, -1, Padding.Right, false)]
+        // 64bit scale
+        [InlineData("0.18446744073709551615", " 0.18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "00.18446744073709551615", 20, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551615", "0.18446744073709551615 ", 20, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", ".18446744073709551615", 20, -1, Padding.Right, false)]
+        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "18446744073709551615", 20, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("0.18446744073709551615", " 0.1844674407370955162", 19, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "00.1844674407370955162", 19, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551615", "0.1844674407370955162 ", 19, -1, Padding.Right, false)]
+        // 64bit + 1 scale
+        [InlineData("0.18446744073709551616", " 0.18446744073709551616", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551616", "00.18446744073709551616", 20, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551616", "0.18446744073709551616 ", 20, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("0.18446744073709551616", ".18446744073709551616", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551616", ".18446744073709551616", 20, -1, Padding.Right, false)]
+        [InlineData("0.18446744073709551616", "18446744073709551616", 20, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551616", "18446744073709551616", 20, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("0.18446744073709551616", " 0.1844674407370955162", 19, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551616", "00.1844674407370955162", 19, -1, Padding.Left, true)]
+        [InlineData("0.18446744073709551616", "0.1844674407370955162 ", 19, -1, Padding.Right, false)]
+        // Parse time fixed
+        [InlineData("0.09999999999999999999999999999", " 0.1000000000000000000000000000", 28, -1, Padding.Left, false)]
+        [InlineData("0.09999999999999999999999999999", "00.1000000000000000000000000000", 28, -1, Padding.Left, true)]
+        [InlineData("0.09999999999999999999999999999", "0.1000000000000000000000000000 ", 28, -1, Padding.Right, false)]
+        // Over scale
+        [InlineData("0.9999999999999999999999999999", " 1.000000000000000000000000000", 27, -1, Padding.Left, false)]
+        [InlineData("0.9999999999999999999999999999", "01.000000000000000000000000000", 27, -1, Padding.Left, true)]
+        // Buffer short
+        [InlineData("0.9999999999999999999999999999", ".000000000000000000000000000", 27, -1, Padding.Left, false)]
+        [InlineData("0.9999999999999999999999999999", ".000000000000000000000000000", 27, -1, Padding.Right, false)]
+        [InlineData("0.9999999999999999999999999999", "000000000000000000000000000", 27, -1, Padding.Left, false)]
+        [InlineData("0.9999999999999999999999999999", "000000000000000000000000000", 27, -1, Padding.Right, false)]
+        // Buffer short
+        [InlineData("1.23", "1.23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", ".23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", "23", 2, -1, Padding.Left, false)]
+        [InlineData("1.23", "1.23", 2, -1, Padding.Right, false)]
+        [InlineData("1.23", ".23", 2, -1, Padding.Right, false)]
+        [InlineData("1.23", "23", 2, -1, Padding.Right, false)]
+        [InlineData("-1.23", "-1.23", 2, -1, Padding.Left, false)]
+        [InlineData("-1.23", "1.23", 2, -1, Padding.Left, false)]
+        [InlineData("-1.23", ".23", 2, -1, Padding.Left, false)]
+        [InlineData("-1.23", "-1.23", 2, -1, Padding.Right, false)]
+        [InlineData("-1.23", "1.23", 2, -1, Padding.Right, false)]
+        [InlineData("-1.23", ".23", 2, -1, Padding.Right, false)]
+        // Scale short
+        [InlineData("1.23456", "1.2346", 4, -1, Padding.Left, false)]
+        [InlineData("1.23456", "1.235", 3, -1, Padding.Left, false)]
+        [InlineData("1.23456", "1.23", 2, -1, Padding.Left, false)]
+        [InlineData("1.000000001", "1", 0, -1, Padding.Left, false)]
+        [InlineData("0.4294967295", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.4294967296", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551615", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.18446744073709551616", "0", 0, -1, Padding.Left, false)]
+        [InlineData("0.5000000001", "1", 0, -1, Padding.Left, false)]
+        // Scale shortage
+        [InlineData("0.123", " 0.12300", 5, -1, Padding.Left, false)]
+        [InlineData("0.123", "00.12300", 5, -1, Padding.Left, true)]
+        [InlineData("0.123", "0.12300 ", 5, -1, Padding.Right, false)]
+        [InlineData("1", ".0", 1, -1, Padding.Left, false)]
+        [InlineData("1", ".0", 1, -1, Padding.Left, true)]
+        [InlineData("1", ".0", 1, -1, Padding.Right, false)]
+        // Grouping shortage
+        [InlineData("1234", "1,234", 0, 3, Padding.Left, false)]
+        [InlineData("1234", ",234", 0, 3, Padding.Left, false)]
+        [InlineData("1234", "234", 0, 3, Padding.Left, false)]
+        [InlineData("1234", "34", 0, 3, Padding.Left, false)]
+        [InlineData("1234", "4", 0, 3, Padding.Left, false)]
+        [InlineData("1234", "1,234", 0, 3, Padding.Right, false)]
+        [InlineData("1234", ",234", 0, 3, Padding.Right, false)]
+        [InlineData("1234", "234", 0, 3, Padding.Right, false)]
+        [InlineData("1234", "34", 0, 3, Padding.Right, false)]
+        [InlineData("1234", "4", 0, 3, Padding.Right, false)]
+        [InlineData("-1234", "-1,234", 0, 3, Padding.Left, false)]
+        [InlineData("-1234", "1,234", 0, 3, Padding.Left, false)]
+        [InlineData("-1234", ",234", 0, 3, Padding.Left, false)]
+        [InlineData("-1234", "-1,234", 0, 3, Padding.Right, false)]
+        [InlineData("-1234", "1,234", 0, 3, Padding.Right, false)]
+        [InlineData("-1234", ",234", 0, 3, Padding.Right, false)]
+        [InlineData("1", "0,001", 0, 3, Padding.Left, true)]
+        [InlineData("1", ",001", 0, 3, Padding.Left, true)]
+        [InlineData("1", "001", 0, 3, Padding.Left, true)]
+        [InlineData("1", "01", 0, 3, Padding.Left, true)]
+        [InlineData("1", "1", 0, 3, Padding.Left, true)]
+        [InlineData("1", "0,001", 0, 3, Padding.Right, true)]
+        [InlineData("1", ",001", 0, 3, Padding.Right, true)]
+        [InlineData("1", "001", 0, 3, Padding.Right, true)]
+        [InlineData("1", "01", 0, 3, Padding.Right, true)]
+        [InlineData("1", "1", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "-0,001", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "-,001", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "-001", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "-01", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "-1", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "1", 0, 3, Padding.Left, true)]
+        [InlineData("-1", "-0,001", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "-,001", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "-001", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "-01", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "-1", 0, 3, Padding.Right, true)]
+        [InlineData("-1", "1", 0, 3, Padding.Right, true)]
+        [InlineData("79228162514264337593543950335", ",5", 0, 1, Padding.Left, false)]
+        [InlineData("79228162514264337593543950335", "5", 0, 1, Padding.Left, false)]
+        [InlineData("79228162514264337593543950335", ",5", 0, 1, Padding.Right, false)]
+        [InlineData("79228162514264337593543950335", "5", 0, 1, Padding.Right, false)]
         public void FormatDecimal(string input, string output, byte scale, int groupingSize, Padding padding, bool zerofill)
         {
             var value = Decimal.Parse(input);
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
-            NumberHelper.FormatDecimalLimited64(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
+            NumberHelper.FormatDecimal(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
             Assert.Equal(expected, buffer);
         }
     }
