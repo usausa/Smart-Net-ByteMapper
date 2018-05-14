@@ -78,9 +78,8 @@
             Assert.False(NumberHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
             // Overflow
-            // TODO
-            //buffer = Encoding.ASCII.GetBytes("79228162514264337593543950336");
-            //Assert.False(NumberHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
+            buffer = Encoding.ASCII.GetBytes("79228162514264337593543950336");
+            Assert.False(NumberHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out value));
 
             // Invalid Value
             buffer = Encoding.ASCII.GetBytes("1,234.567,89");

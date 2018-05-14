@@ -294,7 +294,7 @@
         {
             private ulong lomid;
 
-            private uint hi;
+            private long hi;
 
             public int Lo => (int)(lomid & 0xFFFFFFFF);
 
@@ -303,20 +303,20 @@
             public int Hi => (int)hi;
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Multiply10AndAdd(ulong value)
+            public bool Multiply10AndAdd(ulong value)
             {
                 if (hi == 0)
                 {
                     if (lomid < 1_844_674_407_370_955_160UL)
                     {
                         lomid = (lomid * 10) + value;
-                        return;
+                        return true;
                     }
 
                     if ((lomid == 1_844_674_407_370_955_161UL) && (value < 5))
                     {
                         lomid = (lomid * 10) + value;
-                        return;
+                        return true;
                     }
                 }
 
@@ -342,12 +342,14 @@
                 {
                     hi++;
                 }
+
+                return hi <= UInt32.MaxValue;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             private bool IsOverflow(ulong value1, ulong value2)
             {
-                return UInt64.MaxValue - value1 <= value2;
+                return UInt64.MaxValue - value1 < value2;
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -386,7 +388,6 @@
                 var negative = *(pBytes + i) == '-';
                 i += negative ? 1 : 0;
 
-                // TODO 小数点単位に分離する？
                 var count = 0;
                 var dotPos = -1;
                 while (i < length)
@@ -394,30 +395,18 @@
                     var num = *(pBytes + i) - 0x30;
                     if ((num >= 0) && (num < 10))
                     {
-                        if ((count >= 29) && (dotPos >= 0))
+                        if (!mantissa.Multiply10AndAdd((ulong)num))
                         {
-                            if (num > 4)
-                            {
-                                mantissa.Increment();
-                            }
-
-                            break;
+                            return false;
                         }
 
-                        // TODO overflow check
-                        mantissa.Multiply10AndAdd((ulong)num);
                         count++;
                     }
                     else if ((num == DotDiff) && (dotPos == -1))
                     {
                         dotPos = count;
-                    }
-                    else if (num == CommaDiff)
-                    {
-                        if (dotPos != -1)
-                        {
-                            return false;
-                        }
+                        i++;
+                        break;
                     }
                     else if (*(pBytes + i) == filler)
                     {
@@ -434,12 +423,56 @@
 
                         break;
                     }
-                    else
+                    else if (num != CommaDiff)
                     {
                         return false;
                     }
 
                     i++;
+                }
+
+                if (dotPos != -1)
+                {
+                    while (i < length)
+                    {
+                        var num = *(pBytes + i) - 0x30;
+                        if ((num >= 0) && (num < 10))
+                        {
+                            if (count >= 29)
+                            {
+                                if (num > 4)
+                                {
+                                    mantissa.Increment();
+                                }
+
+                                break;
+                            }
+
+                            mantissa.Multiply10AndAdd((ulong)num);
+                            count++;
+                        }
+                        else if (*(pBytes + i) == filler)
+                        {
+                            i++;
+                            while ((i < length) && (*(pBytes + i) == filler))
+                            {
+                                i++;
+                            }
+
+                            if (i != length)
+                            {
+                                return false;
+                            }
+
+                            break;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+
+                        i++;
+                    }
                 }
 
                 value = new decimal(
