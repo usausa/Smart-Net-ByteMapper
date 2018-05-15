@@ -17,7 +17,7 @@
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
         private const ulong UInt64MaxValueDiv10 = UInt64.MaxValue / 10;
-        private const ulong UInt64MaxValueDiv10Margin = 10 - (UInt64.MaxValue % 10);
+        private const ulong UInt64MaxValueMod10 = UInt64.MaxValue % 10;
         private const ulong UInt64MaxValueDiv10Minus1 = UInt64MaxValueDiv10 - 1;
 
         private const int NegativeBitFlag = unchecked((int)0x80000000);
@@ -316,7 +316,7 @@
                         return true;
                     }
 
-                    if ((lomid == UInt64MaxValueDiv10) && (value < UInt64MaxValueDiv10Margin))
+                    if ((lomid == UInt64MaxValueDiv10) && (value <= UInt64MaxValueMod10))
                     {
                         lomid = (lomid * 10) + value;
                         return true;

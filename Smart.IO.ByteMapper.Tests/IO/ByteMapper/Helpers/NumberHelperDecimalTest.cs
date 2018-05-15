@@ -8,6 +8,57 @@
     public class NumberHelperDecimalTest
     {
         [Theory]
+        // Default
+        [InlineData(true, "1,234,567,890,123,456,789,012,345.6789", null)]
+        // Negative
+        [InlineData(true, "-1,234,567,890,123,456,789,012,345.6789", null)]
+        // Zero
+        [InlineData(true, "0", null)]
+        [InlineData(true, "-0", null)]
+        [InlineData(true, "0.00", null)]
+        [InlineData(true, "-0.00", null)]
+        // Max
+        [InlineData(true, "79228162514264337593543950335", null)]
+        [InlineData(true, "-79228162514264337593543950335", null)]
+        // Overflow
+        [InlineData(false, "79228162514264337593543950336", null)]
+        [InlineData(false, "-79228162514264337593543950336", null)]
+        // 64bit
+        [InlineData(true, "18446744073709551615", null)]
+        // 64bit + 1
+        [InlineData(true, "18446744073709551616", null)]
+        // Trim
+        [InlineData(true, "  12345678901234567890123456789  ", null)]
+        [InlineData(true, "  1234567890123456789012345.6789  ", null)]
+        // Round
+        [InlineData(true, "0.99999999999999999999999999995", "1.0000000000000000000000000000")]
+        [InlineData(true, "0.99999999999999999999999999994", "0.9999999999999999999999999999")]
+        // UInt64.MaxValue base round
+        [InlineData(true, "0.00000000184467440737095516155", null)]
+        // Empty
+        [InlineData(false, "    ", null)]
+        // Dot
+        [InlineData(true, "1.", null)]
+        [InlineData(false, "1..", null)]
+        // Invalid
+        [InlineData(false, "1,234.567,89", null)]
+        [InlineData(false, "1,2 34,567.89", null)]
+        [InlineData(false, "1,234,567.8 9", null)]
+        [InlineData(false, "x1,234,567.89", null)]
+        [InlineData(false, "1,234,567.89x", null)]
+        public void ParseDecimal(bool result, string input, string output)
+        {
+            var buffer = Encoding.ASCII.GetBytes(input);
+            var ret = NumberHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out var value);
+            Assert.Equal(result, ret);
+            if (result)
+            {
+                var dec = Decimal.Parse((output ?? input).Trim());
+                Assert.Equal(dec, value);
+            }
+        }
+
+        [Theory]
         // Default grouping scale
         [InlineData("1234567890123456789012345.6789", "  1,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, false)]
         [InlineData("1234567890123456789012345.6789", "001,234,567,890,123,456,789,012,345.6789", 4, 3, Padding.Left, true)]
