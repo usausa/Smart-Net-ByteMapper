@@ -17,6 +17,7 @@
         private const long Int64MinValueDiv10 = Int64.MinValue / 10;
         private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
         private const ulong UInt64MaxValueDiv10 = UInt64.MaxValue / 10;
+        private const ulong UInt64MaxValueDiv10Margin = 10 - (UInt64.MaxValue % 10);
         private const ulong UInt64MaxValueDiv10Minus1 = UInt64MaxValueDiv10 - 1;
 
         private const int NegativeBitFlag = unchecked((int)0x80000000);
@@ -315,7 +316,7 @@
                         return true;
                     }
 
-                    if ((lomid == UInt64MaxValueDiv10) && (value < 5))
+                    if ((lomid == UInt64MaxValueDiv10) && (value < UInt64MaxValueDiv10Margin))
                     {
                         lomid = (lomid * 10) + value;
                         return true;
@@ -764,15 +765,7 @@
                 carry = 0;
             }
 
-            value = hi + Table[baseIndex + 1] + carry;
-            if (value >= 1000000000000000L)
-            {
-                hi = value - 1000000000000000L;
-            }
-            else
-            {
-                hi = value;
-            }
+            hi = hi + Table[baseIndex + 1] + carry;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
