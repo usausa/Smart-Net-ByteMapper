@@ -67,23 +67,27 @@
             else if (padding == Padding.Right)
             {
                 var size = bytes.Length;
-
-                fixed (byte* pSrc = &bytes[0])
-                fixed (byte* pDst = &buffer[index])
+                if (size > 0)
                 {
-                    Buffer.MemoryCopy(pSrc, pDst, size, size);
+                    fixed (byte* pSrc = &bytes[0])
+                    fixed (byte* pDst = &buffer[index])
+                    {
+                        Buffer.MemoryCopy(pSrc, pDst, size, size);
+                    }
                 }
 
-                Fill(buffer, index + bytes.Length, length - bytes.Length, filler);
+                Fill(buffer, index + size, length - size, filler);
             }
             else
             {
                 var size = bytes.Length;
-
-                fixed (byte* pSrc = &bytes[0])
-                fixed (byte* pDst = &buffer[index + length - size])
+                if (size > 0)
                 {
-                    Buffer.MemoryCopy(pSrc, pDst, size, size);
+                    fixed (byte* pSrc = &bytes[0])
+                    fixed (byte* pDst = &buffer[index + length - size])
+                    {
+                        Buffer.MemoryCopy(pSrc, pDst, size, size);
+                    }
                 }
 
                 Fill(buffer, index, length - size, filler);
