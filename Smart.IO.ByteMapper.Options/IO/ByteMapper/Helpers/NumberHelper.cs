@@ -592,14 +592,14 @@
                     {
                         var dotPos = length - scale - 1;
 
-                        var completion = scale - decimalScale;
-                        while ((completion > 0) && (i >= 0))
+                        var limit = Min(scale - decimalScale, i + 1);
+                        for (var j = 0; j < limit; j++)
                         {
                             *(pBytes + i--) = Num0;
-                            completion--;
                         }
 
-                        while ((i > dotPos) && (i >= 0))
+                        limit = Min(i - dotPos, i + 1);
+                        for (var j = 0; j < limit; j++)
                         {
                             if (workPointer < workSize)
                             {
@@ -625,44 +625,59 @@
                     }
                     else
                     {
-                        while ((workPointer < workSize) && (i >= 0))
+                        if (groupingSize <= 0)
                         {
-                            if (groupingCount == groupingSize)
+                            var limit = Min(workSize - workPointer, i + 1);
+                            for (var j = 0; j < limit; j++)
                             {
-                                *(pBytes + i--) = Comma;
-                                groupingCount = 0;
-
-                                if (i < 0)
+                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                            }
+                        }
+                        else
+                        {
+                            while ((workPointer < workSize) && (i >= 0))
+                            {
+                                if (groupingCount == groupingSize)
                                 {
-                                    break;
+                                    *(pBytes + i--) = Comma;
+                                    groupingCount = 0;
+                                }
+
+                                if (i >= 0)
+                                {
+                                    *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                                    groupingCount++;
                                 }
                             }
-
-                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-
-                            groupingCount++;
                         }
                     }
 
                     if (zerofill)
                     {
                         var end = negative ? 1 : 0;
-                        while (i >= end)
+                        if (groupingSize <= 0)
                         {
-                            if (groupingCount == groupingSize)
+                            while (i >= end)
                             {
-                                *(pBytes + i--) = Comma;
-                                groupingCount = 0;
-
-                                if (i < end)
+                                *(pBytes + i--) = Num0;
+                            }
+                        }
+                        else
+                        {
+                            while (i >= end)
+                            {
+                                if (groupingCount == groupingSize)
                                 {
-                                    break;
+                                    *(pBytes + i--) = Comma;
+                                    groupingCount = 0;
+                                }
+
+                                if (i >= end)
+                                {
+                                    *(pBytes + i--) = Num0;
+                                    groupingCount++;
                                 }
                             }
-
-                            *(pBytes + i--) = Num0;
-
-                            groupingCount++;
                         }
 
                         if (negative && (i >= 0))
@@ -691,14 +706,14 @@
                     {
                         var dotPos = scale;
 
-                        var completion = scale - decimalScale;
-                        while ((completion > 0) && (i < length))
+                        var limit = Min(scale - decimalScale, length - i);
+                        for (var j = 0; j < limit; j++)
                         {
                             *(pBytes + i++) = Num0;
-                            completion--;
                         }
 
-                        while ((i < dotPos) && (i < length))
+                        limit = Min(dotPos - i, length - i);
+                        for (var j = 0; j < limit; j++)
                         {
                             if (workPointer < workSize)
                             {
@@ -724,22 +739,30 @@
                     }
                     else
                     {
-                        while ((workPointer < workSize) && (i < length))
+                        if (groupingSize <= 0)
                         {
-                            if (groupingCount == groupingSize)
+                            var limit = Min(workSize - workPointer, length - i);
+                            for (var j = 0; j < limit; j++)
                             {
-                                *(pBytes + i++) = Comma;
-                                groupingCount = 0;
-
-                                if (i >= length)
+                                *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
+                            }
+                        }
+                        else
+                        {
+                            while ((workPointer < workSize) && (i < length))
+                            {
+                                if (groupingCount == groupingSize)
                                 {
-                                    break;
+                                    *(pBytes + i++) = Comma;
+                                    groupingCount = 0;
+                                }
+
+                                if (i < length)
+                                {
+                                    *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
+                                    groupingCount++;
                                 }
                             }
-
-                            *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
-
-                            groupingCount++;
                         }
                     }
 
@@ -761,6 +784,12 @@
         //--------------------------------------------------------------------------------
         // Helper
         //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int Min(int x, int y)
+        {
+            return x < y ? x : y;
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void AddBitBlockValue(ref long lo, ref long hi, int block, int bits)
