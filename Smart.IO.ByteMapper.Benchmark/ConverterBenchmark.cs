@@ -32,6 +32,7 @@
 
         private const decimal Length8Decimal = 999999.99m;
         private const decimal Length18Decimal = 999999999999999.999m;
+        private const decimal Length28Decimal = 999999999999999999999999.9999m;
 
         private static readonly byte[] Bytes10 = new byte[10];
 
@@ -79,6 +80,10 @@
         private byte[] numberTextDecimal18ZeroBuffer;
         private byte[] numberTextDecimal18MaxBuffer;
 
+        private IMapConverter numberTextDecimal28Converter;
+        private byte[] numberTextDecimal28ZeroBuffer;
+        private byte[] numberTextDecimal28MaxBuffer;
+
         private IMapConverter dateTimeText8Converter;
         private byte[] dateTimeText8Buffer;
 
@@ -113,6 +118,10 @@
         private IMapConverter decimal18Converter;
         private byte[] decimal18ZeroBuffer;
         private byte[] decimal18MaxBuffer;
+
+        private IMapConverter decimal28Converter;
+        private byte[] decimal28ZeroBuffer;
+        private byte[] decimal28MaxBuffer;
 
         private IMapConverter dateTime8Converter;
         private byte[] dateTime8Buffer;
@@ -196,6 +205,11 @@
             numberTextDecimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 19, FixedAlignment.Right);
             numberTextDecimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 19, FixedAlignment.Right);
 
+            var numberTextDecimal28Builder = new NumberTextConverterBuilder { Length = 28 };
+            numberTextDecimal28Converter = numberTextDecimal28Builder.CreateConverter(context, typeof(decimal));
+            numberTextDecimal28MaxBuffer = SjisEncoding.GetFixedBytes(Length28Decimal.ToString(CultureInfo.InvariantCulture), 29, FixedAlignment.Right);
+            numberTextDecimal28ZeroBuffer = SjisEncoding.GetFixedBytes("0.0000", 29, FixedAlignment.Right);
+
             // DateTime
             var dateTimeText8Builder = new DateTimeTextConverterBuilder { Length = 8, Format = "yyyyMMdd" };
             dateTimeText8Converter = dateTimeText8Builder.CreateConverter(context, typeof(DateTime));
@@ -244,6 +258,11 @@
             decimal18Converter = decimal18Builder.CreateConverter(context, typeof(decimal));
             decimal18MaxBuffer = SjisEncoding.GetFixedBytes(Length18Decimal.ToString(CultureInfo.InvariantCulture), 19, FixedAlignment.Right);
             decimal18ZeroBuffer = SjisEncoding.GetFixedBytes("0.000", 19, FixedAlignment.Right);
+
+            var decimal28Builder = new DecimalConverterBuilder { Length = 29, Scale = 4 };
+            decimal28Converter = decimal28Builder.CreateConverter(context, typeof(decimal));
+            decimal28MaxBuffer = SjisEncoding.GetFixedBytes(Length28Decimal.ToString(CultureInfo.InvariantCulture), 29, FixedAlignment.Right);
+            decimal28ZeroBuffer = SjisEncoding.GetFixedBytes("0.0000", 29, FixedAlignment.Right);
 
             // DateTime
             var dateTime8Builder = new DateTimeConverterBuilder { Format = "yyyyMMdd" };
@@ -377,6 +396,18 @@
             numberTextDecimal18Converter.Read(numberTextDecimal18MaxBuffer, 0);
         }
 
+        [Benchmark]
+        public void ReadNumberTextDecimal28Zero()
+        {
+            numberTextDecimal28Converter.Read(numberTextDecimal28ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadNumberTextDecimal28Max()
+        {
+            numberTextDecimal28Converter.Read(numberTextDecimal28MaxBuffer, 0);
+        }
+
         // DateTime
 
         [Benchmark]
@@ -477,6 +508,18 @@
         public void ReadDecimal18Max()
         {
             decimal18Converter.Read(decimal18MaxBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadDecimal28Zero()
+        {
+            decimal28Converter.Read(decimal28ZeroBuffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadDecimal28Max()
+        {
+            decimal28Converter.Read(decimal28MaxBuffer, 0);
         }
 
         // DateTime
@@ -617,6 +660,18 @@
             numberTextDecimal18Converter.Write(numberTextDecimal18MaxBuffer, 0, Length18Decimal);
         }
 
+        [Benchmark]
+        public void WriteNumberTextDecimal28Zero()
+        {
+            numberTextDecimal28Converter.Write(numberTextDecimal28ZeroBuffer, 0, ZeroDecimal);
+        }
+
+        [Benchmark]
+        public void WriteNumberTextDecimal28Max()
+        {
+            numberTextDecimal28Converter.Write(numberTextDecimal28MaxBuffer, 0, Length28Decimal);
+        }
+
         // DateTime
 
         [Benchmark]
@@ -717,6 +772,18 @@
         public void WriteDecimal18Max()
         {
             decimal18Converter.Write(decimal18MaxBuffer, 0, Length18Decimal);
+        }
+
+        [Benchmark]
+        public void WriteDecimal28Zero()
+        {
+            decimal28Converter.Write(decimal28ZeroBuffer, 0, ZeroDecimal);
+        }
+
+        [Benchmark]
+        public void WriteDecimal28Max()
+        {
+            decimal28Converter.Write(decimal28MaxBuffer, 0, Length28Decimal);
         }
 
         // DateTime
