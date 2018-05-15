@@ -89,7 +89,8 @@ mapper.FromByte(buffer, 0, data);
 
 Performance in this case.
 
-* 1,000,000 op/s array to object and object to byte array
+* 1,500,000 op/s byte array to object
+* 1,000,000 op/s object to byte array
 
 ## NuGet
 

@@ -505,18 +505,33 @@
 
             var lo = 0L;
             var hi = 0L;
-            AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
-            AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
+
+            var bit = bits[0];
+            if (bit != 0)
+            {
+                AddBitBlockValue(ref lo, ref hi, 0, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 1, (bit >> 8) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 2, (bit >> 16) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 3, (bit >> 24) & 0b11111111);
+            }
+
+            bit = bits[1];
+            if (bit != 0)
+            {
+                AddBitBlockValue(ref lo, ref hi, 4, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 5, (bit >> 8) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 6, (bit >> 16) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 7, (bit >> 24) & 0b11111111);
+            }
+
+            bit = bits[2];
+            if (bit != 0)
+            {
+                AddBitBlockValue(ref lo, ref hi, 8, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 9, (bit >> 8) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 10, (bit >> 16) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 11, (bit >> 24) & 0b11111111);
+            }
 
             var work = stackalloc byte[30];
             var workSize = 0;
