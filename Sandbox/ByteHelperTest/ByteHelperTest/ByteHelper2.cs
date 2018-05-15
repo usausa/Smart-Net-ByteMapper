@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    public static class ByteHelper2
+    internal static partial class ByteHelper2
     {
         private const byte Minus = (byte)'-';
         private const byte Num0 = (byte)'0';
@@ -23,77 +23,71 @@
         // Integer
         //--------------------------------------------------------------------------------
 
-        // Int32
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryParseInt16(byte[] bytes, int index, int length, byte filler, out short value)
+        {
+            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
+            value = (short)longValue;
+            return ret;
+        }
 
-        public static unsafe void FormatInt32WithTable(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static bool TryParseInt32(byte[] bytes, int index, int length, byte filler, out int value)
+        {
+            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
+            value = (int)longValue;
+            return ret;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, byte filler, out long value)
         {
             fixed (byte* pBytes = &bytes[index])
             {
+                value = 0L;
+
                 var i = 0;
-
-                if ((value == Int32.MinValue) && (i < length))
+                while ((i < length) && (*(pBytes + i) == filler))
                 {
-                    *(pBytes + i++) = Int32MinValueMod10;
-                    value = Int32MinValueDiv10;
+                    i++;
                 }
 
-                var negative = value < 0;
-                if (negative)
+                if (i == length)
                 {
-                    value = -value;
+                    return false;
                 }
 
-                var work = stackalloc byte[12];
-                var writed = DigitTable.GetIntBuffer12(work, value);
+                var sign = *(pBytes + i) == Minus ? -1 : 1;
+                i += sign == -1 ? 1 : 0;
 
-                var copy = writed > length - i ? length - i : writed;
-                Buffer.MemoryCopy(work, pBytes + i, copy, copy);
-                i += copy;
-
-                if (zerofill)
+                while (i < length)
                 {
-                    var max = negative ? length - 1 : length;
-                    while (i < max)
+                    var num = *(pBytes + i) - Num0;
+                    if ((num >= 0) && (num < 10))
                     {
-                        *(pBytes + i++) = Num0;
+                        value = (value * 10) + num;
+                        i++;
                     }
-
-                    if (negative && (i < length))
+                    else
                     {
-                        *(pBytes + i) = Minus;
-                    }
+                        while ((i < length) && (*(pBytes + i) == filler))
+                        {
+                            i++;
+                        }
 
-                    ReverseBytes(pBytes, length);
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
-                    }
-
-                    ReverseBytes(pBytes, length);
-                }
-                else
-                {
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
+                        break;
                     }
                 }
+
+                value *= sign;
+                return i == length;
             }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
+        {
+            FormatInt32(bytes, index, length, value, padding, zerofill, filler);
         }
 
         public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
@@ -194,8 +188,6 @@
             }
         }
 
-        // Int 64
-
         public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
         {
             fixed (byte* pBytes = &bytes[index])
@@ -279,77 +271,6 @@
                         }
                     }
 
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
-                    }
-                }
-            }
-        }
-
-        public static unsafe void FormatInt64WithTable(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
-        {
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = 0;
-
-                if ((value == Int64.MinValue) && (i < length))
-                {
-                    *(pBytes + i++) = Int64MinValueMod10;
-                    value = Int64MinValueDiv10;
-                }
-
-                var negative = value < 0;
-                if (negative)
-                {
-                    value = -value;
-                }
-
-                var work = stackalloc byte[20];
-                var writed = DigitTable.GetLongBuffer20(work, value);
-
-                var copy = writed > length - i ? length - i : writed;
-                Buffer.MemoryCopy(work, pBytes + i, copy, copy);
-                i += copy;
-
-                if (zerofill)
-                {
-                    var max = negative ? length - 1 : length;
-                    while (i < max)
-                    {
-                        *(pBytes + i++) = Num0;
-                    }
-
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, length);
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
-                    }
-
-                    ReverseBytes(pBytes, length);
-                }
-                else
-                {
                     if (negative && (i < length))
                     {
                         *(pBytes + i++) = Minus;
@@ -467,7 +388,6 @@
                 var negative = *(pBytes + i) == '-';
                 i += negative ? 1 : 0;
 
-                // 整数部 「1.」は通す
                 var count = 0;
                 var dotPos = -1;
                 while (i < length)
@@ -511,7 +431,6 @@
                     i++;
                 }
 
-                // 小数部
                 if (dotPos != -1)
                 {
                     while (i < length)
@@ -583,18 +502,18 @@
 
             var lo = 0L;
             var hi = 0L;
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
-            DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
 
             var work = stackalloc byte[30];
             var workSize = 0;
@@ -821,46 +740,38 @@
             }
         }
 
-        //public static unsafe void FormatDecimalWithTable(
-        //    byte[] bytes,
-        //    int offset,
-        //    int length,
-        //    decimal value)
-        //{
-        //    var bits = Decimal.GetBits(value);
+        //--------------------------------------------------------------------------------
+        // Helper
+        //--------------------------------------------------------------------------------
 
-        //    var lo = 0L;
-        //    var hi = 0L;
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 0, (bits[0] >> 0) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 1, (bits[0] >> 8) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 2, (bits[0] >> 16) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 3, (bits[0] >> 24) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 4, (bits[1] >> 0) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 5, (bits[1] >> 8) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 6, (bits[1] >> 16) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 7, (bits[1] >> 24) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 8, (bits[2] >> 0) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 9, (bits[2] >> 8) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 10, (bits[2] >> 16) & 0b11111111);
-        //    DecimalTable.AddBitBlockValue(ref lo, ref hi, 11, (bits[2] >> 24) & 0b11111111);
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void AddBitBlockValue(ref long lo, ref long hi, int block, int bits)
+        {
+            var baseIndex = (block << 9) + (bits << 1);
 
-        //    var work = stackalloc byte[32];
-        //    var writed = DigitTable.GetLongBuffer16(work, lo);
-        //    writed += DigitTable.GetLongBuffer16(work + 16, hi);
+            int carry;
+            var value = lo + Table[baseIndex];
+            if (value >= 1000000000000000L)
+            {
+                lo = value - 1000000000000000L;
+                carry = 1;
+            }
+            else
+            {
+                lo = value;
+                carry = 0;
+            }
 
-        //    fixed (byte* pBytes = &bytes[offset])
-        //    {
-        //        var copy = writed > length ? length : writed;
-        //        Buffer.MemoryCopy(work, pBytes, copy, copy);
-
-        //        for (var i = writed; i < length; i++)
-        //        {
-        //            pBytes[offset + i] = 0x30;
-        //        }
-
-        //        ReverseBytes(pBytes, length);
-        //    }
-        //}
+            value = hi + Table[baseIndex + 1] + carry;
+            if (value >= 1000000000000000L)
+            {
+                hi = value - 1000000000000000L;
+            }
+            else
+            {
+                hi = value;
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void ReverseBytes(byte* ptr, int length)

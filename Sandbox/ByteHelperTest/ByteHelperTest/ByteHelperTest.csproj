@@ -34,26 +34,26 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="DecimalTable.Generate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>DecimalTable.Generate.tt</DependentUpon>
-    </Compile>
     <Compile Update="DigitTable.Generate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>DigitTable.Generate.tt</DependentUpon>
     </Compile>
+    <Compile Update="ByteHelper2.Generate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ByteHelper2.Generate.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DecimalTable.Generate.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>DecimalTable.Generate.cs</LastGenOutput>
-    </None>
     <None Update="DigitTable.Generate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DigitTable.Generate.cs</LastGenOutput>
+    </None>
+    <None Update="ByteHelper2.Generate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ByteHelper2.Generate.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
