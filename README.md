@@ -261,7 +261,7 @@ var mapperFactory = new MapperFactoryConfig()
 | Converter             | Option | Supported Types                                          | Memo                                               |
 |-----------------------|--------|----------------------------------------------------------|----------------------------------------------------|
 | ArrayConverter        |        | T[]                                                      | Use with other converters                          |
-| BinaryCinverter       |        | int, long, short                                         | Support little endian and big endian               |
+| BinaryCinverter       |        | int, long, short, double, float                          | Support little endian and big endian               |
 | BooleanConverter      |        | bool, bool?                                              | Byte value to boolean                              |
 | ByteConverter         |        | byte                                                     | Use byte as it is                                  |
 | BytesConverter        |        | byte[]                                                   | Simple byte array copy                             |
@@ -598,7 +598,8 @@ public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> sy
 ## Future
 
 * DateTimeConverter performance improvement.
-* Add UnicodeConverter.
-* Add Double and Float and DateTime(specific?) and Guid(?) support to BinaryCoverter.
-* Add Double and Float support to DecimalCoverter.
+* Add DateTime(specific?) and Guid(?) support to BinaryCoverter.
+* Add Nullable support to BinaryCoverter.
+* Add Double and Float support to NumberTextCoverter.
+* Add DoubleConverter and FloatConverter.
 * Performance improvements using Span.
