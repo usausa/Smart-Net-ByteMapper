@@ -130,48 +130,8 @@ Converter benchmark on Intel Core i7-4771 CPU 3.50GHz (Haswell) / .NET Core SDK=
 |           ReadDateTimeText17 | 474.765 ns | 1.0581 ns | 1.5175 ns | 474.828 ns | 0.0205 |      88 B |
 |               ReadText13Code |  35.153 ns | 0.1462 ns | 0.2050 ns |  35.129 ns | 0.0133 |      56 B |
 |              ReadAscii13Code |  18.216 ns | 0.0600 ns | 0.0861 ns |  18.201 ns | 0.0133 |      56 B |
-|        ReadIntegerShort4Zero |  11.287 ns | 0.0448 ns | 0.0628 ns |  11.275 ns | 0.0057 |      24 B |
-|         ReadIntegerShort4Max |  13.868 ns | 0.0652 ns | 0.0936 ns |  13.864 ns | 0.0057 |      24 B |
-|             ReadInteger8Zero |  12.574 ns | 0.0528 ns | 0.0774 ns |  12.568 ns | 0.0057 |      24 B |
-|              ReadInteger8Max |  18.484 ns | 0.0713 ns | 0.1067 ns |  18.479 ns | 0.0057 |      24 B |
-|               ReadLong18Zero |  17.364 ns | 0.0573 ns | 0.0784 ns |  17.362 ns | 0.0057 |      24 B |
-|                ReadLong18Max |  29.209 ns | 0.4450 ns | 0.6522 ns |  29.420 ns | 0.0057 |      24 B |
-|             ReadDecimal8Zero |  24.895 ns | 0.1589 ns | 0.2329 ns |  24.882 ns | 0.0076 |      32 B |
-|              ReadDecimal8Max |  31.893 ns | 0.1662 ns | 0.2384 ns |  31.881 ns | 0.0076 |      32 B |
-|            ReadDecimal18Zero |  31.754 ns | 0.4161 ns | 0.6100 ns |  32.022 ns | 0.0076 |      32 B |
-|             ReadDecimal18Max |  51.911 ns | 0.2840 ns | 0.4250 ns |  51.756 ns | 0.0076 |      32 B |
-|            ReadDecimal28Zero |  37.954 ns | 0.1859 ns | 0.2782 ns |  37.856 ns | 0.0076 |      32 B |
-|             ReadDecimal28Max |  96.747 ns | 0.3547 ns | 0.4972 ns |  96.728 ns | 0.0075 |      32 B |
-|                ReadDateTime8 |  41.086 ns | 0.1776 ns | 0.2490 ns |  41.026 ns | 0.0057 |      24 B |
-|               ReadDateTime14 |  53.845 ns | 0.1424 ns | 0.2042 ns |  53.790 ns | 0.0057 |      24 B |
-|               ReadDateTime17 |  63.442 ns | 0.3080 ns | 0.4514 ns |  63.329 ns | 0.0056 |      24 B |
-
-|                       Method |       Mean |     Error |    StdDev |     Median |  Gen 0 | Allocated |
-|----------------------------- |-----------:|----------:|----------:|-----------:|-------:|----------:|
-|                ReadIntBinary |   6.486 ns | 0.1426 ns | 0.2045 ns |   6.457 ns | 0.0057 |      24 B |
-|                  ReadBoolean |   4.711 ns | 0.0367 ns | 0.0538 ns |   4.714 ns | 0.0057 |      24 B |
-|                  ReadBytes10 |  10.088 ns | 0.0438 ns | 0.0614 ns |  10.085 ns | 0.0095 |      40 B |
-|                  ReadBytes20 |  10.625 ns | 0.0559 ns | 0.0837 ns |  10.609 ns | 0.0114 |      48 B |
-|       ReadSjisText20Single20 | 116.123 ns | 0.5843 ns | 0.8380 ns | 116.073 ns | 0.0170 |      72 B |
-|          ReadSjisText20Wide5 |  81.214 ns | 0.4883 ns | 0.7158 ns |  81.059 ns | 0.0094 |      40 B |
-|          ReadSjisText20Empty |  38.380 ns | 0.3776 ns | 0.5415 ns |  38.344 ns |      - |       0 B |
-|     ReadNumberTextShort4Zero |  96.071 ns | 0.4926 ns | 0.7064 ns |  95.964 ns | 0.0132 |      56 B |
-|      ReadNumberTextShort4Max | 118.049 ns | 0.5308 ns | 0.7613 ns | 117.790 ns | 0.0150 |      64 B |
-|       ReadNumberTextInt8Zero |  95.535 ns | 0.3591 ns | 0.5375 ns |  95.444 ns | 0.0132 |      56 B |
-|        ReadNumberTextInt8Max | 138.164 ns | 0.5192 ns | 0.7279 ns | 138.005 ns | 0.0172 |      72 B |
-|     ReadNumberTextLong18Zero | 100.706 ns | 0.4506 ns | 0.6605 ns | 100.629 ns | 0.0132 |      56 B |
-|      ReadNumberTextLong18Max | 207.498 ns | 0.7450 ns | 1.0919 ns | 207.388 ns | 0.0207 |      88 B |
-|   ReadNumberTextDecimal8Zero | 114.147 ns | 0.6877 ns | 1.0081 ns | 113.986 ns | 0.0151 |      64 B |
-|    ReadNumberTextDecimal8Max | 229.644 ns | 1.0534 ns | 1.5767 ns | 229.285 ns | 0.0188 |      80 B |
-|  ReadNumberTextDecimal18Zero | 127.223 ns | 0.3967 ns | 0.5815 ns | 127.116 ns | 0.0169 |      72 B |
-|   ReadNumberTextDecimal18Max | 430.695 ns | 1.1177 ns | 1.6383 ns | 430.641 ns | 0.0224 |      96 B |
-|  ReadNumberTextDecimal28Zero | 137.147 ns | 0.6260 ns | 0.9369 ns | 137.085 ns | 0.0169 |      72 B |
-|   ReadNumberTextDecimal28Max | 638.932 ns | 2.0216 ns | 2.8993 ns | 638.484 ns | 0.0277 |     120 B |
-|            ReadDateTimeText8 | 266.650 ns | 1.1171 ns | 1.6720 ns | 266.521 ns | 0.0172 |      72 B |
-|           ReadDateTimeText14 | 381.978 ns | 1.5786 ns | 2.3139 ns | 381.550 ns | 0.0186 |      80 B |
-|           ReadDateTimeText17 | 474.765 ns | 1.0581 ns | 1.5175 ns | 474.828 ns | 0.0205 |      88 B |
-|               ReadText13Code |  35.153 ns | 0.1462 ns | 0.2050 ns |  35.129 ns | 0.0133 |      56 B |
-|              ReadAscii13Code |  18.216 ns | 0.0600 ns | 0.0861 ns |  18.201 ns | 0.0133 |      56 B |
+|             ReadText30Wide15 | 130.345 ns | 4.9002 ns | 7.3343 ns | 127.726 ns | 0.0131 |      56 B |
+|          ReadUnicode30Wide15 |  15.406 ns | 0.1219 ns | 0.1787 ns |  15.365 ns | 0.0133 |      56 B |
 |        ReadIntegerShort4Zero |  11.287 ns | 0.0448 ns | 0.0628 ns |  11.275 ns | 0.0057 |      24 B |
 |         ReadIntegerShort4Max |  13.868 ns | 0.0652 ns | 0.0936 ns |  13.864 ns | 0.0057 |      24 B |
 |             ReadInteger8Zero |  12.574 ns | 0.0528 ns | 0.0774 ns |  12.568 ns | 0.0057 |      24 B |
@@ -214,6 +174,8 @@ Converter benchmark on Intel Core i7-4771 CPU 3.50GHz (Haswell) / .NET Core SDK=
 |          WriteDateTimeText17 | 582.998 ns | 4.0923 ns | 5.6016 ns | 581.444 ns | 0.0639 |     272 B |
 |              WriteText13Code |  43.765 ns | 0.1710 ns | 0.2397 ns |  43.695 ns | 0.0095 |      40 B |
 |             WriteAscii13Code |  27.182 ns | 0.1562 ns | 0.2290 ns |  27.082 ns | 0.0095 |      40 B |
+|            WriteText30Wide15 |  58.515 ns | 0.4739 ns | 0.7093 ns |  58.472 ns | 0.0132 |      56 B |
+|         WriteUnicode30Wide15 |   7.921 ns | 0.0474 ns | 0.0649 ns |   7.913 ns |      - |       0 B |
 |       WriteIntegerShort4Zero |  13.164 ns | 0.0637 ns | 0.0893 ns |  13.150 ns | 0.0057 |      24 B |
 |        WriteIntegerShort4Max |  16.313 ns | 0.0814 ns | 0.1193 ns |  16.294 ns | 0.0057 |      24 B |
 |            WriteInteger8Zero |  14.332 ns | 0.0809 ns | 0.1161 ns |  14.323 ns | 0.0057 |      24 B |
@@ -635,8 +597,8 @@ public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> sy
 
 ## Future
 
+* DateTimeConverter performance improvement.
 * Add UnicodeConverter.
 * Add Double and Float and DateTime(specific?) and Guid(?) support to BinaryCoverter.
 * Add Double and Float support to DecimalCoverter.
-* DateTimeConverter performance improvement.
 * Performance improvements using Span.

@@ -21,6 +21,8 @@
 
         private const string Ascii13 = "123456789012X";
 
+        private const string Unicode30Wide15 = "○○○○○○○○○○○○○○○";
+
         private const short ZeroShort = 0;
         private const int ZeroInteger = 0;
         private const long ZeroLong = 0L;
@@ -98,6 +100,10 @@
         private IMapConverter text13Converter;
         private IMapConverter ascii13Converter;
         private byte[] ascii13Buffer;
+
+        private IMapConverter text30Converter;
+        private IMapConverter unicode30Converter;
+        private byte[] unicode30Buffer;
 
         private IMapConverter short4Converter;
         private byte[] short4ZeroBuffer;
@@ -231,6 +237,13 @@
             var ascii13Builder = new AsciiConverterBuilder { Length = 13 };
             ascii13Converter = ascii13Builder.CreateConverter(context, typeof(string));
             ascii13Buffer = new byte[ascii13Builder.CalcSize(typeof(string))];
+
+            // Unicode
+            var text30Builder = new TextConverterBuilder { Length = 30, Encoding = Encoding.Unicode };
+            text30Converter = text30Builder.CreateConverter(context, typeof(string));
+            var ascii30Builder = new UnicodeConverterBuilder { Length = 30 };
+            unicode30Converter = ascii30Builder.CreateConverter(context, typeof(string));
+            unicode30Buffer = new byte[ascii30Builder.CalcSize(typeof(string))];
 
             // Integer
             var short4Builder = new IntegerConverterBuilder { Length = 4 };
@@ -444,6 +457,20 @@
         public void ReadAscii13Code()
         {
             ascii13Converter.Read(ascii13Buffer, 0);
+        }
+
+        // Unicode
+
+        [Benchmark]
+        public void ReadText30Wide15()
+        {
+            text30Converter.Read(unicode30Buffer, 0);
+        }
+
+        [Benchmark]
+        public void ReadUnicode30Wide15()
+        {
+            unicode30Converter.Read(unicode30Buffer, 0);
         }
 
         // Integer
@@ -708,6 +735,20 @@
         public void WriteAscii13Code()
         {
             ascii13Converter.Write(ascii13Buffer, 0, Ascii13);
+        }
+
+        // Unicode
+
+        [Benchmark]
+        public void WriteText30Wide15()
+        {
+            text30Converter.Write(unicode30Buffer, 0, Unicode30Wide15);
+        }
+
+        [Benchmark]
+        public void WriteUnicode30Wide15()
+        {
+            unicode30Converter.Write(unicode30Buffer, 0, Unicode30Wide15);
         }
 
         // Integer
