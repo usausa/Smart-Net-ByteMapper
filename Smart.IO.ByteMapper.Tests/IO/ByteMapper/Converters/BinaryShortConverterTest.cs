@@ -29,4 +29,30 @@
             Assert.Equal(ValueBytes, buffer);
         }
     }
+
+    public class LittleEndianShortBinaryConverterTest
+    {
+        private const int Offset = 1;
+
+        private const short Value = 1;
+
+        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[] { 0x01, 0x00 });
+
+        private readonly IMapConverter converter = LittleEndianShortBinaryConverter.Default;
+
+        [Fact]
+        public void ReadToLittleEndianShortBinary()
+        {
+            Assert.Equal(Value, (short)converter.Read(ValueBytes, Offset));
+        }
+
+        [Fact]
+        public void WriteLittleEndianShortBinaryToBuffer()
+        {
+            var buffer = new byte[2 + Offset];
+            converter.Write(buffer, Offset, Value);
+
+            Assert.Equal(ValueBytes, buffer);
+        }
+    }
 }
