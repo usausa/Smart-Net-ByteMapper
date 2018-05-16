@@ -1,7 +1,9 @@
-﻿using Smart.IO.ByteMapper.Helpers;
-
-namespace Smart.IO.ByteMapper.Converters
+﻿namespace Smart.IO.ByteMapper.Converters
 {
+    using System;
+
+    using Smart.IO.ByteMapper.Helpers;
+
     //--------------------------------------------------------------------------------
     // Integer
     //--------------------------------------------------------------------------------
@@ -169,6 +171,56 @@ namespace Smart.IO.ByteMapper.Converters
         public void Write(byte[] buffer, int index, object value)
         {
             ByteOrder.PutIntLE(buffer, index, BytesHelper.FloatToInt32((float)value));
+        }
+    }
+
+    //--------------------------------------------------------------------------------
+    // Decimal
+    //--------------------------------------------------------------------------------
+
+    internal sealed class BigEndianDecimalBinaryConverter : IMapConverter
+    {
+        public static IMapConverter Default { get; } = new BigEndianDecimalBinaryConverter();
+
+        public object Read(byte[] buffer, int index)
+        {
+            var flag = ByteOrder.GetIntLE(buffer, index);
+            var hi = ByteOrder.GetIntLE(buffer, index + 4);
+            var mid = ByteOrder.GetIntLE(buffer, index + 8);
+            var lo = ByteOrder.GetIntLE(buffer, index + 12);
+            return DecimalHelper.FromBits(lo, mid, hi, flag);
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            var bits = Decimal.GetBits((decimal)value);
+            ByteOrder.PutIntBE(buffer, index, bits[3]);
+            ByteOrder.PutIntBE(buffer, index + 4, bits[2]);
+            ByteOrder.PutIntBE(buffer, index + 8, bits[1]);
+            ByteOrder.PutIntBE(buffer, index + 12, bits[0]);
+        }
+    }
+
+    internal sealed class LittleEndianDecimalBinaryConverter : IMapConverter
+    {
+        public static IMapConverter Default { get; } = new LittleEndianDecimalBinaryConverter();
+
+        public object Read(byte[] buffer, int index)
+        {
+            var lo = ByteOrder.GetIntLE(buffer, index);
+            var mid = ByteOrder.GetIntLE(buffer, index + 4);
+            var hi = ByteOrder.GetIntLE(buffer, index + 8);
+            var flag = ByteOrder.GetIntLE(buffer, index + 12);
+            return DecimalHelper.FromBits(lo, mid, hi, flag);
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            var bits = Decimal.GetBits((decimal)value);
+            ByteOrder.PutIntLE(buffer, index, bits[0]);
+            ByteOrder.PutIntLE(buffer, index + 4, bits[1]);
+            ByteOrder.PutIntLE(buffer, index + 8, bits[2]);
+            ByteOrder.PutIntLE(buffer, index + 12, bits[3]);
         }
     }
 }

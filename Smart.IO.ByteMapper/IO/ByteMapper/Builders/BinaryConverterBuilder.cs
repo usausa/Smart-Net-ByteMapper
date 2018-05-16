@@ -13,6 +13,7 @@
             AddEntry(typeof(short), 2, (b, t, c) => b.CreateShortBinaryConverter(c));
             AddEntry(typeof(double), 8, (b, t, c) => b.CreateDoubleBinaryConverter(c));
             AddEntry(typeof(float), 4, (b, t, c) => b.CreateFloatBinaryConverter(c));
+            AddEntry(typeof(decimal), 16, (b, t, c) => b.CreateDecimalBinaryConverter(c));
         }
 
         private IMapConverter CreateIntBinaryConverter(IBuilderContext context)
@@ -53,6 +54,14 @@
             return targetEndian == Smart.IO.ByteMapper.Endian.Big
                 ? BigEndianFloatBinaryConverter.Default
                 : LittleEndianFloatBinaryConverter.Default;
+        }
+
+        private IMapConverter CreateDecimalBinaryConverter(IBuilderContext context)
+        {
+            var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? BigEndianDecimalBinaryConverter.Default
+                : LittleEndianDecimalBinaryConverter.Default;
         }
     }
 }
