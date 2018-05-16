@@ -184,10 +184,10 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var flag = ByteOrder.GetIntLE(buffer, index);
-            var hi = ByteOrder.GetIntLE(buffer, index + 4);
-            var mid = ByteOrder.GetIntLE(buffer, index + 8);
-            var lo = ByteOrder.GetIntLE(buffer, index + 12);
+            var flag = ByteOrder.GetIntBE(buffer, index);
+            var hi = ByteOrder.GetIntBE(buffer, index + 4);
+            var mid = ByteOrder.GetIntBE(buffer, index + 8);
+            var lo = ByteOrder.GetIntBE(buffer, index + 12);
             return DecimalHelper.FromBits(lo, mid, hi, flag);
         }
 
