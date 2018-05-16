@@ -38,5 +38,10 @@
         {
             return config.AddParameter(OptionsParameter.DateTimeKind, value);
         }
+
+        public static MapperFactoryConfig DefaultUnicodeFiller(this MapperFactoryConfig config, char value)
+        {
+            return config.AddParameter(OptionsParameter.UnicodeFiller, value);
+        }
     }
 }

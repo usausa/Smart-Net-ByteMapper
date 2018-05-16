@@ -2,7 +2,7 @@
 {
     using Smart.IO.ByteMapper.Helpers;
 
-    internal sealed class AsciiConverter : IMapConverter
+    internal sealed class UnicodeConverter : IMapConverter
     {
         private readonly int length;
 
@@ -10,13 +10,13 @@
 
         private readonly Padding padding;
 
-        private readonly byte filler;
+        private readonly char filler;
 
-        public AsciiConverter(
+        public UnicodeConverter(
             int length,
             bool trim,
             Padding padding,
-            byte filler)
+            char filler)
         {
             this.length = length;
             this.trim = trim;
@@ -26,25 +26,18 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            return count == 0 ? string.Empty : EncodingHelper.GetAsciiString(buffer, start, count);
+            return EncodingHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
-                BytesHelper.Fill(buffer, index, length, filler);
+                EncodingHelper.FillUnicode(buffer, index, length, filler);
             }
             else
             {
-                BytesHelper.CopyBytes(EncodingHelper.GetAsciiBytes((string)value), buffer, index, length, padding, filler);
+                EncodingHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
             }
         }
     }

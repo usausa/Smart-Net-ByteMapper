@@ -12,5 +12,11 @@
         {
             return default;
         }
+
+        public bool TryGetParameter<T>(string key, out T value)
+        {
+            value = default;
+            return true;
+        }
     }
 }

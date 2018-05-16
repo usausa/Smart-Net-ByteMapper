@@ -635,7 +635,8 @@ public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> sy
 
 ## Future
 
-* Performance improvements using Span.
-* Add over 19 digits decimal support to DecimalCoverter using BigInteger.
+* Add UnicodeConverter.
+* Add Double and Float and DateTime(specific?) and Guid(?) support to BinaryCoverter.
 * Add Double and Float support to DecimalCoverter.
-* Add fast UTF-16 converter support.
+* DateTimeConverter performance improvement.
+* Performance improvements using Span.

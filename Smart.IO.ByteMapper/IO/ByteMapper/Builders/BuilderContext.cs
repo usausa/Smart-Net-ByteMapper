@@ -52,5 +52,41 @@
 
             throw new ByteMapperException($"Parameter not found. key=[{key}]");
         }
+
+        public bool TryGetParameter<T>(string key, out T value)
+        {
+            if (typeParameters.TryGetValue(key, out var obj))
+            {
+                if (obj == null)
+                {
+                    value = default;
+                    return true;
+                }
+
+                if (obj is T t)
+                {
+                    value = t;
+                    return true;
+                }
+            }
+
+            if (globalParameters.TryGetValue(key, out obj))
+            {
+                if (obj == null)
+                {
+                    value = default;
+                    return true;
+                }
+
+                if (obj is T t)
+                {
+                    value = t;
+                    return true;
+                }
+            }
+
+            value = default;
+            return false;
+        }
     }
 }

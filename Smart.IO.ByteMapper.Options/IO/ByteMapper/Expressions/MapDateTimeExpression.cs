@@ -17,7 +17,7 @@
         {
             if (String.IsNullOrEmpty(format))
             {
-                throw new ArgumentException("Invalid format", nameof(format));
+                throw new ArgumentException("Invalid format.", nameof(format));
             }
 
             builder.Format = format;
@@ -27,7 +27,7 @@
         {
             if (String.IsNullOrEmpty(format))
             {
-                throw new ArgumentException("Invalid format", nameof(format));
+                throw new ArgumentException("Invalid format.", nameof(format));
             }
 
             builder.Format = format;

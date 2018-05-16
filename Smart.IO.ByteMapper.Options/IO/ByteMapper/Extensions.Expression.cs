@@ -50,6 +50,15 @@
             return expression;
         }
 
+        // Unicode
+
+        public static IMapUnicodeSyntax Unicode(this IMemberMapConfigSyntax syntax, int length)
+        {
+            var expression = new MapUnicodeExpression(length);
+            syntax.Map(expression);
+            return expression;
+        }
+
         // Integer
 
         public static IMapIntegerSyntax Integer(this IMemberMapConfigSyntax syntax, int length)
