@@ -46,10 +46,10 @@ namespace ByteHelperTest
 
             fixed (byte* pSrc = &array[offset])
             {
+                var pDst = pSrc;
                 for (var i = 0; i < length; i++)
                 {
-                    var pDst = pSrc + i;
-                    *pDst = value;
+                    *pDst++ = value;
                 }
             }
 
