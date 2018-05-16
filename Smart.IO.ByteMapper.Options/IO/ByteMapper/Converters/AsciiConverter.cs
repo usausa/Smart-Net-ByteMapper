@@ -33,7 +33,7 @@
                 BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
             }
 
-            return EncodingHelper.GetAsciiString(buffer, start, count);
+            return count == 0 ? string.Empty : EncodingHelper.GetAsciiString(buffer, start, count);
         }
 
         public void Write(byte[] buffer, int index, object value)
