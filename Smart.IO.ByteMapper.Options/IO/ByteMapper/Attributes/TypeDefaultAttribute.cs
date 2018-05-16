@@ -66,4 +66,17 @@
             Value = value;
         }
     }
+
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    public sealed class TypeUnicodeFillerAttribute : Attribute, ITypeDefaultAttribute
+    {
+        public string Key => OptionsParameter.UnicodeFiller;
+
+        public object Value { get; }
+
+        public TypeUnicodeFillerAttribute(char value)
+        {
+            Value = value;
+        }
+    }
 }

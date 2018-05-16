@@ -6,6 +6,10 @@
 
     public class BuilderContextTest
     {
+        //--------------------------------------------------------------------------------
+        // Get
+        //--------------------------------------------------------------------------------
+
         [Fact]
         public void UseTypeParameter()
         {
@@ -77,6 +81,81 @@
                         new Dictionary<string, object> { { "key", "2" } },
                         new Dictionary<string, object> { { "key", "1" } })
                     .GetParameter<int>("key"));
+        }
+
+        //--------------------------------------------------------------------------------
+        // TryGet
+        //--------------------------------------------------------------------------------
+
+        [Fact]
+        public void TryUseTypeParameter()
+        {
+            // default
+            Assert.True(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", 2 } },
+                        new Dictionary<string, object> { { "key", null } })
+                    .TryGetParameter<int>("key", out var value));
+            Assert.Equal(0, value);
+
+            // value
+            Assert.True(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", 2 } },
+                        new Dictionary<string, object> { { "key", 1 } })
+                    .TryGetParameter("key", out value));
+        }
+
+        [Fact]
+        public void TryUseGlobalParameter()
+        {
+            // default
+            Assert.True(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", null } },
+                        new Dictionary<string, object>())
+                    .TryGetParameter<int>("key", out var value));
+            Assert.Equal(0, value);
+
+            // value
+            Assert.True(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", 2 } },
+                        new Dictionary<string, object>())
+                    .TryGetParameter("key", out value));
+            Assert.Equal(2, value);
+
+            // type is unmatch
+            Assert.True(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", 2 } },
+                        new Dictionary<string, object> { { "key", "1" } })
+                    .TryGetParameter("key", out value));
+            Assert.Equal(2, value);
+        }
+
+        [Fact]
+        public void TryParameterNotFound()
+        {
+            // not found
+            Assert.False(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object>(),
+                        new Dictionary<string, object>())
+                    .TryGetParameter<int>("key", out _));
+
+            Assert.False(
+                new BuilderContext(
+                        null,
+                        new Dictionary<string, object> { { "key", "2" } },
+                        new Dictionary<string, object> { { "key", "1" } })
+                    .TryGetParameter<int>("key", out _));
         }
 
         //--------------------------------------------------------------------------------

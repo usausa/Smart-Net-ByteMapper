@@ -34,6 +34,7 @@
                 .DefaultDateTimeTextEncoding(Encoding.UTF8)
                 .DefaultDateTimeTextProvider(CultureInfo.CurrentCulture)
                 .DefaultDateTimeTextStyle(DateTimeStyles.None)
+                .DefaultUnicodeFiller(' ')
                 .CreateMapByAttribute<TypeDefaultAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<TypeDefaultAttributeObject>();
@@ -86,6 +87,7 @@
         [TypeZeroFill(false)]
         [TypeUseGrouping(false)]
         [TypeDateTimeKind(DateTimeKind.Unspecified)]
+        [TypeUnicodeFiller(' ')]
         internal class TypeDefaultAttributeObject
         {
             [MapNumberText(0, 2)]

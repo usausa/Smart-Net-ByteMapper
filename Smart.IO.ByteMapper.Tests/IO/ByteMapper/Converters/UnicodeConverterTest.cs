@@ -6,7 +6,7 @@
 
     using Xunit;
 
-    public class AsciiConverterTest
+    public class UnicodeConverterTest
     {
         private const int Offset = 1;
 
@@ -14,7 +14,7 @@
 
         private const string Value = "1a*";
 
-        private const string OverflowValue = "12345678901";
+        private const string OverflowValue = "123456";
 
         private static readonly byte[] EmptyBytes;
 
@@ -22,22 +22,22 @@
 
         private static readonly byte[] OverflowBytes;
 
-        private readonly AsciiConverter converter;
+        private readonly UnicodeConverter converter;
 
-        static AsciiConverterTest()
+        static UnicodeConverterTest()
         {
-            EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
-            ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(Value.PadRight(Length, ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(OverflowValue.Substring(0, Length)));
+            EmptyBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(string.Empty.PadRight(Length / 2, ' ')));
+            ValueBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(Value.PadRight(Length / 2, ' ')));
+            OverflowBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(OverflowValue.Substring(0, Length / 2)));
         }
 
-        public AsciiConverterTest()
+        public UnicodeConverterTest()
         {
-            converter = new AsciiConverter(
+            converter = new UnicodeConverter(
                 Length,
                 true,
                 Padding.Right,
-                0x20);
+                ' ');
         }
 
         //--------------------------------------------------------------------------------
@@ -45,7 +45,7 @@
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void ReadToAscii()
+        public void ReadToUnicode()
         {
             // Empty
             Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
@@ -55,7 +55,7 @@
         }
 
         [Fact]
-        public void WriteAsciiToBuffer()
+        public void WriteUnicodeToBuffer()
         {
             var buffer = new byte[Length + Offset];
 
