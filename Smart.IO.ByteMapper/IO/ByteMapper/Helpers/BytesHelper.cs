@@ -56,7 +56,8 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
         {
-            if (bytes.Length >= length)
+            var size = bytes.Length;
+            if (size >= length)
             {
                 fixed (byte* pSrc = &bytes[0])
                 fixed (byte* pDst = &buffer[index])
@@ -66,7 +67,6 @@
             }
             else if (padding == Padding.Right)
             {
-                var size = bytes.Length;
                 if (size > 0)
                 {
                     fixed (byte* pSrc = &bytes[0])
@@ -80,7 +80,6 @@
             }
             else
             {
-                var size = bytes.Length;
                 if (size > 0)
                 {
                     fixed (byte* pSrc = &bytes[0])
