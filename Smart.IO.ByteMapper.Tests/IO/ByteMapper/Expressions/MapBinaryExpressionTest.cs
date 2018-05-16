@@ -14,13 +14,17 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
-                .CreateMapByExpression<BinaryExpressionObject>(28, config => config
+                .CreateMapByExpression<BinaryExpressionObject>(52, config => config
                     .ForMember(x => x.BigEndianIntValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianLongValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianShortValue, m => m.Binary())
-                    .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little)))
+                    .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianDoubleValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianDoubleValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianFloatValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianFloatValue, m => m.Binary(Endian.Little)))
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BinaryExpressionObject>();
 
@@ -32,7 +36,11 @@
                 BigEndianLongValue = 1,
                 LittleEndianLongValue = 1,
                 BigEndianShortValue = 1,
-                LittleEndianShortValue = 1
+                LittleEndianShortValue = 1,
+                BigEndianDoubleValue = 2,
+                LittleEndianDoubleValue = 2,
+                BigEndianFloatValue = 2,
+                LittleEndianFloatValue = 2
             };
 
             // Write
@@ -46,12 +54,16 @@
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x01,
-                    0x01, 0x00
+                    0x01, 0x00,
+                    0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
+                    0x40, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x40
                 },
                 buffer);
 
             // Read
-            for (var i = 0; i < buffer.Length; i++)
+            for (var i = 0; i < buffer.Length - 24; i++)
             {
                 buffer[i] = (byte)(buffer[i] << 1);
             }
@@ -64,6 +76,10 @@
             Assert.Equal(2, obj.LittleEndianLongValue);
             Assert.Equal(2, obj.BigEndianShortValue);
             Assert.Equal(2, obj.LittleEndianShortValue);
+            Assert.Equal(2, obj.BigEndianDoubleValue);
+            Assert.Equal(2, obj.LittleEndianDoubleValue);
+            Assert.Equal(2, obj.BigEndianFloatValue);
+            Assert.Equal(2, obj.LittleEndianFloatValue);
         }
 
         //--------------------------------------------------------------------------------
@@ -83,6 +99,14 @@
             public short BigEndianShortValue { get; set; }
 
             public short LittleEndianShortValue { get; set; }
+
+            public double BigEndianDoubleValue { get; set; }
+
+            public double LittleEndianDoubleValue { get; set; }
+
+            public float BigEndianFloatValue { get; set; }
+
+            public float LittleEndianFloatValue { get; set; }
         }
     }
 }

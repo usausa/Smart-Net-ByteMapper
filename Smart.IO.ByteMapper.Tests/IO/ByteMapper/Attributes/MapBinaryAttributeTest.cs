@@ -28,7 +28,11 @@
                 BigEndianLongValue = 1,
                 LittleEndianLongValue = 1,
                 BigEndianShortValue = 1,
-                LittleEndianShortValue = 1
+                LittleEndianShortValue = 1,
+                BigEndianDoubleValue = 2,
+                LittleEndianDoubleValue = 2,
+                BigEndianFloatValue = 2,
+                LittleEndianFloatValue = 2
             };
 
             // Write
@@ -42,12 +46,16 @@
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x01,
-                    0x01, 0x00
+                    0x01, 0x00,
+                    0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
+                    0x40, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x40
                 },
                 buffer);
 
             // Read
-            for (var i = 0; i < buffer.Length; i++)
+            for (var i = 0; i < buffer.Length - 24; i++)
             {
                 buffer[i] = (byte)(buffer[i] << 1);
             }
@@ -60,6 +68,10 @@
             Assert.Equal(2, obj.LittleEndianLongValue);
             Assert.Equal(2, obj.BigEndianShortValue);
             Assert.Equal(2, obj.LittleEndianShortValue);
+            Assert.Equal(2, obj.BigEndianDoubleValue);
+            Assert.Equal(2, obj.LittleEndianDoubleValue);
+            Assert.Equal(2, obj.BigEndianFloatValue);
+            Assert.Equal(2, obj.LittleEndianFloatValue);
         }
 
         //--------------------------------------------------------------------------------
@@ -80,7 +92,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(28)]
+        [Map(52)]
         internal class BinaryAttributeObject
         {
             [MapBinary(0)]
@@ -100,6 +112,18 @@
 
             [MapBinary(26, Endian = Endian.Little)]
             public short LittleEndianShortValue { get; set; }
+
+            [MapBinary(28)]
+            public double BigEndianDoubleValue { get; set; }
+
+            [MapBinary(36, Endian = Endian.Little)]
+            public double LittleEndianDoubleValue { get; set; }
+
+            [MapBinary(44)]
+            public float BigEndianFloatValue { get; set; }
+
+            [MapBinary(48, Endian = Endian.Little)]
+            public float LittleEndianFloatValue { get; set; }
         }
     }
 }

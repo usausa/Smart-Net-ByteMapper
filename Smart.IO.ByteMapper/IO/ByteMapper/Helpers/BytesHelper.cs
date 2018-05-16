@@ -2,9 +2,72 @@
 {
     using System;
     using System.Runtime.CompilerServices;
+    using System.Runtime.InteropServices;
 
     public static class BytesHelper
     {
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private struct DoubleBit
+        {
+            [FieldOffset(0)]
+            public double DoubleValue;
+            [FieldOffset(0)]
+            public long LongValue;
+        }
+
+        [StructLayout(LayoutKind.Explicit, Pack = 1)]
+        private struct FloatBit
+        {
+            [FieldOffset(0)]
+            public float FloatValue;
+            [FieldOffset(0)]
+            public int IntValue;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Convert
+        //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static double Int64ToDouble(long value)
+        {
+            var bit = new DoubleBit
+            {
+                LongValue = value
+            };
+            return bit.DoubleValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static long DoubleToInt64(double value)
+        {
+            var bit = new DoubleBit
+            {
+                DoubleValue = value
+            };
+            return bit.LongValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static float Int32ToFloat(int value)
+        {
+            var bit = new FloatBit
+            {
+                IntValue = value
+            };
+            return bit.FloatValue;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static int FloatToInt32(float value)
+        {
+            var bit = new FloatBit
+            {
+                FloatValue = value
+            };
+            return bit.IntValue;
+        }
+
         //--------------------------------------------------------------------------------
         // Enum
         //--------------------------------------------------------------------------------
