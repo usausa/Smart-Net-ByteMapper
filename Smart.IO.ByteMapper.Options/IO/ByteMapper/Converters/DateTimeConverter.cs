@@ -44,24 +44,47 @@
 
     internal sealed class DateTimeOffsetConverter : IMapConverter
     {
+        private static readonly long MaxTick = DateTime.MaxValue.Ticks;
+
         private readonly string format;
+
+        private readonly DateTimeKind kind;
 
         private readonly byte filler;
 
         private readonly object defaultValue;
 
-        public DateTimeOffsetConverter(string format, byte filler, Type type)
+        public DateTimeOffsetConverter(string format, DateTimeKind kind, byte filler, Type type)
         {
             this.format = format;
+            this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
-            return DateTimeHelper.TryParseDateTime(buffer, index, format, DateTimeKind.Utc, out var result)
-                ? new DateTimeOffset(result)
-                : defaultValue;
+            if (DateTimeHelper.TryParseDateTime(buffer, index, format, kind, out var result))
+            {
+                if (kind == DateTimeKind.Unspecified)
+                {
+                    return new DateTimeOffset(result, TimeSpan.Zero);
+                }
+
+                if (kind == DateTimeKind.Utc)
+                {
+                    return new DateTimeOffset(result);
+                }
+
+                var offset = TimeZoneInfo.Local.GetUtcOffset(result);
+                var utcTick = result.Ticks - offset.Ticks;
+                if ((utcTick >= 0) && (utcTick <= MaxTick))
+                {
+                    return new DateTimeOffset(result, offset);
+                }
+            }
+
+            return defaultValue;
         }
 
         public void Write(byte[] buffer, int index, object value)

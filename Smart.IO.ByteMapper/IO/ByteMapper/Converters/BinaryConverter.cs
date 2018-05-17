@@ -230,43 +230,42 @@
 
     internal sealed class BigEndianDateTimeBinaryConverter : IMapConverter
     {
-        private readonly DateTimeKind kind;
-
-        public BigEndianDateTimeBinaryConverter(DateTimeKind kind)
-        {
-            this.kind = kind;
-        }
+        public static IMapConverter Default { get; } = new BigEndianDateTimeBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            return new DateTime(ByteOrder.GetLongBE(buffer, index), kind);
+            // TODO check
+            //return new DateTime(ByteOrder.GetLongBE(buffer, index), kind);
+            throw new NotImplementedException();
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
+            //ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
+            throw new NotImplementedException();
         }
     }
 
     internal sealed class LittleEndianDateTimeBinaryConverter : IMapConverter
     {
-        private readonly DateTimeKind kind;
-
-        public LittleEndianDateTimeBinaryConverter(DateTimeKind kind)
-        {
-            this.kind = kind;
-        }
+        public static IMapConverter Default { get; } = new LittleEndianDateTimeBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            return new DateTime(ByteOrder.GetLongLE(buffer, index), kind);
+            // TODO check
+            //return new DateTime(ByteOrder.GetLongLE(buffer, index), kind);
+            throw new NotImplementedException();
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
+            //ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
         }
     }
+
+    //--------------------------------------------------------------------------------
+    // DateTimeOffset
+    //--------------------------------------------------------------------------------
 
     internal sealed class BigEndianDateTimeOffsetBinaryConverter : IMapConverter
     {
@@ -274,12 +273,20 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return new DateTimeOffset(new DateTime(ByteOrder.GetLongBE(buffer, index), DateTimeKind.Utc));
+            //var tick = ByteOrder.GetLongBE(buffer, index);
+            //var offset = ByteOrder.GetShortBE(buffer, index + 8);
+            // TODO check 2
+            //return new DateTimeOffset(new DateTime(tick, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset));
+            throw new NotImplementedException();
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongBE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+            // TODO Bin +
+            //var dateTime = (DateTimeOffset)value;
+            //var tick = ByteOrder.PutLongBE(buffer, index,
+            //ByteOrder.PutLongBE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+            throw new NotImplementedException();
         }
     }
 
@@ -289,12 +296,14 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return new DateTimeOffset(new DateTime(ByteOrder.GetLongLE(buffer, index), DateTimeKind.Utc));
+            //return new DateTimeOffset(new DateTime(ByteOrder.GetLongLE(buffer, index), DateTimeKind.Utc));
+            throw new NotImplementedException();
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongLE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+            //ByteOrder.PutLongLE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+            throw new NotImplementedException();
         }
     }
 }

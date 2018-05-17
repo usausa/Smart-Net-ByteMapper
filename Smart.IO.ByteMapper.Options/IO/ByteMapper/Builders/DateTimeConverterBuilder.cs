@@ -33,6 +33,7 @@
         {
             return new DateTimeOffsetConverter(
                 Format,
+                Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 type);
         }
