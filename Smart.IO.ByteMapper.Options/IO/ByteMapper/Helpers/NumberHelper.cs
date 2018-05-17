@@ -97,95 +97,71 @@
         {
             fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || zerofill)
-                {
-                    var i = length - 1;
+                var i = length - 1;
 
-                    if ((value == Int32.MinValue) && (i >= 0))
+                if ((value == Int32.MinValue) && (i >= 0))
+                {
+                    *(pBytes + i--) = Int32MinValueMod10;
+                    value = Int32MinValueDiv10;
+                }
+
+                var negative = value < 0;
+                if (negative)
+                {
+                    value = -value;
+                }
+
+                while (i >= 0)
+                {
+                    *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                    value /= 10;
+                    if (value == 0)
                     {
-                        *(pBytes + i--) = Int32MinValueMod10;
-                        value = Int32MinValueDiv10;
+                        break;
+                    }
+                }
+
+                if (zerofill)
+                {
+                    while (i >= (negative ? 1 : 0))
+                    {
+                        *(pBytes + i--) = Num0;
                     }
 
-                    var negative = value < 0;
-                    if (negative)
+                    if (negative && (i >= 0))
                     {
-                        value = -value;
+                        *pBytes = Minus;
+                    }
+                }
+                else if (padding == Padding.Left)
+                {
+                    if (negative && (i >= 0))
+                    {
+                        *(pBytes + i--) = Minus;
                     }
 
                     while (i >= 0)
                     {
-                        *(pBytes + i--) = (byte)(Num0 + (value % 10));
-
-                        value /= 10;
-                        if (value == 0)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (zerofill)
-                    {
-                        while (i >= (negative ? 1 : 0))
-                        {
-                            *(pBytes + i--) = Num0;
-                        }
-
-                        if (negative && (i >= 0))
-                        {
-                            *pBytes = Minus;
-                        }
-                    }
-                    else
-                    {
-                        if (negative && (i >= 0))
-                        {
-                            *(pBytes + i--) = Minus;
-                        }
-
-                        while (i >= 0)
-                        {
-                            *(pBytes + i--) = filler;
-                        }
+                        *(pBytes + i--) = filler;
                     }
                 }
                 else
                 {
-                    var i = 0;
-
-                    if ((value == Int32.MinValue) && (i < length))
+                    if (negative && (i >= 0))
                     {
-                        *(pBytes + i++) = Int32MinValueMod10;
-                        value = Int32MinValueDiv10;
+                        *(pBytes + i--) = Minus;
                     }
 
-                    var negative = value < 0;
-                    if (negative)
+                    if (i >= 0)
                     {
-                        value = -value;
-                    }
+                        var size = length - (i + 1);
+                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
 
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = (byte)(Num0 + (value % 10));
-
-                        value /= 10;
-                        if (value == 0)
+                        for (var j = size; j < length; j++)
                         {
-                            break;
+                            *(pBytes + j) = filler;
                         }
-                    }
-
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
                     }
                 }
             }
@@ -195,95 +171,71 @@
         {
             fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || zerofill)
-                {
-                    var i = length - 1;
+                var i = length - 1;
 
-                    if ((value == Int64.MinValue) && (i >= 0))
+                if ((value == Int64.MinValue) && (i >= 0))
+                {
+                    *(pBytes + i--) = Int64MinValueMod10;
+                    value = Int64MinValueDiv10;
+                }
+
+                var negative = value < 0;
+                if (negative)
+                {
+                    value = -value;
+                }
+
+                while (i >= 0)
+                {
+                    *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                    value /= 10;
+                    if (value == 0)
                     {
-                        *(pBytes + i--) = Int64MinValueMod10;
-                        value = Int64MinValueDiv10;
+                        break;
+                    }
+                }
+
+                if (zerofill)
+                {
+                    while (i >= (negative ? 1 : 0))
+                    {
+                        *(pBytes + i--) = Num0;
                     }
 
-                    var negative = value < 0;
-                    if (negative)
+                    if (negative && (i >= 0))
                     {
-                        value = -value;
+                        *pBytes = Minus;
+                    }
+                }
+                else if (padding == Padding.Left)
+                {
+                    if (negative && (i >= 0))
+                    {
+                        *(pBytes + i--) = Minus;
                     }
 
                     while (i >= 0)
                     {
-                        *(pBytes + i--) = (byte)(Num0 + (value % 10));
-
-                        value /= 10;
-                        if (value == 0)
-                        {
-                            break;
-                        }
-                    }
-
-                    if (zerofill)
-                    {
-                        while (i >= (negative ? 1 : 0))
-                        {
-                            *(pBytes + i--) = Num0;
-                        }
-
-                        if (negative && (i >= 0))
-                        {
-                            *pBytes = Minus;
-                        }
-                    }
-                    else
-                    {
-                        if (negative && (i >= 0))
-                        {
-                            *(pBytes + i--) = Minus;
-                        }
-
-                        while (i >= 0)
-                        {
-                            *(pBytes + i--) = filler;
-                        }
+                        *(pBytes + i--) = filler;
                     }
                 }
                 else
                 {
-                    var i = 0;
-
-                    if ((value == Int64.MinValue) && (i < length))
+                    if (negative && (i >= 0))
                     {
-                        *(pBytes + i++) = Int64MinValueMod10;
-                        value = Int64MinValueDiv10;
+                        *(pBytes + i--) = Minus;
                     }
 
-                    var negative = value < 0;
-                    if (negative)
+                    if (i >= 0)
                     {
-                        value = -value;
-                    }
+                        var size = length - (i + 1);
+                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
 
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = (byte)(Num0 + (value % 10));
-
-                        value /= 10;
-                        if (value == 0)
+                        for (var j = size; j < length; j++)
                         {
-                            break;
+                            *(pBytes + j) = filler;
                         }
-                    }
-
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
                     }
                 }
             }
@@ -584,198 +536,133 @@
 
             fixed (byte* pBytes = &bytes[index])
             {
-                if ((padding == Padding.Left) || zerofill)
+                var i = length - 1;
+
+                if (scale > 0)
                 {
-                    var i = length - 1;
+                    var dotPos = length - scale - 1;
 
-                    if (scale > 0)
-                    {
-                        var dotPos = length - scale - 1;
-
-                        var limit = Min(scale - decimalScale, i + 1);
-                        for (var j = 0; j < limit; j++)
-                        {
-                            *(pBytes + i--) = Num0;
-                        }
-
-                        limit = Min(i - dotPos, i + 1);
-                        for (var j = 0; j < limit; j++)
-                        {
-                            if (workPointer < workSize)
-                            {
-                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                            }
-                            else
-                            {
-                                *(pBytes + i--) = Num0;
-                            }
-                        }
-
-                        if ((i == dotPos) && (i >= 0))
-                        {
-                            *(pBytes + i--) = Dot;
-                        }
-                    }
-
-                    var groupingCount = 0;
-
-                    if ((workPointer == workSize) && (i >= 0))
+                    var limit = Min(scale - decimalScale, i + 1);
+                    for (var j = 0; j < limit; j++)
                     {
                         *(pBytes + i--) = Num0;
                     }
-                    else
+
+                    limit = Min(i - dotPos, i + 1);
+                    for (var j = 0; j < limit; j++)
                     {
-                        if (groupingSize <= 0)
+                        if (workPointer < workSize)
                         {
-                            var limit = Min(workSize - workPointer, i + 1);
-                            for (var j = 0; j < limit; j++)
-                            {
-                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                            }
+                            *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
                         }
                         else
                         {
-                            while ((workPointer < workSize) && (i >= 0))
-                            {
-                                if (groupingCount == groupingSize)
-                                {
-                                    *(pBytes + i--) = Comma;
-                                    groupingCount = 0;
-                                }
-
-                                if (i >= 0)
-                                {
-                                    *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                                    groupingCount++;
-                                }
-                            }
+                            *(pBytes + i--) = Num0;
                         }
                     }
 
-                    if (zerofill)
+                    if ((i == dotPos) && (i >= 0))
                     {
-                        var end = negative ? 1 : 0;
-                        if (groupingSize <= 0)
+                        *(pBytes + i--) = Dot;
+                    }
+                }
+
+                var groupingCount = 0;
+
+                if ((workPointer == workSize) && (i >= 0))
+                {
+                    *(pBytes + i--) = Num0;
+                }
+                else
+                {
+                    if (groupingSize <= 0)
+                    {
+                        var limit = Min(workSize - workPointer, i + 1);
+                        for (var j = 0; j < limit; j++)
                         {
-                            while (i >= end)
+                            *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
+                        }
+                    }
+                    else
+                    {
+                        while ((workPointer < workSize) && (i >= 0))
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+                                groupingCount = 0;
+                            }
+
+                            if (i >= 0)
+                            {
+                                *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
+                                groupingCount++;
+                            }
+                        }
+                    }
+                }
+
+                if (zerofill)
+                {
+                    var end = negative ? 1 : 0;
+                    if (groupingSize <= 0)
+                    {
+                        while (i >= end)
+                        {
+                            *(pBytes + i--) = Num0;
+                        }
+                    }
+                    else
+                    {
+                        while (i >= end)
+                        {
+                            if (groupingCount == groupingSize)
+                            {
+                                *(pBytes + i--) = Comma;
+                                groupingCount = 0;
+                            }
+
+                            if (i >= end)
                             {
                                 *(pBytes + i--) = Num0;
+                                groupingCount++;
                             }
-                        }
-                        else
-                        {
-                            while (i >= end)
-                            {
-                                if (groupingCount == groupingSize)
-                                {
-                                    *(pBytes + i--) = Comma;
-                                    groupingCount = 0;
-                                }
-
-                                if (i >= end)
-                                {
-                                    *(pBytes + i--) = Num0;
-                                    groupingCount++;
-                                }
-                            }
-                        }
-
-                        if (negative && (i >= 0))
-                        {
-                            *pBytes = Minus;
                         }
                     }
-                    else
-                    {
-                        if (negative && (i >= 0))
-                        {
-                            *(pBytes + i--) = Minus;
-                        }
 
-                        while (i >= 0)
-                        {
-                            *(pBytes + i--) = filler;
-                        }
+                    if (negative && (i >= 0))
+                    {
+                        *pBytes = Minus;
+                    }
+                }
+                else if (padding == Padding.Left)
+                {
+                    if (negative && (i >= 0))
+                    {
+                        *(pBytes + i--) = Minus;
+                    }
+
+                    while (i >= 0)
+                    {
+                        *(pBytes + i--) = filler;
                     }
                 }
                 else
                 {
-                    var i = 0;
-
-                    if (scale > 0)
+                    if (negative && (i >= 0))
                     {
-                        var dotPos = scale;
-
-                        var limit = Min(scale - decimalScale, length - i);
-                        for (var j = 0; j < limit; j++)
-                        {
-                            *(pBytes + i++) = Num0;
-                        }
-
-                        limit = Min(dotPos - i, length - i);
-                        for (var j = 0; j < limit; j++)
-                        {
-                            if (workPointer < workSize)
-                            {
-                                *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
-                            }
-                            else
-                            {
-                                *(pBytes + i++) = Num0;
-                            }
-                        }
-
-                        if ((i == dotPos) && (i < length))
-                        {
-                            *(pBytes + i++) = Dot;
-                        }
+                        *(pBytes + i--) = Minus;
                     }
 
-                    var groupingCount = 0;
+                    if (i >= 0)
+                    {
+                        var size = length - (i + 1);
+                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
 
-                    if ((workPointer == workSize) && (i < length))
-                    {
-                        *(pBytes + i++) = Num0;
-                    }
-                    else
-                    {
-                        if (groupingSize <= 0)
+                        for (var j = size; j < length; j++)
                         {
-                            var limit = Min(workSize - workPointer, length - i);
-                            for (var j = 0; j < limit; j++)
-                            {
-                                *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
-                            }
+                            *(pBytes + j) = filler;
                         }
-                        else
-                        {
-                            while ((workPointer < workSize) && (i < length))
-                            {
-                                if (groupingCount == groupingSize)
-                                {
-                                    *(pBytes + i++) = Comma;
-                                    groupingCount = 0;
-                                }
-
-                                if (i < length)
-                                {
-                                    *(pBytes + i++) = (byte)(Num0 + work[workPointer++]);
-                                    groupingCount++;
-                                }
-                            }
-                        }
-                    }
-
-                    if (negative && (i < length))
-                    {
-                        *(pBytes + i++) = Minus;
-                    }
-
-                    ReverseBytes(pBytes, i);
-
-                    while (i < length)
-                    {
-                        *(pBytes + i++) = filler;
                     }
                 }
             }
@@ -810,21 +697,6 @@
             }
 
             hi = hi + Table[baseIndex + 1] + carry;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void ReverseBytes(byte* ptr, int length)
-        {
-            var start = ptr;
-            var end = ptr + length - 1;
-            while (start < end)
-            {
-                var tmp = *start;
-                *start = *end;
-                *end = tmp;
-                start++;
-                end--;
-            }
         }
     }
 }
