@@ -55,19 +55,6 @@
     }
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public sealed class TypeDateTimeKindAttribute : Attribute, ITypeDefaultAttribute
-    {
-        public string Key => OptionsParameter.DateTimeKind;
-
-        public object Value { get; }
-
-        public TypeDateTimeKindAttribute(DateTimeKind value)
-        {
-            Value = value;
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
     public sealed class TypeUnicodeFillerAttribute : Attribute, ITypeDefaultAttribute
     {
         public string Key => OptionsParameter.UnicodeFiller;

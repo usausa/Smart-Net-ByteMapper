@@ -24,7 +24,7 @@
         {
             return new DateTimeConverter(
                 Format,
-                Kind ?? context.GetParameter<DateTimeKind>(OptionsParameter.DateTimeKind),
+                Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 type);
         }
@@ -33,7 +33,6 @@
         {
             return new DateTimeOffsetConverter(
                 Format,
-                Kind ?? context.GetParameter<DateTimeKind>(OptionsParameter.DateTimeKind),
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 type);
         }

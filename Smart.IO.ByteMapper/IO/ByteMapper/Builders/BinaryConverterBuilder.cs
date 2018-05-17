@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper.Builders
 {
+    using System;
+
     using Smart.IO.ByteMapper.Converters;
 
     public sealed class BinaryConverterBuilder : AbstractMapConverterBuilder<BinaryConverterBuilder>
@@ -14,6 +16,8 @@
             AddEntry(typeof(double), 8, (b, t, c) => b.CreateDoubleBinaryConverter(c));
             AddEntry(typeof(float), 4, (b, t, c) => b.CreateFloatBinaryConverter(c));
             AddEntry(typeof(decimal), 16, (b, t, c) => b.CreateDecimalBinaryConverter(c));
+            AddEntry(typeof(DateTime), 8, (b, t, c) => b.CreateDateTimeBinaryConverter(c));
+            AddEntry(typeof(DateTimeOffset), 8, (b, t, c) => b.CreateDateTimeOffsetBinaryConverter(c));
         }
 
         private IMapConverter CreateIntBinaryConverter(IBuilderContext context)
@@ -62,6 +66,23 @@
             return targetEndian == Smart.IO.ByteMapper.Endian.Big
                 ? BigEndianDecimalBinaryConverter.Default
                 : LittleEndianDecimalBinaryConverter.Default;
+        }
+
+        private IMapConverter CreateDateTimeBinaryConverter(IBuilderContext context)
+        {
+            var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            var kind = context.GetParameter<DateTimeKind>(Parameter.DateTimeKind);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? (IMapConverter)new BigEndianDateTimeBinaryConverter(kind)
+                : new LittleEndianDateTimeBinaryConverter(kind);
+        }
+
+        private IMapConverter CreateDateTimeOffsetBinaryConverter(IBuilderContext context)
+        {
+            var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            return targetEndian == Smart.IO.ByteMapper.Endian.Big
+                ? BigEndianDateTimeOffsetBinaryConverter.Default
+                : LittleEndianDateTimeOffsetBinaryConverter.Default;
         }
     }
 }

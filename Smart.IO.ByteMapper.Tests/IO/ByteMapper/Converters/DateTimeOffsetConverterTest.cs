@@ -15,7 +15,7 @@
 
         private const string Format = "yyyyMMddHHmmssfff";
 
-        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56, 789));
+        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56, 789, DateTimeKind.Utc));
 
         private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
@@ -37,7 +37,6 @@
         {
             return new DateTimeOffsetConverter(
                 format,
-                DateTimeKind.Unspecified,
                 0x20,
                 type);
         }

@@ -10,7 +10,6 @@
             config.DefaultZeroFill(false);
             config.DefaultUseGrouping(false);
             config.DefaultNumberFiller(0x20);
-            config.DefaultDateTimeKind(DateTimeKind.Unspecified);
             return config;
         }
 
@@ -32,11 +31,6 @@
         public static MapperFactoryConfig DefaultNumberFiller(this MapperFactoryConfig config, byte value)
         {
             return config.AddParameter(OptionsParameter.NumberFiller, value);
-        }
-
-        public static MapperFactoryConfig DefaultDateTimeKind(this MapperFactoryConfig config, DateTimeKind value)
-        {
-            return config.AddParameter(OptionsParameter.DateTimeKind, value);
         }
 
         public static MapperFactoryConfig DefaultUnicodeFiller(this MapperFactoryConfig config, char value)

@@ -27,7 +27,7 @@
             var obj = new DateTimeAttributeObject
             {
                 DateTimeValue = new DateTime(2000, 12, 31, 0, 0, 0),
-                DateTimeOffsetValue = new DateTimeOffset(new DateTime(2000, 12, 31, 0, 0, 0))
+                DateTimeOffsetValue = new DateTimeOffset(new DateTime(2000, 12, 31, 0, 0, 0, DateTimeKind.Utc))
             };
 
             // Write
@@ -59,9 +59,9 @@
             Assert.Equal(new DateTime(2001, 1, 1, 0, 0, 0), obj.DateTimeValue);
             Assert.Equal(new DateTime(2001, 1, 1, 0, 0, 0), obj.NullableDateTimeValue);
             Assert.Equal(new DateTime(2000, 12, 31, 23, 59, 59), obj.CustomDateTimeValue);
-            Assert.Equal(new DateTimeOffset(new DateTime(2001, 1, 1, 0, 0, 0)), obj.DateTimeOffsetValue);
-            Assert.Equal(new DateTimeOffset(new DateTime(2001, 1, 1, 0, 0, 0)), obj.NullableDateTimeOffsetValue);
-            Assert.Equal(new DateTimeOffset(new DateTime(2000, 12, 31, 23, 59, 59)), obj.CustomDateTimeOffsetValue);
+            Assert.Equal(new DateTimeOffset(new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc)), obj.DateTimeOffsetValue);
+            Assert.Equal(new DateTimeOffset(new DateTime(2001, 1, 1, 0, 0, 0, DateTimeKind.Utc)), obj.NullableDateTimeOffsetValue);
+            Assert.Equal(new DateTimeOffset(new DateTime(2000, 12, 31, 23, 59, 59, DateTimeKind.Utc)), obj.CustomDateTimeOffsetValue);
         }
 
         //--------------------------------------------------------------------------------

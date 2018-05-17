@@ -119,6 +119,11 @@
             return syntax.TypeDefault(Parameter.Endian, value);
         }
 
+        public static ITypeConfigSyntax<T> TypeDateTimeKind<T>(this ITypeConfigSyntax<T> syntax, DateTimeKind value)
+        {
+            return syntax.TypeDefault(Parameter.DateTimeKind, value);
+        }
+
         public static ITypeConfigSyntax<T> TypeTrueValue<T>(this ITypeConfigSyntax<T> syntax, byte value)
         {
             return syntax.TypeDefault(Parameter.TrueValue, value);

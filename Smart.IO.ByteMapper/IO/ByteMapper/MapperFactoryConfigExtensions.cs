@@ -46,6 +46,11 @@
             return config.AddParameter(Parameter.Endian, value);
         }
 
+        public static MapperFactoryConfig DefaultDateTimeKind(this MapperFactoryConfig config, DateTimeKind value)
+        {
+            return config.AddParameter(Parameter.DateTimeKind, value);
+        }
+
         public static MapperFactoryConfig DefaultTrueValue(this MapperFactoryConfig config, byte value)
         {
             return config.AddParameter(Parameter.TrueValue, value);

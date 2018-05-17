@@ -16,6 +16,8 @@
 
         public const string Endian = nameof(Parameter) + "." + nameof(Endian);
 
+        public const string DateTimeKind = nameof(Parameter) + "." + nameof(DateTimeKind);
+
         public const string TrueValue = nameof(Parameter) + "." + nameof(TrueValue);
 
         public const string FalseValue = nameof(Parameter) + "." + nameof(FalseValue);

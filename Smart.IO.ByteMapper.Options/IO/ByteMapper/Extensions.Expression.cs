@@ -32,11 +32,6 @@
             return syntax.TypeDefault(OptionsParameter.NumberFiller, value);
         }
 
-        public static ITypeConfigSyntax<T> TypeDateTimeKind<T>(this ITypeConfigSyntax<T> syntax, DateTimeKind value)
-        {
-            return syntax.TypeDefault(OptionsParameter.DateTimeKind, value);
-        }
-
         //--------------------------------------------------------------------------------
         // Member
         //--------------------------------------------------------------------------------

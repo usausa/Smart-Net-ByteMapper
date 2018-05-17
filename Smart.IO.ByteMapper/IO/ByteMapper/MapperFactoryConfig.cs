@@ -30,6 +30,7 @@
             this.DefaultFiller(0x20);
             this.DefaultTextFiller(0x20);
             this.DefaultEndian(Endian.Big);
+            this.DefaultDateTimeKind(DateTimeKind.Unspecified);
             this.DefaultTrueValue(0x31);
             this.DefaultFalseValue(0x30);
 

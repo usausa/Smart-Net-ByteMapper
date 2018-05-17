@@ -10,8 +10,6 @@
 
         public const string NumberFiller = nameof(OptionsParameter) + "." + nameof(NumberFiller);
 
-        public const string DateTimeKind = nameof(OptionsParameter) + "." + nameof(DateTimeKind);
-
         public const string UnicodeFiller = nameof(OptionsParameter) + "." + nameof(UnicodeFiller);
     }
 }

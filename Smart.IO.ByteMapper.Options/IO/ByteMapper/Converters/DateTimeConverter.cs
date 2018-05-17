@@ -46,24 +46,21 @@
     {
         private readonly string format;
 
-        private readonly DateTimeKind kind;
-
         private readonly byte filler;
 
         private readonly object defaultValue;
 
-        public DateTimeOffsetConverter(string format, DateTimeKind kind, byte filler, Type type)
+        public DateTimeOffsetConverter(string format, byte filler, Type type)
         {
             this.format = format;
-            this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
         }
 
         public object Read(byte[] buffer, int index)
         {
-            return DateTimeHelper.TryParseDateTime(buffer, index, format, kind, out var result)
-                ? (DateTimeOffset)result
+            return DateTimeHelper.TryParseDateTime(buffer, index, format, DateTimeKind.Utc, out var result)
+                ? new DateTimeOffset(result)
                 : defaultValue;
         }
 
@@ -75,7 +72,7 @@
             }
             else
             {
-                DateTimeHelper.FormatDateTime(buffer, index, format, ((DateTimeOffset)value).DateTime);
+                DateTimeHelper.FormatDateTime(buffer, index, format, ((DateTimeOffset)value).UtcDateTime);
             }
         }
     }

@@ -71,6 +71,7 @@
         [TypeFiller((byte)'*')]
         [TypeTextFiller((byte)'_')]
         [TypeEndian(Endian.Little)]
+        [TypeDateTimeKind(DateTimeKind.Unspecified)]
         [TypeTrueValue((byte)'Y')]
         [TypeFalseValue((byte)'N')]
         [TypeNumberTextEncoding("ASCII")]
@@ -86,7 +87,6 @@
         [TypeNumberFiller((byte)'_')]
         [TypeZeroFill(false)]
         [TypeUseGrouping(false)]
-        [TypeDateTimeKind(DateTimeKind.Unspecified)]
         [TypeUnicodeFiller(' ')]
         internal class TypeDefaultAttributeObject
         {

@@ -223,4 +223,78 @@
             ByteOrder.PutIntLE(buffer, index + 12, bits[3]);
         }
     }
+
+    //--------------------------------------------------------------------------------
+    // DateTime
+    //--------------------------------------------------------------------------------
+
+    internal sealed class BigEndianDateTimeBinaryConverter : IMapConverter
+    {
+        private readonly DateTimeKind kind;
+
+        public BigEndianDateTimeBinaryConverter(DateTimeKind kind)
+        {
+            this.kind = kind;
+        }
+
+        public object Read(byte[] buffer, int index)
+        {
+            return new DateTime(ByteOrder.GetLongBE(buffer, index), kind);
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
+        }
+    }
+
+    internal sealed class LittleEndianDateTimeBinaryConverter : IMapConverter
+    {
+        private readonly DateTimeKind kind;
+
+        public LittleEndianDateTimeBinaryConverter(DateTimeKind kind)
+        {
+            this.kind = kind;
+        }
+
+        public object Read(byte[] buffer, int index)
+        {
+            return new DateTime(ByteOrder.GetLongLE(buffer, index), kind);
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
+        }
+    }
+
+    internal sealed class BigEndianDateTimeOffsetBinaryConverter : IMapConverter
+    {
+        public static IMapConverter Default { get; } = new BigEndianDateTimeOffsetBinaryConverter();
+
+        public object Read(byte[] buffer, int index)
+        {
+            return new DateTimeOffset(new DateTime(ByteOrder.GetLongBE(buffer, index), DateTimeKind.Utc));
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            ByteOrder.PutLongBE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+        }
+    }
+
+    internal sealed class LittleEndianDateTimeOffsetBinaryConverter : IMapConverter
+    {
+        public static IMapConverter Default { get; } = new LittleEndianDateTimeOffsetBinaryConverter();
+
+        public object Read(byte[] buffer, int index)
+        {
+            return new DateTimeOffset(new DateTime(ByteOrder.GetLongLE(buffer, index), DateTimeKind.Utc));
+        }
+
+        public void Write(byte[] buffer, int index, object value)
+        {
+            ByteOrder.PutLongLE(buffer, index, ((DateTimeOffset)value).UtcTicks);
+        }
+    }
 }

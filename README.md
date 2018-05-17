@@ -286,6 +286,7 @@ Use the following method to set the default parameters.
 | DefaultFiller()                 |        | 0x20                         | Used in various converters                                 |
 | DefaultTextFiller()             |        | 0x20                         | Used in TextConverter, AsciiConverter                      |
 | DefaultEndian()                 |        | Endian.Big                   | Used in BinaryConverter                                    |
+| DefaultDateTimeKind()           |        | DateTimeKind.Unspecified     | Used in DateTimeConverter                                  |
 | DefaultTrueValue()              |        | 0x31                         | Used in BooleanConverter                                   |
 | DefaultFalseValue()             |        | 0x30                         | Used in BooleanConverter                                   |
 | DefaultDateTimeTextEncoding()   |        | Encoding.ASCII               | Used in DateTimeTextConverter                              |
@@ -301,7 +302,7 @@ Use the following method to set the default parameters.
 | DefaultZeroFill()               | ✅     | false                        | Used in NumberConverter, DecimalConverter                  |
 | DefaultUseGrouping()            | ✅     | false                        | Used in DecimalConverter                                   |
 | DefaultNumberFiller()           | ✅     | 0x20                         | Used in NumberConverter, DecimalConverter                  |
-| DefaultDateTimeKind()           | ✅     | DateTimeKind.Unspecified     | Used in DateTimeConverter                                  |
+
 ## Profile
 
 ```csharp
