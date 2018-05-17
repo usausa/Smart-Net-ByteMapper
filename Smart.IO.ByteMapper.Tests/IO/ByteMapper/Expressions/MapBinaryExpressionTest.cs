@@ -14,13 +14,15 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
-                .CreateMapByExpression<BinaryExpressionObject>(52, config => config
+                .CreateMapByExpression<BinaryExpressionObject>(84, config => config
                     .ForMember(x => x.BigEndianIntValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianLongValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianShortValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianDecimalValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianDecimalValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianDoubleValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianDoubleValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianFloatValue, m => m.Binary())
@@ -37,6 +39,8 @@
                 LittleEndianLongValue = 1,
                 BigEndianShortValue = 1,
                 LittleEndianShortValue = 1,
+                BigEndianDecimalValue = 1,
+                LittleEndianDecimalValue = 1,
                 BigEndianDoubleValue = 2,
                 LittleEndianDoubleValue = 2,
                 BigEndianFloatValue = 2,
@@ -55,6 +59,8 @@
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x01,
                     0x01, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
                     0x40, 0x00, 0x00, 0x00,
@@ -76,6 +82,8 @@
             Assert.Equal(2, obj.LittleEndianLongValue);
             Assert.Equal(2, obj.BigEndianShortValue);
             Assert.Equal(2, obj.LittleEndianShortValue);
+            Assert.Equal(2, obj.BigEndianDecimalValue);
+            Assert.Equal(2, obj.LittleEndianDecimalValue);
             Assert.Equal(2, obj.BigEndianDoubleValue);
             Assert.Equal(2, obj.LittleEndianDoubleValue);
             Assert.Equal(2, obj.BigEndianFloatValue);
@@ -99,6 +107,10 @@
             public short BigEndianShortValue { get; set; }
 
             public short LittleEndianShortValue { get; set; }
+
+            public decimal BigEndianDecimalValue { get; set; }
+
+            public decimal LittleEndianDecimalValue { get; set; }
 
             public double BigEndianDoubleValue { get; set; }
 
