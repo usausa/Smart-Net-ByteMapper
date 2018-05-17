@@ -26,18 +26,18 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return EncodingHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
+            return EncodingByteHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
-                EncodingHelper.FillUnicode(buffer, index, length, filler);
+                EncodingByteHelper.FillUnicode(buffer, index, length, filler);
             }
             else
             {
-                EncodingHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
+                EncodingByteHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
             }
         }
     }

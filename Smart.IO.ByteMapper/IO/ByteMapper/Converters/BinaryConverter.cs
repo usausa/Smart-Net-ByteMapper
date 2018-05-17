@@ -230,36 +230,47 @@
 
     internal sealed class BigEndianDateTimeBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianDateTimeBinaryConverter();
+        private readonly DateTimeKind kind;
+
+        public BigEndianDateTimeBinaryConverter(DateTimeKind kind)
+        {
+            this.kind = kind;
+        }
 
         public object Read(byte[] buffer, int index)
         {
-            // TODO check
-            //return new DateTime(ByteOrder.GetLongBE(buffer, index), kind);
-            throw new NotImplementedException();
+            var ticks = ByteOrder.GetLongBE(buffer, index);
+            return DateTimeHelper.IsValidTicks(ticks)
+                ? new DateTime(ticks, kind)
+                : default;
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            //ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
-            throw new NotImplementedException();
+            ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
         }
     }
 
     internal sealed class LittleEndianDateTimeBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianDateTimeBinaryConverter();
+        private readonly DateTimeKind kind;
+
+        public LittleEndianDateTimeBinaryConverter(DateTimeKind kind)
+        {
+            this.kind = kind;
+        }
 
         public object Read(byte[] buffer, int index)
         {
-            // TODO check
-            //return new DateTime(ByteOrder.GetLongLE(buffer, index), kind);
-            throw new NotImplementedException();
+            var ticks = ByteOrder.GetLongLE(buffer, index);
+            return DateTimeHelper.IsValidTicks(ticks)
+                ? new DateTime(ticks, kind)
+                : default;
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            //ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
+            ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
         }
     }
 
@@ -273,20 +284,18 @@
 
         public object Read(byte[] buffer, int index)
         {
-            //var tick = ByteOrder.GetLongBE(buffer, index);
-            //var offset = ByteOrder.GetShortBE(buffer, index + 8);
-            // TODO check 2
-            //return new DateTimeOffset(new DateTime(tick, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset));
-            throw new NotImplementedException();
+            var ticks = ByteOrder.GetLongBE(buffer, index);
+            var offset = ByteOrder.GetShortBE(buffer, index + 8);
+            return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
+                ? new DateTimeOffset(new DateTime(ticks, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset))
+                : default;
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            // TODO Bin +
-            //var dateTime = (DateTimeOffset)value;
-            //var tick = ByteOrder.PutLongBE(buffer, index,
-            //ByteOrder.PutLongBE(buffer, index, ((DateTimeOffset)value).UtcTicks);
-            throw new NotImplementedException();
+            var dateTime = (DateTimeOffset)value;
+            ByteOrder.PutLongBE(buffer, index, dateTime.UtcTicks);
+            ByteOrder.PutShortBE(buffer, index + 8, (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
         }
     }
 
@@ -296,14 +305,18 @@
 
         public object Read(byte[] buffer, int index)
         {
-            //return new DateTimeOffset(new DateTime(ByteOrder.GetLongLE(buffer, index), DateTimeKind.Utc));
-            throw new NotImplementedException();
+            var ticks = ByteOrder.GetLongLE(buffer, index);
+            var offset = ByteOrder.GetShortLE(buffer, index + 8);
+            return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
+                ? new DateTimeOffset(new DateTime(ticks, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset))
+                : default;
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
-            //ByteOrder.PutLongLE(buffer, index, ((DateTimeOffset)value).UtcTicks);
-            throw new NotImplementedException();
+            var dateTime = (DateTimeOffset)value;
+            ByteOrder.PutLongLE(buffer, index, dateTime.UtcTicks);
+            ByteOrder.PutShortLE(buffer, index + 8, (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
         }
     }
 }

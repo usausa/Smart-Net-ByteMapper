@@ -35,7 +35,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            if (NumberHelper.TryParseInt32(buffer, index, length, filler, out var result))
+            if (NumberByteHelper.TryParseInt32(buffer, index, length, filler, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
@@ -51,7 +51,7 @@
             }
             else
             {
-                NumberHelper.FormatInt32(buffer, index, length, (int)value, padding, zerofill, filler);
+                NumberByteHelper.FormatInt32(buffer, index, length, (int)value, padding, zerofill, filler);
             }
         }
     }
@@ -87,7 +87,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            if (NumberHelper.TryParseInt64(buffer, index, length, filler, out var result))
+            if (NumberByteHelper.TryParseInt64(buffer, index, length, filler, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
@@ -103,7 +103,7 @@
             }
             else
             {
-                NumberHelper.FormatInt64(buffer, index, length, (long)value, padding, zerofill, filler);
+                NumberByteHelper.FormatInt64(buffer, index, length, (long)value, padding, zerofill, filler);
             }
         }
     }
@@ -139,7 +139,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            if (NumberHelper.TryParseInt16(buffer, index, length, filler, out var result))
+            if (NumberByteHelper.TryParseInt16(buffer, index, length, filler, out var result))
             {
                 return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
             }
@@ -155,7 +155,7 @@
             }
             else
             {
-                NumberHelper.FormatInt16(buffer, index, length, (short)value, padding, zerofill, filler);
+                NumberByteHelper.FormatInt16(buffer, index, length, (short)value, padding, zerofill, filler);
             }
         }
     }

@@ -1,7 +1,5 @@
 ﻿namespace Smart.IO.ByteMapper
 {
-    using System;
-
     public static class OptionsMapperFactoryConfigExtensions
     {
         public static MapperFactoryConfig UseOptionsDefault(this MapperFactoryConfig config)

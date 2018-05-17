@@ -5,7 +5,7 @@
 
     using Xunit;
 
-    public class NumberHelperDecimalTest
+    public class NumberByteHelperDecimalTest
     {
         [Theory]
         // Default
@@ -49,7 +49,7 @@
         public void ParseDecimal(bool result, string input, string output)
         {
             var buffer = Encoding.ASCII.GetBytes(input);
-            var ret = NumberHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out var value);
+            var ret = NumberByteHelper.TryParseDecimal(buffer, 0, buffer.Length, 0x20, out var value);
             Assert.Equal(result, ret);
             if (result)
             {
@@ -178,7 +178,7 @@
             var value = Decimal.Parse(input);
             var expected = Encoding.ASCII.GetBytes(output);
             var buffer = new byte[expected.Length];
-            NumberHelper.FormatDecimal(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, value, scale, groupingSize, padding, zerofill, (byte)' ');
             Assert.Equal(expected, buffer);
         }
     }

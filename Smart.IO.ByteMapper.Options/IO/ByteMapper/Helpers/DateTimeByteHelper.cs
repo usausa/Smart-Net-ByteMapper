@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    internal static class DateTimeHelper
+    internal static class DateTimeByteHelper
     {
         private const byte Num0 = (byte)'0';
 

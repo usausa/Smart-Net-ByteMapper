@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    internal static class EncodingHelper
+    internal static class EncodingByteHelper
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe byte[] GetAsciiBytes(string str)

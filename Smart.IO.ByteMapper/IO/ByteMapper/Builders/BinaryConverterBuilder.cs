@@ -71,9 +71,10 @@
         private IMapConverter CreateDateTimeBinaryConverter(IBuilderContext context)
         {
             var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
+            var kind = context.GetParameter<DateTimeKind>(Parameter.DateTimeKind);
             return targetEndian == Smart.IO.ByteMapper.Endian.Big
-                ? BigEndianDateTimeBinaryConverter.Default
-                : LittleEndianDateTimeBinaryConverter.Default;
+                ? (IMapConverter)new BigEndianDateTimeBinaryConverter(kind)
+                : new LittleEndianDateTimeBinaryConverter(kind);
         }
 
         private IMapConverter CreateDateTimeOffsetBinaryConverter(IBuilderContext context)

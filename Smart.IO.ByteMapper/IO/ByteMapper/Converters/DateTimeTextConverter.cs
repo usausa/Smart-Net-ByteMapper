@@ -51,7 +51,7 @@
             return defaultValue;
         }
 
-        public unsafe void Write(byte[] buffer, int index, object value)
+        public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {
@@ -110,7 +110,7 @@
             return defaultValue;
         }
 
-        public unsafe void Write(byte[] buffer, int index, object value)
+        public void Write(byte[] buffer, int index, object value)
         {
             if (value == null)
             {

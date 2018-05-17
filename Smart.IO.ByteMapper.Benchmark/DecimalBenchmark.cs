@@ -41,21 +41,21 @@
         public void FormatCustom8()
         {
             var buffer = new byte[8];
-            NumberHelper.FormatDecimal(buffer, 0, buffer.Length, Value8, 2, -1, Padding.Left, false, 0x20);
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value8, 2, -1, Padding.Left, false, 0x20);
         }
 
         [Benchmark]
         public void FormatCustom19()
         {
             var buffer = new byte[19];
-            NumberHelper.FormatDecimal(buffer, 0, buffer.Length, Value19, 3, -1, Padding.Left, false, 0x20);
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value19, 3, -1, Padding.Left, false, 0x20);
         }
 
         [Benchmark]
         public void FormatCustom28()
         {
             var buffer = new byte[28];
-            NumberHelper.FormatDecimal(buffer, 0, buffer.Length, Value28, 4, -1, Padding.Left, false, 0x20);
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value28, 4, -1, Padding.Left, false, 0x20);
         }
     }
 }

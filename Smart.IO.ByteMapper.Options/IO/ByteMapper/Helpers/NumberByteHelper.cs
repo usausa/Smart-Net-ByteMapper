@@ -3,7 +3,7 @@
     using System;
     using System.Runtime.CompilerServices;
 
-    internal static partial class NumberHelper
+    internal static partial class NumberByteHelper
     {
         private const byte Minus = (byte)'-';
         private const byte Num0 = (byte)'0';
