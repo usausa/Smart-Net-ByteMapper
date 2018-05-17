@@ -553,7 +553,7 @@
                     {
                         if (workPointer < workSize)
                         {
-                            *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
                         }
                         else
                         {
@@ -580,7 +580,7 @@
                         var limit = Min(workSize - workPointer, i + 1);
                         for (var j = 0; j < limit; j++)
                         {
-                            *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
                         }
                     }
                     else
@@ -595,7 +595,7 @@
 
                             if (i >= 0)
                             {
-                                *(pBytes + i--) = (byte) (Num0 + work[workPointer++]);
+                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
                                 groupingCount++;
                             }
                         }
@@ -668,16 +668,6 @@
             }
         }
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int Min(int x, int y)
-        {
-            return x < y ? x : y;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void AddBitBlockValue(ref long lo, ref long hi, int block, int bits)
         {
@@ -697,6 +687,16 @@
             }
 
             hi = hi + Table[baseIndex + 1] + carry;
+        }
+
+        //--------------------------------------------------------------------------------
+        // Helper
+        //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int Min(int x, int y)
+        {
+            return x < y ? x : y;
         }
     }
 }
