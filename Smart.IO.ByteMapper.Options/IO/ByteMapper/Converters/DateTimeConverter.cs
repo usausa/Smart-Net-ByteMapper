@@ -44,8 +44,6 @@
 
     internal sealed class DateTimeOffsetConverter : IMapConverter
     {
-        private static readonly long MaxTick = DateTime.MaxValue.Ticks;
-
         private readonly string format;
 
         private readonly DateTimeKind kind;
@@ -78,7 +76,7 @@
 
                 var offset = TimeZoneInfo.Local.GetUtcOffset(result);
                 var utcTick = result.Ticks - offset.Ticks;
-                if ((utcTick >= 0) && (utcTick <= MaxTick))
+                if (DateTimeHelper.IsValidTicks(utcTick))
                 {
                     return new DateTimeOffset(result, offset);
                 }

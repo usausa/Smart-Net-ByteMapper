@@ -26,6 +26,12 @@
         }
 
         [Fact]
+        public void ReadToBigEndianInvalidDateTimeIsDefault()
+        {
+            Assert.Equal(default, (DateTime)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 0));
+        }
+
+        [Fact]
         public void WriteBigEndianDateTimeBinaryToBuffer()
         {
             var buffer = new byte[8 + Offset];
@@ -49,13 +55,19 @@
         private readonly IMapConverter converter = new LittleEndianDateTimeBinaryConverter(DateTimeKind.Local);
 
         [Fact]
-        public void ReadToBigEndianDateTimeBinary()
+        public void ReadToLittleEndianDateTimeBinary()
         {
             Assert.Equal(Value, (DateTime)converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteBigEndianDateTimeBinaryToBuffer()
+        public void ReadToLittleEndianInvalidDateTimeIsDefault()
+        {
+            Assert.Equal(default, (DateTime)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 0));
+        }
+
+        [Fact]
+        public void WriteLittleEndianDateTimeBinaryToBuffer()
         {
             var buffer = new byte[8 + Offset];
             converter.Write(buffer, Offset, Value);
@@ -84,6 +96,13 @@
         }
 
         [Fact]
+        public void ReadToBigEndianInvalidDateTimeOffsetIsDefault()
+        {
+            Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00 }, 0));
+            Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0xFF }, 0));
+        }
+
+        [Fact]
         public void WriteBigEndianDateTimeOffsetBinaryToBuffer()
         {
             var buffer = new byte[10 + Offset];
@@ -107,13 +126,20 @@
         private readonly IMapConverter converter = LittleEndianDateTimeOffsetBinaryConverter.Default;
 
         [Fact]
-        public void ReadToBigEndianDateTimeOffsetBinary()
+        public void ReadToLittleEndianDateTimeOffsetBinary()
         {
             Assert.Equal(Value, (DateTimeOffset)converter.Read(ValueBytes, Offset));
         }
 
         [Fact]
-        public void WriteBigEndianDateTimeOffsetBinaryToBuffer()
+        public void ReadToLittleEndianInvalidDateTimeOffsetIsDefault()
+        {
+            Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00 }, 0));
+            Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x7F }, 0));
+        }
+
+        [Fact]
+        public void WriteLittleEndianDateTimeOffsetBinaryToBuffer()
         {
             var buffer = new byte[10 + Offset];
             converter.Write(buffer, Offset, Value);

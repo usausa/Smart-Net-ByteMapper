@@ -1,5 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper.Expressions
 {
+    using System;
+
     using Xunit;
 
     public class MapBinaryExpressionTest
@@ -14,13 +16,17 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
-                .CreateMapByExpression<BinaryExpressionObject>(84, config => config
+                .CreateMapByExpression<BinaryExpressionObject>(120, config => config
                     .ForMember(x => x.BigEndianIntValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianLongValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianLongValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianShortValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianShortValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianDateTimeValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianDateTimeValue, m => m.Binary(Endian.Little))
+                    .ForMember(x => x.BigEndianDateTimeOffsetValue, m => m.Binary())
+                    .ForMember(x => x.LittleEndianDateTimeOffsetValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianDecimalValue, m => m.Binary())
                     .ForMember(x => x.LittleEndianDecimalValue, m => m.Binary(Endian.Little))
                     .ForMember(x => x.BigEndianDoubleValue, m => m.Binary())
@@ -39,6 +45,10 @@
                 LittleEndianLongValue = 1,
                 BigEndianShortValue = 1,
                 LittleEndianShortValue = 1,
+                BigEndianDateTimeValue = new DateTime(1, DateTimeKind.Unspecified),
+                LittleEndianDateTimeValue = new DateTime(1, DateTimeKind.Unspecified),
+                BigEndianDateTimeOffsetValue = new DateTimeOffset(new DateTime(1, DateTimeKind.Unspecified), TimeSpan.Zero),
+                LittleEndianDateTimeOffsetValue = new DateTimeOffset(new DateTime(1, DateTimeKind.Unspecified), TimeSpan.Zero),
                 BigEndianDecimalValue = 1,
                 LittleEndianDecimalValue = 1,
                 BigEndianDoubleValue = 2,
@@ -59,6 +69,10 @@
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x01,
                     0x01, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -82,6 +96,10 @@
             Assert.Equal(2, obj.LittleEndianLongValue);
             Assert.Equal(2, obj.BigEndianShortValue);
             Assert.Equal(2, obj.LittleEndianShortValue);
+            Assert.Equal(2, obj.BigEndianDateTimeValue.Ticks);
+            Assert.Equal(2, obj.LittleEndianDateTimeValue.Ticks);
+            Assert.Equal(2, obj.BigEndianDateTimeOffsetValue.Ticks);
+            Assert.Equal(2, obj.LittleEndianDateTimeOffsetValue.Ticks);
             Assert.Equal(2, obj.BigEndianDecimalValue);
             Assert.Equal(2, obj.LittleEndianDecimalValue);
             Assert.Equal(2, obj.BigEndianDoubleValue);
@@ -107,6 +125,14 @@
             public short BigEndianShortValue { get; set; }
 
             public short LittleEndianShortValue { get; set; }
+
+            public DateTime BigEndianDateTimeValue { get; set; }
+
+            public DateTime LittleEndianDateTimeValue { get; set; }
+
+            public DateTimeOffset BigEndianDateTimeOffsetValue { get; set; }
+
+            public DateTimeOffset LittleEndianDateTimeOffsetValue { get; set; }
 
             public decimal BigEndianDecimalValue { get; set; }
 

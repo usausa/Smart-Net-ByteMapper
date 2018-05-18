@@ -16,6 +16,7 @@
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultDelimiter(null)
                 .DefaultEndian(Endian.Big)
+                .DefaultDateTimeKind(DateTimeKind.Unspecified)
                 .CreateMapByAttribute<BinaryAttributeObject>()
                 .ToMapperFactory();
             var mapper = mapperFactory.Create<BinaryAttributeObject>();
@@ -29,6 +30,10 @@
                 LittleEndianLongValue = 1,
                 BigEndianShortValue = 1,
                 LittleEndianShortValue = 1,
+                BigEndianDateTimeValue = new DateTime(1, DateTimeKind.Unspecified),
+                LittleEndianDateTimeValue = new DateTime(1, DateTimeKind.Unspecified),
+                BigEndianDateTimeOffsetValue = new DateTimeOffset(new DateTime(1, DateTimeKind.Unspecified), TimeSpan.Zero),
+                LittleEndianDateTimeOffsetValue = new DateTimeOffset(new DateTime(1, DateTimeKind.Unspecified), TimeSpan.Zero),
                 BigEndianDecimalValue = 1,
                 LittleEndianDecimalValue = 1,
                 BigEndianDoubleValue = 2,
@@ -49,6 +54,10 @@
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x01,
                     0x01, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
+                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+                    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00,
+                    0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
                     0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                     0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -72,6 +81,10 @@
             Assert.Equal(2, obj.LittleEndianLongValue);
             Assert.Equal(2, obj.BigEndianShortValue);
             Assert.Equal(2, obj.LittleEndianShortValue);
+            Assert.Equal(2, obj.BigEndianDateTimeValue.Ticks);
+            Assert.Equal(2, obj.LittleEndianDateTimeValue.Ticks);
+            Assert.Equal(2, obj.BigEndianDateTimeOffsetValue.Ticks);
+            Assert.Equal(2, obj.LittleEndianDateTimeOffsetValue.Ticks);
             Assert.Equal(2, obj.BigEndianDecimalValue);
             Assert.Equal(2, obj.LittleEndianDecimalValue);
             Assert.Equal(2, obj.BigEndianDoubleValue);
@@ -98,7 +111,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(84)]
+        [Map(120)]
         internal class BinaryAttributeObject
         {
             [MapBinary(0)]
@@ -120,21 +133,33 @@
             public short LittleEndianShortValue { get; set; }
 
             [MapBinary(28)]
+            public DateTime BigEndianDateTimeValue { get; set; }
+
+            [MapBinary(36, Endian = Endian.Little)]
+            public DateTime LittleEndianDateTimeValue { get; set; }
+
+            [MapBinary(44)]
+            public DateTimeOffset BigEndianDateTimeOffsetValue { get; set; }
+
+            [MapBinary(54, Endian = Endian.Little)]
+            public DateTimeOffset LittleEndianDateTimeOffsetValue { get; set; }
+
+            [MapBinary(64)]
             public decimal BigEndianDecimalValue { get; set; }
 
-            [MapBinary(44, Endian = Endian.Little)]
+            [MapBinary(80, Endian = Endian.Little)]
             public decimal LittleEndianDecimalValue { get; set; }
 
-            [MapBinary(60)]
+            [MapBinary(96)]
             public double BigEndianDoubleValue { get; set; }
 
-            [MapBinary(68, Endian = Endian.Little)]
+            [MapBinary(104, Endian = Endian.Little)]
             public double LittleEndianDoubleValue { get; set; }
 
-            [MapBinary(76)]
+            [MapBinary(112)]
             public float BigEndianFloatValue { get; set; }
 
-            [MapBinary(80, Endian = Endian.Little)]
+            [MapBinary(116, Endian = Endian.Little)]
             public float LittleEndianFloatValue { get; set; }
         }
     }
