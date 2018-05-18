@@ -4,7 +4,7 @@
     using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
-    internal static class ByteHelper4
+    internal static partial class ByteHelper4
     {
         private const byte Num0 = (byte)'0';
 
@@ -606,27 +606,27 @@
 
                     if (part == FormatYear)
                     {
-                        FormatDateTimePart(pBase, year, length);
+                        FormatDateTimePart4(pBase, year, length);
                     }
                     else if (part == FormatMonth)
                     {
-                        FormatDateTimePart(pBase, month, length);
+                        FormatDateTimePart2(pBase, month, length);
                     }
                     else if (part == FormatDay)
                     {
-                        FormatDateTimePart(pBase, day, length);
+                        FormatDateTimePart2(pBase, day, length);
                     }
                     else if (part == FormatHour)
                     {
-                        FormatDateTimePart(pBase, dateTime.Hour, length);
+                        FormatDateTimePart2(pBase, dateTime.Hour, length);
                     }
                     else if (part == FormatMinute)
                     {
-                        FormatDateTimePart(pBase, dateTime.Minute, length);
+                        FormatDateTimePart2(pBase, dateTime.Minute, length);
                     }
                     else if (part == FormatSecond)
                     {
-                        FormatDateTimePart(pBase, dateTime.Second, length);
+                        FormatDateTimePart2(pBase, dateTime.Second, length);
                     }
                     else if (part == FormatMillisecond)
                     {
@@ -646,39 +646,114 @@
             }
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void FormatDateTimePart(byte* pBytes, int value, int length)
-        {
-            // TODO Table?
-            var offset = length - 1;
-            for (var j = 0; j < length - 1; j++)
-            {
-                OperationHelper.DivMod10Signed(value, out var div, out var mod);
-                *(pBytes + offset--) = (byte)(Num0 + mod);
-                value = div;
-            }
+        //[MethodImpl(MethodImplOptions.AggressiveInlining)]
+        //private static unsafe void FormatDateTimePart(byte* pBytes, int value, int length)
+        //{
+        //    var offset = length - 1;
+        //    for (var j = 0; j < length - 1; j++)
+        //    {
+        //        OperationHelper.DivMod10Signed(value, out var div, out var mod);
+        //        *(pBytes + offset--) = (byte)(Num0 + mod);
+        //        value = div;
+        //    }
 
-            *(pBytes + offset) = (byte)(Num0 + value);
+        //    *(pBytes + offset) = (byte)(Num0 + value);
+        //}
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void FormatDateTimePart4(byte* pBytes, int value, int length)
+        {
+            if (length == 4)
+            {
+                var hi = Table[value / 100];
+                var lo = Table[value % 100];
+                *pBytes = hi[0];
+                *(pBytes + 1) = hi[1];
+                *(pBytes + 2) = lo[0];
+                *(pBytes + 3) = lo[1];
+            }
+            else if (length == 2)
+            {
+                var lo = Table[value % 100];
+                *pBytes = lo[0];
+                *(pBytes + 1) = lo[1];
+            }
+            else if (length > 4)
+            {
+                var offset = 0;
+                for (var i = 0; i < length - 4; i++)
+                {
+                    *(pBytes + offset++) = Num0;
+                }
+
+                var hi = Table[value / 100];
+                var lo = Table[value % 100];
+                *(pBytes + offset++) = hi[0];
+                *(pBytes + offset++) = hi[1];
+                *(pBytes + offset++) = lo[0];
+                *(pBytes + offset) = lo[1];
+            }
+            else if (length == 3)
+            {
+                var hi = Table[value / 100];
+                var lo = Table[value % 100];
+                *pBytes = hi[1];
+                *(pBytes + 1) = lo[0];
+                *(pBytes + 2) = lo[1];
+            }
+            else
+            {
+                *pBytes = (byte)(Num0 + (value % 10));
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe void FormatDateTimePart2(byte* pBytes, int value, int length)
+        {
+            if (length == 2)
+            {
+                var bytes = Table[value];
+                *pBytes = bytes[0];
+                *(pBytes + 1) = bytes[1];
+            }
+            else if (length > 2)
+            {
+                var offset = 0;
+                for (var i = 0; i < length - 2; i++)
+                {
+                    *(pBytes + offset++) = Num0;
+                }
+
+                var bytes = Table[value];
+                *(pBytes + offset++) = bytes[0];
+                *(pBytes + offset) = bytes[1];
+            }
+            else
+            {
+                var bytes = Table[value];
+                *pBytes = bytes[1];
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void FormatDateTimeMillisecond(byte* pBytes, int value, int length)
         {
-            // TODO Table?
-            *pBytes = (byte)(Num0 + (value / 100));
-            value = value % 100;
-
-            // TODO length?
-            if (length > 1)
+            if (length == 3)
             {
-                OperationHelper.DivMod10Signed(value, out var div, out var mod);
-                *(pBytes + 1) = (byte)(Num0 + div);
-                value = mod;
+                var lo = Table[value % 100];
+                *pBytes = (byte)(Num0 + (value / 100));
+                *(pBytes + 1) = lo[0];
+                *(pBytes + 2) = lo[1];
             }
-
-            if (length > 2)
+            else if (length == 2)
             {
-                *(pBytes + 2) = (byte)(Num0 + value);
+                var lo = Table[value % 100];
+                *pBytes = (byte)(Num0 + (value / 100));
+                *(pBytes + 1) = lo[0];
+            }
+            else
+            {
+                *pBytes = (byte)(Num0 + (value / 100));
             }
         }
 

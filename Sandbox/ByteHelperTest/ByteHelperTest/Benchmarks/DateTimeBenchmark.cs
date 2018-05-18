@@ -17,29 +17,9 @@
 
         private ByteHelper4.DateTimeEntry[] entries17B;
 
-        //private ByteHelper4.IDateTimeBlockConverter[] converters8A;
-
-        //private ByteHelper4.IDateTimeBlockConverter[] converters17A;
-
         [GlobalSetup]
         public void Setup()
         {
-            //converters8A = new ByteHelper4.IDateTimeBlockConverter[]
-            //{
-            //    new ByteHelper4.Year4BlockConverter(0),
-            //    new ByteHelper4.Month2BlockConverter(4),
-            //    new ByteHelper4.Day2BlockConverter(6)
-            //};
-            //converters17A = new ByteHelper4.IDateTimeBlockConverter[]
-            //{
-            //    new ByteHelper4.Year4BlockConverter(0),
-            //    new ByteHelper4.Month2BlockConverter(4),
-            //    new ByteHelper4.Day2BlockConverter(6),
-            //    new ByteHelper4.Hour2BlockConverter(8),
-            //    new ByteHelper4.Minute2BlockConverter(10),
-            //    new ByteHelper4.Second2BlockConverter(12),
-            //    new ByteHelper4.Millisecond3BlockConverter(14),
-            //};
             entries8B = ByteHelper4.ParseDateTimeFormat("yyyyMMdd", out _);
             entries17B = ByteHelper4.ParseDateTimeFormat("yyyyMMddHHmmssfff", out _);
         }
@@ -48,51 +28,51 @@
         // Parse
         //--------------------------------------------------------------------------------
 
-        [Benchmark]
-        public void ParseDefault17()
-        {
-            DateTime.TryParseExact(Encoding.ASCII.GetString(Bytes17), "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var _);
-        }
+        //[Benchmark]
+        //public void ParseDefault17()
+        //{
+        //    DateTime.TryParseExact(Encoding.ASCII.GetString(Bytes17), "yyyyMMddHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.None, out var _);
+        //}
 
-        [Benchmark]
-        public void ParseCustom8()
-        {
-            ByteHelper4.TryParseDateTime(Bytes17, 0, "yyyyMMdd", DateTimeKind.Unspecified, out _);
-        }
+        //[Benchmark]
+        //public void ParseCustom8()
+        //{
+        //    ByteHelper4.TryParseDateTime(Bytes17, 0, "yyyyMMdd", DateTimeKind.Unspecified, out _);
+        //}
 
-        [Benchmark]
-        public void ParseCustom8B()
-        {
-            ByteHelper4.TryParseDateTime2(Bytes17, 0, entries8B, DateTimeKind.Unspecified, out _);
-        }
+        //[Benchmark]
+        //public void ParseCustom8B()
+        //{
+        //    ByteHelper4.TryParseDateTime2(Bytes17, 0, entries8B, DateTimeKind.Unspecified, out _);
+        //}
 
-        [Benchmark]
-        public void ParseCustom17()
-        {
-            ByteHelper4.TryParseDateTime(Bytes17, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out _);
-        }
+        //[Benchmark]
+        //public void ParseCustom17()
+        //{
+        //    ByteHelper4.TryParseDateTime(Bytes17, 0, "yyyyMMddHHmmssfff", DateTimeKind.Unspecified, out _);
+        //}
 
-        [Benchmark]
-        public void ParseCustom17B()
-        {
-            ByteHelper4.TryParseDateTime2(Bytes17, 0, entries17B, DateTimeKind.Unspecified, out _);
-        }
+        //[Benchmark]
+        //public void ParseCustom17B()
+        //{
+        //    ByteHelper4.TryParseDateTime2(Bytes17, 0, entries17B, DateTimeKind.Unspecified, out _);
+        //}
 
         //--------------------------------------------------------------------------------
         // Format
         //--------------------------------------------------------------------------------
 
-        [Benchmark]
-        public void FormatDefault17()
-        {
-            Encoding.ASCII.GetBytes(Date.ToString("yyyyMMddHHmmssfff"));
-        }
+        //[Benchmark]
+        //public void FormatDefault17()
+        //{
+        //    Encoding.ASCII.GetBytes(Date.ToString("yyyyMMddHHmmssfff"));
+        //}
 
-        [Benchmark]
-        public void FormatCustom8()
-        {
-            ByteHelper4.FormatDateTime(Bytes17, 0, "yyyyMMdd", Date);
-        }
+        //[Benchmark]
+        //public void FormatCustom8()
+        //{
+        //    ByteHelper4.FormatDateTime(Bytes17, 0, "yyyyMMdd", Date);
+        //}
 
         [Benchmark]
         public void FormatCustom8B()
@@ -100,11 +80,11 @@
             ByteHelper4.FormatDateTime2(Bytes17, 0, true, entries8B, Date);
         }
 
-        [Benchmark]
-        public void FormatCustom17()
-        {
-            ByteHelper4.FormatDateTime(Bytes17, 0, "yyyyMMddHHmmssfff", Date);
-        }
+        //[Benchmark]
+        //public void FormatCustom17()
+        //{
+        //    ByteHelper4.FormatDateTime(Bytes17, 0, "yyyyMMddHHmmssfff", Date);
+        //}
 
         [Benchmark]
         public void FormatCustom17B()

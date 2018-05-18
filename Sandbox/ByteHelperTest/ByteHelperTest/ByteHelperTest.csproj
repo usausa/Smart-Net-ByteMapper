@@ -34,6 +34,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="ByteHelper4.Generate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ByteHelper4.Generate.tt</DependentUpon>
+    </Compile>
     <Compile Update="DigitTable.Generate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -47,6 +52,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ByteHelper4.Generate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ByteHelper4.Generate.cs</LastGenOutput>
+    </None>
     <None Update="DigitTable.Generate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>DigitTable.Generate.cs</LastGenOutput>
