@@ -13,7 +13,7 @@
         private const char FormatHour = 'H';
         private const char FormatMinute = 'm';
         private const char FormatSecond = 's';
-        private const char FormatMilisecond = 'f';
+        private const char FormatMillisecond = 'f';
 
         private const long TicksPerMillisecond = 10000;
         private const long TicksPerSecond = TicksPerMillisecond * 1000;
@@ -46,7 +46,7 @@
                 var hour = 0;
                 var minute = 0;
                 var second = 0;
-                var milisecond = 0;
+                var millisecond = 0;
 
                 var length = format.Length;
                 var i = 0;
@@ -119,11 +119,11 @@
                             return false;
                         }
                     }
-                    else if (c == FormatMilisecond)
+                    else if (c == FormatMillisecond)
                     {
-                        // Milisecond
-                        milisecond = ParseDateTimeMilisecond(pBytes, pFormat, length, ref i);
-                        if (milisecond < 0)
+                        // Millisecond
+                        millisecond = ParseDateTimeMillisecond(pBytes, pFormat, length, ref i);
+                        if (millisecond < 0)
                         {
                             value = default;
                             return false;
@@ -156,9 +156,9 @@
                 var y = year - 1;
                 var ticks = (((y * 365) + (y / 4) - (y / 100) + (y / 400)) + days[month - 1] + (day - 1)) * TicksPerDay;
                 ticks += (((long)hour * 3600) + ((long)minute * 60) + second) * TimeSpan.TicksPerSecond;
-                if (milisecond > 0)
+                if (millisecond > 0)
                 {
-                    ticks += milisecond * TicksPerMillisecond;
+                    ticks += millisecond * TicksPerMillisecond;
                 }
 
                 value = new DateTime(ticks, kind);
@@ -189,7 +189,7 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe int ParseDateTimeMilisecond(byte* pBytes, char* pFormat, int limit, ref int i)
+        private static unsafe int ParseDateTimeMillisecond(byte* pBytes, char* pFormat, int limit, ref int i)
         {
             var value = 0;
             var index = 0;
@@ -219,7 +219,7 @@
 
                 index++;
             }
-            while ((i < limit) && (*(pFormat + i) == FormatMilisecond));
+            while ((i < limit) && (*(pFormat + i) == FormatMillisecond));
 
             return value;
         }
@@ -258,9 +258,9 @@
                     {
                         FormatDateTimePart(pBytes, pFormat, c, dateTime.Second, length, ref i);
                     }
-                    else if (c == FormatMilisecond)
+                    else if (c == FormatMillisecond)
                     {
-                        FormatDateTimeMilisecond(pBytes, pFormat, dateTime.Millisecond, length, ref i);
+                        FormatDateTimeMillisecond(pBytes, pFormat, dateTime.Millisecond, length, ref i);
                     }
                     else
                     {
@@ -293,10 +293,10 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static unsafe void FormatDateTimeMilisecond(byte* pBytes, char* pFormat, int value, int limit, ref int i)
+        private static unsafe void FormatDateTimeMillisecond(byte* pBytes, char* pFormat, int value, int limit, ref int i)
         {
             var length = 1;
-            for (var j = i + 1; (j < limit) && (*(pFormat + j) == FormatMilisecond); j++)
+            for (var j = i + 1; (j < limit) && (*(pFormat + j) == FormatMillisecond); j++)
             {
                 length++;
             }
@@ -328,7 +328,14 @@
 
         public enum DateTimePart
         {
-            Year, Month, Day, Hour, Minute, Second, Millisecond, Other
+            Year,
+            Month,
+            Day,
+            Hour,
+            Minute,
+            Second,
+            Millisecond,
+            Other
         }
 
         public sealed class DateTimeEntry
@@ -347,8 +354,212 @@
             }
         }
 
-        public static unsafe void FormatDateTime2(byte[] bytes, int index, DateTimeEntry[] entries, DateTime dateTime)
+        //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsValidNumber(int value)
         {
+            return (value >= 0) && (value < 10);
+        }
+
+        public static unsafe bool TryParseDateTime2(byte[] bytes, int index, DateTimeEntry[] entries, DateTimeKind kind, out DateTime value)
+        {
+            fixed (byte* pBytes = &bytes[index])
+            {
+                var year = 0;
+                var month = 1;
+                var day = 1;
+                var hour = 0;
+                var minute = 0;
+                var second = 0;
+                var millisecond = 0;
+
+                var offset = 0;
+                for (var i = 0; i < entries.Length; i++)
+                {
+                    var entry = entries[i];
+                    var part = entry.Part;
+                    var length = entry.Length;
+                    var pBase = pBytes + offset;
+
+                    if (part == DateTimePart.Year)
+                    {
+                        // Year
+                        year = ParseDateTimePart(pBase, length);
+                        if (length == 2)
+                        {
+                            year += 2000;
+                        }
+
+                        if ((year > 9999) || (year < 1))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Month)
+                    {
+                        // Month
+                        month = ParseDateTimePart(pBase, length);
+                        if ((month < 1) || (month > 12))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Day)
+                    {
+                        // Day
+                        day = ParseDateTimePart(pBase, length);
+                        if (day < 1)
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Hour)
+                    {
+                        // Hour
+                        hour = ParseDateTimePart(pBase, length);
+                        if ((hour < 0) || (hour > 23))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Minute)
+                    {
+                        // Minute
+                        minute = ParseDateTimePart(pBase, length);
+                        if ((minute < 0) || (minute > 59))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Second)
+                    {
+                        // Second
+                        second = ParseDateTimePart(pBase, length);
+                        if ((second < 0) || (second > 59))
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else if (part == DateTimePart.Millisecond)
+                    {
+                        // Millisecond
+                        millisecond = ParseDateTimeMillisecond(pBase, length);
+                        if (millisecond < 0)
+                        {
+                            value = default;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        // TODO 一致の確認？
+                    }
+
+                    offset += length;
+                }
+
+                if (year == 0)
+                {
+                    year = DateTime.Now.Year;
+                }
+
+                var days = DateTime.IsLeapYear(year) ? DaysToMonth366 : DaysToMonth365;
+
+                if (day > days[month] - days[month - 1])
+                {
+                    value = default;
+                    return false;
+                }
+
+                var y = year - 1;
+                var ticks = (((y * 365) + (y / 4) - (y / 100) + (y / 400)) + days[month - 1] + (day - 1)) * TicksPerDay;
+                ticks += (((long)hour * 3600) + ((long)minute * 60) + second) * TimeSpan.TicksPerSecond;
+                if (millisecond > 0)
+                {
+                    ticks += millisecond * TicksPerMillisecond;
+                }
+
+                value = new DateTime(ticks, kind);
+                return true;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe int ParseDateTimePart(byte* pBase, int length)
+        {
+            var value = *pBase - Num0;
+            if (!IsValidNumber(value))
+            {
+                return -1;
+            }
+
+            for (var i = 1; i < length; i++)
+            {
+                var num = *(pBase + i) - Num0;
+                if (!IsValidNumber(num))
+                {
+                    return -1;
+                }
+
+                value = (value * 10) + num;
+            }
+
+            return value;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static unsafe int ParseDateTimeMillisecond(byte* pBase, int length)
+        {
+            if (length == 3)
+            {
+                var num100 = *pBase - Num0;
+                var num10 = *(pBase + 1) - Num0;
+                var num1 = *(pBase + 2) - Num0;
+                if (IsValidNumber(num100) && IsValidNumber(num10) && IsValidNumber(num1))
+                {
+                    return (num100 * 100) + (num10 * 10) + num1;
+                }
+            }
+            else if (length == 2)
+            {
+                var num100 = *pBase - Num0;
+                var num10 = *(pBase + 1) - Num0;
+                if (IsValidNumber(num100) && IsValidNumber(num10))
+                {
+                    return (num100 * 100) + (num10 * 10);
+                }
+            }
+            else if (length == 1)
+            {
+                var num = *pBase - Num0;
+                if (IsValidNumber(num))
+                {
+                    return num;
+                }
+            }
+
+            return -1;
+        }
+
+        //--------------------------------------------------------------------------------
+
+        public static unsafe void FormatDateTime2(byte[] bytes, int index, bool hasDatePart, DateTimeEntry[] entries, DateTime dateTime)
+        {
+            var year = 0;
+            var month = 0;
+            var day = 0;
+            if (hasDatePart)
+            {
+                GetDatePart(dateTime.Ticks, out year, out month, out day);
+            }
+
             fixed (byte* pBytes = &bytes[index])
             {
                 var offset = 0;
@@ -361,15 +572,15 @@
 
                     if (part == DateTimePart.Year)
                     {
-                        FormatDateTimePart(pBase, dateTime.Year, length);
+                        FormatDateTimePart(pBase, year, length);
                     }
                     else if (part == DateTimePart.Month)
                     {
-                        FormatDateTimePart(pBase, dateTime.Month, length);
+                        FormatDateTimePart(pBase, month, length);
                     }
                     else if (part == DateTimePart.Day)
                     {
-                        FormatDateTimePart(pBase, dateTime.Day, length);
+                        FormatDateTimePart(pBase, day, length);
                     }
                     else if (part == DateTimePart.Hour)
                     {
@@ -404,6 +615,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void FormatDateTimePart(byte* pBytes, int value, int length)
         {
+            // TODO Table?
             var offset = length - 1;
             for (var j = 0; j < length - 1; j++)
             {
@@ -418,6 +630,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe void FormatDateTimeMillisecond(byte* pBytes, int value, int length)
         {
+            // TODO Table?
             *pBytes = (byte)(Num0 + (value / 100));
             value = value % 100;
 
@@ -438,63 +651,59 @@
         // DateTime2(slow)
         //--------------------------------------------------------------------------------
 
-        //// Number of days in a non-leap year
-        //private const int DaysPerYear = 365;
-        //// Number of days in 4 years
-        //private const int DaysPer4Years = DaysPerYear * 4 + 1;       // 1461
-        //// Number of days in 100 years
-        //private const int DaysPer100Years = DaysPer4Years * 25 - 1;  // 36524
-        //// Number of days in 400 years
-        //private const int DaysPer400Years = DaysPer100Years * 4 + 1; // 146097
+#pragma warning disable SA1203 // Constants must appear before fields
+        // Number of days in a non-leap year
+        private const int DaysPerYear = 365;
+                              // Number of days in 4 years
+        private const int DaysPer4Years = (DaysPerYear * 4) + 1;       // 1461
+        // Number of days in 100 years
+        private const int DaysPer100Years = (DaysPer4Years * 25) - 1;  // 36524
+        // Number of days in 400 years
+        private const int DaysPer400Years = (DaysPer100Years * 4) + 1; // 146097
+#pragma warning restore SA1203 // Constants must appear before fields
 
-        //public static void GetDatePart(long ticks, out int year, out int month, out int day)
-        //{
-        //    // n = number of days since 1/1/0001
-        //    int n = (int)(ticks / TicksPerDay);
-        //    // y400 = number of whole 400-year periods since 1/1/0001
-        //    int y400 = n / DaysPer400Years;
-        //    // n = day number within 400-year period
-        //    n -= y400 * DaysPer400Years;
-        //    // y100 = number of whole 100-year periods within 400-year period
-        //    int y100 = n / DaysPer100Years;
-        //    // Last 100-year period has an extra day, so decrement result if 4
-        //    if (y100 == 4) y100 = 3;
-        //    // n = day number within 100-year period
-        //    n -= y100 * DaysPer100Years;
-        //    // y4 = number of whole 4-year periods within 100-year period
-        //    int y4 = n / DaysPer4Years;
-        //    // n = day number within 4-year period
-        //    n -= y4 * DaysPer4Years;
-        //    // y1 = number of whole years within 4-year period
-        //    int y1 = n / DaysPerYear;
-        //    // Last year has an extra day, so decrement result if 4
-        //    if (y1 == 4) y1 = 3;
-        //    // If year was requested, compute and return it
-        //    //if (part == DatePartYear)
-        //    //{
-        //    //    return y400 * 400 + y100 * 100 + y4 * 4 + y1 + 1;
-        //    //}
-        //    year = y400 * 400 + y100 * 100 + y4 * 4 + y1 + 1;
-        //    // n = day number within year
-        //    n -= y1 * DaysPerYear;
-        //    // If day-of-year was requested, return it
-        //    //if (part == DatePartDayOfYear) return n + 1;
-        //    // Leap year calculation looks different from IsLeapYear since y1, y4,
-        //    // and y100 are relative to year 1, not year 0
-        //    bool leapYear = y1 == 3 && (y4 != 24 || y100 == 3);
-        //    int[] days = leapYear ? DaysToMonth366 : DaysToMonth365;
-        //    // All months have less than 32 days, so n >> 5 is a good conservative
-        //    // estimate for the month
-        //    int m = (n >> 5) + 1;
-        //    // m = 1-based month number
-        //    while (n >= days[m]) m++;
-        //    // If month was requested, return it
-        //    //if (part == DatePartMonth) return m;
-        //    month = m;
-        //    // Return 1-based day-of-month
-        //    //return n - days[m - 1] + 1;
-        //    day = n - days[m - 1] + 1;
-        //}
+        public static void GetDatePart(long ticks, out int year, out int month, out int day)
+        {
+            var n = (int)(ticks / TicksPerDay);
+            var y400 = n / DaysPer400Years;
+
+            n -= y400 * DaysPer400Years;
+
+            var y100 = n / DaysPer100Years;
+            if (y100 == 4)
+            {
+                y100 = 3;
+            }
+
+            n -= y100 * DaysPer100Years;
+
+            var y4 = n / DaysPer4Years;
+
+            n -= y4 * DaysPer4Years;
+
+            var y1 = n / DaysPerYear;
+
+            if (y1 == 4)
+            {
+                y1 = 3;
+            }
+
+            year = (y400 * 400) + (y100 * 100) + (y4 * 4) + y1 + 1;
+
+            n -= y1 * DaysPerYear;
+
+            var leapYear = y1 == 3 && (y4 != 24 || y100 == 3);
+            var days = leapYear ? DaysToMonth366 : DaysToMonth365;
+            var m = (n >> 5) + 1;
+            while (n >= days[m])
+            {
+                m++;
+            }
+
+            month = m;
+
+            day = n - days[m - 1] + 1;
+        }
 
         ////--------------------------------------------------------------------------------
 
