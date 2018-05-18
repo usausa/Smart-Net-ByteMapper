@@ -1,6 +1,7 @@
 ﻿namespace ByteHelperTest
 {
     using System;
+    using System.Collections.Generic;
     using System.Runtime.CompilerServices;
 
     internal static class ByteHelper4
@@ -326,27 +327,15 @@
         // DateTime3
         //--------------------------------------------------------------------------------
 
-        public enum DateTimePart
-        {
-            Year,
-            Month,
-            Day,
-            Hour,
-            Minute,
-            Second,
-            Millisecond,
-            Other
-        }
-
         public sealed class DateTimeEntry
         {
-            public DateTimePart Part { get; }
+            public char Part { get; }
 
             public int Length { get; }
 
             public byte[] Bytes { get; }
 
-            public DateTimeEntry(DateTimePart part, int length, byte[] bytes)
+            public DateTimeEntry(char part, int length, byte[] bytes)
             {
                 Part = part;
                 Length = length;
@@ -355,6 +344,55 @@
         }
 
         //--------------------------------------------------------------------------------
+
+        private static bool IsDateTimeFormatChar(char c)
+        {
+            return c == FormatYear || c == FormatMonth || c == FormatDay ||
+                   c == FormatHour || c == FormatMinute || c == FormatSecond || c == FormatMillisecond;
+        }
+
+        private static bool IsDatePartChar(char c)
+        {
+            return c == FormatYear || c == FormatMonth || c == FormatDay;
+        }
+
+        public static DateTimeEntry[] ParseDateTimeFormat(string format, out bool hasDatePart)
+        {
+            hasDatePart = false;
+            var list = new List<DateTimeEntry>();
+
+            var index = 0;
+            while (index < format.Length)
+            {
+                var start = index;
+                var c = format[index++];
+                if (IsDateTimeFormatChar(c))
+                {
+                    while (index < format.Length && format[index] == c)
+                    {
+                        index++;
+                    }
+
+                    list.Add(new DateTimeEntry(c, index - start, null));
+
+                    if (IsDatePartChar(c))
+                    {
+                        hasDatePart = true;
+                    }
+                }
+                else
+                {
+                    while (index < format.Length && !IsDateTimeFormatChar(format[index]))
+                    {
+                        index++;
+                    }
+
+                    list.Add(new DateTimeEntry((char)0, index - start, null));
+                }
+            }
+
+            return list.ToArray();
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsValidNumber(int value)
@@ -382,7 +420,7 @@
                     var length = entry.Length;
                     var pBase = pBytes + offset;
 
-                    if (part == DateTimePart.Year)
+                    if (part == FormatYear)
                     {
                         // Year
                         year = ParseDateTimePart(pBase, length);
@@ -397,7 +435,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Month)
+                    else if (part == FormatMonth)
                     {
                         // Month
                         month = ParseDateTimePart(pBase, length);
@@ -407,7 +445,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Day)
+                    else if (part == FormatDay)
                     {
                         // Day
                         day = ParseDateTimePart(pBase, length);
@@ -417,7 +455,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Hour)
+                    else if (part == FormatHour)
                     {
                         // Hour
                         hour = ParseDateTimePart(pBase, length);
@@ -427,7 +465,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Minute)
+                    else if (part == FormatMinute)
                     {
                         // Minute
                         minute = ParseDateTimePart(pBase, length);
@@ -437,7 +475,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Second)
+                    else if (part == FormatSecond)
                     {
                         // Second
                         second = ParseDateTimePart(pBase, length);
@@ -447,7 +485,7 @@
                             return false;
                         }
                     }
-                    else if (part == DateTimePart.Millisecond)
+                    else if (part == FormatMillisecond)
                     {
                         // Millisecond
                         millisecond = ParseDateTimeMillisecond(pBase, length);
@@ -456,10 +494,6 @@
                             value = default;
                             return false;
                         }
-                    }
-                    else
-                    {
-                        // TODO 一致の確認？
                     }
 
                     offset += length;
@@ -570,31 +604,31 @@
                     var length = entry.Length;
                     var pBase = pBytes + offset;
 
-                    if (part == DateTimePart.Year)
+                    if (part == FormatYear)
                     {
                         FormatDateTimePart(pBase, year, length);
                     }
-                    else if (part == DateTimePart.Month)
+                    else if (part == FormatMonth)
                     {
                         FormatDateTimePart(pBase, month, length);
                     }
-                    else if (part == DateTimePart.Day)
+                    else if (part == FormatDay)
                     {
                         FormatDateTimePart(pBase, day, length);
                     }
-                    else if (part == DateTimePart.Hour)
+                    else if (part == FormatHour)
                     {
                         FormatDateTimePart(pBase, dateTime.Hour, length);
                     }
-                    else if (part == DateTimePart.Minute)
+                    else if (part == FormatMinute)
                     {
                         FormatDateTimePart(pBase, dateTime.Minute, length);
                     }
-                    else if (part == DateTimePart.Second)
+                    else if (part == FormatSecond)
                     {
                         FormatDateTimePart(pBase, dateTime.Second, length);
                     }
-                    else if (part == DateTimePart.Millisecond)
+                    else if (part == FormatMillisecond)
                     {
                         FormatDateTimeMillisecond(pBase, dateTime.Millisecond, length);
                     }
@@ -634,6 +668,7 @@
             *pBytes = (byte)(Num0 + (value / 100));
             value = value % 100;
 
+            // TODO length?
             if (length > 1)
             {
                 OperationHelper.DivMod10Signed(value, out var div, out var mod);
@@ -704,192 +739,5 @@
 
             day = n - days[m - 1] + 1;
         }
-
-        ////--------------------------------------------------------------------------------
-
-        //public struct DateTimeContext
-        //{
-        //    public int Year;
-        //    public int Month;
-        //    public int Day;
-        //    public long Ticks;
-        //}
-
-        //public unsafe interface IDateTimeBlockConverter
-        //{
-        //    // bool CanRead { get; }
-        //    //int Read(byte* pBytes);
-
-        //    void Write(byte* pBytes, ref DateTimeContext context);
-        //}
-
-        ////--------------------------------------------------------------------------------
-
-        //public sealed class Year4BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Year4BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed(context.Year, out var div, out var mod);
-        //        *(ptr + 3) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *(ptr + 2) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        *pBytes = (byte)(Num0 + div);
-        //    }
-        //}
-
-        //public sealed class Year2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Year2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed(context.Year, out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Month2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Month2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed(context.Month, out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Day2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Day2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed(context.Day, out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Hour2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Hour2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed((int)((context.Ticks / TicksPerHour) % 24), out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Minute2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Minute2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed((int)((context.Ticks / TicksPerMinute) % 60), out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Second2BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Second2BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed((int)((context.Ticks / TicksPerSecond) % 60), out var div, out var mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *ptr = (byte)(Num0 + mod);
-        //    }
-        //}
-
-        //public sealed class Millisecond3BlockConverter : IDateTimeBlockConverter
-        //{
-        //    private readonly int offset;
-
-        //    public Millisecond3BlockConverter(int offset)
-        //    {
-        //        this.offset = offset;
-        //    }
-
-        //    public unsafe void Write(byte* pBytes, ref DateTimeContext context)
-        //    {
-        //        var ptr = pBytes + offset;
-
-        //        OperationHelper.DivMod10Signed((int)((context.Ticks / TicksPerMillisecond) % 1000), out var div, out var mod);
-        //        *(ptr + 2) = (byte)(Num0 + mod);
-        //        OperationHelper.DivMod10Signed(div, out div, out mod);
-        //        *(ptr + 1) = (byte)(Num0 + mod);
-        //        *ptr = (byte)(Num0 + div);
-        //    }
-        //}
-
-        //// Number args(Func, length)
-        //// Decimal
     }
 }
