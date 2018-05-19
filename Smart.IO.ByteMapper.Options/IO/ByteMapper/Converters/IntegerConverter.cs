@@ -29,7 +29,7 @@
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 
@@ -81,7 +81,7 @@
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 
@@ -133,7 +133,7 @@
             this.padding = padding;
             this.zerofill = zerofill;
             this.filler = filler;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 

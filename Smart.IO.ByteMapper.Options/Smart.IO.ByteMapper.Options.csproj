@@ -29,6 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="IO\ByteMapper\Helpers\DateTimeByteHelper.Generate.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>DateTimeByteHelper.Generate.cs</LastGenOutput>
+    </None>
     <None Update="IO\ByteMapper\Helpers\NumberByteHelper.Generate.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>NumberByteHelper.Generate.cs</LastGenOutput>
@@ -40,6 +44,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="IO\ByteMapper\Helpers\DateTimeByteHelper.Generate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>DateTimeByteHelper.Generate.tt</DependentUpon>
+    </Compile>
     <Compile Update="IO\ByteMapper\Helpers\NumberByteHelper.Generate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

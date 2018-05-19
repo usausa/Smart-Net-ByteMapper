@@ -5,6 +5,10 @@
 
     internal static class EncodingByteHelper
     {
+        //--------------------------------------------------------------------------------
+        // ASCII
+        //--------------------------------------------------------------------------------
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe byte[] GetAsciiBytes(string str)
         {

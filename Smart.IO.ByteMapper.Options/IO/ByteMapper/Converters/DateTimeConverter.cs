@@ -6,7 +6,11 @@
 
     internal sealed class DateTimeConverter : IMapConverter
     {
-        private readonly string format;
+        private readonly int length;
+
+        private readonly bool hasDatePart;
+
+        private readonly DateTimeFormatEntry[] entries;
 
         private readonly DateTimeKind kind;
 
@@ -16,7 +20,8 @@
 
         public DateTimeConverter(string format, DateTimeKind kind, byte filler, Type type)
         {
-            this.format = format;
+            length = format.Length;
+            entries = DateTimeByteHelper.ParseDateTimeFormat(format, out hasDatePart);
             this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
@@ -24,7 +29,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            return DateTimeByteHelper.TryParseDateTime(buffer, index, format, kind, out var result)
+            return DateTimeByteHelper.TryParseDateTime(buffer, index, entries, kind, out var result)
                 ? result
                 : defaultValue;
         }
@@ -33,18 +38,22 @@
         {
             if (value == null)
             {
-                BytesHelper.Fill(buffer, index, format.Length, filler);
+                BytesHelper.Fill(buffer, index, length, filler);
             }
             else
             {
-                DateTimeByteHelper.FormatDateTime(buffer, index, format, (DateTime)value);
+                DateTimeByteHelper.FormatDateTime(buffer, index, hasDatePart, entries, (DateTime)value);
             }
         }
     }
 
     internal sealed class DateTimeOffsetConverter : IMapConverter
     {
-        private readonly string format;
+        private readonly int length;
+
+        private readonly bool hasDatePart;
+
+        private readonly DateTimeFormatEntry[] entries;
 
         private readonly DateTimeKind kind;
 
@@ -54,7 +63,8 @@
 
         public DateTimeOffsetConverter(string format, DateTimeKind kind, byte filler, Type type)
         {
-            this.format = format;
+            length = format.Length;
+            entries = DateTimeByteHelper.ParseDateTimeFormat(format, out hasDatePart);
             this.kind = kind;
             this.filler = filler;
             defaultValue = type.GetDefaultValue();
@@ -62,7 +72,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            if (DateTimeByteHelper.TryParseDateTime(buffer, index, format, kind, out var result))
+            if (DateTimeByteHelper.TryParseDateTime(buffer, index, entries, kind, out var result))
             {
                 if (kind == DateTimeKind.Unspecified)
                 {
@@ -89,11 +99,11 @@
         {
             if (value == null)
             {
-                BytesHelper.Fill(buffer, index, format.Length, filler);
+                BytesHelper.Fill(buffer, index, length, filler);
             }
             else
             {
-                DateTimeByteHelper.FormatDateTime(buffer, index, format, ((DateTimeOffset)value).UtcDateTime);
+                DateTimeByteHelper.FormatDateTime(buffer, index, hasDatePart, entries, ((DateTimeOffset)value).UtcDateTime);
             }
         }
     }

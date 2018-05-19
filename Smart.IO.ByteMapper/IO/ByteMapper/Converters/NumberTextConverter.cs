@@ -47,7 +47,7 @@
             this.filler = filler;
             this.style = style;
             this.provider = provider;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 
@@ -123,7 +123,7 @@
             this.filler = filler;
             this.style = style;
             this.provider = provider;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 
@@ -199,7 +199,7 @@
             this.filler = filler;
             this.style = style;
             this.provider = provider;
-            convertEnumType = BytesHelper.GetConvertEnumType(type);
+            convertEnumType = EnumHelper.GetConvertEnumType(type);
             defaultValue = type.GetDefaultValue();
         }
 

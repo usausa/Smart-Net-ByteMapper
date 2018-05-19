@@ -23,6 +23,22 @@
         private const int NegativeBitFlag = unchecked((int)0x80000000);
 
         //--------------------------------------------------------------------------------
+        // Helper
+        //--------------------------------------------------------------------------------
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int Min(int x, int y)
+        {
+            return x < y ? x : y;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static bool IsValidNumber(int value)
+        {
+            return (value >= 0) && (value < 10);
+        }
+
+        //--------------------------------------------------------------------------------
         // Integer
         //--------------------------------------------------------------------------------
 
@@ -66,7 +82,7 @@
                 while (i < length)
                 {
                     var num = *(pBytes + i) - Num0;
-                    if ((num >= 0) && (num < 10))
+                    if (IsValidNumber(num))
                     {
                         value = (value * 10) + num;
                         i++;
@@ -348,7 +364,7 @@
                 while (i < length)
                 {
                     var num = *(pBytes + i) - 0x30;
-                    if ((num >= 0) && (num < 10))
+                    if (IsValidNumber(num))
                     {
                         if (!mantissa.Multiply10AndAdd((ulong)num))
                         {
@@ -391,7 +407,7 @@
                     while (i < length)
                     {
                         var num = *(pBytes + i) - 0x30;
-                        if ((num >= 0) && (num < 10))
+                        if (IsValidNumber(num))
                         {
                             if (count >= 29)
                             {
@@ -687,16 +703,6 @@
             }
 
             hi = hi + Table[baseIndex + 1] + carry;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int Min(int x, int y)
-        {
-            return x < y ? x : y;
         }
     }
 }
