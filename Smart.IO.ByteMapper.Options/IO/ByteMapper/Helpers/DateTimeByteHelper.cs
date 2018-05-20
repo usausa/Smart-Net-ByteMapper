@@ -151,20 +151,9 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsValidNumberAndFix(ref int value)
+        private static bool IsValidNumber(int value)
         {
-            if ((value >= 0) && (value < 10))
-            {
-                return true;
-            }
-
-            if (value == SpaceDiff)
-            {
-                value = 0;
-                return true;
-            }
-
-            return false;
+            return (value >= 0) && (value < 10);
         }
 
         //--------------------------------------------------------------------------------
@@ -299,21 +288,33 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static unsafe int ParseDateTimePart(byte* pBase, int length)
         {
-            var value = *pBase - Num0;
-            if (!IsValidNumberAndFix(ref value))
+            var i = 0;
+
+            int num;
+            while ((num = *(pBase + i) - Num0) == SpaceDiff)
+            {
+                i++;
+            }
+
+            if (!IsValidNumber(num))
             {
                 return -1;
             }
 
-            for (var i = 1; i < length; i++)
+            var value = num;
+            i++;
+
+            while (i < length)
             {
-                var num = *(pBase + i) - Num0;
-                if (!IsValidNumberAndFix(ref num))
+                num = *(pBase + i) - Num0;
+                if (!IsValidNumber(num))
                 {
                     return -1;
                 }
 
                 value = (value * 10) + num;
+
+                i++;
             }
 
             return value;
@@ -327,7 +328,7 @@
                 var num100 = *pBase - Num0;
                 var num10 = *(pBase + 1) - Num0;
                 var num1 = *(pBase + 2) - Num0;
-                if (IsValidNumberAndFix(ref num100) && IsValidNumberAndFix(ref num10) && IsValidNumberAndFix(ref num1))
+                if (IsValidNumber(num100) && IsValidNumber(num10) && IsValidNumber(num1))
                 {
                     return (num100 * 100) + (num10 * 10) + num1;
                 }
@@ -336,7 +337,7 @@
             {
                 var num100 = *pBase - Num0;
                 var num10 = *(pBase + 1) - Num0;
-                if (IsValidNumberAndFix(ref num100) && IsValidNumberAndFix(ref num10))
+                if (IsValidNumber(num100) && IsValidNumber(num10))
                 {
                     return (num100 * 100) + (num10 * 10);
                 }
@@ -344,7 +345,7 @@
             else if (length == 1)
             {
                 var num100 = *pBase - Num0;
-                if (IsValidNumberAndFix(ref num100))
+                if (IsValidNumber(num100))
                 {
                     return num100 * 100;
                 }

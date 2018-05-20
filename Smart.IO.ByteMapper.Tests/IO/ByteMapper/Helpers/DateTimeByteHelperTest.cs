@@ -40,11 +40,6 @@
             Assert.True(DateTimeByteHelper.TryParseDateTime(buffer, 0, DateTimeByteHelper.ParseDateTimeFormat("yyyyMMddHHmmssf", out _), DateTimeKind.Unspecified, out value));
             Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 100), value);
 
-            // Long ms
-            buffer = Encoding.ASCII.GetBytes("219912312359591  ");
-            Assert.True(DateTimeByteHelper.TryParseDateTime(buffer, 0, DateTimeByteHelper.ParseDateTimeFormat("yyyyMMddHHmmssfff", out _), DateTimeKind.Unspecified, out value));
-            Assert.Equal(new DateTime(2199, 12, 31, 23, 59, 59, 100), value);
-
             // Space
             buffer = Encoding.ASCII.GetBytes("   1 1 1 0 0 0000");
             Assert.True(DateTimeByteHelper.TryParseDateTime(buffer, 0, DateTimeByteHelper.ParseDateTimeFormat("yyyyMMddHHmmssfff", out _), DateTimeKind.Unspecified, out value));
