@@ -44,7 +44,7 @@
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void GetDatePart(long ticks, out int year, out int month, out int day)
+        internal static void GetDatePart(long ticks, out int year, out int month, out int day)
         {
             var n = (int)(ticks / TicksPerDay);
             var y400 = n / DaysPer400Years;
