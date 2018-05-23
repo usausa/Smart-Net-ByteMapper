@@ -153,7 +153,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool IsValidNumber(int value)
         {
-            return (value >= 0) && (value < 10);
+            return (uint)value < 10;
         }
 
         //--------------------------------------------------------------------------------
