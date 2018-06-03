@@ -6,6 +6,7 @@
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -51,7 +52,7 @@
                 options.InputFormatters.Add(new ByteMapperInputFormatter(config));
 
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
-            });
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             // Swagger
             services.AddSwaggerGen(options =>
@@ -65,7 +66,6 @@
         {
             if (env.IsDevelopment())
             {
-                app.UseBrowserLink();
                 app.UseDeveloperExceptionPage();
             }
             else
