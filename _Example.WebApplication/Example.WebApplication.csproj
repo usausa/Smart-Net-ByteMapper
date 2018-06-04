@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="2.6.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.0" PrivateAssets="All" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="2.4.0" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0" />
+    <PackageReference Include="Usa.Smart.AspNetCore" Version="1.1.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.5.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Smart.IO.ByteMapper.AspNetCore\Smart.IO.ByteMapper.AspNetCore.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
+  </ItemGroup>
+
+</Project>
