@@ -181,15 +181,15 @@
 
         // Type
 
-        public static ITypeConfigSyntax<T> UseDelimitter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
+        public static ITypeConfigSyntax<T> UseDelimiter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
         {
             if ((value != null) && (value.Length > 0))
             {
-                syntax.UseDelimitter(true).TypeDelimiter(value);
+                syntax.UseDelimiter(true).TypeDelimiter(value);
             }
             else
             {
-                syntax.UseDelimitter(false).TypeDelimiter(null);
+                syntax.UseDelimiter(false).TypeDelimiter(null);
             }
 
             return syntax;

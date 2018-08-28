@@ -106,7 +106,7 @@
             buffer = Encoding.ASCII.GetBytes("20000101000060000");
             Assert.False(DateTimeByteHelper.TryParseDateTime(buffer, 0, DateTimeByteHelper.ParseDateTimeFormat("yyyyMMddHHmmssfff", out _), DateTimeKind.Unspecified, out value));
 
-            // Invalid Milisecond
+            // Invalid Millisecond
             buffer = Encoding.ASCII.GetBytes("20000101000000***");
             Assert.False(DateTimeByteHelper.TryParseDateTime(buffer, 0, DateTimeByteHelper.ParseDateTimeFormat("yyyyMMddHHmmssfff", out _), DateTimeKind.Unspecified, out value));
 

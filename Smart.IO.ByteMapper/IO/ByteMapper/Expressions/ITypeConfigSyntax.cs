@@ -15,7 +15,7 @@
 
         ITypeConfigSyntax<T> AutoFiller(bool value);
 
-        ITypeConfigSyntax<T> UseDelimitter(bool value);
+        ITypeConfigSyntax<T> UseDelimiter(bool value);
 
         // Type default
 

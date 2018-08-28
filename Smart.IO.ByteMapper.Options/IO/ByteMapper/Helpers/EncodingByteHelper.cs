@@ -140,15 +140,15 @@
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FillUnicode(byte[] byets, int index, int length, char filler)
+        public static void FillUnicode(byte[] bytes, int index, int length, char filler)
         {
             var filler1 = (byte)(filler & 0xff);
             var filler2 = (byte)((filler >> 8) & 0xff);
 
             for (var i = 0; i < length; i += 2)
             {
-                byets[index++] = filler1;
-                byets[index++] = filler2;
+                bytes[index++] = filler1;
+                bytes[index++] = filler2;
             }
         }
     }

@@ -25,7 +25,7 @@
 
         private bool autoFiller = true;
 
-        private bool useDelimitter = true;
+        private bool useDelimiter = true;
 
         private int lastOffset;
 
@@ -66,9 +66,9 @@
             return this;
         }
 
-        public ITypeConfigSyntax<T> UseDelimitter(bool value)
+        public ITypeConfigSyntax<T> UseDelimiter(bool value)
         {
-            useDelimitter = value;
+            useDelimiter = value;
             return this;
         }
 
@@ -197,7 +197,7 @@
                 size,
                 Type.FullName,
                 validation,
-                useDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
+                useDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
                 autoFiller ? (byte?)filler : null);
 
             return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());

@@ -127,7 +127,7 @@
             [MapNumberText(4, 4)]
             public int? NullableIntValue { get; set; }
 
-            [MapNumberText(8, 4, Format = "D2", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(8, 4, Format = "D2", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invariant)]
             public int CustomIntValue { get; set; }
 
             // long
@@ -138,7 +138,7 @@
             [MapNumberText(18, 6)]
             public long? NullableLongValue { get; set; }
 
-            [MapNumberText(24, 6, Format = "D2", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(24, 6, Format = "D2", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invariant)]
             public long CustomLongValue { get; set; }
 
             // short
@@ -149,7 +149,7 @@
             [MapNumberText(32, 2)]
             public short? NullableShortValue { get; set; }
 
-            [MapNumberText(34, 2, Format = "D1", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(34, 2, Format = "D1", EncodingName = "ASCII", Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invariant)]
             public short CustomShortValue { get; set; }
 
             // decimal
@@ -160,7 +160,7 @@
             [MapNumberText(42, 6)]
             public decimal? NullableDecimalValue { get; set; }
 
-            [MapNumberText(48, 6, Format = "0.00", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invaliant)]
+            [MapNumberText(48, 6, Format = "0.00", CodePage = 20127, Trim = true, Padding = Padding.Right, Filler = (byte)'_', Style = NumberStyles.Any, Culture = Culture.Invariant)]
             public decimal CustomDecimalValue { get; set; }
         }
     }

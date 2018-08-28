@@ -16,7 +16,7 @@
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            context.HttpContext.Items[Consts.ProfileKey] = profile;
+            context.HttpContext.Items[Const.ProfileKey] = profile;
         }
     }
 }

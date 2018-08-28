@@ -34,7 +34,7 @@
 
         public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
-            var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : Profile.Default;
+            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
 
             var reader = readerCache.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
 

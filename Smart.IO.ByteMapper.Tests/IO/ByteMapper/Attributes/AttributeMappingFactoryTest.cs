@@ -42,7 +42,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(6, UseDelimitter = false)]
+        [Map(6, UseDelimiter = false)]
         internal class OverlapObject
         {
             [MapBinary(0)]
@@ -52,14 +52,14 @@
             public int IntValue2 { get; set; }
         }
 
-        [Map(1, UseDelimitter = false)]
+        [Map(1, UseDelimiter = false)]
         internal class UnmatchedObject
         {
             [MapBinary(0)]
             public string StringValue { get; set; }
         }
 
-        [Map(4, UseDelimitter = false)]
+        [Map(4, UseDelimiter = false)]
         internal class NoArrayObject
         {
             [MapArray(1)]
@@ -67,7 +67,7 @@
             public int ArrayValue { get; set; }
         }
 
-        [Map(4, UseDelimitter = false)]
+        [Map(4, UseDelimiter = false)]
         internal class ArrayUnmatchedObject
         {
             [MapArray(1)]

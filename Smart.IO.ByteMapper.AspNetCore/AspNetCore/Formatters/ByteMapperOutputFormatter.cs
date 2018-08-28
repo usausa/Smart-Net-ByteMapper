@@ -37,7 +37,7 @@
                 return;
             }
 
-            var profile = context.HttpContext.Items.TryGetValue(Consts.ProfileKey, out var value) ? value as string : Profile.Default;
+            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
 
             var writer = writerCache.AddIfNotExist(new MapperKey(context.ObjectType, profile), CreateWriter);
 

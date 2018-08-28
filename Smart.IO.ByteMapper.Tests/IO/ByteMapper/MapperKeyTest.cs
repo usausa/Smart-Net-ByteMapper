@@ -13,19 +13,19 @@
             // Compare to null
             Assert.False(key1.Equals(null));
 
-            // Compar to self
+            // Compare to self
             Assert.True(key1.Equals(key1B));
 
-            // Compar to same
+            // Compare to same
             Assert.True(key1.Equals(new MapperKey(typeof(object), string.Empty)));
 
-            // Compar to different type
+            // Compare to different type
             Assert.False(key1.Equals(new MapperKey(typeof(string), string.Empty)));
 
-            // Compar to different name
+            // Compare to different name
             Assert.False(key1.Equals(new MapperKey(typeof(object), "x")));
 
-            // Compar to another type
+            // Compare to another type
             Assert.False(key1.Equals(new object()));
         }
     }

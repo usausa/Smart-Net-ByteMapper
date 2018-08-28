@@ -45,7 +45,7 @@
                 mapAttribute.Size,
                 Type.FullName,
                 validation,
-                mapAttribute.UseDelimitter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
+                mapAttribute.UseDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
                 mapAttribute.AutoFiller ? (byte?)filler : null);
 
             return new Mapping(

@@ -79,42 +79,42 @@
         }
 
         //--------------------------------------------------------------------------------
-        // Delimitter
+        // Delimiter
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapUseDelimitter()
+        public void MapUseDelimiter()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultFiller(0x00)
                 .DefaultDelimiter(0xCC)
-                .CreateMapByExpression<TypeDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(0xFF))
-                .CreateMapByExpression<DefaultDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(true))
-                .CreateMapByExpression<NoDelimitterObject>(2, c => c.AutoFiller(false).UseDelimitter(null))
+                .CreateMapByExpression<TypeDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(0xFF))
+                .CreateMapByExpression<DefaultDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(true))
+                .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(null))
                 .ToMapperFactory();
-            var typeMapper = mapperFactory.Create<TypeDelimitterObject>();
-            var defaultMapper = mapperFactory.Create<DefaultDelimitterObject>();
-            var noMapper = mapperFactory.Create<NoDelimitterObject>();
+            var typeMapper = mapperFactory.Create<TypeDelimiterObject>();
+            var defaultMapper = mapperFactory.Create<DefaultDelimiterObject>();
+            var noMapper = mapperFactory.Create<NoDelimiterObject>();
 
             // Write
-            Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimitterObject()));
+            Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimiterObject()));
 
-            Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimitterObject()));
+            Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimiterObject()));
 
             var buffer = new byte[noMapper.Size].Fill(0x11);
-            noMapper.ToByte(buffer, 0, new NoDelimitterObject());
+            noMapper.ToByte(buffer, 0, new NoDelimiterObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }
 
-        internal class TypeDelimitterObject
+        internal class TypeDelimiterObject
         {
         }
 
-        internal class DefaultDelimitterObject
+        internal class DefaultDelimiterObject
         {
         }
 
-        internal class NoDelimitterObject
+        internal class NoDelimiterObject
         {
         }
 

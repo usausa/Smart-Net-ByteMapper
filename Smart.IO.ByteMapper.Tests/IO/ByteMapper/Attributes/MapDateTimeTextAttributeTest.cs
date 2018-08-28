@@ -99,7 +99,7 @@
             [MapDateTimeText(8, 8, "yyyyMMdd")]
             public DateTime? NullableDateTimeValue { get; set; }
 
-            [MapDateTimeText(16, 14, "yyyyMMddHHmmss", EncodingName = "ASCII", Filler = (byte)'_', Style = DateTimeStyles.None, Culture = Culture.Invaliant)]
+            [MapDateTimeText(16, 14, "yyyyMMddHHmmss", EncodingName = "ASCII", Filler = (byte)'_', Style = DateTimeStyles.None, Culture = Culture.Invariant)]
             public DateTime? CustomDateTimeValue { get; set; }
 
             [MapDateTimeText(30, 8, "yyyyMMdd")]
@@ -108,7 +108,7 @@
             [MapDateTimeText(38, 8, "yyyyMMdd")]
             public DateTimeOffset? NullableDateTimeOffsetValue { get; set; }
 
-            [MapDateTimeText(46, 14, "yyyyMMddHHmmss", CodePage = 20127, Filler = (byte)'_', Style = DateTimeStyles.None, Culture = Culture.Invaliant)]
+            [MapDateTimeText(46, 14, "yyyyMMddHHmmss", CodePage = 20127, Filler = (byte)'_', Style = DateTimeStyles.None, Culture = Culture.Invariant)]
             public DateTimeOffset? CustomDateTimeOffsetValue { get; set; }
         }
     }

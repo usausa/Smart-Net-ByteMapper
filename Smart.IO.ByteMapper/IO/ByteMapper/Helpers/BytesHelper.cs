@@ -73,11 +73,11 @@
         //--------------------------------------------------------------------------------
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Fill(byte[] byets, int index, int length, byte value)
+        public static void Fill(byte[] bytes, int index, int length, byte value)
         {
             for (var i = 0; i < length; i++)
             {
-                byets[index + i] = value;
+                bytes[index + i] = value;
             }
         }
 

@@ -23,10 +23,10 @@
             // Default index
             mapper.FromByte(buffer, new TargetObject());
 
-            // Mutliple factory
+            // Multiple factory
             Assert.Single(mapper.FromByteMultiple(buffer, () => new TargetObject()));
 
-            // Mutliple index factory
+            // Multiple index factory
             Assert.Single(mapper.FromByteMultiple(buffer, 0, () => new TargetObject()));
 
             // Multiple IEnumerable factory
@@ -87,10 +87,10 @@
             // Default index
             mapper.FromByte(buffer, new TargetObject());
 
-            // Mutliple factory
+            // Multiple factory
             Assert.Single(mapper.FromByteMultiple(buffer, () => new TargetObject()));
 
-            // Mutliple index factory
+            // Multiple index factory
             Assert.Single(mapper.FromByteMultiple(buffer, 0, () => new TargetObject()));
 
             // Multiple IEnumerable factory
@@ -182,7 +182,7 @@
             return mapperFactory.Create(type);
         }
 
-        [Map(4, UseDelimitter = false)]
+        [Map(4, UseDelimiter = false)]
         internal class TargetObject
         {
             [MapBinary(0)]

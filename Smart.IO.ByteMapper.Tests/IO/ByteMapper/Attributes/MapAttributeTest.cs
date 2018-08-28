@@ -83,46 +83,46 @@
         }
 
         //--------------------------------------------------------------------------------
-        // Delimitter
+        // Delimiter
         //--------------------------------------------------------------------------------
 
         [Fact]
-        public void MapUseDelimitter()
+        public void MapUseDelimiter()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .DefaultFiller(0x00)
                 .DefaultDelimiter(0xCC)
-                .CreateMapByAttribute<TypeDelimitterObject>()
-                .CreateMapByAttribute<DefaultDelimitterObject>()
-                .CreateMapByAttribute<NoDelimitterObject>()
+                .CreateMapByAttribute<TypeDelimiterObject>()
+                .CreateMapByAttribute<DefaultDelimiterObject>()
+                .CreateMapByAttribute<NoDelimiterObject>()
                 .ToMapperFactory();
-            var typeMapper = mapperFactory.Create<TypeDelimitterObject>();
-            var defaultMapper = mapperFactory.Create<DefaultDelimitterObject>();
-            var noMapper = mapperFactory.Create<NoDelimitterObject>();
+            var typeMapper = mapperFactory.Create<TypeDelimiterObject>();
+            var defaultMapper = mapperFactory.Create<DefaultDelimiterObject>();
+            var noMapper = mapperFactory.Create<NoDelimiterObject>();
 
             // Write
-            Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimitterObject()));
+            Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimiterObject()));
 
-            Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimitterObject()));
+            Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimiterObject()));
 
             var buffer = new byte[noMapper.Size].Fill(0x11);
-            noMapper.ToByte(buffer, 0, new NoDelimitterObject());
+            noMapper.ToByte(buffer, 0, new NoDelimiterObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }
 
-        [Map(2, AutoFiller = false, UseDelimitter = true)]
+        [Map(2, AutoFiller = false, UseDelimiter = true)]
         [TypeDelimiter(0xFF)]
-        internal class TypeDelimitterObject
+        internal class TypeDelimiterObject
         {
         }
 
-        [Map(2, AutoFiller = false, UseDelimitter = true)]
-        internal class DefaultDelimitterObject
+        [Map(2, AutoFiller = false, UseDelimiter = true)]
+        internal class DefaultDelimiterObject
         {
         }
 
-        [Map(2, AutoFiller = false, UseDelimitter = false)]
-        internal class NoDelimitterObject
+        [Map(2, AutoFiller = false, UseDelimiter = false)]
+        internal class NoDelimiterObject
         {
         }
 

@@ -182,7 +182,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        [Map(0, UseDelimitter = false)]
+        [Map(0, UseDelimiter = false)]
         internal class SimpleObject
         {
         }
