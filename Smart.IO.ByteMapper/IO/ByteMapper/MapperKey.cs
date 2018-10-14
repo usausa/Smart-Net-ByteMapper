@@ -2,7 +2,7 @@
 {
     using System;
 
-    public sealed class MapperKey
+    public struct MapperKey : IEquatable<MapperKey>
     {
         public Type Type { get; }
 
@@ -14,24 +14,14 @@
             Profile = profile;
         }
 
+        public bool Equals(MapperKey other)
+        {
+            return Type == other.Type && Profile == other.Profile;
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj is null)
-            {
-                return false;
-            }
-
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
-            if (obj is MapperKey other)
-            {
-                return Type == other.Type && Profile == other.Profile;
-            }
-
-            return false;
+            return obj is MapperKey other && Type == other.Type && Profile == other.Profile;
         }
 
         public override int GetHashCode()

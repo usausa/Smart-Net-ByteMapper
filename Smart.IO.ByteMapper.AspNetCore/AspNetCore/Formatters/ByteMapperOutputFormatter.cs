@@ -39,7 +39,11 @@
 
             var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
 
-            var writer = writerCache.AddIfNotExist(new MapperKey(context.ObjectType, profile), CreateWriter);
+            var key = new MapperKey(context.ObjectType, profile);
+            if (!writerCache.TryGetValue(key, out var writer))
+            {
+                writer = writerCache.AddIfNotExist(key, CreateWriter);
+            }
 
             var stream = context.HttpContext.Response.Body;
 

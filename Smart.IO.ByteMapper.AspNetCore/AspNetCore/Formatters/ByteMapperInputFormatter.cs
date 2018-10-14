@@ -36,7 +36,11 @@
         {
             var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
 
-            var reader = readerCache.AddIfNotExist(new MapperKey(context.ModelType, profile), CreateReader);
+            var key = new MapperKey(context.ModelType, profile);
+            if (!readerCache.TryGetValue(key, out var reader))
+            {
+                reader = readerCache.AddIfNotExist(key, CreateReader);
+            }
 
             var request = context.HttpContext.Request;
 
