@@ -12,9 +12,13 @@
     {
         private readonly IDictionary<string, object> parameters;
 
-        private readonly IDictionary<MapperKey, IMappingFactory> mappingFactories;
+        private readonly IDictionary<Type, IMappingFactory> mappingFactories;
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, object> cache = new ThreadsafeHashArrayMap<MapperKey, object>();
+        private readonly IDictionary<MapperKey, IMappingFactory> profiledMappingFactories;
+
+        private readonly ThreadsafeTypeHashArrayMap<object> cache = new ThreadsafeTypeHashArrayMap<object>();
+
+        private readonly ThreadsafeHashArrayMap<MapperKey, object> profiledCache = new ThreadsafeHashArrayMap<MapperKey, object>();
 
         public IComponentContainer Components { get; }
 
@@ -28,30 +32,14 @@
             Components = config.ResolveComponents();
             parameters = config.ResolveParameters();
             mappingFactories = config.ResolveMappingFactories()
-                .ToDictionary(x => new MapperKey(x.Type, x.Name ?? Profile.Default), x => x);
+                .Where(x => String.IsNullOrEmpty(x.Name))
+                .ToDictionary(x => x.Type, x => x);
+            profiledMappingFactories = config.ResolveMappingFactories()
+                .Where(x => !String.IsNullOrEmpty(x.Name))
+                .ToDictionary(x => new MapperKey(x.Type, x.Name), x => x);
         }
 
         public ITypeMapper Create(Type type)
-        {
-            return CallGenericCreateInternal(type, null);
-        }
-
-        public ITypeMapper Create(Type type, string profile)
-        {
-            return CallGenericCreateInternal(type, profile);
-        }
-
-        public ITypeMapper<T> Create<T>()
-        {
-            return CreateInternal<T>(null);
-        }
-
-        public ITypeMapper<T> Create<T>(string profile)
-        {
-            return CreateInternal<T>(profile);
-        }
-
-        private ITypeMapper CallGenericCreateInternal(Type type, string profile)
         {
             if (type == null)
             {
@@ -60,13 +48,39 @@
 
             var method = GetType().GetMethod(nameof(CreateInternal), BindingFlags.Instance | BindingFlags.NonPublic);
             var genericMethod = method.MakeGenericMethod(type);
+            return (ITypeMapper)genericMethod.Invoke(this, null);
+        }
+
+        public ITypeMapper Create(Type type, string profile)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+
+            if (profile == null)
+            {
+                throw new ArgumentNullException(nameof(profile));
+            }
+
+            var method = GetType().GetMethod(nameof(CreateInternal), BindingFlags.Instance | BindingFlags.NonPublic);
+            var genericMethod = method.MakeGenericMethod(type);
             return (ITypeMapper)genericMethod.Invoke(this, new object[] { profile });
         }
 
-        private ITypeMapper<T> CreateInternal<T>(string profile)
+        public ITypeMapper<T> Create<T>()
         {
-            var type = typeof(T);
-            var key = new MapperKey(type, profile ?? Profile.Default);
+            return CreateInternal<T>();
+        }
+
+        public ITypeMapper<T> Create<T>(string profile)
+        {
+            return CreateInternal<T>(profile);
+        }
+
+        private ITypeMapper<T> CreateInternal<T>()
+        {
+            var key = typeof(T);
             if (!cache.TryGetValue(key, out var mapper))
             {
                 mapper = cache.AddIfNotExist(key, CreateMapper<T>);
@@ -75,9 +89,32 @@
             return (ITypeMapper<T>)mapper;
         }
 
+        private ITypeMapper<T> CreateInternal<T>(string profile)
+        {
+            var type = typeof(T);
+            var key = new MapperKey(type, profile);
+            if (!profiledCache.TryGetValue(key, out var mapper))
+            {
+                mapper = profiledCache.AddIfNotExist(key, CreateMapper<T>);
+            }
+
+            return (ITypeMapper<T>)mapper;
+        }
+
+        private ITypeMapper<T> CreateMapper<T>(Type type)
+        {
+            if (!mappingFactories.TryGetValue(type, out var mappingFactory))
+            {
+                throw new ByteMapperException($"Mapper entry is not exist. type=[{type.FullName}]");
+            }
+
+            var mapping = mappingFactory.Create(Components, parameters);
+            return new TypeMapper<T>(mapping.Type, mapping.Size, mapping.Filler, mapping.Mappers);
+        }
+
         private ITypeMapper<T> CreateMapper<T>(MapperKey key)
         {
-            if (!mappingFactories.TryGetValue(key, out var mappingFactory))
+            if (!profiledMappingFactories.TryGetValue(key, out var mappingFactory))
             {
                 throw new ByteMapperException($"Mapper entry is not exist. type=[{key.Type.FullName}], profile=[{key.Profile}]");
             }

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+﻿namespace Smart.AspNetCore.Formatters
 {
     using System;
 

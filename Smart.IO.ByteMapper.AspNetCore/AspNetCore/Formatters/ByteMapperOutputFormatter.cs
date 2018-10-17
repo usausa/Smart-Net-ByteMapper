@@ -17,7 +17,9 @@
 
         private static readonly Type EnumerableWriterType = typeof(EnumerableOutputWriter<>);
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, IOutputWriter> writerCache = new ThreadsafeHashArrayMap<MapperKey, IOutputWriter>();
+        private readonly ThreadsafeTypeHashArrayMap<IOutputWriter> writerCache = new ThreadsafeTypeHashArrayMap<IOutputWriter>();
+
+        private readonly ThreadsafeHashArrayMap<MapperKey, IOutputWriter> profiledWriterCache = new ThreadsafeHashArrayMap<MapperKey, IOutputWriter>();
 
         private readonly ByteMapperFormatterConfig config;
 
@@ -37,13 +39,12 @@
                 return;
             }
 
-            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
-
-            var key = new MapperKey(context.ObjectType, profile);
-            if (!writerCache.TryGetValue(key, out var writer))
-            {
-                writer = writerCache.AddIfNotExist(key, CreateWriter);
-            }
+            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value)
+                ? value as string
+                : null;
+            var writer = String.IsNullOrEmpty(profile)
+                ? GetWriter(context.ObjectType)
+                : GetWriter(context.ObjectType, profile);
 
             var stream = context.HttpContext.Response.Body;
 
@@ -52,10 +53,36 @@
             await stream.FlushAsync();
         }
 
+        private IOutputWriter GetWriter(Type type)
+        {
+            if (!writerCache.TryGetValue(type, out var writer))
+            {
+                writer = writerCache.AddIfNotExist(type, CreateWriter);
+            }
+
+            return writer;
+        }
+
+        private IOutputWriter GetWriter(Type type, string profile)
+        {
+            var key = new MapperKey(type, profile);
+            if (!profiledWriterCache.TryGetValue(key, out var writer))
+            {
+                writer = profiledWriterCache.AddIfNotExist(key, CreateWriter);
+            }
+
+            return writer;
+        }
+
+        private IOutputWriter CreateWriter(Type type)
+        {
+            var writerType = ResolveWriterType(type);
+            return (IOutputWriter)Activator.CreateInstance(writerType, config, null);
+        }
+
         private IOutputWriter CreateWriter(MapperKey key)
         {
             var writerType = ResolveWriterType(key.Type);
-
             return (IOutputWriter)Activator.CreateInstance(writerType, config, key.Profile);
         }
 
@@ -83,7 +110,7 @@
 
             public SingleOutputWriter(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = config.MapperFactory.Create<T>(profile);
+                mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
                 bufferSize = mapper.Size;
             }
 
@@ -110,7 +137,7 @@
 
             public EnumerableOutputWriter(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = config.MapperFactory.Create<T>(profile);
+                mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
             }
 

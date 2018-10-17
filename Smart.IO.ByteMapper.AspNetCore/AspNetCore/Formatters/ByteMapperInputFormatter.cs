@@ -19,7 +19,9 @@
 
         private static readonly Type ListReaderType = typeof(ListInputReader<>);
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> readerCache = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
+        private readonly ThreadsafeTypeHashArrayMap<IInputReader> readerCache = new ThreadsafeTypeHashArrayMap<IInputReader>();
+
+        private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> profiledReaderCache = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
 
         private readonly ByteMapperFormatterConfig config;
 
@@ -34,13 +36,12 @@
 
         public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
-            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value) ? value as string : Profile.Default;
-
-            var key = new MapperKey(context.ModelType, profile);
-            if (!readerCache.TryGetValue(key, out var reader))
-            {
-                reader = readerCache.AddIfNotExist(key, CreateReader);
-            }
+            var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value)
+                ? value as string
+                : null;
+            var reader = String.IsNullOrEmpty(profile)
+                ? GetReader(context.ModelType)
+                : GetReader(context.ModelType, profile);
 
             var request = context.HttpContext.Request;
 
@@ -49,10 +50,36 @@
             return InputFormatterResult.SuccessAsync(model);
         }
 
+        private IInputReader GetReader(Type type)
+        {
+            if (!readerCache.TryGetValue(type, out var reader))
+            {
+                reader = readerCache.AddIfNotExist(type, CreateReader);
+            }
+
+            return reader;
+        }
+
+        private IInputReader GetReader(Type type, string profile)
+        {
+            var key = new MapperKey(type, profile);
+            if (!profiledReaderCache.TryGetValue(key, out var reader))
+            {
+                reader = profiledReaderCache.AddIfNotExist(key, CreateReader);
+            }
+
+            return reader;
+        }
+
+        private IInputReader CreateReader(Type type)
+        {
+            var readerType = ResolveReaderType(type);
+            return (IInputReader)Activator.CreateInstance(readerType, config, null);
+        }
+
         private IInputReader CreateReader(MapperKey key)
         {
             var readerType = ResolveReaderType(key.Type);
-
             return (IInputReader)Activator.CreateInstance(readerType, config, key.Profile);
         }
 
@@ -86,7 +113,7 @@
 
             public SingleInputReader(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = config.MapperFactory.Create<T>(profile);
+                mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
                 factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = mapper.Size;
             }
@@ -124,7 +151,7 @@
 
             public ArrayInputReader(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = config.MapperFactory.Create<T>(profile);
+                mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
                 factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
@@ -193,7 +220,7 @@
 
             public ListInputReader(ByteMapperFormatterConfig config, string profile)
             {
-                mapper = config.MapperFactory.Create<T>(profile);
+                mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
                 factory = config.DelegateFactory.CreateFactory<T>();
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
