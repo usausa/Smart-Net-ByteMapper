@@ -137,14 +137,14 @@
                 throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
-            if (config == null)
+            if (config is null)
             {
                 throw new ArgumentNullException(nameof(config));
             }
 
             var type = typeof(T);
             var pi = type.GetProperty(name);
-            if (pi == null)
+            if (pi is null)
             {
                 throw new ArgumentException("Name is invalid.", nameof(name));
             }
@@ -152,7 +152,7 @@
             var member = new MemberConfigExpression();
             config(member);
 
-            if (member.Expression == null)
+            if (member.Expression is null)
             {
                 throw new InvalidOperationException("Property is not mapped.");
             }

@@ -105,14 +105,14 @@
             MapArrayAttribute arrayAttribute,
             AbstractMemberMapAttribute memberAttribute)
         {
-            if (arrayAttribute != null)
+            if (arrayAttribute is null)
             {
-                var builder = arrayAttribute.GetArrayConverterBuilder();
-                builder.ElementConverterBuilder = memberAttribute.GetConverterBuilder();
-                return builder;
+                return memberAttribute.GetConverterBuilder();
             }
 
-            return memberAttribute.GetConverterBuilder();
+            var builder = arrayAttribute.GetArrayConverterBuilder();
+            builder.ElementConverterBuilder = memberAttribute.GetConverterBuilder();
+            return builder;
         }
     }
 }

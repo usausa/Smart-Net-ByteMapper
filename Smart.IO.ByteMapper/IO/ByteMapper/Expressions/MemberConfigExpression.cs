@@ -22,7 +22,7 @@
                 throw new ArgumentOutOfRangeException(nameof(length));
             }
 
-            if (config == null)
+            if (config is null)
             {
                 throw new ArgumentNullException(nameof(config));
             }
@@ -30,7 +30,7 @@
             var element = new ElementConfigExpression();
             config(element);
 
-            if (element.Expression == null)
+            if (element.Expression is null)
             {
                 throw new InvalidOperationException("Element is not mapped.");
             }

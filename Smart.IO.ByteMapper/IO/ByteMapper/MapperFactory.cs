@@ -24,7 +24,7 @@
 
         public MapperFactory(IMapperFactoryConfig config)
         {
-            if (config == null)
+            if (config is null)
             {
                 throw new ArgumentNullException(nameof(config));
             }
@@ -41,7 +41,7 @@
 
         public ITypeMapper Create(Type type)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
@@ -53,12 +53,12 @@
 
         public ITypeMapper Create(Type type, string profile)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (profile == null)
+            if (profile is null)
             {
                 throw new ArgumentNullException(nameof(profile));
             }

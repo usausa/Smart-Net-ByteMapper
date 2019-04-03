@@ -12,7 +12,7 @@
 
         void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
         {
-            if (expression == null)
+            if (expression is null)
             {
                 throw new ArgumentNullException(nameof(expression));
             }

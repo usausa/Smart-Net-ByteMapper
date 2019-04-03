@@ -15,7 +15,7 @@
                 throw new ArgumentOutOfRangeException(nameof(offset));
             }
 
-            if (content == null)
+            if (content is null)
             {
                 throw new ArgumentNullException(nameof(content));
             }

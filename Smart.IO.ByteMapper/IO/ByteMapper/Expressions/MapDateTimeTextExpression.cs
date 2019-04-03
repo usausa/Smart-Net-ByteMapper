@@ -38,7 +38,7 @@
 
         public IMapDateTimeTextSyntax Encoding(Encoding value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
@@ -61,7 +61,7 @@
 
         public IMapDateTimeTextSyntax Provider(IFormatProvider value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }

@@ -50,13 +50,13 @@
 
         public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, Type type, string profile, bool validation)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
             var mapAttribute = type.GetCustomAttribute<MapAttribute>();
-            if (mapAttribute == null)
+            if (mapAttribute is null)
             {
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
@@ -87,7 +87,7 @@
 
         public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, string profile, bool validation)
         {
-            if (types == null)
+            if (types is null)
             {
                 throw new ArgumentNullException(nameof(types));
             }
@@ -129,13 +129,13 @@
 
         public static MapperProfile CreateMapByAttribute(this MapperProfile profile, Type type, bool validation)
         {
-            if (type == null)
+            if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
             var mapAttribute = type.GetCustomAttribute<MapAttribute>();
-            if (mapAttribute == null)
+            if (mapAttribute is null)
             {
                 throw new ArgumentException($"No MapAttribute. type=[{type.FullName}]", nameof(type));
             }
@@ -156,7 +156,7 @@
 
         public static MapperProfile CreateMapByAttribute(this MapperProfile profile, IEnumerable<Type> types, bool validation)
         {
-            if (types == null)
+            if (types is null)
             {
                 throw new ArgumentNullException(nameof(types));
             }

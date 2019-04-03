@@ -40,7 +40,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length * elementSize, filler);
             }

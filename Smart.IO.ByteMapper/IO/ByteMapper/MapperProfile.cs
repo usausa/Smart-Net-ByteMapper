@@ -20,7 +20,7 @@
 
         public MapperProfile AddMappingFactory(IMappingFactory factory)
         {
-            if (factory == null)
+            if (factory is null)
             {
                 throw new ArgumentNullException(nameof(factory));
             }

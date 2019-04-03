@@ -52,7 +52,7 @@
 
         public IMapNumberTextSyntax Encoding(Encoding value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }
@@ -87,7 +87,7 @@
 
         public IMapNumberTextSyntax Provider(IFormatProvider value)
         {
-            if (value == null)
+            if (value is null)
             {
                 throw new ArgumentNullException(nameof(value));
             }

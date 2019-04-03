@@ -9,7 +9,7 @@
         public static string GetMemberName(Expression expr)
         {
             var mi = GetMemberInfo(expr);
-            if (mi == null)
+            if (mi is null)
             {
                 throw new ArgumentException("Expression is invalid.", nameof(expr));
             }

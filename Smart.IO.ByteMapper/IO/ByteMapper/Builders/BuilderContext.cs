@@ -26,7 +26,7 @@
         {
             if (typeParameters.TryGetValue(key, out var obj))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     return default;
                 }
@@ -39,7 +39,7 @@
 
             if (globalParameters.TryGetValue(key, out obj))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     return default;
                 }
@@ -57,7 +57,7 @@
         {
             if (typeParameters.TryGetValue(key, out var obj))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     value = default;
                     return true;
@@ -72,7 +72,7 @@
 
             if (globalParameters.TryGetValue(key, out obj))
             {
-                if (obj == null)
+                if (obj is null)
                 {
                     value = default;
                     return true;

@@ -37,7 +37,7 @@
         {
             if (NumberByteHelper.TryParseInt32(buffer, index, length, filler, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -45,7 +45,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }
@@ -89,7 +89,7 @@
         {
             if (NumberByteHelper.TryParseInt64(buffer, index, length, filler, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -97,7 +97,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }
@@ -141,7 +141,7 @@
         {
             if (NumberByteHelper.TryParseInt16(buffer, index, length, filler, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -149,7 +149,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }

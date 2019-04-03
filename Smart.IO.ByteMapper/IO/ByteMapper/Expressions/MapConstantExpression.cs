@@ -10,7 +10,7 @@
 
         public MapConstantExpression(params byte[] content)
         {
-            if (content == null)
+            if (content is null)
             {
                 throw new ArgumentNullException(nameof(content));
             }

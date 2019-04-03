@@ -48,7 +48,7 @@
 
         public MapperFactoryConfig Configure(Action<ComponentConfig> action)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
@@ -67,7 +67,7 @@
 
         public MapperFactoryConfig AddMappingFactory(IMappingFactory factory)
         {
-            if (factory == null)
+            if (factory is null)
             {
                 throw new ArgumentNullException(nameof(factory));
             }
@@ -78,7 +78,7 @@
 
         public MapperFactoryConfig AddProfile(IMapperProfile profile)
         {
-            if (profile == null)
+            if (profile is null)
             {
                 throw new ArgumentNullException(nameof(profile));
             }

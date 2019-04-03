@@ -19,7 +19,7 @@
 
         public static MapperFactoryConfig CreateMapByExpression<T>(this MapperFactoryConfig config, string profile, int size, Action<ITypeConfigSyntax<T>> action)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
@@ -37,7 +37,7 @@
 
         public static MapperFactoryConfig CreateMapByExpression(this MapperFactoryConfig config, Type type, string profile, int size, Action<ITypeConfigSyntax<object>> action)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
@@ -54,7 +54,7 @@
 
         public static MapperProfile CreateMapByExpression<T>(this MapperProfile profile, int size, Action<ITypeConfigSyntax<T>> action)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
@@ -67,7 +67,7 @@
 
         public static MapperProfile CreateMapByExpression(this MapperProfile profile, Type type, int size, Action<ITypeConfigSyntax<object>> action)
         {
-            if (action == null)
+            if (action is null)
             {
                 throw new ArgumentNullException(nameof(action));
             }
@@ -183,13 +183,13 @@
 
         public static ITypeConfigSyntax<T> UseDelimiter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
         {
-            if ((value != null) && (value.Length > 0))
+            if (value is null || (value.Length == 0))
             {
-                syntax.UseDelimiter(true).TypeDelimiter(value);
+                syntax.UseDelimiter(false).TypeDelimiter(null);
             }
             else
             {
-                syntax.UseDelimiter(false).TypeDelimiter(null);
+                syntax.UseDelimiter(true).TypeDelimiter(value);
             }
 
             return syntax;

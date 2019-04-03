@@ -63,7 +63,7 @@
             var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -71,7 +71,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }
@@ -139,7 +139,7 @@
             var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -147,7 +147,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }
@@ -215,7 +215,7 @@
             var value = encoding.GetString(buffer, start, count);
             if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
             {
-                return convertEnumType != null ? Enum.ToObject(convertEnumType, result) : result;
+                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
             }
 
             return defaultValue;
@@ -223,7 +223,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }
@@ -296,7 +296,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            if (value == null)
+            if (value is null)
             {
                 BytesHelper.Fill(buffer, index, length, filler);
             }

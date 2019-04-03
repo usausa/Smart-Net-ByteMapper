@@ -34,7 +34,7 @@
 
         public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
         {
-            if (context.Object == null)
+            if (context.Object is null)
             {
                 return;
             }
@@ -89,12 +89,12 @@
         private Type ResolveWriterType(Type type)
         {
             var elementType = TypeHelper.GetEnumerableElementType(type);
-            if (elementType != null)
+            if (elementType is null)
             {
-                return EnumerableWriterType.MakeGenericType(elementType);
+                return SingleWriterType.MakeGenericType(type);
             }
 
-            return SingleWriterType.MakeGenericType(type);
+            return EnumerableWriterType.MakeGenericType(elementType);
         }
 
         private interface IOutputWriter
