@@ -52,7 +52,7 @@
                 options.InputFormatters.Add(new ByteMapperInputFormatter(config));
 
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // Swagger
             services.AddSwaggerGen(options =>
