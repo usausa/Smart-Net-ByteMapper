@@ -1,4 +1,4 @@
-namespace Smart.IO.ByteMapper
+﻿namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
