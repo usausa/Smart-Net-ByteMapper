@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -53,17 +53,17 @@
 
         public ITypeMapper Create(Type type, string profile)
         {
+            if (profile is null)
+            {
+                return Create(type);
+            }
+
             if (type is null)
             {
                 throw new ArgumentNullException(nameof(type));
             }
 
-            if (profile is null)
-            {
-                throw new ArgumentNullException(nameof(profile));
-            }
-
-            var method = GetType().GetMethod(nameof(CreateInternal), BindingFlags.Instance | BindingFlags.NonPublic);
+            var method = GetType().GetMethod(nameof(CreateInternalWithProfile), BindingFlags.Instance | BindingFlags.NonPublic);
             var genericMethod = method.MakeGenericMethod(type);
             return (ITypeMapper)genericMethod.Invoke(this, new object[] { profile });
         }
@@ -75,7 +75,12 @@
 
         public ITypeMapper<T> Create<T>(string profile)
         {
-            return CreateInternal<T>(profile);
+            if (profile is null)
+            {
+                return CreateInternal<T>();
+            }
+
+            return CreateInternalWithProfile<T>(profile);
         }
 
         private ITypeMapper<T> CreateInternal<T>()
@@ -89,7 +94,7 @@
             return (ITypeMapper<T>)mapper;
         }
 
-        private ITypeMapper<T> CreateInternal<T>(string profile)
+        private ITypeMapper<T> CreateInternalWithProfile<T>(string profile)
         {
             var type = typeof(T);
             var key = new MapperKey(type, profile);
