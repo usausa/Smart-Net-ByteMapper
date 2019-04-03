@@ -3,11 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <IsPackable>false</IsPackable>
-    <LangVersion>latest</LangVersion>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
     <RootNamespace>Smart</RootNamespace>
-    <Version>1.1.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
