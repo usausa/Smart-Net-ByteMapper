@@ -2,6 +2,7 @@
 {
     using BenchmarkDotNet.Attributes;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1802:UseLiteralsWhereAppropriate", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class LongBenchmark2
     {

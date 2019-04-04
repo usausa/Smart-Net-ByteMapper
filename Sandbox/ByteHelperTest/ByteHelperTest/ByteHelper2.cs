@@ -347,7 +347,7 @@
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private bool IsOverflow(ulong value1, ulong value2)
+            private static bool IsOverflow(ulong value1, ulong value2)
             {
                 return UInt64.MaxValue - value1 < value2;
             }

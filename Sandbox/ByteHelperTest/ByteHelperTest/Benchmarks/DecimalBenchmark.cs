@@ -1,17 +1,18 @@
 ﻿namespace ByteHelperTest.Benchmarks
 {
-    using System;
-    using System.Globalization;
+    //using System;
+    //using System.Globalization;
     using System.Text;
 
     using BenchmarkDotNet.Attributes;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class DecimalBenchmark
     {
-        private static readonly byte[] Bytes8 = Encoding.ASCII.GetBytes("123456.78");
+        //private static readonly byte[] Bytes8 = Encoding.ASCII.GetBytes("123456.78");
 
-        private static readonly byte[] Bytes19 = Encoding.ASCII.GetBytes("12345678901234567.89");
+        //private static readonly byte[] Bytes19 = Encoding.ASCII.GetBytes("12345678901234567.89");
 
         private static readonly byte[] Bytes28 = Encoding.ASCII.GetBytes("12345678901234567890123456.78");
 

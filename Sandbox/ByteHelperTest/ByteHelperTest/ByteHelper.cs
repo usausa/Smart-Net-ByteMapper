@@ -23,7 +23,7 @@ namespace ByteHelperTest
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static byte[] Fill(this byte[] array, int offset, int length, byte value)
         {
-            if ((length <= 0) || (array is null))
+            if ((length <= 0) || array is null)
             {
                 return array;
             }
@@ -39,7 +39,7 @@ namespace ByteHelperTest
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static unsafe byte[] FillUnsafe(this byte[] array, int offset, int length, byte value)
         {
-            if ((length <= 0) || (array is null))
+            if ((length <= 0) || array is null)
             {
                 return array;
             }
@@ -60,7 +60,7 @@ namespace ByteHelperTest
         public static unsafe byte[] FillMemoryCopy(this byte[] array, int offset, int length, byte value)
         {
             // few cost
-            if ((length <= 0) || (array is null))
+            if ((length <= 0) || array is null)
             {
                 return array;
             }
