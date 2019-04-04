@@ -4,6 +4,7 @@
 
     using Smart.IO.ByteMapper.Expressions;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", Justification = "Ignore")]
     public static class OptionsExpressionExtensions
     {
         //--------------------------------------------------------------------------------

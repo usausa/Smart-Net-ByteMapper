@@ -1,5 +1,6 @@
 ﻿namespace Smart.IO.ByteMapper.Helpers
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Ignore")]
     public sealed class DateTimeFormatEntry
     {
         public char Part { get; }

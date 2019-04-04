@@ -42,7 +42,7 @@
         }
 
         [Map(40, UseDelimiter = false, AutoFiller = false)]
-        public class BinaryObject
+        protected class BinaryObject
         {
             [MapBinary(0)]
             public int Value0 { get; set; }

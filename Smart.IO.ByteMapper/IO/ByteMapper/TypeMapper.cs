@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     using Smart.IO.ByteMapper.Helpers;
@@ -18,7 +19,7 @@
 
         public int Size { get; }
 
-        public TypeMapper(Type targetType, int size, byte filler, IMapper[] mappers)
+        public TypeMapper(Type targetType, int size, byte filler, IReadOnlyList<IMapper> mappers)
         {
             TargetType = targetType;
             Size = size;

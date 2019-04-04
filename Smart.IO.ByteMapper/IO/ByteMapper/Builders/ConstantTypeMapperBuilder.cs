@@ -2,6 +2,7 @@
 {
     using Smart.IO.ByteMapper.Mappers;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Ignore")]
     public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
     {
         public int Offset { get; set; }

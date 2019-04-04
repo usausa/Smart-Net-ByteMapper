@@ -11,6 +11,7 @@
     using Smart.Collections.Concurrent;
     using Smart.IO.ByteMapper;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
     public class ByteMapperInputFormatter : InputFormatter
     {
         private static readonly Type SingleReaderType = typeof(SingleInputReader<>);
@@ -83,7 +84,7 @@
             return (IInputReader)Activator.CreateInstance(readerType, config, key.Profile);
         }
 
-        private Type ResolveReaderType(Type type)
+        private static Type ResolveReaderType(Type type)
         {
             if (type.IsArray)
             {

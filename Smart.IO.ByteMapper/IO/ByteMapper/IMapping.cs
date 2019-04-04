@@ -1,6 +1,7 @@
 ﻿namespace Smart.IO.ByteMapper
 {
     using System;
+    using System.Collections.Generic;
 
     using Smart.IO.ByteMapper.Mappers;
 
@@ -12,6 +13,6 @@
 
         byte Filler { get; }
 
-        IMapper[] Mappers { get; }
+        IReadOnlyList<IMapper> Mappers { get; }
     }
 }

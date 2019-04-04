@@ -10,6 +10,7 @@
 
     using Smart.AspNetCore.Filters;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Ignore")]
     [Route("api/[controller]/[action]")]
     public class MapController : Controller
     {

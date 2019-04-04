@@ -11,6 +11,7 @@
     using Smart.Collections.Concurrent;
     using Smart.IO.ByteMapper;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
     public class ByteMapperOutputFormatter : OutputFormatter
     {
         private static readonly Type SingleWriterType = typeof(SingleOutputWriter<>);
@@ -50,7 +51,7 @@
 
             writer.Write(stream, context.Object);
 
-            await stream.FlushAsync();
+            await stream.FlushAsync().ConfigureAwait(false);
         }
 
         private IOutputWriter GetWriter(Type type)
@@ -86,7 +87,7 @@
             return (IOutputWriter)Activator.CreateInstance(writerType, config, key.Profile);
         }
 
-        private Type ResolveWriterType(Type type)
+        private static Type ResolveWriterType(Type type)
         {
             var elementType = TypeHelper.GetEnumerableElementType(type);
             if (elementType is null)
