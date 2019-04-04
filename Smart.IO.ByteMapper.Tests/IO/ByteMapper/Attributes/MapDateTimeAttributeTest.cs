@@ -100,7 +100,7 @@
             [MapDateTime(38, "yyyyMMdd")]
             public DateTimeOffset? NullableDateTimeOffsetValue { get; set; }
 
-            [MapDateTime(46, "yyyyMMddHHmmss",  Filler = (byte)'_')]
+            [MapDateTime(46, "yyyyMMddHHmmss", Filler = (byte)'_')]
             public DateTimeOffset? CustomDateTimeOffsetValue { get; set; }
         }
     }
