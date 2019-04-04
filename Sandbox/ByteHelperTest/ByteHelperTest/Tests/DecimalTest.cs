@@ -6,7 +6,6 @@
 
     using Xunit;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
     public class DecimalTest
     {
         [Fact]

@@ -4,8 +4,6 @@
 
     using BenchmarkDotNet.Attributes;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1822:MarkMembersAsStatic", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class DecimalBenchmark2
     {
