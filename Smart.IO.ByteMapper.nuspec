@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Usa.Smart.IO.ByteMapper</id>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
     <title>Smart.IO.ByteMapper .NET</title>
     <authors>machi_pon</authors>
     <owners>machi_pon</owners>
@@ -10,6 +10,7 @@
     <releaseNotes></releaseNotes>
     <summary>Smart byte mapper library for .NET</summary>
     <projectUrl>https://github.com/usausa/Smart-Net-ByteMapper</projectUrl>
+    <repository type="git" url="https://github.com/usausa/Smart-Net-ByteMapper" />
     <copyright></copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>Usa.Smart.IO.ByteMapper.Options</id>
-    <version>1.1.2</version>
+    <version>1.2.0</version>
     <title>Smart.IO.ByteMapper.Options .NET</title>
     <authors>machi_pon</authors>
     <owners>machi_pon</owners>
@@ -10,16 +10,17 @@
     <releaseNotes></releaseNotes>
     <summary>Smart byte mapper library optional converters for .NET</summary>
     <projectUrl>https://github.com/usausa/Smart-Net-ByteMapper</projectUrl>
+    <repository type="git" url="https://github.com/usausa/Smart-Net-ByteMapper" />
     <copyright></copyright>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <dependencies>
       <group targetFramework="netstandard2.0">
         <dependency id="Usa.Smart.Core" version="1.7.1" />
-        <dependency id="Usa.Smart.IO.ByteMapper" version="1.1.2" />
+        <dependency id="Usa.Smart.IO.ByteMapper" version="1.2.0" />
       </group>
       <group targetFramework="net462">
         <dependency id="Usa.Smart.Core" version="1.7.1" />
-        <dependency id="Usa.Smart.IO.ByteMapper" version="1.1.2" />
+        <dependency id="Usa.Smart.IO.ByteMapper" version="1.2.0" />
       </group>
     </dependencies>
     <tags>smart io mapper</tags>
