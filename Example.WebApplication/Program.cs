@@ -1,4 +1,4 @@
-﻿namespace Example.WebApplication
+namespace Example.WebApplication
 {
     using Microsoft.AspNetCore;
     using Microsoft.AspNetCore.Hosting;
