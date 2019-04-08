@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
     using System.Text;
@@ -36,7 +36,7 @@
         [Fact]
         public void CoverageFix()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Empty<byte>.Array));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Array.Empty<byte>()));
             Assert.Throws<ArgumentNullException>(() => new MapConstantAttribute(0, null));
         }
 
