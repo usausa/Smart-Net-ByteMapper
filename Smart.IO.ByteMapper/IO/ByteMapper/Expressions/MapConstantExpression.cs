@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
 
@@ -22,9 +22,6 @@
         // Expression
         //--------------------------------------------------------------------------------
 
-        ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder()
-        {
-            return builder;
-        }
+        ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder() => builder;
     }
 }

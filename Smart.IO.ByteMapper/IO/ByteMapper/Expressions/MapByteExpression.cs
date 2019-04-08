@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using Smart.IO.ByteMapper.Builders;
 
@@ -8,9 +8,6 @@
         // Expression
         //--------------------------------------------------------------------------------
 
-        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder()
-        {
-            return ByteConverterBuilder.Default;
-        }
+        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => ByteConverterBuilder.Default;
     }
 }

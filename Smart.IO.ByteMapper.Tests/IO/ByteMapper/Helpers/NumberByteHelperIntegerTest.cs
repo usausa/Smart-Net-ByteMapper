@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
     using System.Globalization;
@@ -123,84 +123,84 @@
             // Max value
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MaxValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,22}", Int64.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MaxValue,22}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MaxValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,22:D22}", Int64.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MaxValue,22:D22}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MaxValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-22}", Int64.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MaxValue,-22}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             // Min value
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MinValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,22}", Int64.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MinValue,22}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MinValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,22:D21}", Int64.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MinValue,22:D21}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[22];
             NumberByteHelper.FormatInt64(buffer, 0, buffer.Length, Int64.MinValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-22}", Int64.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int64.MinValue,-22}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             // Int16
 
             // Max value
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MaxValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,9}", Int16.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MaxValue,9}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MaxValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,9:D9}", Int16.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MaxValue,9:D9}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MaxValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-9}", Int16.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MaxValue,-9}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             // Min value
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MinValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,9}", Int16.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MinValue,9}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MinValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,9:D8}", Int16.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MinValue,9:D8}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[9];
             NumberByteHelper.FormatInt16(buffer, 0, buffer.Length, Int16.MinValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-9}", Int16.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int16.MinValue,-9}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             // Int32
 
             // Max value
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MaxValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,12}", Int32.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MaxValue,12}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MaxValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,12:D12}", Int32.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MaxValue,12:D12}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MaxValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-12}", Int32.MaxValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MaxValue,-12}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             // Min value
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MinValue, Padding.Left, false, 0x20);
-            Assert.Equal(String.Format("{0,12}", Int32.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MinValue,12}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MinValue, Padding.Left, true, 0x20);
-            Assert.Equal(String.Format("{0,12:D11}", Int32.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MinValue,12:D11}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
 
             buffer = new byte[12];
             NumberByteHelper.FormatInt32(buffer, 0, buffer.Length, Int32.MinValue, Padding.Right, false, 0x20);
-            Assert.Equal(String.Format("{0,-12}", Int32.MinValue), Encoding.ASCII.GetString(buffer, 0, buffer.Length));
+            Assert.Equal($"{Int32.MinValue,-12}", Encoding.ASCII.GetString(buffer, 0, buffer.Length));
         }
     }
 }

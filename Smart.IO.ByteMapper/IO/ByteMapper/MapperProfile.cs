@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -33,9 +33,6 @@
         // IByteMapperProfile
         //--------------------------------------------------------------------------------
 
-        IEnumerable<IMappingFactory> IMapperProfile.ResolveMappingFactories()
-        {
-            return factories;
-        }
+        IEnumerable<IMappingFactory> IMapperProfile.ResolveMappingFactories() => factories;
     }
 }

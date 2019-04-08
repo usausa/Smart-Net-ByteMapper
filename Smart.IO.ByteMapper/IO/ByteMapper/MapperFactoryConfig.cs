@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -98,19 +98,10 @@
         // IByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        IComponentContainer IMapperFactoryConfig.ResolveComponents()
-        {
-            return config.ToContainer();
-        }
+        IComponentContainer IMapperFactoryConfig.ResolveComponents() => config.ToContainer();
 
-        IDictionary<string, object> IMapperFactoryConfig.ResolveParameters()
-        {
-            return new Dictionary<string, object>(parameters);
-        }
+        IDictionary<string, object> IMapperFactoryConfig.ResolveParameters() => new Dictionary<string, object>(parameters);
 
-        IEnumerable<IMappingFactory> IMapperFactoryConfig.ResolveMappingFactories()
-        {
-            return factories.Concat(profiles.SelectMany(x => x.ResolveMappingFactories()));
-        }
+        IEnumerable<IMappingFactory> IMapperFactoryConfig.ResolveMappingFactories() => factories.Concat(profiles.SelectMany(x => x.ResolveMappingFactories()));
     }
 }

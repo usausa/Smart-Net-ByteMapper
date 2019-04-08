@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
 
@@ -53,9 +53,6 @@
         // Expression
         //--------------------------------------------------------------------------------
 
-        public IMapConverterBuilder GetMapConverterBuilder()
-        {
-            return builder;
-        }
+        public IMapConverterBuilder GetMapConverterBuilder() => builder;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -30,9 +30,6 @@
             builder.Length = length;
         }
 
-        public override ITypeMapperBuilder GetTypeMapperBuilder()
-        {
-            return builder;
-        }
+        public override ITypeMapperBuilder GetTypeMapperBuilder() => builder;
     }
 }

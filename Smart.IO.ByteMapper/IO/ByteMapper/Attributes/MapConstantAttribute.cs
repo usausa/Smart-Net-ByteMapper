@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -24,9 +24,6 @@
             builder.Content = content;
         }
 
-        public override ITypeMapperBuilder GetTypeMapperBuilder()
-        {
-            return builder;
-        }
+        public override ITypeMapperBuilder GetTypeMapperBuilder() => builder;
     }
 }

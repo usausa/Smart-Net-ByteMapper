@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -25,9 +25,6 @@
             builder.Length = length;
         }
 
-        public ArrayConverterBuilder GetArrayConverterBuilder()
-        {
-            return builder;
-        }
+        public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
     }
 }

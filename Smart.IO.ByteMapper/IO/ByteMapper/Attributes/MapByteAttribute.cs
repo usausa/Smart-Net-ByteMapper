@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using Smart.IO.ByteMapper.Builders;
 
@@ -9,9 +9,6 @@
         {
         }
 
-        public override IMapConverterBuilder GetConverterBuilder()
-        {
-            return ByteConverterBuilder.Default;
-        }
+        public override IMapConverterBuilder GetConverterBuilder() => ByteConverterBuilder.Default;
     }
 }

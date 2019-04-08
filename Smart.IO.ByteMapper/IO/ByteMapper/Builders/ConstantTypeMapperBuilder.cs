@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using Smart.IO.ByteMapper.Mappers;
 
@@ -14,9 +14,6 @@
             return Content.Length;
         }
 
-        public IMapper CreateMapper(IBuilderContext context)
-        {
-            return new ConstantMapper(Offset, Content);
-        }
+        public IMapper CreateMapper(IBuilderContext context) => new ConstantMapper(Offset, Content);
     }
 }
