@@ -12,12 +12,12 @@ namespace Smart.IO.ByteMapper.Builders
 
         protected static void AddEntry(Type type, Func<TBuilder, Type, int> calcSize, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
         {
-            Entries.Add(type, new Entry { CalcSize = calcSize, Factory = factory });
+            Entries.Add(type, new Entry(calcSize, factory));
         }
 
         protected static void AddEntry(Type type, int size, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
         {
-            Entries.Add(type, new Entry { CalcSize = (b, t) => size, Factory = factory });
+            Entries.Add(type, new Entry((b, t) => size, factory));
         }
 
         public bool Match(Type type)
@@ -36,11 +36,17 @@ namespace Smart.IO.ByteMapper.Builders
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
-        private class Entry
+        private sealed class Entry
         {
-            public Func<TBuilder, Type, int> CalcSize;
+            public readonly Func<TBuilder, Type, int> CalcSize;
 
-            public Func<TBuilder, Type, IBuilderContext, IMapConverter> Factory;
+            public readonly Func<TBuilder, Type, IBuilderContext, IMapConverter> Factory;
+
+            public Entry(Func<TBuilder, Type, int> calcSize, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
+            {
+                CalcSize = calcSize;
+                Factory = factory;
+            }
         }
     }
 }
