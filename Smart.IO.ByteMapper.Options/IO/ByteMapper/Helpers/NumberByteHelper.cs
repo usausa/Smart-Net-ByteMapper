@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
     using System.Runtime.CompilerServices;
@@ -477,7 +477,7 @@
             var bit = bits[0];
             if (bit != 0)
             {
-                AddBitBlockValue(ref lo, ref hi, 0, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 0, bit & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 1, (bit >> 8) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 2, (bit >> 16) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 3, (bit >> 24) & 0b11111111);
@@ -486,7 +486,7 @@
             bit = bits[1];
             if (bit != 0)
             {
-                AddBitBlockValue(ref lo, ref hi, 4, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 4, bit & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 5, (bit >> 8) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 6, (bit >> 16) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 7, (bit >> 24) & 0b11111111);
@@ -495,7 +495,7 @@
             bit = bits[2];
             if (bit != 0)
             {
-                AddBitBlockValue(ref lo, ref hi, 8, (bit >> 0) & 0b11111111);
+                AddBitBlockValue(ref lo, ref hi, 8, bit & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 9, (bit >> 8) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 10, (bit >> 16) & 0b11111111);
                 AddBitBlockValue(ref lo, ref hi, 11, (bit >> 24) & 0b11111111);
