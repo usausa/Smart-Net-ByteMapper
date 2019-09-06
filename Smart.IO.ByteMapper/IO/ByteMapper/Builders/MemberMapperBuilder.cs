@@ -1,10 +1,11 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System.Reflection;
 
     using Smart.IO.ByteMapper.Mappers;
     using Smart.Reflection;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public sealed class MemberMapperBuilder : IMemberMapperBuilder
     {
         private readonly IMapConverterBuilder converterBuilder;

@@ -1,4 +1,4 @@
-﻿namespace Smart.AspNetCore.Formatters
+namespace Smart.AspNetCore.Formatters
 {
     using System;
     using System.Buffers;
@@ -11,6 +11,7 @@
     using Smart.Collections.Concurrent;
     using Smart.IO.ByteMapper;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
     public class ByteMapperOutputFormatter : OutputFormatter
     {

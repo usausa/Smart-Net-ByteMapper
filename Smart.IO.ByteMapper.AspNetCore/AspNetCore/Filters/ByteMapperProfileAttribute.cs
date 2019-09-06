@@ -1,4 +1,4 @@
-﻿namespace Smart.AspNetCore.Filters
+namespace Smart.AspNetCore.Filters
 {
     using System;
 
@@ -14,6 +14,7 @@
             this.profile = profile;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             context.HttpContext.Items[Const.ProfileKey] = profile;

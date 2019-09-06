@@ -1,9 +1,10 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
 
     using Smart.IO.ByteMapper.Expressions;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1720:IdentifiersShouldNotContainTypeNames", Justification = "Ignore")]
     public static class OptionsExpressionExtensions
     {

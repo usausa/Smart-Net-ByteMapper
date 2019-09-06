@@ -1,5 +1,6 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public static class OptionsMapperFactoryConfigExtensions
     {
         public static MapperFactoryConfig UseOptionsDefault(this MapperFactoryConfig config)

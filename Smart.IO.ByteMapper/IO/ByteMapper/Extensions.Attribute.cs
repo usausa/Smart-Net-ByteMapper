@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -7,6 +7,7 @@
 
     using Smart.IO.ByteMapper.Attributes;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public static class AttributeExtensions
     {
         //--------------------------------------------------------------------------------

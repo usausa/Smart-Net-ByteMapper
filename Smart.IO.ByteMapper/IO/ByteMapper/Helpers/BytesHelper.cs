@@ -1,9 +1,10 @@
-﻿namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
     using System.Runtime.CompilerServices;
     using System.Runtime.InteropServices;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public static class BytesHelper
     {
         [StructLayout(LayoutKind.Explicit, Pack = 1)]
