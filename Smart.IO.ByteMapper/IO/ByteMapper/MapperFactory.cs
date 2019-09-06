@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -14,11 +14,11 @@
 
         private readonly IDictionary<Type, IMappingFactory> mappingFactories;
 
-        private readonly IDictionary<MapperKey, IMappingFactory> profiledMappingFactories;
+        private readonly IDictionary<TypeProfile, IMappingFactory> profiledMappingFactories;
 
         private readonly ThreadsafeTypeHashArrayMap<object> cache = new ThreadsafeTypeHashArrayMap<object>();
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, object> profiledCache = new ThreadsafeHashArrayMap<MapperKey, object>();
+        private readonly TypeProfileKeyCache<object> profiledCache = new TypeProfileKeyCache<object>();
 
         public IComponentContainer Components { get; }
 
@@ -36,7 +36,7 @@
                 .ToDictionary(x => x.Type, x => x);
             profiledMappingFactories = config.ResolveMappingFactories()
                 .Where(x => !String.IsNullOrEmpty(x.Name))
-                .ToDictionary(x => new MapperKey(x.Type, x.Name), x => x);
+                .ToDictionary(x => new TypeProfile(x.Type, x.Name), x => x);
         }
 
         public ITypeMapper Create(Type type)
@@ -97,10 +97,9 @@
         private ITypeMapper<T> CreateInternalWithProfile<T>(string profile)
         {
             var type = typeof(T);
-            var key = new MapperKey(type, profile);
-            if (!profiledCache.TryGetValue(key, out var mapper))
+            if (!profiledCache.TryGetValue(type, profile, out var mapper))
             {
-                mapper = profiledCache.AddIfNotExist(key, CreateMapper<T>);
+                mapper = profiledCache.AddIfNotExist(type, profile, CreateMapper<T>);
             }
 
             return (ITypeMapper<T>)mapper;
@@ -117,8 +116,9 @@
             return new TypeMapper<T>(mapping.Type, mapping.Size, mapping.Filler, mapping.Mappers);
         }
 
-        private ITypeMapper<T> CreateMapper<T>(MapperKey key)
+        private ITypeMapper<T> CreateMapper<T>(Type type, string profile)
         {
+            var key = new TypeProfile(type, profile);
             if (!profiledMappingFactories.TryGetValue(key, out var mappingFactory))
             {
                 throw new ByteMapperException($"Mapper entry is not exist. type=[{key.Type.FullName}], profile=[{key.Profile}]");

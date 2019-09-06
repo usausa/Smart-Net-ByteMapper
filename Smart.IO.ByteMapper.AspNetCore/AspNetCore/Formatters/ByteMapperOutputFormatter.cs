@@ -21,7 +21,7 @@ namespace Smart.AspNetCore.Formatters
 
         private readonly ThreadsafeTypeHashArrayMap<IOutputWriter> writerCache = new ThreadsafeTypeHashArrayMap<IOutputWriter>();
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, IOutputWriter> profiledWriterCache = new ThreadsafeHashArrayMap<MapperKey, IOutputWriter>();
+        private readonly TypeProfileKeyCache<IOutputWriter> profiledWriterCache = new TypeProfileKeyCache<IOutputWriter>();
 
         private readonly ByteMapperFormatterConfig config;
 
@@ -67,10 +67,9 @@ namespace Smart.AspNetCore.Formatters
 
         private IOutputWriter GetWriter(Type type, string profile)
         {
-            var key = new MapperKey(type, profile);
-            if (!profiledWriterCache.TryGetValue(key, out var writer))
+            if (!profiledWriterCache.TryGetValue(type, profile, out var writer))
             {
-                writer = profiledWriterCache.AddIfNotExist(key, CreateWriter);
+                writer = profiledWriterCache.AddIfNotExist(type, profile, CreateWriter);
             }
 
             return writer;
@@ -82,10 +81,10 @@ namespace Smart.AspNetCore.Formatters
             return (IOutputWriter)Activator.CreateInstance(writerType, config, null);
         }
 
-        private IOutputWriter CreateWriter(MapperKey key)
+        private IOutputWriter CreateWriter(Type type, string profile)
         {
-            var writerType = ResolveWriterType(key.Type);
-            return (IOutputWriter)Activator.CreateInstance(writerType, config, key.Profile);
+            var writerType = ResolveWriterType(type);
+            return (IOutputWriter)Activator.CreateInstance(writerType, config, profile);
         }
 
         private static Type ResolveWriterType(Type type)

@@ -23,7 +23,7 @@ namespace Smart.AspNetCore.Formatters
 
         private readonly ThreadsafeTypeHashArrayMap<IInputReader> readerCache = new ThreadsafeTypeHashArrayMap<IInputReader>();
 
-        private readonly ThreadsafeHashArrayMap<MapperKey, IInputReader> profiledReaderCache = new ThreadsafeHashArrayMap<MapperKey, IInputReader>();
+        private readonly TypeProfileKeyCache<IInputReader> profiledReaderCache = new TypeProfileKeyCache<IInputReader>();
 
         private readonly ByteMapperFormatterConfig config;
 
@@ -64,10 +64,9 @@ namespace Smart.AspNetCore.Formatters
 
         private IInputReader GetReader(Type type, string profile)
         {
-            var key = new MapperKey(type, profile);
-            if (!profiledReaderCache.TryGetValue(key, out var reader))
+            if (!profiledReaderCache.TryGetValue(type, profile, out var reader))
             {
-                reader = profiledReaderCache.AddIfNotExist(key, CreateReader);
+                reader = profiledReaderCache.AddIfNotExist(type, profile, CreateReader);
             }
 
             return reader;
@@ -79,10 +78,10 @@ namespace Smart.AspNetCore.Formatters
             return (IInputReader)Activator.CreateInstance(readerType, config, null);
         }
 
-        private IInputReader CreateReader(MapperKey key)
+        private IInputReader CreateReader(Type type, string profile)
         {
-            var readerType = ResolveReaderType(key.Type);
-            return (IInputReader)Activator.CreateInstance(readerType, config, key.Profile);
+            var readerType = ResolveReaderType(type);
+            return (IInputReader)Activator.CreateInstance(readerType, config, profile);
         }
 
         private static Type ResolveReaderType(Type type)
