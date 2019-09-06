@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.3" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.7" />
     <PackageReference Include="Usa.Smart.Text.Japanese" Version="1.5.0" />
   </ItemGroup>
 
