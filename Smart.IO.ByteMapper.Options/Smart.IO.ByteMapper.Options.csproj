@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.8-beta1" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.8" />
   </ItemGroup>
 
   <ItemGroup>
