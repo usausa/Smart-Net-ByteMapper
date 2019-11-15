@@ -51,26 +51,6 @@ namespace Smart.IO.ByteMapper
             return (int)(size + 1);
         }
 
-        private static int CalculateCount(Node[] targetNodes)
-        {
-            var count = 0;
-            for (var i = 0; i < targetNodes.Length; i++)
-            {
-                var node = targetNodes[i];
-                if (node != EmptyNode)
-                {
-                    do
-                    {
-                        count++;
-                        node = node.Next;
-                    }
-                    while (node != null);
-                }
-            }
-
-            return count;
-        }
-
         private static Node[] CreateInitialTable()
         {
             var newNodes = new Node[InitialSize];
@@ -131,7 +111,7 @@ namespace Smart.IO.ByteMapper
 
         private void AddNode(Node node)
         {
-            var requestSize = Math.Max(InitialSize, (nodes.Length + 1) * Factor);
+            var requestSize = Math.Max(InitialSize, (count + 1) * Factor);
             var size = CalculateSize(requestSize);
             if (size > nodes.Length)
             {
@@ -148,7 +128,8 @@ namespace Smart.IO.ByteMapper
                 Interlocked.MemoryBarrier();
 
                 nodes = newNodes;
-                count = CalculateCount(newNodes);
+
+                count++;
             }
             else
             {
