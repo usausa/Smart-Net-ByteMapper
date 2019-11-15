@@ -10,9 +10,9 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.2.0" PrivateAssets="All" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="4.0.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.6.0" />
     <PackageReference Include="Usa.Smart.AspNetCore" Version="1.3.2" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.7.8" />
+    <PackageReference Include="Usa.Smart.Core" Version="1.7.9" />
   </ItemGroup>
 
   <ItemGroup>
