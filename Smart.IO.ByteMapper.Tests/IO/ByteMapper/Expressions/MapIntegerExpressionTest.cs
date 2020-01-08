@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Text;
@@ -47,7 +47,7 @@
                 ZeroFillLongValue = 1,
                 ShortValue = 1,
                 PaddingRightShortValue = -1,
-                ZeroFillShortValue = 1,
+                ZeroFillShortValue = 1
             };
 
             // Write

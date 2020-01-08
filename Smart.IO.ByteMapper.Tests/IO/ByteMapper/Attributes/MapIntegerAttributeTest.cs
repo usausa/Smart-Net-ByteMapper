@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
     using System.Text;
@@ -35,7 +35,7 @@
                 ZeroFillLongValue = 1,
                 ShortValue = 1,
                 PaddingRightShortValue = -1,
-                ZeroFillShortValue = 1,
+                ZeroFillShortValue = 1
             };
 
             // Write

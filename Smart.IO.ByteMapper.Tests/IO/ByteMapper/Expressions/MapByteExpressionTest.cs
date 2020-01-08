@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using Xunit;
 
@@ -21,7 +21,7 @@
             var buffer = new byte[mapper.Size];
             var obj = new ByteExpressionObject
             {
-                ByteValue = 1,
+                ByteValue = 1
             };
 
             // Write

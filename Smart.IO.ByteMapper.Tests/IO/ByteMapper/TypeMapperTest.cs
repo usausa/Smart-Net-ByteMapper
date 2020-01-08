@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.IO;
@@ -166,7 +166,7 @@
         // Helper
         //--------------------------------------------------------------------------------
 
-        private ITypeMapper<T> CreateTypeMapper<T>()
+        private static ITypeMapper<T> CreateTypeMapper<T>()
         {
             var mapperFactory = new MapperFactoryConfig()
                 .CreateMapByAttribute<TargetObject>()
@@ -174,7 +174,7 @@
             return mapperFactory.Create<T>();
         }
 
-        private ITypeMapper CreateTypeMapper(Type type)
+        private static ITypeMapper CreateTypeMapper(Type type)
         {
             var mapperFactory = new MapperFactoryConfig()
                 .CreateMapByAttribute<TargetObject>()

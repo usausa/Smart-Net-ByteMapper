@@ -59,7 +59,7 @@ namespace Example.WebApplication.Controllers
                     Qty = 10000,
                     Price = 49.50m,
                     Date = null
-                },
+                }
             };
         }
 

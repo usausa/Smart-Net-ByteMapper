@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -22,7 +22,7 @@
             var buffer = new byte[mapper.Size];
             var obj = new ByteAttributeObject
             {
-                ByteValue = 1,
+                ByteValue = 1
             };
 
             // Write
