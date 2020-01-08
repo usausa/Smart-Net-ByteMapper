@@ -1,4 +1,5 @@
-﻿namespace Example.WebApplication.Controllers
+// ReSharper disable UnusedParameter.Global
+namespace Example.WebApplication.Controllers
 {
     using System;
     using System.Collections.Generic;

@@ -36,7 +36,7 @@ namespace Smart.IO.ByteMapper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static int CalculateHash(Type type, string profile)
         {
-            return type.GetHashCode() ^ profile.GetHashCode();
+            return type.GetHashCode() ^ profile.GetHashCode(StringComparison.Ordinal);
         }
 
         private static int CalculateSize(int requestSize)

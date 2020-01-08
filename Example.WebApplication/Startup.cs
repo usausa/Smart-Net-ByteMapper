@@ -6,14 +6,13 @@ namespace Example.WebApplication
 
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
-    using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.OpenApi.Models;
 
     using Smart.AspNetCore.Formatters;
     using Smart.IO.ByteMapper;
-
-    using Swashbuckle.AspNetCore.Swagger;
 
     public class Startup
     {
@@ -43,7 +42,7 @@ namespace Example.WebApplication
                     .ForMember(x => x.Name, m => m.Text(20)))
                 .ToMapperFactory();
 
-            services.AddMvc(options =>
+            services.AddControllersWithViews(options =>
             {
                 var config = new ByteMapperFormatterConfig { MapperFactory = mapperFactory };
                 config.SupportedMediaTypes.Add("text/x-fixedrecord");
@@ -52,17 +51,21 @@ namespace Example.WebApplication
                 options.InputFormatters.Add(new ByteMapperInputFormatter(config));
 
                 options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
-            }).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            });
 
             // Swagger
             services.AddSwaggerGen(options =>
             {
-                options.SwaggerDoc("example", new Info { Title = "Example API", Version = "v1" });
+                options.SwaggerDoc("example", new OpenApiInfo
+                {
+                    Title = "Example API",
+                    Version = "v1"
+                });
             });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -75,18 +78,20 @@ namespace Example.WebApplication
 
             app.UseStaticFiles();
 
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
-
             // Swagger
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
                 options.SwaggerEndpoint("/swagger/example/swagger.json", "Example API");
+            });
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllerRoute(
+                    name: "default",
+                    pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

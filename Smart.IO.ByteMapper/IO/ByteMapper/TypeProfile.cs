@@ -21,7 +21,7 @@ namespace Smart.IO.ByteMapper
         public override int GetHashCode()
         {
             var hash = Type.GetHashCode();
-            hash = hash ^ Profile.GetHashCode();
+            hash = hash ^ Profile.GetHashCode(StringComparison.Ordinal);
             return hash;
         }
     }
