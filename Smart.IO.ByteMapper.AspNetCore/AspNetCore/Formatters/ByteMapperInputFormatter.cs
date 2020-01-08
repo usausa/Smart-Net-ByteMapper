@@ -36,7 +36,7 @@ namespace Smart.AspNetCore.Formatters
             }
         }
 
-        public override Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
+        public override async Task<InputFormatterResult> ReadRequestBodyAsync(InputFormatterContext context)
         {
             var profile = context.HttpContext.Items.TryGetValue(Const.ProfileKey, out var value)
                 ? value as string
@@ -47,9 +47,9 @@ namespace Smart.AspNetCore.Formatters
 
             var request = context.HttpContext.Request;
 
-            var model = reader.Read(request.Body, request.ContentLength);
+            var model = await reader.ReadAsync(request.Body, request.ContentLength).ConfigureAwait(false);
 
-            return InputFormatterResult.SuccessAsync(model);
+            return await InputFormatterResult.SuccessAsync(model).ConfigureAwait(false);
         }
 
         private IInputReader GetReader(Type type)
@@ -101,7 +101,7 @@ namespace Smart.AspNetCore.Formatters
 
         private interface IInputReader
         {
-            object Read(Stream stream, long? length);
+            ValueTask<object> ReadAsync(Stream stream, long? length);
         }
 
         private sealed class SingleInputReader<T> : IInputReader
@@ -119,12 +119,12 @@ namespace Smart.AspNetCore.Formatters
                 bufferSize = mapper.Size;
             }
 
-            public object Read(Stream stream, long? length)
+            public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                 try
                 {
-                    if (stream.Read(buffer, 0, bufferSize) != bufferSize)
+                    if (await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false) != bufferSize)
                     {
                         return default;
                     }
@@ -158,7 +158,7 @@ namespace Smart.AspNetCore.Formatters
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
 
-            public object Read(Stream stream, long? length)
+            public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                 try
@@ -169,7 +169,7 @@ namespace Smart.AspNetCore.Formatters
 
                         var index = 0;
                         int read;
-                        while ((read = stream.Read(buffer, 0, readSize)) > 0)
+                        while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
                         {
                             var limit = read - mapper.Size;
                             for (var pos = 0; pos <= limit; pos += mapper.Size)
@@ -188,7 +188,7 @@ namespace Smart.AspNetCore.Formatters
                         var list = new List<T>();
 
                         int read;
-                        while ((read = stream.Read(buffer, 0, readSize)) > 0)
+                        while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
                         {
                             var limit = read - mapper.Size;
                             for (var pos = 0; pos <= limit; pos += mapper.Size)
@@ -227,7 +227,7 @@ namespace Smart.AspNetCore.Formatters
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
 
-            public object Read(Stream stream, long? length)
+            public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                 try
@@ -235,7 +235,7 @@ namespace Smart.AspNetCore.Formatters
                     var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : new List<T>();
 
                     int read;
-                    while ((read = stream.Read(buffer, 0, readSize)) > 0)
+                    while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
                     {
                         var limit = read - mapper.Size;
                         for (var pos = 0; pos <= limit; pos += mapper.Size)

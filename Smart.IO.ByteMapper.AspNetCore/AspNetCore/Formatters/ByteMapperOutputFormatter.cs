@@ -50,7 +50,7 @@ namespace Smart.AspNetCore.Formatters
 
             var stream = context.HttpContext.Response.Body;
 
-            await writer.WriteAsync(stream, context.Object);
+            await writer.WriteAsync(stream, context.Object).ConfigureAwait(false);
 
             await stream.FlushAsync().ConfigureAwait(false);
         }
