@@ -50,7 +50,7 @@ namespace Smart.AspNetCore.Formatters
 
             var stream = context.HttpContext.Response.Body;
 
-            writer.Write(stream, context.Object);
+            await writer.WriteAsync(stream, context.Object);
 
             await stream.FlushAsync().ConfigureAwait(false);
         }
@@ -100,7 +100,7 @@ namespace Smart.AspNetCore.Formatters
 
         private interface IOutputWriter
         {
-            void Write(Stream stream, object model);
+            ValueTask WriteAsync(Stream stream, object model);
         }
 
         private sealed class SingleOutputWriter<T> : IOutputWriter
@@ -115,13 +115,13 @@ namespace Smart.AspNetCore.Formatters
                 bufferSize = mapper.Size;
             }
 
-            public void Write(Stream stream, object model)
+            public async ValueTask WriteAsync(Stream stream, object model)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                 try
                 {
                     mapper.ToByte(buffer, 0, (T)model);
-                    stream.Write(buffer, 0, bufferSize);
+                    await stream.WriteAsync(buffer, 0, bufferSize).ConfigureAwait(false);
                 }
                 finally
                 {
@@ -142,7 +142,7 @@ namespace Smart.AspNetCore.Formatters
                 bufferSize = Math.Max(config.BufferSize, mapper.Size);
             }
 
-            public void Write(Stream stream, object model)
+            public async ValueTask WriteAsync(Stream stream, object model)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
                 try
@@ -156,14 +156,14 @@ namespace Smart.AspNetCore.Formatters
                         pos += mapper.Size;
                         if (pos > limit)
                         {
-                            stream.Write(buffer, 0, pos);
+                            await stream.WriteAsync(buffer, 0, pos).ConfigureAwait(false);
                             pos = 0;
                         }
                     }
 
                     if (pos > 0)
                     {
-                        stream.Write(buffer, 0, pos);
+                        await stream.WriteAsync(buffer, 0, pos).ConfigureAwait(false);
                     }
                 }
                 finally
