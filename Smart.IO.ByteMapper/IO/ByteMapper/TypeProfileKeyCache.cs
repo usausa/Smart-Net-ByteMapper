@@ -5,7 +5,7 @@ namespace Smart.IO.ByteMapper
     using System.Runtime.CompilerServices;
     using System.Threading;
 
-    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
+    [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
     public sealed class TypeProfileKeyCache<T>
     {
         private const int InitialSize = 64;
@@ -17,6 +17,8 @@ namespace Smart.IO.ByteMapper
         private readonly object sync = new object();
 
         private Node[] nodes;
+
+        private int depth;
 
         private int count;
 
@@ -37,6 +39,36 @@ namespace Smart.IO.ByteMapper
         private static int CalculateHash(Type type, string profile)
         {
             return type.GetHashCode() ^ profile.GetHashCode(StringComparison.Ordinal);
+        }
+
+        private static int CalculateDepth(Node node)
+        {
+            var length = 0;
+
+            do
+            {
+                length++;
+                node = node.Next;
+            }
+            while (node != null);
+
+            return length;
+        }
+
+        private static int CalculateDepth(Node[] targetNodes)
+        {
+            var depth = 0;
+
+            for (var i = 0; i < targetNodes.Length; i++)
+            {
+                var node = targetNodes[i];
+                if (node != EmptyNode)
+                {
+                    depth = Math.Max(CalculateDepth(node), depth);
+                }
+            }
+
+            return depth;
         }
 
         private static int CalculateSize(int requestSize)
@@ -128,15 +160,18 @@ namespace Smart.IO.ByteMapper
                 Interlocked.MemoryBarrier();
 
                 nodes = newNodes;
-
+                depth = CalculateDepth(newNodes);
                 count++;
             }
             else
             {
                 Interlocked.MemoryBarrier();
 
-                UpdateLink(ref nodes[CalculateHash(node.Type, node.Profile) & (nodes.Length - 1)], node);
+                var hash = CalculateHash(node.Type, node.Profile);
 
+                UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
+
+                depth = Math.Max(CalculateDepth(nodes[hash & (nodes.Length - 1)]), depth);
                 count++;
             }
         }
@@ -145,13 +180,13 @@ namespace Smart.IO.ByteMapper
         // Public
         //--------------------------------------------------------------------------------
 
-        public int Count
+        public DiagnosticsInfo Diagnostics
         {
             get
             {
                 lock (sync)
                 {
-                    return count;
+                    return new DiagnosticsInfo(nodes.Length, depth, count);
                 }
             }
         }
@@ -165,6 +200,7 @@ namespace Smart.IO.ByteMapper
                 Interlocked.MemoryBarrier();
 
                 nodes = newNodes;
+                depth = 0;
                 count = 0;
             }
         }
@@ -240,6 +276,28 @@ namespace Smart.IO.ByteMapper
                 Profile = profile;
                 Value = value;
             }
+        }
+
+        //--------------------------------------------------------------------------------
+        // Diagnostics
+        //--------------------------------------------------------------------------------
+
+        public sealed class DiagnosticsInfo
+        {
+            public int Width { get; }
+
+            public int Depth { get; }
+
+            public int Count { get; }
+
+            public DiagnosticsInfo(int width, int depth, int count)
+            {
+                Width = width;
+                Depth = depth;
+                Count = count;
+            }
+
+            public override string ToString() => $"Count={Count}, Width={Width}, Depth={Depth}";
         }
     }
 }
