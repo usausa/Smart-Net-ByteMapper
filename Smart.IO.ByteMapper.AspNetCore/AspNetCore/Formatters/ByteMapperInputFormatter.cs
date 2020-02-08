@@ -254,5 +254,57 @@ namespace Smart.AspNetCore.Formatters
                 }
             }
         }
+
+        // ------------------------------------------------------------
+        // Diagnostics
+        // ------------------------------------------------------------
+
+        public DiagnosticsInfo Diagnostics
+        {
+            get
+            {
+                var cacheDiagnostics = readerCache.Diagnostics;
+                var profiledCacheDiagnostics = profiledReaderCache.Diagnostics;
+
+                return new DiagnosticsInfo(
+                    cacheDiagnostics.Count,
+                    cacheDiagnostics.Width,
+                    cacheDiagnostics.Depth,
+                    profiledCacheDiagnostics.Count,
+                    profiledCacheDiagnostics.Width,
+                    profiledCacheDiagnostics.Depth);
+            }
+        }
+
+        public sealed class DiagnosticsInfo
+        {
+            public int CacheCount { get; }
+
+            public int CacheWidth { get; }
+
+            public int CacheDepth { get; }
+
+            public int ProfiledCacheCount { get; }
+
+            public int ProfiledCacheWidth { get; }
+
+            public int ProfiledCacheDepth { get; }
+
+            public DiagnosticsInfo(
+                int cacheCount,
+                int cacheWidth,
+                int cacheDepth,
+                int profiledCacheCount,
+                int profiledCacheWidth,
+                int profiledCacheDepth)
+            {
+                CacheCount = cacheCount;
+                CacheWidth = cacheWidth;
+                CacheDepth = cacheDepth;
+                ProfiledCacheCount = profiledCacheCount;
+                ProfiledCacheWidth = profiledCacheWidth;
+                ProfiledCacheDepth = profiledCacheDepth;
+            }
+        }
     }
 }

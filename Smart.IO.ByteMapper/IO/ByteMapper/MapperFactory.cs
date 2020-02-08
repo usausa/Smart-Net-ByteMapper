@@ -39,6 +39,10 @@ namespace Smart.IO.ByteMapper
                 .ToDictionary(x => new TypeProfile(x.Type, x.Name), x => x);
         }
 
+        // ------------------------------------------------------------
+        // Create
+        // ------------------------------------------------------------
+
         public ITypeMapper Create(Type type)
         {
             if (type is null)
@@ -126,6 +130,58 @@ namespace Smart.IO.ByteMapper
 
             var mapping = mappingFactory.Create(Components, parameters);
             return new TypeMapper<T>(mapping.Type, mapping.Size, mapping.Filler, mapping.Mappers);
+        }
+
+        // ------------------------------------------------------------
+        // Diagnostics
+        // ------------------------------------------------------------
+
+        public DiagnosticsInfo Diagnostics
+        {
+            get
+            {
+                var cacheDiagnostics = cache.Diagnostics;
+                var profiledCacheDiagnostics = profiledCache.Diagnostics;
+
+                return new DiagnosticsInfo(
+                    cacheDiagnostics.Count,
+                    cacheDiagnostics.Width,
+                    cacheDiagnostics.Depth,
+                    profiledCacheDiagnostics.Count,
+                    profiledCacheDiagnostics.Width,
+                    profiledCacheDiagnostics.Depth);
+            }
+        }
+
+        public sealed class DiagnosticsInfo
+        {
+            public int CacheCount { get; }
+
+            public int CacheWidth { get; }
+
+            public int CacheDepth { get; }
+
+            public int ProfiledCacheCount { get; }
+
+            public int ProfiledCacheWidth { get; }
+
+            public int ProfiledCacheDepth { get; }
+
+            public DiagnosticsInfo(
+                int cacheCount,
+                int cacheWidth,
+                int cacheDepth,
+                int profiledCacheCount,
+                int profiledCacheWidth,
+                int profiledCacheDepth)
+            {
+                CacheCount = cacheCount;
+                CacheWidth = cacheWidth;
+                CacheDepth = cacheDepth;
+                ProfiledCacheCount = profiledCacheCount;
+                ProfiledCacheWidth = profiledCacheWidth;
+                ProfiledCacheDepth = profiledCacheDepth;
+            }
         }
     }
 }
