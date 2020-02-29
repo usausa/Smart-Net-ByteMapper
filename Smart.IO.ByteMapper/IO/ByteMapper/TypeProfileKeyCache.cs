@@ -209,7 +209,8 @@ namespace Smart.IO.ByteMapper
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue(Type type, string profile, out T value)
         {
-            var node = nodes[CalculateHash(type, profile) & (nodes.Length - 1)];
+            var temp = nodes;
+            var node = temp[CalculateHash(type, profile) & (temp.Length - 1)];
             do
             {
                 if ((node.Type == type) && (node.Profile == profile))
