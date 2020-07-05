@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Benchmark
+namespace Smart.IO.ByteMapper.Benchmark
 {
     using BenchmarkDotNet.Configs;
     using BenchmarkDotNet.Diagnosers;
@@ -9,9 +9,9 @@
     {
         public BenchmarkConfig()
         {
-            Add(MarkdownExporter.Default, MarkdownExporter.GitHub);
-            Add(MemoryDiagnoser.Default);
-            Add(Job.MediumRun);
+            AddExporter(MarkdownExporter.Default, MarkdownExporter.GitHub);
+            AddDiagnoser(MemoryDiagnoser.Default);
+            AddJob(Job.MediumRun);
         }
     }
 }

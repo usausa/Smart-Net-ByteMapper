@@ -373,7 +373,7 @@ namespace Smart.IO.ByteMapper.Helpers
 
                         count++;
                     }
-                    else if ((num == DotDiff) && (dotPos == -1))
+                    else if (num == DotDiff)
                     {
                         dotPos = count;
                         i++;
