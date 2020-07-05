@@ -1,10 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <RootNamespace>Smart</RootNamespace>
     <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Usa.Smart.IO.ByteMapper</PackageId>
+    <Title>Smart.IO.ByteMapper .NET</Title>
+    <Description>Smart byte mapper library for .NET</Description>
+    <Summary>Smart byte mapper library for .NET</Summary>
+    <PackageTags>smart io mapper</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,9 +1,17 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Smart</RootNamespace>
     <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Usa.Smart.IO.ByteMapper.AspNetCore</PackageId>
+    <Title>Smart.IO.ByteMapper.AspNetCore .NET</Title>
+    <Description>Smart byte mapper library ASP.NET Core extensions for .NET</Description>
+    <Summary>Smart byte mapper library ASP.NET Core extensions for .NET</Summary>
+    <PackageTags>smart io mapper aspnet aspnetcore</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
