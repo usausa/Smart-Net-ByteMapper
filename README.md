@@ -1,4 +1,6 @@
-﻿# Smart.IO.ByteMapper .NET - byte array mapper library for .NET
+# Smart.IO.ByteMapper .NET - byte array mapper library for .NET
+
+[![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper/)
 
 ## What is this ?
 
@@ -94,11 +96,11 @@ Performance in this case.
 
 ## NuGet
 
-| Id                                 | Note                       |
-|------------------------------------|----------------------------|
-| Usa.Smart.IO.ByteMapper            | Core libyrary              |
-| Usa.Smart.IO.ByteMapper.Options    | Optional converters        |
-| Usa.Smart.IO.ByteMapper.AspNetCore | ASP.NET Core integration   |
+| Package | Note |
+|-|-|
+| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper/) | Core libyrary |
+| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper.Options)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.Options/) | Optional converters |
+| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper.AspNetCore)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.AspNetCore/) | ASP.NET Core integration |
 
 ## Benchmark
 
