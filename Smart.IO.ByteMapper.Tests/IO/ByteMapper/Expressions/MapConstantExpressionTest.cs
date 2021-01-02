@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Text;
@@ -30,16 +30,6 @@
             mapper.ToByte(buffer, 0, obj);
 
             Assert.Equal(Encoding.ASCII.GetBytes("1234\r\n"), buffer);
-        }
-
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void CoverageFix()
-        {
-            Assert.Throws<ArgumentNullException>(() => new MapConstantExpression(null));
         }
 
         //--------------------------------------------------------------------------------

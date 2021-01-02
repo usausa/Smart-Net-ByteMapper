@@ -171,10 +171,10 @@ namespace Smart.IO.ByteMapper.Converters
         public object Read(byte[] buffer, int index)
         {
             var span = buffer.AsSpan(index);
-            var flag = BinaryPrimitives.ReadInt32LittleEndian(span);
-            var hi = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
-            var mid = BinaryPrimitives.ReadInt32LittleEndian(span[8..]);
-            var lo = BinaryPrimitives.ReadInt32LittleEndian(span[12..]);
+            var lo = BinaryPrimitives.ReadInt32LittleEndian(span);
+            var mid = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
+            var hi = BinaryPrimitives.ReadInt32LittleEndian(span[8..]);
+            var flag = BinaryPrimitives.ReadInt32LittleEndian(span[12..]);
             return DecimalHelper.FromBits(lo, mid, hi, flag);
         }
 
@@ -249,7 +249,7 @@ namespace Smart.IO.ByteMapper.Converters
 
         public object Read(byte[] buffer, int index)
         {
-            var span = buffer.AsSpan();
+            var span = buffer.AsSpan(index);
             var ticks = BinaryPrimitives.ReadInt64BigEndian(span);
             var offset = BinaryPrimitives.ReadInt16BigEndian(span[8..]);
             return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
@@ -259,7 +259,7 @@ namespace Smart.IO.ByteMapper.Converters
 
         public void Write(byte[] buffer, int index, object value)
         {
-            var span = buffer.AsSpan();
+            var span = buffer.AsSpan(index);
             var dateTime = (DateTimeOffset)value;
             BinaryPrimitives.WriteInt64BigEndian(span, dateTime.UtcTicks);
             BinaryPrimitives.WriteInt16BigEndian(span[8..], (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
@@ -272,7 +272,7 @@ namespace Smart.IO.ByteMapper.Converters
 
         public object Read(byte[] buffer, int index)
         {
-            var span = buffer.AsSpan();
+            var span = buffer.AsSpan(index);
             var ticks = BinaryPrimitives.ReadInt64LittleEndian(span);
             var offset = BinaryPrimitives.ReadInt16LittleEndian(span[8..]);
             return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
@@ -282,7 +282,7 @@ namespace Smart.IO.ByteMapper.Converters
 
         public void Write(byte[] buffer, int index, object value)
         {
-            var span = buffer.AsSpan();
+            var span = buffer.AsSpan(index);
             var dateTime = (DateTimeOffset)value;
             BinaryPrimitives.WriteInt64LittleEndian(span, dateTime.UtcTicks);
             BinaryPrimitives.WriteInt16LittleEndian(span[8..], (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));

@@ -88,7 +88,7 @@ namespace Smart.IO.ByteMapper.Expressions
                 .DefaultDelimiter(0xCC)
                 .CreateMapByExpression<TypeDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(0xFF))
                 .CreateMapByExpression<DefaultDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(true))
-                .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(null))
+                .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(Array.Empty<byte>()))
                 .ToMapperFactory();
             var typeMapper = mapperFactory.Create<TypeDelimiterObject>();
             var defaultMapper = mapperFactory.Create<DefaultDelimiterObject>();
