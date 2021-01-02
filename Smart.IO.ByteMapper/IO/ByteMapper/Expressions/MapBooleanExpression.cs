@@ -13,7 +13,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapBooleanExpression : IMemberMapExpression, IMapBooleanSyntax
     {
-        private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
+        private readonly BooleanConverterBuilder builder = new();
 
         //--------------------------------------------------------------------------------
         // Syntax

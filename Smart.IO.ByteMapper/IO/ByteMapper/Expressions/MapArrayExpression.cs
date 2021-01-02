@@ -11,7 +11,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapArrayExpression : IMemberMapExpression, IMapArraySyntax
     {
-        private readonly ArrayConverterBuilder builder = new ArrayConverterBuilder();
+        private readonly ArrayConverterBuilder builder = new();
 
         public MapArrayExpression(int length, IMapConverterBuilder elementConverterBuilder)
         {

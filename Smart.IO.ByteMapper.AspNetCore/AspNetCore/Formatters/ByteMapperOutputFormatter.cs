@@ -19,9 +19,9 @@ namespace Smart.AspNetCore.Formatters
 
         private static readonly Type EnumerableWriterType = typeof(EnumerableOutputWriter<>);
 
-        private readonly ThreadsafeTypeHashArrayMap<IOutputWriter> writerCache = new ThreadsafeTypeHashArrayMap<IOutputWriter>();
+        private readonly ThreadsafeTypeHashArrayMap<IOutputWriter> writerCache = new();
 
-        private readonly TypeProfileKeyCache<IOutputWriter> profiledWriterCache = new TypeProfileKeyCache<IOutputWriter>();
+        private readonly TypeProfileKeyCache<IOutputWriter> profiledWriterCache = new();
 
         private readonly ByteMapperFormatterConfig config;
 

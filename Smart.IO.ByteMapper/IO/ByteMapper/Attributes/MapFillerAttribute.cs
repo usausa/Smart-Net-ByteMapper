@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapFillerAttribute : AbstractTypeMapAttribute
     {
-        private readonly FillerTypeMapperBuilder builder = new FillerTypeMapperBuilder();
+        private readonly FillerTypeMapperBuilder builder = new();
 
         public byte Filler
         {

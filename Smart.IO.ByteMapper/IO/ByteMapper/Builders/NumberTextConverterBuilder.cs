@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System;
     using System.Globalization;
@@ -26,14 +26,14 @@
 
         static NumberTextConverterBuilder()
         {
-            AddEntry(typeof(int), (b, t) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
-            AddEntry(typeof(int?), (b, t) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
-            AddEntry(typeof(long), (b, t) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
-            AddEntry(typeof(long?), (b, t) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
-            AddEntry(typeof(short), (b, t) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
-            AddEntry(typeof(short?), (b, t) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
-            AddEntry(typeof(decimal), (b, t) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
-            AddEntry(typeof(decimal?), (b, t) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
+            AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
+            AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
+            AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
+            AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
+            AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
+            AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
+            AddEntry(typeof(decimal), (b, _) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
+            AddEntry(typeof(decimal?), (b, _) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
         }
 
         private IMapConverter CreateIntTextConverter(Type type, IBuilderContext context)

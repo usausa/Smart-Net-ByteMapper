@@ -23,7 +23,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapNumberTextTextExpression : IMemberMapExpression, IMapNumberTextSyntax
     {
-        private readonly NumberTextConverterBuilder builder = new NumberTextConverterBuilder();
+        private readonly NumberTextConverterBuilder builder = new();
 
         public MapNumberTextTextExpression(int length)
         {

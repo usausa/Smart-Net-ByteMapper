@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
 
@@ -79,7 +79,7 @@
         {
             Assert.Throws<ArgumentOutOfRangeException>(() => new MemberConfigExpression().Array(-1, null));
             Assert.Throws<ArgumentNullException>(() => new MemberConfigExpression().Array(0, null));
-            Assert.Throws<InvalidOperationException>(() => new MemberConfigExpression().Array(0, e => { }));
+            Assert.Throws<InvalidOperationException>(() => new MemberConfigExpression().Array(0, _ => { }));
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new MapArrayExpression(-1, null));
 

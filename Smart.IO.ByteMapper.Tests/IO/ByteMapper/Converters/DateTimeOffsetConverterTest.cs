@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using System;
     using System.Text;
@@ -15,7 +15,7 @@
 
         private const string Format = "yyyyMMddHHmmssfff";
 
-        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(2000, 12, 31, 12, 34, 56, 789), TimeSpan.Zero);
+        private static readonly DateTimeOffset Value = new(new DateTime(2000, 12, 31, 12, 34, 56, 789), TimeSpan.Zero);
 
         private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
@@ -44,11 +44,7 @@
 
         private static DateTimeOffsetConverter CreateConverter(Type type, string format, DateTimeKind kind)
         {
-            return new DateTimeOffsetConverter(
-                format,
-                kind,
-                0x20,
-                type);
+            return new(format, kind, 0x20, type);
         }
 
         //--------------------------------------------------------------------------------

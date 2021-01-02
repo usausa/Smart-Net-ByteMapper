@@ -40,9 +40,9 @@ namespace Smart.IO.ByteMapper.Benchmark
 
         private static readonly byte[] Bytes20 = new byte[20];
 
-        private static readonly DateTime DateTime8 = new DateTime(2000, 12, 31);
-        private static readonly DateTime DateTime14 = new DateTime(2000, 12, 31, 23, 59, 59);
-        private static readonly DateTime DateTime17 = new DateTime(2000, 12, 31, 23, 59, 59, 999);
+        private static readonly DateTime DateTime8 = new(2000, 12, 31);
+        private static readonly DateTime DateTime14 = new(2000, 12, 31, 23, 59, 59);
+        private static readonly DateTime DateTime17 = new(2000, 12, 31, 23, 59, 59, 999);
 
         // Default
 

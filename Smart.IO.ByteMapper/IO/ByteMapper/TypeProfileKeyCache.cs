@@ -12,9 +12,9 @@ namespace Smart.IO.ByteMapper
 
         private const int Factor = 3;
 
-        private static readonly Node EmptyNode = new Node(typeof(EmptyKey), null, default);
+        private static readonly Node EmptyNode = new(typeof(EmptyKey), null, default);
 
-        private readonly object sync = new object();
+        private readonly object sync = new();
 
         private Node[] nodes;
 

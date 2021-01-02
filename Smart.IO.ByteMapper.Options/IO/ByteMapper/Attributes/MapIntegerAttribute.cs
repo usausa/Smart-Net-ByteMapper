@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapIntegerAttribute : AbstractMemberMapAttribute
     {
-        private readonly IntegerConverterBuilder builder = new IntegerConverterBuilder();
+        private readonly IntegerConverterBuilder builder = new();
 
         public Padding Padding
         {

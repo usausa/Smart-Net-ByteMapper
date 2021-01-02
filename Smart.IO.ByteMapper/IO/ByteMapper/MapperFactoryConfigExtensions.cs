@@ -9,7 +9,7 @@ namespace Smart.IO.ByteMapper
     {
         public static MapperFactory ToMapperFactory(this MapperFactoryConfig config)
         {
-            return new MapperFactory(config);
+            return new(config);
         }
 
         public static MapperFactoryConfig DefaultDelimiter(this MapperFactoryConfig config, params byte[] value)

@@ -15,7 +15,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapIntegerExpression : IMemberMapExpression, IMapIntegerSyntax
     {
-        private readonly IntegerConverterBuilder builder = new IntegerConverterBuilder();
+        private readonly IntegerConverterBuilder builder = new();
 
         public MapIntegerExpression(int length)
         {

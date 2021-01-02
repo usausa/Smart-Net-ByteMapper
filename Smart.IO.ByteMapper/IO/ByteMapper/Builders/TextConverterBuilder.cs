@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System.Text;
 
@@ -18,7 +18,7 @@
 
         static TextConverterBuilder()
         {
-            AddEntry(typeof(string), (b, t) => b.Length, (b, t, c) => b.CreateTextConverter(c));
+            AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateTextConverter(c));
         }
 
         private IMapConverter CreateTextConverter(IBuilderContext context)

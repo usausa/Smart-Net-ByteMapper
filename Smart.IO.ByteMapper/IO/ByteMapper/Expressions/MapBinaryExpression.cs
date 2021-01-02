@@ -9,7 +9,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapBinaryExpression : IMemberMapExpression, IMapBinarySyntax
     {
-        private readonly BinaryConverterBuilder builder = new BinaryConverterBuilder();
+        private readonly BinaryConverterBuilder builder = new();
 
         //--------------------------------------------------------------------------------
         // Syntax

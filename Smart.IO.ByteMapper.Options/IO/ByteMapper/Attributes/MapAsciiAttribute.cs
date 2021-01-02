@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapAsciiAttribute : AbstractMemberMapAttribute
     {
-        private readonly AsciiConverterBuilder builder = new AsciiConverterBuilder();
+        private readonly AsciiConverterBuilder builder = new();
 
         public bool Trim
         {

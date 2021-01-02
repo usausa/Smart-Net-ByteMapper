@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapBinaryAttribute : AbstractMemberMapAttribute
     {
-        private readonly BinaryConverterBuilder builder = new BinaryConverterBuilder();
+        private readonly BinaryConverterBuilder builder = new();
 
         public Endian Endian
         {

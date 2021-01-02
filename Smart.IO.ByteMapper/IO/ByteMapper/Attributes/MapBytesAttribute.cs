@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapBytesAttribute : AbstractMemberMapAttribute
     {
-        private readonly BytesConverterBuilder builder = new BytesConverterBuilder();
+        private readonly BytesConverterBuilder builder = new();
 
         public byte Filler
         {

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Collections.Generic;
@@ -11,11 +11,11 @@
 
     internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
     {
-        private readonly List<ITypeMapperBuilder> typeMapBuilders = new List<ITypeMapperBuilder>();
+        private readonly List<ITypeMapperBuilder> typeMapBuilders = new();
 
-        private readonly List<IMemberMapperBuilder> memberMapBuilders = new List<IMemberMapperBuilder>();
+        private readonly List<IMemberMapperBuilder> memberMapBuilders = new();
 
-        private readonly Dictionary<string, object> typeParameters = new Dictionary<string, object>();
+        private readonly Dictionary<string, object> typeParameters = new();
 
         private readonly int size;
 

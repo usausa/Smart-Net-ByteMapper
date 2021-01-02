@@ -7,7 +7,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapTextAttribute : AbstractMemberMapAttribute
     {
-        private readonly TextConverterBuilder builder = new TextConverterBuilder();
+        private readonly TextConverterBuilder builder = new();
 
         public int CodePage
         {

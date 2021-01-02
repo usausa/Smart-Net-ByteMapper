@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Converters
 {
     internal sealed class ByteConverter : IMapConverter
     {
-        public static ByteConverter Default { get; } = new ByteConverter();
+        public static ByteConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index)
         {

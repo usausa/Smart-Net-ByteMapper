@@ -16,9 +16,9 @@ namespace Smart.IO.ByteMapper
 
         private readonly IDictionary<TypeProfile, IMappingFactory> profiledMappingFactories;
 
-        private readonly ThreadsafeTypeHashArrayMap<object> cache = new ThreadsafeTypeHashArrayMap<object>();
+        private readonly ThreadsafeTypeHashArrayMap<object> cache = new();
 
-        private readonly TypeProfileKeyCache<object> profiledCache = new TypeProfileKeyCache<object>();
+        private readonly TypeProfileKeyCache<object> profiledCache = new();
 
         public ComponentContainer Components { get; }
 

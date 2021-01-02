@@ -30,7 +30,7 @@ namespace Smart.IO.ByteMapper.Builders
             var delegateFactory = context.Components.Get<IDelegateFactory>();
             var elementType = type.GetElementType();
             return new ArrayConverter(
-                delegateFactory.CreateArrayAllocator(elementType),
+                delegateFactory.CreateArrayAllocator(elementType!),
                 Length,
                 Filler ?? context.GetParameter<byte>(Parameter.Filler),
                 ElementConverterBuilder.CalcSize(elementType),

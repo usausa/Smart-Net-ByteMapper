@@ -11,7 +11,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianIntBinaryConverter : IMapConverter
     {
-        public static BigEndianIntBinaryConverter Default { get; } = new BigEndianIntBinaryConverter();
+        public static BigEndianIntBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(index));
@@ -22,7 +22,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianIntBinaryConverter : IMapConverter
     {
-        public static LittleEndianIntBinaryConverter Default { get; } = new LittleEndianIntBinaryConverter();
+        public static LittleEndianIntBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(index));
@@ -37,7 +37,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianLongBinaryConverter : IMapConverter
     {
-        public static BigEndianLongBinaryConverter Default { get; } = new BigEndianLongBinaryConverter();
+        public static BigEndianLongBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt64BigEndian(buffer.AsSpan(index));
@@ -48,7 +48,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianLongBinaryConverter : IMapConverter
     {
-        public static LittleEndianLongBinaryConverter Default { get; } = new LittleEndianLongBinaryConverter();
+        public static LittleEndianLongBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt64LittleEndian(buffer.AsSpan(index));
@@ -63,7 +63,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianShortBinaryConverter : IMapConverter
     {
-        public static BigEndianShortBinaryConverter Default { get; } = new BigEndianShortBinaryConverter();
+        public static BigEndianShortBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(index));
@@ -74,7 +74,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianShortBinaryConverter : IMapConverter
     {
-        public static LittleEndianShortBinaryConverter Default { get; } = new LittleEndianShortBinaryConverter();
+        public static LittleEndianShortBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(index));
@@ -89,7 +89,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianDoubleBinaryConverter : IMapConverter
     {
-        public static BigEndianDoubleBinaryConverter Default { get; } = new BigEndianDoubleBinaryConverter();
+        public static BigEndianDoubleBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64BigEndian(buffer.AsSpan(index)));
@@ -100,7 +100,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianDoubleBinaryConverter : IMapConverter
     {
-        public static LittleEndianDoubleBinaryConverter Default { get; } = new LittleEndianDoubleBinaryConverter();
+        public static LittleEndianDoubleBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64LittleEndian(buffer.AsSpan(index)));
@@ -115,7 +115,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianFloatBinaryConverter : IMapConverter
     {
-        public static BigEndianFloatBinaryConverter Default { get; } = new BigEndianFloatBinaryConverter();
+        public static BigEndianFloatBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(index)));
@@ -126,7 +126,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianFloatBinaryConverter : IMapConverter
     {
-        public static LittleEndianFloatBinaryConverter Default { get; } = new LittleEndianFloatBinaryConverter();
+        public static LittleEndianFloatBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index) =>
             BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(index)));
@@ -141,7 +141,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianDecimalBinaryConverter : IMapConverter
     {
-        public static BigEndianDecimalBinaryConverter Default { get; } = new BigEndianDecimalBinaryConverter();
+        public static BigEndianDecimalBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index)
         {
@@ -166,7 +166,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianDecimalBinaryConverter : IMapConverter
     {
-        public static LittleEndianDecimalBinaryConverter Default { get; } = new LittleEndianDecimalBinaryConverter();
+        public static LittleEndianDecimalBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index)
         {
@@ -245,7 +245,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class BigEndianDateTimeOffsetBinaryConverter : IMapConverter
     {
-        public static BigEndianDateTimeOffsetBinaryConverter Default { get; } = new BigEndianDateTimeOffsetBinaryConverter();
+        public static BigEndianDateTimeOffsetBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index)
         {
@@ -268,7 +268,7 @@ namespace Smart.IO.ByteMapper.Converters
 
     internal sealed class LittleEndianDateTimeOffsetBinaryConverter : IMapConverter
     {
-        public static LittleEndianDateTimeOffsetBinaryConverter Default { get; } = new LittleEndianDateTimeOffsetBinaryConverter();
+        public static LittleEndianDateTimeOffsetBinaryConverter Default { get; } = new();
 
         public object Read(byte[] buffer, int index)
         {

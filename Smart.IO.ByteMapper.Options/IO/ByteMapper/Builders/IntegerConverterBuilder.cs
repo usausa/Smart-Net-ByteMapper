@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System;
 
@@ -16,12 +16,12 @@
 
         static IntegerConverterBuilder()
         {
-            AddEntry(typeof(int), (b, t) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-            AddEntry(typeof(int?), (b, t) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-            AddEntry(typeof(long), (b, t) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-            AddEntry(typeof(long?), (b, t) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-            AddEntry(typeof(short), (b, t) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
-            AddEntry(typeof(short?), (b, t) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
+            AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
+            AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
+            AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
+            AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
+            AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
+            AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
         }
 
         private IMapConverter CreateInt32Converter(Type type, IBuilderContext context)

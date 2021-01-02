@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System.Collections.Generic;
     using System.Globalization;
@@ -11,7 +11,7 @@
 
     public static class CultureExtensions
     {
-        private static readonly Dictionary<Culture, CultureInfo> Cultures = new Dictionary<Culture, CultureInfo>
+        private static readonly Dictionary<Culture, CultureInfo> Cultures = new()
         {
             { Culture.Current, CultureInfo.CurrentCulture },
             { Culture.Invariant, CultureInfo.InvariantCulture }

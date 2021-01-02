@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapBooleanAttribute : AbstractMemberMapAttribute
     {
-        private readonly BooleanConverterBuilder builder = new BooleanConverterBuilder();
+        private readonly BooleanConverterBuilder builder = new();
 
         public byte TrueValue
         {

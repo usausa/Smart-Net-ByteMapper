@@ -151,11 +151,9 @@ namespace Smart.IO.ByteMapper
                 return buffer;
             }
 
-            using (var ms = new MemoryStream())
-            {
-                mapper.ToStreamMultiple(ms, source);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            mapper.ToStreamMultiple(ms, source);
+            return ms.ToArray();
         }
 
         public static void ToByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, IEnumerable<T> source)
@@ -214,11 +212,9 @@ namespace Smart.IO.ByteMapper
                 return buffer;
             }
 
-            using (var ms = new MemoryStream())
-            {
-                mapper.ToStreamMultiple(ms, source);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            mapper.ToStreamMultiple(ms, source);
+            return ms.ToArray();
         }
 
         public static void ToByteMultiple(this ITypeMapper mapper, byte[] buffer, IEnumerable source)

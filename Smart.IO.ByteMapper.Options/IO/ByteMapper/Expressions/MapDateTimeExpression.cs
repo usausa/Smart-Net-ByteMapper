@@ -11,7 +11,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapDateTimeExpression : IMemberMapExpression, IMapDateTimeSyntax
     {
-        private readonly DateTimeConverterBuilder builder = new DateTimeConverterBuilder();
+        private readonly DateTimeConverterBuilder builder = new();
 
         public MapDateTimeExpression(string format)
         {

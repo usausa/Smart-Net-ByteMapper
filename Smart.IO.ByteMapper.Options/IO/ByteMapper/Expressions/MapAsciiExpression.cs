@@ -15,7 +15,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapAsciiExpression : IMemberMapExpression, IMapAsciiSyntax
     {
-        private readonly AsciiConverterBuilder builder = new AsciiConverterBuilder();
+        private readonly AsciiConverterBuilder builder = new();
 
         public MapAsciiExpression(int length)
         {

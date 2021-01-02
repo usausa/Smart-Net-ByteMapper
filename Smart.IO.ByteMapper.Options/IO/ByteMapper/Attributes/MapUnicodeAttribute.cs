@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapUnicodeAttribute : AbstractMemberMapAttribute
     {
-        private readonly UnicodeConverterBuilder builder = new UnicodeConverterBuilder();
+        private readonly UnicodeConverterBuilder builder = new();
 
         public bool Trim
         {

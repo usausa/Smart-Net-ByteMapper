@@ -6,15 +6,10 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapConstantExpression : ITypeMapExpression
     {
-        private readonly ConstantTypeMapperBuilder builder = new ConstantTypeMapperBuilder();
+        private readonly ConstantTypeMapperBuilder builder = new();
 
         public MapConstantExpression(params byte[] content)
         {
-            if (content is null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
-
             builder.Content = content;
         }
 

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using Smart.IO.ByteMapper.Converters;
 
@@ -10,7 +10,7 @@
 
         static BytesConverterBuilder()
         {
-            AddEntry(typeof(byte[]), (b, t) => b.Length, (b, t, c) => b.CreateBytesConverter(c));
+            AddEntry(typeof(byte[]), (b, _) => b.Length, (b, _, c) => b.CreateBytesConverter(c));
         }
 
         private IMapConverter CreateBytesConverter(IBuilderContext context)

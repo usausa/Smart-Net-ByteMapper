@@ -18,7 +18,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapTextExpression : IMemberMapExpression, IMapTextSyntax
     {
-        private readonly TextConverterBuilder builder = new TextConverterBuilder();
+        private readonly TextConverterBuilder builder = new();
 
         public MapTextExpression(int length)
         {

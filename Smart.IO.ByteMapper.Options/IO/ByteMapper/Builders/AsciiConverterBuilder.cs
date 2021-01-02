@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using Smart.IO.ByteMapper.Converters;
 
@@ -14,7 +14,7 @@
 
         static AsciiConverterBuilder()
         {
-            AddEntry(typeof(string), (b, t) => b.Length, (b, t, c) => b.CreateAsciiConverter(c));
+            AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateAsciiConverter(c));
         }
 
         private IMapConverter CreateAsciiConverter(IBuilderContext context)

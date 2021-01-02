@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using System;
     using System.Globalization;
@@ -32,16 +32,7 @@
 
         private static DecimalTextConverter CreateConverter(Type type)
         {
-            return new DecimalTextConverter(
-                Length,
-                null,
-                Encoding.ASCII,
-                true,
-                Padding.Left,
-                0x20,
-                NumberStyles.Number,
-                NumberFormatInfo.InvariantInfo,
-                type);
+            return new(Length, null, Encoding.ASCII, true, Padding.Left, 0x20, NumberStyles.Number, NumberFormatInfo.InvariantInfo, type);
         }
 
         //--------------------------------------------------------------------------------

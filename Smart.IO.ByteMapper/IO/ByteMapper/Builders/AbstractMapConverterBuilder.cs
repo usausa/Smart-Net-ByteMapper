@@ -8,7 +8,7 @@ namespace Smart.IO.ByteMapper.Builders
     public abstract class AbstractMapConverterBuilder<TBuilder> : IMapConverterBuilder
         where TBuilder : AbstractMapConverterBuilder<TBuilder>
     {
-        private static readonly Dictionary<Type, Entry> Entries = new Dictionary<Type, Entry>();
+        private static readonly Dictionary<Type, Entry> Entries = new();
 
         protected static void AddEntry(Type type, Func<TBuilder, Type, int> calcSize, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
         {
@@ -17,7 +17,7 @@ namespace Smart.IO.ByteMapper.Builders
 
         protected static void AddEntry(Type type, int size, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
         {
-            Entries.Add(type, new Entry((b, t) => size, factory));
+            Entries.Add(type, new Entry((_, _) => size, factory));
         }
 
         public bool Match(Type type)

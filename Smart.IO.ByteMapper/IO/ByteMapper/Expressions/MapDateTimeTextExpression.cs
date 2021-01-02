@@ -19,7 +19,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapDateTimeTextExpression : IMemberMapExpression, IMapDateTimeTextSyntax
     {
-        private readonly DateTimeTextConverterBuilder builder = new DateTimeTextConverterBuilder();
+        private readonly DateTimeTextConverterBuilder builder = new();
 
         public MapDateTimeTextExpression(int length, string format)
         {

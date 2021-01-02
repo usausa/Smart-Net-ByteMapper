@@ -8,7 +8,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapNumberTextAttribute : AbstractMemberMapAttribute
     {
-        private readonly NumberTextConverterBuilder builder = new NumberTextConverterBuilder();
+        private readonly NumberTextConverterBuilder builder = new();
 
         public string Format
         {

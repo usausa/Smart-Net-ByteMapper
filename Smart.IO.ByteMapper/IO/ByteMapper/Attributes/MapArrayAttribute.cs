@@ -7,7 +7,7 @@ namespace Smart.IO.ByteMapper.Attributes
     [AttributeUsage(AttributeTargets.Property)]
     public sealed class MapArrayAttribute : Attribute
     {
-        private readonly ArrayConverterBuilder builder = new ArrayConverterBuilder();
+        private readonly ArrayConverterBuilder builder = new();
 
         public byte Filler
         {

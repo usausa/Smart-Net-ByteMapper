@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using System;
     using System.Text;
@@ -37,12 +37,7 @@
 
         private static Int32Converter CreateConverter(Type type)
         {
-            return new Int32Converter(
-                Length,
-                Padding.Left,
-                false,
-                0x20,
-                type);
+            return new(Length, Padding.Left, false, 0x20, type);
         }
 
         //--------------------------------------------------------------------------------

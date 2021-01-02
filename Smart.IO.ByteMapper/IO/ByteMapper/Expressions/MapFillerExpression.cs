@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapFillerExpression : ITypeMapExpression
     {
-        private readonly FillerTypeMapperBuilder builder = new FillerTypeMapperBuilder();
+        private readonly FillerTypeMapperBuilder builder = new();
 
         public MapFillerExpression(int length)
         {

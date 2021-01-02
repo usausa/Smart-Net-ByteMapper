@@ -19,7 +19,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapDecimalExpression : IMemberMapExpression, IMapDecimalSyntax
     {
-        private readonly DecimalConverterBuilder builder = new DecimalConverterBuilder();
+        private readonly DecimalConverterBuilder builder = new();
 
         public MapDecimalExpression(int length)
             : this(length, 0)

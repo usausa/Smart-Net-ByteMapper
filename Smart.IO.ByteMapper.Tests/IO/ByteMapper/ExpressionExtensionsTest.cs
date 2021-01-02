@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
 
@@ -23,7 +23,7 @@
 
             // Named
             Assert.NotNull(new MapperFactoryConfig()
-                .CreateMapByExpression<SimpleObject>("test", 0, c => { })
+                .CreateMapByExpression<SimpleObject>("test", 0, _ => { })
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
@@ -31,13 +31,13 @@
 
             // Type
             Assert.NotNull(new MapperFactoryConfig()
-                .CreateMapByExpression(typeof(SimpleObject), 0, c => { })
+                .CreateMapByExpression(typeof(SimpleObject), 0, _ => { })
                 .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Type Named
             Assert.NotNull(new MapperFactoryConfig()
-                .CreateMapByExpression(typeof(SimpleObject), "test", 0, c => { })
+                .CreateMapByExpression(typeof(SimpleObject), "test", 0, _ => { })
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
@@ -47,13 +47,13 @@
 
             // Default
             Assert.NotNull(new MapperFactoryConfig()
-                .AddProfile(new AnonymousProfile(profile => profile.CreateMapByExpression<SimpleObject>(0, c => { })))
+                .AddProfile(new AnonymousProfile(profile => profile.CreateMapByExpression<SimpleObject>(0, _ => { })))
                 .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Named
             Assert.NotNull(new MapperFactoryConfig()
-                .AddProfile(new NamedProfile("test", profile => profile.CreateMapByExpression<SimpleObject>(0, c => { })))
+                .AddProfile(new NamedProfile("test", profile => profile.CreateMapByExpression<SimpleObject>(0, _ => { })))
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
 
@@ -61,13 +61,13 @@
 
             // Type
             Assert.NotNull(new MapperFactoryConfig()
-                .AddProfile(new AnonymousProfile(profile => profile.CreateMapByExpression(typeof(SimpleObject), 0, c => { })))
+                .AddProfile(new AnonymousProfile(profile => profile.CreateMapByExpression(typeof(SimpleObject), 0, _ => { })))
                 .ToMapperFactory()
                 .Create<SimpleObject>());
 
             // Type Named
             Assert.NotNull(new MapperFactoryConfig()
-                .AddProfile(new NamedProfile("test", profile => profile.CreateMapByExpression(typeof(SimpleObject), 0, c => { })))
+                .AddProfile(new NamedProfile("test", profile => profile.CreateMapByExpression(typeof(SimpleObject), 0, _ => { })))
                 .ToMapperFactory()
                 .Create<SimpleObject>("test"));
         }

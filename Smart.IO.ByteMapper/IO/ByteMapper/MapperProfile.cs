@@ -5,7 +5,7 @@ namespace Smart.IO.ByteMapper
 
     public class MapperProfile : IMapperProfile
     {
-        private readonly List<IMappingFactory> factories = new List<IMappingFactory>();
+        private readonly List<IMappingFactory> factories = new();
 
         public string Name { get; }
 
@@ -33,6 +33,7 @@ namespace Smart.IO.ByteMapper
         // IByteMapperProfile
         //--------------------------------------------------------------------------------
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes", Justification = "Ignore")]
         IEnumerable<IMappingFactory> IMapperProfile.ResolveMappingFactories() => factories;
     }
 }

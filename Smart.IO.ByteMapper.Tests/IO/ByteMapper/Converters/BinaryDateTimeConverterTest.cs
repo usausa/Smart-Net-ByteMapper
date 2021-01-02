@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using System;
 
@@ -10,7 +10,7 @@
     {
         private const int Offset = 1;
 
-        private static readonly DateTime Value = new DateTime(1);
+        private static readonly DateTime Value = new(1);
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
         {
@@ -45,7 +45,7 @@
     {
         private const int Offset = 1;
 
-        private static readonly DateTime Value = new DateTime(1);
+        private static readonly DateTime Value = new(1);
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
         {
@@ -80,7 +80,7 @@
     {
         private const int Offset = 1;
 
-        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(1, DateTimeKind.Utc));
+        private static readonly DateTimeOffset Value = new(new DateTime(1, DateTimeKind.Utc));
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
         {
@@ -116,7 +116,7 @@
     {
         private const int Offset = 1;
 
-        private static readonly DateTimeOffset Value = new DateTimeOffset(new DateTime(1, DateTimeKind.Utc));
+        private static readonly DateTimeOffset Value = new(new DateTime(1, DateTimeKind.Utc));
 
         private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
         {

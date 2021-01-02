@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapConstantAttribute : AbstractTypeMapAttribute
     {
-        private readonly ConstantTypeMapperBuilder builder = new ConstantTypeMapperBuilder();
+        private readonly ConstantTypeMapperBuilder builder = new();
 
         public MapConstantAttribute(int offset, byte[] content)
         {

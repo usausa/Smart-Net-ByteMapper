@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using Smart.IO.ByteMapper.Converters;
 
@@ -12,8 +12,8 @@
 
         static BooleanConverterBuilder()
         {
-            AddEntry(typeof(bool), 1, (b, t, c) => b.CreateBooleanConverter(c));
-            AddEntry(typeof(bool?), 1, (b, t, c) => b.CreateNullableBooleanConverter(c));
+            AddEntry(typeof(bool), 1, (b, _, c) => b.CreateBooleanConverter(c));
+            AddEntry(typeof(bool?), 1, (b, _, c) => b.CreateNullableBooleanConverter(c));
         }
 
         private IMapConverter CreateBooleanConverter(IBuilderContext context)

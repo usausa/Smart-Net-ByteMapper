@@ -17,7 +17,7 @@ namespace Smart.IO.ByteMapper.Expressions
                 .DefaultDelimiter(null)
                 .DefaultFiller(0xCC)
                 .CreateMapByExpression<MapNullFillerObject>(2, c => c.NullFiller(0xFF))
-                .CreateMapByExpression<DefaultNullFillerObject>(2, c => { })
+                .CreateMapByExpression<DefaultNullFillerObject>(2, _ => { })
                 .ToMapperFactory();
             var mapMapper = mapperFactory.Create<MapNullFillerObject>();
             var defaultMapper = mapperFactory.Create<DefaultNullFillerObject>();
@@ -133,9 +133,9 @@ namespace Smart.IO.ByteMapper.Expressions
             Assert.Throws<ArgumentNullException>(() =>
                 new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", null)));
             Assert.Throws<ArgumentException>(() =>
-                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", m => { })));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember("x", _ => { })));
             Assert.Throws<InvalidOperationException>(() =>
-                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember(x => x.IntValue, m => { })));
+                new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember(x => x.IntValue, _ => { })));
             Assert.Throws<ByteMapperException>(() =>
                 new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.ForMember(x => x.IntValue, m => m.Boolean())));
 

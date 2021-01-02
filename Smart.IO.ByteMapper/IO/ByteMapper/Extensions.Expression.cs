@@ -184,7 +184,7 @@ namespace Smart.IO.ByteMapper
 
         public static ITypeConfigSyntax<T> UseDelimiter<T>(this ITypeConfigSyntax<T> syntax, params byte[] value)
         {
-            if (value is null || (value.Length == 0))
+            if (value.Length == 0)
             {
                 syntax.UseDelimiter(false).TypeDelimiter(null);
             }

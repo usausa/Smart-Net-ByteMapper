@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Benchmark
+namespace Smart.IO.ByteMapper.Benchmark
 {
     using BenchmarkDotNet.Attributes;
 
@@ -9,7 +9,7 @@
     {
         private readonly byte[] buffer = new byte[40];
 
-        private readonly BinaryObject obj = new BinaryObject();
+        private readonly BinaryObject obj = new();
 
         private ITypeMapper<BinaryObject> mapper;
 

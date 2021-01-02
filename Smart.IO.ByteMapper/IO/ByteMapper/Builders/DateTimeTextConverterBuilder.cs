@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System;
     using System.Globalization;
@@ -22,10 +22,10 @@
 
         static DateTimeTextConverterBuilder()
         {
-            AddEntry(typeof(DateTime), (b, t) => b.Length, (b, t, c) => b.CreateDateTimeTextConverter(t, c));
-            AddEntry(typeof(DateTime?), (b, t) => b.Length, (b, t, c) => b.CreateDateTimeTextConverter(t, c));
-            AddEntry(typeof(DateTimeOffset), (b, t) => b.Length, (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
-            AddEntry(typeof(DateTimeOffset?), (b, t) => b.Length, (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
+            AddEntry(typeof(DateTime), (b, _) => b.Length, (b, t, c) => b.CreateDateTimeTextConverter(t, c));
+            AddEntry(typeof(DateTime?), (b, _) => b.Length, (b, t, c) => b.CreateDateTimeTextConverter(t, c));
+            AddEntry(typeof(DateTimeOffset), (b, _) => b.Length, (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
+            AddEntry(typeof(DateTimeOffset?), (b, _) => b.Length, (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
         }
 
         private IMapConverter CreateDateTimeTextConverter(Type type, IBuilderContext context)

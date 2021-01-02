@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System;
 
@@ -22,8 +22,8 @@
 
         static DecimalConverterBuilder()
         {
-            AddEntry(typeof(decimal), (b, t) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
-            AddEntry(typeof(decimal?), (b, t) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
+            AddEntry(typeof(decimal), (b, _) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
+            AddEntry(typeof(decimal?), (b, _) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
         }
 
         private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)

@@ -8,7 +8,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapDateTimeTextAttribute : AbstractMemberMapAttribute
     {
-        private readonly DateTimeTextConverterBuilder builder = new DateTimeTextConverterBuilder();
+        private readonly DateTimeTextConverterBuilder builder = new();
 
         public int CodePage
         {

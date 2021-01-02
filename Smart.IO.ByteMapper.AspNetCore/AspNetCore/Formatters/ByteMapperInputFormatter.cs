@@ -21,9 +21,9 @@ namespace Smart.AspNetCore.Formatters
 
         private static readonly Type ListReaderType = typeof(ListInputReader<>);
 
-        private readonly ThreadsafeTypeHashArrayMap<IInputReader> readerCache = new ThreadsafeTypeHashArrayMap<IInputReader>();
+        private readonly ThreadsafeTypeHashArrayMap<IInputReader> readerCache = new();
 
-        private readonly TypeProfileKeyCache<IInputReader> profiledReaderCache = new TypeProfileKeyCache<IInputReader>();
+        private readonly TypeProfileKeyCache<IInputReader> profiledReaderCache = new();
 
         private readonly ByteMapperFormatterConfig config;
 
@@ -88,7 +88,7 @@ namespace Smart.AspNetCore.Formatters
         {
             if (type.IsArray)
             {
-                return ArrayReaderType.MakeGenericType(type.GetElementType());
+                return ArrayReaderType.MakeGenericType(type.GetElementType()!);
             }
 
             if (TypeHelper.IsEnumerableType(type))

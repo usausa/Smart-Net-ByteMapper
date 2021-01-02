@@ -11,7 +11,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapBytesExpression : IMemberMapExpression, IMapBytesSyntax
     {
-        private readonly BytesConverterBuilder builder = new BytesConverterBuilder();
+        private readonly BytesConverterBuilder builder = new();
 
         public MapBytesExpression(int length)
         {

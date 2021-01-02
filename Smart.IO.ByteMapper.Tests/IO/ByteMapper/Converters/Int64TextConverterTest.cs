@@ -38,16 +38,7 @@ namespace Smart.IO.ByteMapper.Converters
 
         private static Int64TextConverter CreateConverter(Type type)
         {
-            return new Int64TextConverter(
-                Length,
-                null,
-                Encoding.ASCII,
-                true,
-                Padding.Left,
-                0x20,
-                NumberStyles.Integer,
-                NumberFormatInfo.InvariantInfo,
-                type);
+            return new(Length, null, Encoding.ASCII, true, Padding.Left, 0x20, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, type);
         }
 
         //--------------------------------------------------------------------------------

@@ -1,6 +1,5 @@
-﻿namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers
 {
-    using System;
     using System.Runtime.CompilerServices;
 
     public static class DecimalHelper
@@ -12,7 +11,7 @@
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static decimal FromBits(int lo, int mid, int hi, int flag)
         {
-            return new Decimal(lo, mid, hi, (flag & SignMask) != 0, (byte)((flag & ScaleMask) >> 16));
+            return new(lo, mid, hi, (flag & SignMask) != 0, (byte)((flag & ScaleMask) >> 16));
         }
     }
 }

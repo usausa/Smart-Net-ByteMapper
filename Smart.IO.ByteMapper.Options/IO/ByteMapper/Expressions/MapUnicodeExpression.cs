@@ -15,7 +15,7 @@ namespace Smart.IO.ByteMapper.Expressions
 
     internal sealed class MapUnicodeExpression : IMemberMapExpression, IMapUnicodeSyntax
     {
-        private readonly UnicodeConverterBuilder builder = new UnicodeConverterBuilder();
+        private readonly UnicodeConverterBuilder builder = new();
 
         public MapUnicodeExpression(int length)
         {

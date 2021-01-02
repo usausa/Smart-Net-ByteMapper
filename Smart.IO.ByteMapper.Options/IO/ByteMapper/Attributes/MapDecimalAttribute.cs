@@ -6,7 +6,7 @@ namespace Smart.IO.ByteMapper.Attributes
 
     public sealed class MapDecimalAttribute : AbstractMemberMapAttribute
     {
-        private readonly DecimalConverterBuilder builder = new DecimalConverterBuilder();
+        private readonly DecimalConverterBuilder builder = new();
 
         public bool UseGrouping
         {
