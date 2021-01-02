@@ -1,8 +1,7 @@
-﻿namespace Smart.IO.ByteMapper.Mappings
+namespace Smart.IO.ByteMapper.Mappings
 {
     using System;
 
-    using Smart.Functional;
     using Smart.IO.ByteMapper.Mappers;
 
     using Xunit;

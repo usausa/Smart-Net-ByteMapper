@@ -6,7 +6,7 @@
 
     public class MockBuilderContext : IBuilderContext
     {
-        public IComponentContainer Components { get; } = new ComponentConfig().ToContainer();
+        public ComponentContainer Components { get; } = new ComponentConfig().ToContainer();
 
         public T GetParameter<T>(string key)
         {

@@ -8,8 +8,8 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.12.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.1" />
-    <PackageReference Include="Usa.Smart.Core" Version="1.8.8" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.0.0-beta1" />
     <PackageReference Include="Usa.Smart.Text.Japanese" Version="1.6.2" />
   </ItemGroup>
 

@@ -1,6 +1,7 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using System;
+    using System.Buffers.Binary;
 
     using Smart.IO.ByteMapper.Helpers;
 
@@ -10,32 +11,24 @@
 
     internal sealed class BigEndianIntBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianIntBinaryConverter();
+        public static BigEndianIntBinaryConverter Default { get; } = new BigEndianIntBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetIntBE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutIntBE(buffer, index, (int)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(index), (int)value);
     }
 
     internal sealed class LittleEndianIntBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianIntBinaryConverter();
+        public static LittleEndianIntBinaryConverter Default { get; } = new LittleEndianIntBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetIntLE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutIntLE(buffer, index, (int)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(index), (int)value);
     }
 
     //--------------------------------------------------------------------------------
@@ -44,32 +37,24 @@
 
     internal sealed class BigEndianLongBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianLongBinaryConverter();
+        public static BigEndianLongBinaryConverter Default { get; } = new BigEndianLongBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetLongBE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt64BigEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutLongBE(buffer, index, (long)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt64BigEndian(buffer.AsSpan(index), (long)value);
     }
 
     internal sealed class LittleEndianLongBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianLongBinaryConverter();
+        public static LittleEndianLongBinaryConverter Default { get; } = new LittleEndianLongBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetLongLE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt64LittleEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutLongLE(buffer, index, (long)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(index), (long)value);
     }
 
     //--------------------------------------------------------------------------------
@@ -78,32 +63,24 @@
 
     internal sealed class BigEndianShortBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianShortBinaryConverter();
+        public static BigEndianShortBinaryConverter Default { get; } = new BigEndianShortBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetShortBE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutShortBE(buffer, index, (short)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt16BigEndian(buffer.AsSpan(index), (short)value);
     }
 
     internal sealed class LittleEndianShortBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianShortBinaryConverter();
+        public static LittleEndianShortBinaryConverter Default { get; } = new LittleEndianShortBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return ByteOrder.GetShortLE(buffer, index);
-        }
+        public object Read(byte[] buffer, int index) =>
+            BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(index));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutShortLE(buffer, index, (short)value);
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt16LittleEndian(buffer.AsSpan(index), (short)value);
     }
 
     //--------------------------------------------------------------------------------
@@ -112,32 +89,24 @@
 
     internal sealed class BigEndianDoubleBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianDoubleBinaryConverter();
+        public static BigEndianDoubleBinaryConverter Default { get; } = new BigEndianDoubleBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return BytesHelper.Int64ToDouble(ByteOrder.GetLongBE(buffer, index));
-        }
+        public object Read(byte[] buffer, int index) =>
+            BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64BigEndian(buffer.AsSpan(index)));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutLongBE(buffer, index, BytesHelper.DoubleToInt64((double)value));
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt64BigEndian(buffer.AsSpan(index), BytesHelper.DoubleToInt64((double)value));
     }
 
     internal sealed class LittleEndianDoubleBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianDoubleBinaryConverter();
+        public static LittleEndianDoubleBinaryConverter Default { get; } = new LittleEndianDoubleBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return BytesHelper.Int64ToDouble(ByteOrder.GetLongLE(buffer, index));
-        }
+        public object Read(byte[] buffer, int index) =>
+            BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64LittleEndian(buffer.AsSpan(index)));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutLongLE(buffer, index, BytesHelper.DoubleToInt64((double)value));
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(index), BytesHelper.DoubleToInt64((double)value));
     }
 
     //--------------------------------------------------------------------------------
@@ -146,32 +115,24 @@
 
     internal sealed class BigEndianFloatBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianFloatBinaryConverter();
+        public static BigEndianFloatBinaryConverter Default { get; } = new BigEndianFloatBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return BytesHelper.Int32ToFloat(ByteOrder.GetIntBE(buffer, index));
-        }
+        public object Read(byte[] buffer, int index) =>
+            BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(index)));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutIntBE(buffer, index, BytesHelper.FloatToInt32((float)value));
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt32BigEndian(buffer.AsSpan(index), BytesHelper.FloatToInt32((float)value));
     }
 
     internal sealed class LittleEndianFloatBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianFloatBinaryConverter();
+        public static LittleEndianFloatBinaryConverter Default { get; } = new LittleEndianFloatBinaryConverter();
 
-        public object Read(byte[] buffer, int index)
-        {
-            return BytesHelper.Int32ToFloat(ByteOrder.GetIntLE(buffer, index));
-        }
+        public object Read(byte[] buffer, int index) =>
+            BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(index)));
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            ByteOrder.PutIntLE(buffer, index, BytesHelper.FloatToInt32((float)value));
-        }
+        public void Write(byte[] buffer, int index, object value) =>
+            BinaryPrimitives.WriteInt32LittleEndian(buffer.AsSpan(index), BytesHelper.FloatToInt32((float)value));
     }
 
     //--------------------------------------------------------------------------------
@@ -180,47 +141,51 @@
 
     internal sealed class BigEndianDecimalBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianDecimalBinaryConverter();
+        public static BigEndianDecimalBinaryConverter Default { get; } = new BigEndianDecimalBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            var flag = ByteOrder.GetIntBE(buffer, index);
-            var hi = ByteOrder.GetIntBE(buffer, index + 4);
-            var mid = ByteOrder.GetIntBE(buffer, index + 8);
-            var lo = ByteOrder.GetIntBE(buffer, index + 12);
+            var span = buffer.AsSpan(index);
+            var flag = BinaryPrimitives.ReadInt32BigEndian(span);
+            var hi = BinaryPrimitives.ReadInt32BigEndian(span[4..]);
+            var mid = BinaryPrimitives.ReadInt32BigEndian(span[8..]);
+            var lo = BinaryPrimitives.ReadInt32BigEndian(span[12..]);
             return DecimalHelper.FromBits(lo, mid, hi, flag);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
+            var span = buffer.AsSpan(index);
             var bits = Decimal.GetBits((decimal)value);
-            ByteOrder.PutIntBE(buffer, index, bits[3]);
-            ByteOrder.PutIntBE(buffer, index + 4, bits[2]);
-            ByteOrder.PutIntBE(buffer, index + 8, bits[1]);
-            ByteOrder.PutIntBE(buffer, index + 12, bits[0]);
+            BinaryPrimitives.WriteInt32BigEndian(span, bits[3]);
+            BinaryPrimitives.WriteInt32BigEndian(span[4..], bits[2]);
+            BinaryPrimitives.WriteInt32BigEndian(span[8..], bits[1]);
+            BinaryPrimitives.WriteInt32BigEndian(span[12..], bits[0]);
         }
     }
 
     internal sealed class LittleEndianDecimalBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianDecimalBinaryConverter();
+        public static LittleEndianDecimalBinaryConverter Default { get; } = new LittleEndianDecimalBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            var lo = ByteOrder.GetIntLE(buffer, index);
-            var mid = ByteOrder.GetIntLE(buffer, index + 4);
-            var hi = ByteOrder.GetIntLE(buffer, index + 8);
-            var flag = ByteOrder.GetIntLE(buffer, index + 12);
+            var span = buffer.AsSpan(index);
+            var flag = BinaryPrimitives.ReadInt32LittleEndian(span);
+            var hi = BinaryPrimitives.ReadInt32LittleEndian(span[4..]);
+            var mid = BinaryPrimitives.ReadInt32LittleEndian(span[8..]);
+            var lo = BinaryPrimitives.ReadInt32LittleEndian(span[12..]);
             return DecimalHelper.FromBits(lo, mid, hi, flag);
         }
 
         public void Write(byte[] buffer, int index, object value)
         {
+            var span = buffer.AsSpan(index);
             var bits = Decimal.GetBits((decimal)value);
-            ByteOrder.PutIntLE(buffer, index, bits[0]);
-            ByteOrder.PutIntLE(buffer, index + 4, bits[1]);
-            ByteOrder.PutIntLE(buffer, index + 8, bits[2]);
-            ByteOrder.PutIntLE(buffer, index + 12, bits[3]);
+            BinaryPrimitives.WriteInt32LittleEndian(span, bits[0]);
+            BinaryPrimitives.WriteInt32LittleEndian(span[4..], bits[1]);
+            BinaryPrimitives.WriteInt32LittleEndian(span[8..], bits[2]);
+            BinaryPrimitives.WriteInt32LittleEndian(span[12..], bits[3]);
         }
     }
 
@@ -239,7 +204,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var ticks = ByteOrder.GetLongBE(buffer, index);
+            var ticks = BinaryPrimitives.ReadInt64BigEndian(buffer.AsSpan(index));
             return DateTimeHelper.IsValidTicks(ticks)
                 ? new DateTime(ticks, kind)
                 : default;
@@ -247,7 +212,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongBE(buffer, index, ((DateTime)value).Ticks);
+            BinaryPrimitives.WriteInt64BigEndian(buffer.AsSpan(index), ((DateTime)value).Ticks);
         }
     }
 
@@ -262,7 +227,7 @@
 
         public object Read(byte[] buffer, int index)
         {
-            var ticks = ByteOrder.GetLongLE(buffer, index);
+            var ticks = BinaryPrimitives.ReadInt64LittleEndian(buffer.AsSpan(index));
             return DateTimeHelper.IsValidTicks(ticks)
                 ? new DateTime(ticks, kind)
                 : default;
@@ -270,7 +235,7 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
-            ByteOrder.PutLongLE(buffer, index, ((DateTime)value).Ticks);
+            BinaryPrimitives.WriteInt64LittleEndian(buffer.AsSpan(index), ((DateTime)value).Ticks);
         }
     }
 
@@ -280,12 +245,13 @@
 
     internal sealed class BigEndianDateTimeOffsetBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new BigEndianDateTimeOffsetBinaryConverter();
+        public static BigEndianDateTimeOffsetBinaryConverter Default { get; } = new BigEndianDateTimeOffsetBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            var ticks = ByteOrder.GetLongBE(buffer, index);
-            var offset = ByteOrder.GetShortBE(buffer, index + 8);
+            var span = buffer.AsSpan();
+            var ticks = BinaryPrimitives.ReadInt64BigEndian(span);
+            var offset = BinaryPrimitives.ReadInt16BigEndian(span[8..]);
             return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
                 ? new DateTimeOffset(new DateTime(ticks, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset))
                 : default;
@@ -293,20 +259,22 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
+            var span = buffer.AsSpan();
             var dateTime = (DateTimeOffset)value;
-            ByteOrder.PutLongBE(buffer, index, dateTime.UtcTicks);
-            ByteOrder.PutShortBE(buffer, index + 8, (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
+            BinaryPrimitives.WriteInt64BigEndian(span, dateTime.UtcTicks);
+            BinaryPrimitives.WriteInt16BigEndian(span[8..], (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
         }
     }
 
     internal sealed class LittleEndianDateTimeOffsetBinaryConverter : IMapConverter
     {
-        public static IMapConverter Default { get; } = new LittleEndianDateTimeOffsetBinaryConverter();
+        public static LittleEndianDateTimeOffsetBinaryConverter Default { get; } = new LittleEndianDateTimeOffsetBinaryConverter();
 
         public object Read(byte[] buffer, int index)
         {
-            var ticks = ByteOrder.GetLongLE(buffer, index);
-            var offset = ByteOrder.GetShortLE(buffer, index + 8);
+            var span = buffer.AsSpan();
+            var ticks = BinaryPrimitives.ReadInt64LittleEndian(span);
+            var offset = BinaryPrimitives.ReadInt16LittleEndian(span[8..]);
             return DateTimeHelper.IsValidTicks(ticks) && DateTimeHelper.IsValidOffset(offset)
                 ? new DateTimeOffset(new DateTime(ticks, DateTimeKind.Unspecified), TimeSpan.FromMinutes(offset))
                 : default;
@@ -314,9 +282,10 @@
 
         public void Write(byte[] buffer, int index, object value)
         {
+            var span = buffer.AsSpan();
             var dateTime = (DateTimeOffset)value;
-            ByteOrder.PutLongLE(buffer, index, dateTime.UtcTicks);
-            ByteOrder.PutShortLE(buffer, index + 8, (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
+            BinaryPrimitives.WriteInt64LittleEndian(span, dateTime.UtcTicks);
+            BinaryPrimitives.WriteInt16LittleEndian(span[8..], (short)(dateTime.Offset.Ticks / TimeSpan.TicksPerMinute));
         }
     }
 }

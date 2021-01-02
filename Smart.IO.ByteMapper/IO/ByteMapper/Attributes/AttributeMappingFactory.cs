@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
     using System.Collections.Generic;
@@ -27,7 +27,7 @@
             this.validation = validation;
         }
 
-        IMapping IMappingFactory.Create(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapping IMappingFactory.Create(ComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(
                 components,

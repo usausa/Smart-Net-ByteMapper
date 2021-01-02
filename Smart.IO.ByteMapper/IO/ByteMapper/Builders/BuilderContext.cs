@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System.Collections.Generic;
 
@@ -10,10 +10,10 @@
 
         private readonly IDictionary<string, object> typeParameters;
 
-        public IComponentContainer Components { get; }
+        public ComponentContainer Components { get; }
 
         public BuilderContext(
-            IComponentContainer components,
+            ComponentContainer components,
             IDictionary<string, object> globalParameters,
             IDictionary<string, object> typeParameters)
         {

@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Collections.Generic;
@@ -11,6 +11,6 @@
 
         string Name { get; }
 
-        IMapping Create(IComponentContainer components, IDictionary<string, object> parameters);
+        IMapping Create(ComponentContainer components, IDictionary<string, object> parameters);
     }
 }

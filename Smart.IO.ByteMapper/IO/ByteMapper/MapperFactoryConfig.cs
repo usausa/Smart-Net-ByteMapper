@@ -98,7 +98,7 @@ namespace Smart.IO.ByteMapper
         // IByteMapperConfig
         //--------------------------------------------------------------------------------
 
-        IComponentContainer IMapperFactoryConfig.ResolveComponents() => config.ToContainer();
+        ComponentContainer IMapperFactoryConfig.ResolveComponents() => config.ToContainer();
 
         IDictionary<string, object> IMapperFactoryConfig.ResolveParameters() => new Dictionary<string, object>(parameters);
 

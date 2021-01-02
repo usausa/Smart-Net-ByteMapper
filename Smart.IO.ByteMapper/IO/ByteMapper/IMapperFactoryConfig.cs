@@ -6,7 +6,7 @@
 
     public interface IMapperFactoryConfig
     {
-        IComponentContainer ResolveComponents();
+        ComponentContainer ResolveComponents();
 
         IDictionary<string, object> ResolveParameters();
 

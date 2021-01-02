@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -61,7 +61,7 @@
 
             Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(new DefaultFillerObject()));
 
-            var buffer = new byte[noMapper.Size].Fill(0x11);
+            var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
             noMapper.ToByte(buffer, 0, new NoFillerObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }
@@ -105,7 +105,7 @@
 
             Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimiterObject()));
 
-            var buffer = new byte[noMapper.Size].Fill(0x11);
+            var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
             noMapper.ToByte(buffer, 0, new NoDelimiterObject());
             Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
         }

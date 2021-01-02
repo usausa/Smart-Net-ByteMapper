@@ -20,7 +20,7 @@ namespace Smart.IO.ByteMapper
 
         private readonly TypeProfileKeyCache<object> profiledCache = new TypeProfileKeyCache<object>();
 
-        public IComponentContainer Components { get; }
+        public ComponentContainer Components { get; }
 
         public MapperFactory(IMapperFactoryConfig config)
         {

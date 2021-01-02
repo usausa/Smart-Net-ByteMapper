@@ -182,7 +182,7 @@
         // IMappingFactory
         //--------------------------------------------------------------------------------
 
-        IMapping IMappingFactory.Create(IComponentContainer components, IDictionary<string, object> parameters)
+        IMapping IMappingFactory.Create(ComponentContainer components, IDictionary<string, object> parameters)
         {
             var context = new BuilderContext(components, parameters, typeParameters);
 
