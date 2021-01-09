@@ -17,21 +17,15 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <MinClientVersion>2.12</MinClientVersion>
     <Authors>machi_pon</Authors>
-    <Copyright></Copyright>
+    <Copyright>Copyright (c) 2021 machi_pon</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/usausa/Smart-Net-ByteMapper</PackageProjectUrl>
-    <PackageLicenseExpression></PackageLicenseExpression>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.321">
