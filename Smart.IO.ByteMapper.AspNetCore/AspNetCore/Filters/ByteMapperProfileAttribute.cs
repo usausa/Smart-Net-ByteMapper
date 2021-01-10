@@ -5,7 +5,7 @@ namespace Smart.AspNetCore.Filters
     using Microsoft.AspNetCore.Mvc.Filters;
 
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
+    public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
     {
         private readonly string profile;
 

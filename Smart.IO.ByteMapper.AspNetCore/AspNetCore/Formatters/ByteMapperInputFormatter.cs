@@ -119,6 +119,7 @@ namespace Smart.AspNetCore.Formatters
                 bufferSize = mapper.Size;
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
             public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -158,6 +159,7 @@ namespace Smart.AspNetCore.Formatters
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
             public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -227,6 +229,7 @@ namespace Smart.AspNetCore.Formatters
                 readSize = (bufferSize / mapper.Size) * mapper.Size;
             }
 
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
             public async ValueTask<object> ReadAsync(Stream stream, long? length)
             {
                 var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
