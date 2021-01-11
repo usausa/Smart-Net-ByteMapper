@@ -105,7 +105,7 @@
                         null,
                         new Dictionary<string, object> { { "key", 2 } },
                         new Dictionary<string, object> { { "key", 1 } })
-                    .TryGetParameter("key", out value));
+                    .TryGetParameter("key", out int _));
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-// ReSharper disable UnusedParameter.Global
+﻿// ReSharper disable UnusedParameter.Global
+#pragma warning disable IDE0060
 namespace Example.WebApplication.Controllers
 {
     using System;
@@ -152,3 +153,4 @@ namespace Example.WebApplication.Controllers
         }
     }
 }
+#pragma warning restore IDE0060

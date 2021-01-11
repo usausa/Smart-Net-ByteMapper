@@ -1,4 +1,4 @@
-namespace Smart.IO.ByteMapper.Helpers
+﻿namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
     using System.Globalization;
@@ -78,17 +78,17 @@ namespace Smart.IO.ByteMapper.Helpers
 
             // Empty
             buffer = Encoding.ASCII.GetBytes("                   ");
-            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
             // Invalid Value
             buffer = Encoding.ASCII.GetBytes("1234567890 123456789");
-            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
             buffer = Encoding.ASCII.GetBytes("a1234567890123456789");
-            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
             buffer = Encoding.ASCII.GetBytes("1234567890123456789a");
-            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
+            Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
         }
 
         [Fact]
