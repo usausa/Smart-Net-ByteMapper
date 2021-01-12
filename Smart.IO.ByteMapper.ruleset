@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="Smart.IO.ByteMapper Rules" Description="Smart.IO.ByteMapper Rules" ToolsVersion="14.0">
   <IncludeAll Action="Warning" />
-  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
-    <Rule Id="CA1019" Action="Hidden" />
-    <Rule Id="CA1034" Action="Hidden" />
-    <Rule Id="CA1711" Action="Hidden" />
-    <Rule Id="CA1716" Action="Hidden" />
-  </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA1101" Action="Hidden" />
     <Rule Id="SA1118" Action="Hidden" />
@@ -24,5 +18,11 @@
     <Rule Id="SA1602" Action="Hidden" />
     <Rule Id="SA1633" Action="Hidden" />
     <Rule Id="SA1649" Action="Hidden" />
+  </Rules>
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
+    <Rule Id="CA1019" Action="Hidden" />
+    <Rule Id="CA1034" Action="Hidden" />
+    <Rule Id="CA1711" Action="Hidden" />
+    <Rule Id="CA1716" Action="Hidden" />
   </Rules>
 </RuleSet>
