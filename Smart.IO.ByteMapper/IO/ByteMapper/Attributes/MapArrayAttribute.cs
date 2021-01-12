@@ -1,4 +1,4 @@
-namespace Smart.IO.ByteMapper.Attributes
+﻿namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
 
@@ -25,6 +25,7 @@ namespace Smart.IO.ByteMapper.Attributes
             builder.Length = length;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
         public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
     }
 }
