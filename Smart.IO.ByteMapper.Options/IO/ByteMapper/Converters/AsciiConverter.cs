@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters
 {
     using Smart.IO.ByteMapper.Helpers;
 

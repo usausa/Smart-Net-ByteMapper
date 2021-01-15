@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers
 {
     using System;
     using System.Text;

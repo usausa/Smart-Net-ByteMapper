@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders
 {
     using System;
 

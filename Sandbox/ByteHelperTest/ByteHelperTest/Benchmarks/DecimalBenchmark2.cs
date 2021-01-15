@@ -1,4 +1,4 @@
-﻿namespace ByteHelperTest.Benchmarks
+namespace ByteHelperTest.Benchmarks
 {
     using System.Text;
 

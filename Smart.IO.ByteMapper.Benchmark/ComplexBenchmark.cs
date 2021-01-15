@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Benchmark
+namespace Smart.IO.ByteMapper.Benchmark
 {
     using System;
     using System.Text;

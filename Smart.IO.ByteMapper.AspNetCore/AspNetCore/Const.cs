@@ -1,4 +1,4 @@
-﻿namespace Smart.AspNetCore
+namespace Smart.AspNetCore
 {
     internal static class Const
     {

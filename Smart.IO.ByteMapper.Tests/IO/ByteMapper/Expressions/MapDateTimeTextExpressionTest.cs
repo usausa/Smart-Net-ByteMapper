@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions
 {
     using System;
     using System.Globalization;

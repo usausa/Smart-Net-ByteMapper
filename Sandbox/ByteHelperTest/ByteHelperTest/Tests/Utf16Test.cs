@@ -1,4 +1,4 @@
-﻿namespace ByteHelperTest.Tests
+namespace ByteHelperTest.Tests
 {
     using System.Text;
 

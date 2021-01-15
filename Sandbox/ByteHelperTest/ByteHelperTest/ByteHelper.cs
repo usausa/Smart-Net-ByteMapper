@@ -1,4 +1,4 @@
-﻿#pragma warning disable SA1203 // Constants must appear before fields
+#pragma warning disable SA1203 // Constants must appear before fields
 namespace ByteHelperTest
 {
     using System;

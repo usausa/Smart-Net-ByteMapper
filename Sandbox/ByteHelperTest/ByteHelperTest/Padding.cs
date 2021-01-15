@@ -1,4 +1,4 @@
-﻿namespace ByteHelperTest
+namespace ByteHelperTest
 {
     public enum Padding
     {

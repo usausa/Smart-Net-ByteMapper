@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Mock
+namespace Smart.IO.ByteMapper.Mock
 {
     using System;
 

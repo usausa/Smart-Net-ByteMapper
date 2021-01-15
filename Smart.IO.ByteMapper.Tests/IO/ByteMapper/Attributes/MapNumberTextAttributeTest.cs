@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes
 {
     using System;
     using System.Globalization;

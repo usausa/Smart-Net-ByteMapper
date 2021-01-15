@@ -1,4 +1,4 @@
-﻿namespace ByteHelperTest
+namespace ByteHelperTest
 {
     using System.Reflection;
 

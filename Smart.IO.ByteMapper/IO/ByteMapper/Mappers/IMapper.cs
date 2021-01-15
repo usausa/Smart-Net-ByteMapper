@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Mappers
+namespace Smart.IO.ByteMapper.Mappers
 {
     public interface IMapper
     {
