@@ -12,6 +12,7 @@ namespace Smart.IO.ByteMapper.Benchmark
     using Smart.IO.ByteMapper.Converters;
     using Smart.Text.Japanese;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class ConverterBenchmark
     {

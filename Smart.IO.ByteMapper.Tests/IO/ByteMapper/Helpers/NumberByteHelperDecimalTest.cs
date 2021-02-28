@@ -5,6 +5,8 @@ namespace Smart.IO.ByteMapper.Helpers
 
     using Xunit;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
     public class NumberByteHelperDecimalTest
     {
         [Theory]

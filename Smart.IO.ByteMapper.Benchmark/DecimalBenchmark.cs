@@ -6,6 +6,7 @@ namespace Smart.IO.ByteMapper.Benchmark
 
     using Smart.IO.ByteMapper.Helpers;
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
     [Config(typeof(BenchmarkConfig))]
     public class DecimalBenchmark2
     {

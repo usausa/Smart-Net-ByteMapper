@@ -9,6 +9,7 @@ namespace Smart.IO.ByteMapper.Mock
         Two
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
     public enum LongEnum : long
     {
         Zero,
@@ -16,6 +17,7 @@ namespace Smart.IO.ByteMapper.Mock
         Two
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
     public enum ShortEnum : short
     {
         Zero,
