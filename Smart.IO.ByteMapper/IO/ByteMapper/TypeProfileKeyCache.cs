@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper
 {
     using System;
     using System.Diagnostics;
+    using System.Diagnostics.CodeAnalysis;
     using System.Runtime.CompilerServices;
     using System.Threading;
 
@@ -12,7 +13,7 @@ namespace Smart.IO.ByteMapper
 
         private const int Factor = 3;
 
-        private static readonly Node EmptyNode = new(typeof(EmptyKey), null, default);
+        private static readonly Node EmptyNode = new(typeof(EmptyKey), null!, default!);
 
         private readonly object sync = new();
 
@@ -43,14 +44,13 @@ namespace Smart.IO.ByteMapper
 
         private static int CalculateDepth(Node node)
         {
-            var length = 0;
-
-            do
+            var length = 1;
+            var next = node.Next;
+            while (next is not null)
             {
                 length++;
-                node = node.Next;
+                next = next.Next;
             }
-            while (node != null);
 
             return length;
         }
@@ -97,7 +97,7 @@ namespace Smart.IO.ByteMapper
 
         private static Node FindLastNode(Node node)
         {
-            while (node.Next != null)
+            while (node.Next is not null)
             {
                 node = node.Next;
             }
@@ -137,7 +137,7 @@ namespace Smart.IO.ByteMapper
 
                     node = next;
                 }
-                while (node != null);
+                while (node is not null);
             }
         }
 
@@ -207,7 +207,7 @@ namespace Smart.IO.ByteMapper
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetValue(Type type, string profile, out T value)
+        public bool TryGetValue(Type type, string profile, [MaybeNullWhen(false)] out T value)
         {
             var temp = nodes;
             var node = temp[CalculateHash(type, profile) & (temp.Length - 1)];
@@ -220,7 +220,7 @@ namespace Smart.IO.ByteMapper
                 }
                 node = node.Next;
             }
-            while (node != null);
+            while (node is not null);
 
             value = default;
             return false;
