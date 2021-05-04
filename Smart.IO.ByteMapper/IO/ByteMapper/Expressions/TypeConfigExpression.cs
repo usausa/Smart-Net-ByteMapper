@@ -198,7 +198,7 @@ namespace Smart.IO.ByteMapper.Expressions
                 Type.FullName,
                 validation,
                 useDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
-                autoFiller ? (byte?)filler : null);
+                autoFiller ? filler : null);
 
             return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
         }

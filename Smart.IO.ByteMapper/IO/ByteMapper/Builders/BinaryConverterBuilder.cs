@@ -73,7 +73,7 @@ namespace Smart.IO.ByteMapper.Builders
             var targetEndian = Endian ?? context.GetParameter<Endian>(Parameter.Endian);
             var kind = context.GetParameter<DateTimeKind>(Parameter.DateTimeKind);
             return targetEndian == Smart.IO.ByteMapper.Endian.Big
-                ? (IMapConverter)new BigEndianDateTimeBinaryConverter(kind)
+                ? new BigEndianDateTimeBinaryConverter(kind)
                 : new LittleEndianDateTimeBinaryConverter(kind);
         }
 

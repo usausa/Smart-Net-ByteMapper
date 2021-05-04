@@ -41,7 +41,7 @@ namespace Smart.IO.ByteMapper.Converters
         public object Read(byte[] buffer, int index)
         {
             var b = buffer[index];
-            return b == trueValue ? true : b == nullValue ? (bool?)null : false;
+            return b == trueValue ? true : b == nullValue ? null : false;
         }
 
         public void Write(byte[] buffer, int index, object value)

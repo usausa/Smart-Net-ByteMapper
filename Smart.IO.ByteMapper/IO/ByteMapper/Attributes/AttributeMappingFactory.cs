@@ -46,7 +46,7 @@ namespace Smart.IO.ByteMapper.Attributes
                 Type.FullName,
                 validation,
                 mapAttribute.UseDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
-                mapAttribute.AutoFiller ? (byte?)filler : null);
+                mapAttribute.AutoFiller ? filler : null);
 
             return new Mapping(
                 Type,
