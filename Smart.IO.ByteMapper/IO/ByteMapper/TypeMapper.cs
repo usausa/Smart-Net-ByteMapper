@@ -40,9 +40,10 @@ namespace Smart.IO.ByteMapper
 
         public void FromByte(byte[] buffer, int index, T target)
         {
-            for (var i = 0; i < readableMappers.Length; i++)
+            var mappers = readableMappers;
+            for (var i = 0; i < mappers.Length; i++)
             {
-                readableMappers[i].Read(buffer, index, target);
+                mappers[i].Read(buffer, index, target);
             }
         }
 
@@ -54,9 +55,10 @@ namespace Smart.IO.ByteMapper
             }
             else
             {
-                for (var i = 0; i < writableMappers.Length; i++)
+                var mappers = writableMappers;
+                for (var i = 0; i < mappers.Length; i++)
                 {
-                    writableMappers[i].Write(buffer, index, target);
+                    mappers[i].Write(buffer, index, target);
                 }
             }
         }
