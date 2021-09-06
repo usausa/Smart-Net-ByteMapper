@@ -33,7 +33,7 @@ namespace Smart.IO.ByteMapper.Converters
 
             EmptyBytes = TestBytes.Offset(Offset, Encoding.GetBytes(string.Empty.PadRight(Length, ' ')));
             ValueBytes = TestBytes.Offset(Offset, Encoding.GetBytes(Value.PadRight(Length - (Encoding.GetByteCount(Value) - Value.Length), ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.GetBytes(OverflowValue.Substring(0, Length)));
+            OverflowBytes = TestBytes.Offset(Offset, Encoding.GetBytes(OverflowValue[..Length]));
         }
 
         public TextConverterTest()

@@ -28,7 +28,7 @@ namespace Smart.IO.ByteMapper.Converters
         {
             EmptyBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(string.Empty.PadRight(Length / 2, ' ')));
             ValueBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(Value.PadRight(Length / 2, ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(OverflowValue.Substring(0, Length / 2)));
+            OverflowBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(OverflowValue[..(Length / 2)]));
         }
 
         public UnicodeConverterTest()

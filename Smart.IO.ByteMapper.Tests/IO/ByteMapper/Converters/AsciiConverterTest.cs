@@ -28,7 +28,7 @@ namespace Smart.IO.ByteMapper.Converters
         {
             EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
             ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(Value.PadRight(Length, ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(OverflowValue.Substring(0, Length)));
+            OverflowBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(OverflowValue[..Length]));
         }
 
         public AsciiConverterTest()
