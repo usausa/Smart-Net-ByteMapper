@@ -1,8 +1,7 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+public enum Endian
 {
-    public enum Endian
-    {
-        Big,
-        Little
-    }
+    Big,
+    Little
 }

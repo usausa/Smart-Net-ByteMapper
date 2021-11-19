@@ -1,38 +1,37 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+internal sealed class MapFillerExpression : ITypeMapExpression
 {
-    using System;
+    private readonly FillerTypeMapperBuilder builder = new();
 
-    using Smart.IO.ByteMapper.Builders;
-
-    internal sealed class MapFillerExpression : ITypeMapExpression
+    public MapFillerExpression(int length)
     {
-        private readonly FillerTypeMapperBuilder builder = new();
-
-        public MapFillerExpression(int length)
+        if (length < 0)
         {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
+            throw new ArgumentOutOfRangeException(nameof(length));
         }
 
-        public MapFillerExpression(int length, byte filler)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
-            builder.Filler = filler;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder() => builder;
+        builder.Length = length;
     }
+
+    public MapFillerExpression(int length, byte filler)
+    {
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
+
+        builder.Length = length;
+        builder.Filler = filler;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder() => builder;
 }

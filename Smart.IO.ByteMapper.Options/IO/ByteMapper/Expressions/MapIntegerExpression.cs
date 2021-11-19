@@ -1,58 +1,57 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapIntegerSyntax
 {
-    using System;
+    IMapIntegerSyntax Padding(Padding value);
 
-    using Smart.IO.ByteMapper.Builders;
+    IMapIntegerSyntax ZeroFill(bool value);
 
-    public interface IMapIntegerSyntax
+    IMapIntegerSyntax Filler(byte value);
+}
+
+internal sealed class MapIntegerExpression : IMemberMapExpression, IMapIntegerSyntax
+{
+    private readonly IntegerConverterBuilder builder = new();
+
+    public MapIntegerExpression(int length)
     {
-        IMapIntegerSyntax Padding(Padding value);
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
 
-        IMapIntegerSyntax ZeroFill(bool value);
-
-        IMapIntegerSyntax Filler(byte value);
+        builder.Length = length;
     }
 
-    internal sealed class MapIntegerExpression : IMemberMapExpression, IMapIntegerSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapIntegerSyntax Padding(Padding value)
     {
-        private readonly IntegerConverterBuilder builder = new();
-
-        public MapIntegerExpression(int length)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapIntegerSyntax Padding(Padding value)
-        {
-            builder.Padding = value;
-            return this;
-        }
-
-        public IMapIntegerSyntax ZeroFill(bool value)
-        {
-            builder.ZeroFill = value;
-            return this;
-        }
-
-        public IMapIntegerSyntax Filler(byte value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        public IMapConverterBuilder GetMapConverterBuilder() => builder;
+        builder.Padding = value;
+        return this;
     }
+
+    public IMapIntegerSyntax ZeroFill(bool value)
+    {
+        builder.ZeroFill = value;
+        return this;
+    }
+
+    public IMapIntegerSyntax Filler(byte value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    public IMapConverterBuilder GetMapConverterBuilder() => builder;
 }

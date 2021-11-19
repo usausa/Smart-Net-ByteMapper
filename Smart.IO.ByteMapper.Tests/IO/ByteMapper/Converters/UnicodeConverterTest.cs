@@ -1,75 +1,74 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System.Text;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class UnicodeConverterTest
 {
-    using System.Text;
+    private const int Offset = 1;
 
-    using Smart.IO.ByteMapper.Mock;
+    private const int Length = 10;
 
-    using Xunit;
+    private const string Value = "1a*";
 
-    public class UnicodeConverterTest
+    private const string OverflowValue = "123456";
+
+    private static readonly byte[] EmptyBytes;
+
+    private static readonly byte[] ValueBytes;
+
+    private static readonly byte[] OverflowBytes;
+
+    private readonly UnicodeConverter converter;
+
+    static UnicodeConverterTest()
     {
-        private const int Offset = 1;
+        EmptyBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(string.Empty.PadRight(Length / 2, ' ')));
+        ValueBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(Value.PadRight(Length / 2, ' ')));
+        OverflowBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(OverflowValue[..(Length / 2)]));
+    }
 
-        private const int Length = 10;
+    public UnicodeConverterTest()
+    {
+        converter = new UnicodeConverter(
+            Length,
+            true,
+            Padding.Right,
+            ' ');
+    }
 
-        private const string Value = "1a*";
+    //--------------------------------------------------------------------------------
+    // string
+    //--------------------------------------------------------------------------------
 
-        private const string OverflowValue = "123456";
+    [Fact]
+    public void ReadToUnicode()
+    {
+        // Empty
+        Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
 
-        private static readonly byte[] EmptyBytes;
+        // Value
+        Assert.Equal(Value, converter.Read(ValueBytes, Offset));
+    }
 
-        private static readonly byte[] ValueBytes;
+    [Fact]
+    public void WriteUnicodeToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-        private static readonly byte[] OverflowBytes;
+        // Value
+        converter.Write(buffer, Offset, Value);
+        Assert.Equal(ValueBytes, buffer);
 
-        private readonly UnicodeConverter converter;
+        // Null
+        converter.Write(buffer, Offset, null);
+        Assert.Equal(EmptyBytes, buffer);
 
-        static UnicodeConverterTest()
-        {
-            EmptyBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(string.Empty.PadRight(Length / 2, ' ')));
-            ValueBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(Value.PadRight(Length / 2, ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.Unicode.GetBytes(OverflowValue[..(Length / 2)]));
-        }
-
-        public UnicodeConverterTest()
-        {
-            converter = new UnicodeConverter(
-                Length,
-                true,
-                Padding.Right,
-                ' ');
-        }
-
-        //--------------------------------------------------------------------------------
-        // string
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToUnicode()
-        {
-            // Empty
-            Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
-
-            // Value
-            Assert.Equal(Value, converter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteUnicodeToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Value
-            converter.Write(buffer, Offset, Value);
-            Assert.Equal(ValueBytes, buffer);
-
-            // Null
-            converter.Write(buffer, Offset, null);
-            Assert.Equal(EmptyBytes, buffer);
-
-            // Overflow
-            converter.Write(buffer, Offset, OverflowValue);
-            Assert.Equal(OverflowBytes, buffer);
-        }
+        // Overflow
+        converter.Write(buffer, Offset, OverflowValue);
+        Assert.Equal(OverflowBytes, buffer);
     }
 }

@@ -1,53 +1,52 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapDateTimeSyntax
 {
-    using System;
+    IMapDateTimeSyntax Filler(byte value);
+}
 
-    using Smart.IO.ByteMapper.Builders;
+internal sealed class MapDateTimeExpression : IMemberMapExpression, IMapDateTimeSyntax
+{
+    private readonly DateTimeConverterBuilder builder = new();
 
-    public interface IMapDateTimeSyntax
+    public MapDateTimeExpression(string format)
     {
-        IMapDateTimeSyntax Filler(byte value);
+        if (String.IsNullOrEmpty(format))
+        {
+            throw new ArgumentException("Invalid format.", nameof(format));
+        }
+
+        builder.Format = format;
     }
 
-    internal sealed class MapDateTimeExpression : IMemberMapExpression, IMapDateTimeSyntax
+    public MapDateTimeExpression(string format, DateTimeKind kind)
     {
-        private readonly DateTimeConverterBuilder builder = new();
-
-        public MapDateTimeExpression(string format)
+        if (String.IsNullOrEmpty(format))
         {
-            if (String.IsNullOrEmpty(format))
-            {
-                throw new ArgumentException("Invalid format.", nameof(format));
-            }
-
-            builder.Format = format;
+            throw new ArgumentException("Invalid format.", nameof(format));
         }
 
-        public MapDateTimeExpression(string format, DateTimeKind kind)
-        {
-            if (String.IsNullOrEmpty(format))
-            {
-                throw new ArgumentException("Invalid format.", nameof(format));
-            }
-
-            builder.Format = format;
-            builder.Kind = kind;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapDateTimeSyntax Filler(byte value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        public IMapConverterBuilder GetMapConverterBuilder() => builder;
+        builder.Format = format;
+        builder.Kind = kind;
     }
+
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapDateTimeSyntax Filler(byte value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    public IMapConverterBuilder GetMapConverterBuilder() => builder;
 }

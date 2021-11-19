@@ -1,13 +1,12 @@
-namespace Smart.IO.ByteMapper.Mappers
+namespace Smart.IO.ByteMapper.Mappers;
+
+public interface IMapper
 {
-    public interface IMapper
-    {
-        bool CanRead { get; }
+    bool CanRead { get; }
 
-        bool CanWrite { get; }
+    bool CanWrite { get; }
 
-        void Read(byte[] buffer, int index, object target);
+    void Read(byte[] buffer, int index, object target);
 
-        void Write(byte[] buffer, int index, object target);
-    }
+    void Write(byte[] buffer, int index, object target);
 }

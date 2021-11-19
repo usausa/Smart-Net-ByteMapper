@@ -1,23 +1,22 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+internal sealed class ElementConfigExpression : IMemberMapConfigSyntax
 {
-    using System;
+    public IMemberMapExpression Expression { get; private set; }
 
-    internal sealed class ElementConfigExpression : IMemberMapConfigSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
     {
-        public IMemberMapExpression Expression { get; private set; }
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
+        if (expression is null)
         {
-            if (expression is null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            Expression = expression;
+            throw new ArgumentNullException(nameof(expression));
         }
+
+        Expression = expression;
     }
 }

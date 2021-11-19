@@ -1,79 +1,78 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+using System.Globalization;
+using System.Text;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapDateTimeTextSyntax
 {
-    using System;
-    using System.Globalization;
-    using System.Text;
+    IMapDateTimeTextSyntax Encoding(Encoding value);
 
-    using Smart.IO.ByteMapper.Builders;
+    IMapDateTimeTextSyntax Filler(byte value);
 
-    public interface IMapDateTimeTextSyntax
+    IMapDateTimeTextSyntax Style(DateTimeStyles value);
+
+    IMapDateTimeTextSyntax Provider(IFormatProvider value);
+}
+
+internal sealed class MapDateTimeTextExpression : IMemberMapExpression, IMapDateTimeTextSyntax
+{
+    private readonly DateTimeTextConverterBuilder builder = new();
+
+    public MapDateTimeTextExpression(int length, string format)
     {
-        IMapDateTimeTextSyntax Encoding(Encoding value);
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
 
-        IMapDateTimeTextSyntax Filler(byte value);
-
-        IMapDateTimeTextSyntax Style(DateTimeStyles value);
-
-        IMapDateTimeTextSyntax Provider(IFormatProvider value);
+        builder.Length = length;
+        builder.Format = format;
     }
 
-    internal sealed class MapDateTimeTextExpression : IMemberMapExpression, IMapDateTimeTextSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapDateTimeTextSyntax Encoding(Encoding value)
     {
-        private readonly DateTimeTextConverterBuilder builder = new();
-
-        public MapDateTimeTextExpression(int length, string format)
+        if (value is null)
         {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
-            builder.Format = format;
+            throw new ArgumentNullException(nameof(value));
         }
 
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapDateTimeTextSyntax Encoding(Encoding value)
-        {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            builder.Encoding = value;
-            return this;
-        }
-
-        public IMapDateTimeTextSyntax Filler(byte value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        public IMapDateTimeTextSyntax Style(DateTimeStyles value)
-        {
-            builder.Style = value;
-            return this;
-        }
-
-        public IMapDateTimeTextSyntax Provider(IFormatProvider value)
-        {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            builder.Provider = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
+        builder.Encoding = value;
+        return this;
     }
+
+    public IMapDateTimeTextSyntax Filler(byte value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    public IMapDateTimeTextSyntax Style(DateTimeStyles value)
+    {
+        builder.Style = value;
+        return this;
+    }
+
+    public IMapDateTimeTextSyntax Provider(IFormatProvider value)
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(nameof(value));
+        }
+
+        builder.Provider = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
 }

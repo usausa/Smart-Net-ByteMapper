@@ -1,18 +1,17 @@
-namespace ByteHelperTest
-{
-    using BenchmarkDotNet.Configs;
-    using BenchmarkDotNet.Diagnosers;
-    using BenchmarkDotNet.Exporters;
-    using BenchmarkDotNet.Jobs;
+namespace ByteHelperTest;
 
-    public class BenchmarkConfig : ManualConfig
+using BenchmarkDotNet.Configs;
+using BenchmarkDotNet.Diagnosers;
+using BenchmarkDotNet.Exporters;
+using BenchmarkDotNet.Jobs;
+
+public class BenchmarkConfig : ManualConfig
+{
+    public BenchmarkConfig()
     {
-        public BenchmarkConfig()
-        {
-            Add(MarkdownExporter.Default, MarkdownExporter.GitHub);
-            Add(MemoryDiagnoser.Default);
-            //Add(Job.ShortRun);
-            Add(Job.MediumRun);
-        }
+        Add(MarkdownExporter.Default, MarkdownExporter.GitHub);
+        Add(MemoryDiagnoser.Default);
+        //Add(Job.ShortRun);
+        Add(Job.MediumRun);
     }
 }

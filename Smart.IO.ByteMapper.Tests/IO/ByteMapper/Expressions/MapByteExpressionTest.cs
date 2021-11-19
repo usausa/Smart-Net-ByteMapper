@@ -1,49 +1,48 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using Xunit;
+
+public class MapByteExpressionTest
 {
-    using Xunit;
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
 
-    public class MapByteExpressionTest
+    [Fact]
+    public void MapByByteExpression()
     {
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(null)
+            .CreateMapByExpression<ByteExpressionObject>(1, config => config
+                .ForMember(x => x.ByteValue, m => m.Byte()))
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<ByteExpressionObject>();
 
-        [Fact]
-        public void MapByByteExpression()
+        var buffer = new byte[mapper.Size];
+        var obj = new ByteExpressionObject
         {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .CreateMapByExpression<ByteExpressionObject>(1, config => config
-                    .ForMember(x => x.ByteValue, m => m.Byte()))
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<ByteExpressionObject>();
+            ByteValue = 1
+        };
 
-            var buffer = new byte[mapper.Size];
-            var obj = new ByteExpressionObject
-            {
-                ByteValue = 1
-            };
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+        Assert.Equal(new byte[] { 0x01 }, buffer);
 
-            Assert.Equal(new byte[] { 0x01 }, buffer);
+        // Read
+        buffer[0] = 0x02;
 
-            // Read
-            buffer[0] = 0x02;
+        mapper.FromByte(buffer, 0, obj);
 
-            mapper.FromByte(buffer, 0, obj);
+        Assert.Equal(2, obj.ByteValue);
+    }
 
-            Assert.Equal(2, obj.ByteValue);
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        internal class ByteExpressionObject
-        {
-            public byte ByteValue { get; set; }
-        }
+    internal class ByteExpressionObject
+    {
+        public byte ByteValue { get; set; }
     }
 }

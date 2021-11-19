@@ -1,41 +1,40 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System;
+
+using Smart.IO.ByteMapper.Converters;
+
+public sealed class DateTimeConverterBuilder : AbstractMapConverterBuilder<DateTimeConverterBuilder>
 {
-    using System;
+    public string Format { get; set; }
 
-    using Smart.IO.ByteMapper.Converters;
+    public DateTimeKind? Kind { get; set; }
 
-    public sealed class DateTimeConverterBuilder : AbstractMapConverterBuilder<DateTimeConverterBuilder>
+    public byte? Filler { get; set; }
+
+    static DateTimeConverterBuilder()
     {
-        public string Format { get; set; }
+        AddEntry(typeof(DateTime), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
+        AddEntry(typeof(DateTime?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
+        AddEntry(typeof(DateTimeOffset), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
+        AddEntry(typeof(DateTimeOffset?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
+    }
 
-        public DateTimeKind? Kind { get; set; }
+    private IMapConverter CreateDateTimeConverter(Type type, IBuilderContext context)
+    {
+        return new DateTimeConverter(
+            Format,
+            Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
+            type);
+    }
 
-        public byte? Filler { get; set; }
-
-        static DateTimeConverterBuilder()
-        {
-            AddEntry(typeof(DateTime), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
-            AddEntry(typeof(DateTime?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
-            AddEntry(typeof(DateTimeOffset), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
-            AddEntry(typeof(DateTimeOffset?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
-        }
-
-        private IMapConverter CreateDateTimeConverter(Type type, IBuilderContext context)
-        {
-            return new DateTimeConverter(
-                Format,
-                Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
-                Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                type);
-        }
-
-        private IMapConverter CreateDateTimeOffsetConverter(Type type, IBuilderContext context)
-        {
-            return new DateTimeOffsetConverter(
-                Format,
-                Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
-                Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                type);
-        }
+    private IMapConverter CreateDateTimeOffsetConverter(Type type, IBuilderContext context)
+    {
+        return new DateTimeOffsetConverter(
+            Format,
+            Kind ?? context.GetParameter<DateTimeKind>(Parameter.DateTimeKind),
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
+            type);
     }
 }

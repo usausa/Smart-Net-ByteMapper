@@ -1,25 +1,24 @@
-namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers;
+
+using System;
+using System.Runtime.CompilerServices;
+
+public static class DateTimeHelper
 {
-    using System;
-    using System.Runtime.CompilerServices;
+    private const long MaxOffset = 60 * 14;
+    private const long MinOffset = -MaxOffset;
 
-    public static class DateTimeHelper
+    private static readonly long MaxTicks = DateTime.MaxValue.Ticks;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsValidTicks(long value)
     {
-        private const long MaxOffset = 60 * 14;
-        private const long MinOffset = -MaxOffset;
+        return value >= 0 && value <= MaxTicks;
+    }
 
-        private static readonly long MaxTicks = DateTime.MaxValue.Ticks;
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValidTicks(long value)
-        {
-            return value >= 0 && value <= MaxTicks;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValidOffset(short value)
-        {
-            return value >= MinOffset && value <= MaxOffset;
-        }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsValidOffset(short value)
+    {
+        return value >= MinOffset && value <= MaxOffset;
     }
 }

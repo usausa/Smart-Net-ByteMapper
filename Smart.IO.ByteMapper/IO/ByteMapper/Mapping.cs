@@ -1,26 +1,25 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+using System;
+using System.Collections.Generic;
+
+using Smart.IO.ByteMapper.Mappers;
+
+public class Mapping : IMapping
 {
-    using System;
-    using System.Collections.Generic;
+    public Type Type { get; }
 
-    using Smart.IO.ByteMapper.Mappers;
+    public int Size { get; }
 
-    public class Mapping : IMapping
+    public byte Filler { get; }
+
+    public IReadOnlyList<IMapper> Mappers { get; }
+
+    public Mapping(Type type, int size, byte filler, IReadOnlyList<IMapper> mappers)
     {
-        public Type Type { get; }
-
-        public int Size { get; }
-
-        public byte Filler { get; }
-
-        public IReadOnlyList<IMapper> Mappers { get; }
-
-        public Mapping(Type type, int size, byte filler, IReadOnlyList<IMapper> mappers)
-        {
-            Type = type;
-            Size = size;
-            Filler = filler;
-            Mappers = mappers;
-        }
+        Type = type;
+        Size = size;
+        Filler = filler;
+        Mappers = mappers;
     }
 }

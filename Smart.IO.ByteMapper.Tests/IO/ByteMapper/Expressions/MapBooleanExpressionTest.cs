@@ -1,77 +1,76 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using Xunit;
+
+public class MapBooleanExpressionTest
 {
-    using Xunit;
+    private const byte Filler = 0x00;
 
-    public class MapBooleanExpressionTest
+    private const byte True = (byte)'1';
+
+    private const byte False = (byte)'0';
+
+    private const byte Yes = (byte)'Y';
+
+    private const byte No = (byte)'N';
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    [Fact]
+    public void MapByBooleanExpression()
     {
-        private const byte Filler = 0x00;
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(null)
+            .DefaultFiller(Filler)
+            .DefaultTrueValue(True)
+            .DefaultFalseValue(False)
+            .CreateMapByExpression<BooleanExpressionObject>(4, config => config
+                .ForMember(x => x.BooleanValue, m => m.Boolean())
+                .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
+                .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))
+                .ForMember(x => x.CustomNullableBooleanValue, m => m.Boolean(Yes, No, Filler)))
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<BooleanExpressionObject>();
 
-        private const byte True = (byte)'1';
+        var buffer = new byte[mapper.Size];
+        var obj = new BooleanExpressionObject();
 
-        private const byte False = (byte)'0';
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-        private const byte Yes = (byte)'Y';
+        Assert.Equal(new[] { False, Filler, No, Filler }, buffer);
 
-        private const byte No = (byte)'N';
+        // Read
+        mapper.FromByte(new[] { True, True, Yes, Yes }, 0, obj);
 
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
+        Assert.True(obj.BooleanValue);
+        Assert.True(obj.NullableBooleanValue);
+        Assert.True(obj.CustomBooleanValue);
+        Assert.True(obj.CustomNullableBooleanValue);
 
-        [Fact]
-        public void MapByBooleanExpression()
-        {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .DefaultFiller(Filler)
-                .DefaultTrueValue(True)
-                .DefaultFalseValue(False)
-                .CreateMapByExpression<BooleanExpressionObject>(4, config => config
-                    .ForMember(x => x.BooleanValue, m => m.Boolean())
-                    .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
-                    .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))
-                    .ForMember(x => x.CustomNullableBooleanValue, m => m.Boolean(Yes, No, Filler)))
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<BooleanExpressionObject>();
+        // Read default
+        mapper.FromByte(new[] { Filler, Filler, Filler, Filler }, 0, obj);
 
-            var buffer = new byte[mapper.Size];
-            var obj = new BooleanExpressionObject();
+        Assert.False(obj.BooleanValue);
+        Assert.Null(obj.NullableBooleanValue);
+        Assert.False(obj.CustomBooleanValue);
+        Assert.Null(obj.CustomNullableBooleanValue);
+    }
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
-            Assert.Equal(new[] { False, Filler, No, Filler }, buffer);
+    internal class BooleanExpressionObject
+    {
+        public bool BooleanValue { get; set; }
 
-            // Read
-            mapper.FromByte(new[] { True, True, Yes, Yes }, 0, obj);
+        public bool? NullableBooleanValue { get; set; }
 
-            Assert.True(obj.BooleanValue);
-            Assert.True(obj.NullableBooleanValue);
-            Assert.True(obj.CustomBooleanValue);
-            Assert.True(obj.CustomNullableBooleanValue);
+        public bool CustomBooleanValue { get; set; }
 
-            // Read default
-            mapper.FromByte(new[] { Filler, Filler, Filler, Filler }, 0, obj);
-
-            Assert.False(obj.BooleanValue);
-            Assert.Null(obj.NullableBooleanValue);
-            Assert.False(obj.CustomBooleanValue);
-            Assert.Null(obj.CustomNullableBooleanValue);
-        }
-
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        internal class BooleanExpressionObject
-        {
-            public bool BooleanValue { get; set; }
-
-            public bool? NullableBooleanValue { get; set; }
-
-            public bool CustomBooleanValue { get; set; }
-
-            public bool? CustomNullableBooleanValue { get; set; }
-        }
+        public bool? CustomNullableBooleanValue { get; set; }
     }
 }

@@ -1,22 +1,21 @@
-namespace Smart.IO.ByteMapper.Mock
+namespace Smart.IO.ByteMapper.Mock;
+
+using Smart.ComponentModel;
+
+using Smart.IO.ByteMapper.Builders;
+
+public class MockBuilderContext : IBuilderContext
 {
-    using Smart.ComponentModel;
+    public ComponentContainer Components { get; } = new ComponentConfig().ToContainer();
 
-    using Smart.IO.ByteMapper.Builders;
-
-    public class MockBuilderContext : IBuilderContext
+    public T GetParameter<T>(string key)
     {
-        public ComponentContainer Components { get; } = new ComponentConfig().ToContainer();
+        return default;
+    }
 
-        public T GetParameter<T>(string key)
-        {
-            return default;
-        }
-
-        public bool TryGetParameter<T>(string key, out T value)
-        {
-            value = default;
-            return true;
-        }
+    public bool TryGetParameter<T>(string key, out T value)
+    {
+        value = default;
+        return true;
     }
 }

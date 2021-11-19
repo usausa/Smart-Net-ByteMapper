@@ -1,8 +1,7 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+public enum Padding
 {
-    public enum Padding
-    {
-        Left,
-        Right
-    }
+    Left,
+    Right
 }

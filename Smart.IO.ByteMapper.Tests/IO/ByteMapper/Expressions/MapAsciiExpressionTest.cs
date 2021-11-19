@@ -1,69 +1,68 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+using System.Text;
+
+using Xunit;
+
+public class MapAsciiExpressionTest
 {
-    using System;
-    using System.Text;
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
 
-    using Xunit;
-
-    public class MapAsciiExpressionTest
+    [Fact]
+    public void MapByAsciiExpression()
     {
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .UseOptionsDefault()
+            .DefaultDelimiter(null)
+            .DefaultTrim(true)
+            .DefaultTextPadding(Padding.Right)
+            .DefaultTextFiller(0x20)
+            .CreateMapByExpression<AsciiExpressionObject>(8, config => config
+                .ForMember(
+                    x => x.StringValue,
+                    m => m.Ascii(4))
+                .ForMember(
+                    x => x.CustomStringValue,
+                    m => m.Ascii(4).Trim(false).Padding(Padding.Left).Filler((byte)'_')))
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<AsciiExpressionObject>();
 
-        [Fact]
-        public void MapByAsciiExpression()
-        {
-            var mapperFactory = new MapperFactoryConfig()
-                .UseOptionsDefault()
-                .DefaultDelimiter(null)
-                .DefaultTrim(true)
-                .DefaultTextPadding(Padding.Right)
-                .DefaultTextFiller(0x20)
-                .CreateMapByExpression<AsciiExpressionObject>(8, config => config
-                    .ForMember(
-                        x => x.StringValue,
-                        m => m.Ascii(4))
-                    .ForMember(
-                        x => x.CustomStringValue,
-                        m => m.Ascii(4).Trim(false).Padding(Padding.Left).Filler((byte)'_')))
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<AsciiExpressionObject>();
+        var buffer = new byte[mapper.Size];
+        var obj = new AsciiExpressionObject();
 
-            var buffer = new byte[mapper.Size];
-            var obj = new AsciiExpressionObject();
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+        Assert.Equal(Encoding.ASCII.GetBytes("    ____"), buffer);
 
-            Assert.Equal(Encoding.ASCII.GetBytes("    ____"), buffer);
+        // Read
+        mapper.FromByte(Encoding.ASCII.GetBytes("12  __AB"), 0, obj);
 
-            // Read
-            mapper.FromByte(Encoding.ASCII.GetBytes("12  __AB"), 0, obj);
+        Assert.Equal("12", obj.StringValue);
+        Assert.Equal("__AB", obj.CustomStringValue);
+    }
 
-            Assert.Equal("12", obj.StringValue);
-            Assert.Equal("__AB", obj.CustomStringValue);
-        }
+    //--------------------------------------------------------------------------------
+    // Fix
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
+    [Fact]
+    public void CoverageFix()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapAsciiExpression(-1));
+    }
 
-        [Fact]
-        public void CoverageFix()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapAsciiExpression(-1));
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
+    internal class AsciiExpressionObject
+    {
+        public string StringValue { get; set; }
 
-        internal class AsciiExpressionObject
-        {
-            public string StringValue { get; set; }
-
-            public string CustomStringValue { get; set; }
-        }
+        public string CustomStringValue { get; set; }
     }
 }

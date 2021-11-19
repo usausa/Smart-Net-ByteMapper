@@ -1,16 +1,15 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+using System;
+using System.Collections.Generic;
+
+using Smart.ComponentModel;
+
+public interface IMappingFactory
 {
-    using System;
-    using System.Collections.Generic;
+    Type Type { get; }
 
-    using Smart.ComponentModel;
+    string Name { get; }
 
-    public interface IMappingFactory
-    {
-        Type Type { get; }
-
-        string Name { get; }
-
-        IMapping Create(ComponentContainer components, IDictionary<string, object> parameters);
-    }
+    IMapping Create(ComponentContainer components, IDictionary<string, object> parameters);
 }

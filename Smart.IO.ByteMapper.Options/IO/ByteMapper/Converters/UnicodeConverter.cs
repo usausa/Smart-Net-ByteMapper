@@ -1,44 +1,43 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class UnicodeConverter : IMapConverter
 {
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly int length;
 
-    internal sealed class UnicodeConverter : IMapConverter
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly char filler;
+
+    public UnicodeConverter(
+        int length,
+        bool trim,
+        Padding padding,
+        char filler)
     {
-        private readonly int length;
+        this.length = length;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+    }
 
-        private readonly bool trim;
+    public object Read(byte[] buffer, int index)
+    {
+        return EncodingByteHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
+    }
 
-        private readonly Padding padding;
-
-        private readonly char filler;
-
-        public UnicodeConverter(
-            int length,
-            bool trim,
-            Padding padding,
-            char filler)
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
         {
-            this.length = length;
-            this.trim = trim;
-            this.padding = padding;
-            this.filler = filler;
+            EncodingByteHelper.FillUnicode(buffer, index, length, filler);
         }
-
-        public object Read(byte[] buffer, int index)
+        else
         {
-            return EncodingByteHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
-            {
-                EncodingByteHelper.FillUnicode(buffer, index, length, filler);
-            }
-            else
-            {
-                EncodingByteHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
-            }
+            EncodingByteHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
         }
     }
 }

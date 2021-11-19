@@ -1,59 +1,58 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class BooleanConverterTest
 {
-    using Smart.IO.ByteMapper.Mock;
+    private const int Offset = 1;
 
-    using Xunit;
+    private const byte TrueByte = 0x31;
 
-    public class BooleanConverterTest
+    private const byte FalseByte = 0x30;
+
+    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+
+    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+
+    private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, new byte[] { 0x00 });
+
+    private readonly BooleanConverter converter;
+
+    public BooleanConverterTest()
     {
-        private const int Offset = 1;
+        converter = new BooleanConverter(TrueByte, FalseByte);
+    }
 
-        private const byte TrueByte = 0x31;
+    //--------------------------------------------------------------------------------
+    // bool
+    //--------------------------------------------------------------------------------
 
-        private const byte FalseByte = 0x30;
+    [Fact]
+    public void ReadToBoolean()
+    {
+        // True
+        Assert.True((bool)converter.Read(TrueBytes, Offset));
 
-        private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+        // False
+        Assert.False((bool)converter.Read(FalseBytes, Offset));
 
-        private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+        // Unknown
+        Assert.False((bool)converter.Read(UnknownBytes, Offset));
+    }
 
-        private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, new byte[] { 0x00 });
+    [Fact]
+    public void WriteBooleanToBuffer()
+    {
+        var buffer = new byte[1 + Offset];
 
-        private readonly BooleanConverter converter;
+        // True
+        converter.Write(buffer, Offset, true);
+        Assert.Equal(TrueBytes, buffer);
 
-        public BooleanConverterTest()
-        {
-            converter = new BooleanConverter(TrueByte, FalseByte);
-        }
-
-        //--------------------------------------------------------------------------------
-        // bool
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToBoolean()
-        {
-            // True
-            Assert.True((bool)converter.Read(TrueBytes, Offset));
-
-            // False
-            Assert.False((bool)converter.Read(FalseBytes, Offset));
-
-            // Unknown
-            Assert.False((bool)converter.Read(UnknownBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteBooleanToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
-
-            // True
-            converter.Write(buffer, Offset, true);
-            Assert.Equal(TrueBytes, buffer);
-
-            // False
-            converter.Write(buffer, Offset, false);
-            Assert.Equal(FalseBytes, buffer);
-        }
+        // False
+        converter.Write(buffer, Offset, false);
+        Assert.Equal(FalseBytes, buffer);
     }
 }

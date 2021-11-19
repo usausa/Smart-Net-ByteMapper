@@ -1,78 +1,77 @@
-namespace Smart.IO.ByteMapper.Mock
+namespace Smart.IO.ByteMapper.Mock;
+
+using System;
+
+public enum IntEnum
 {
-    using System;
+    Zero,
+    One,
+    Two
+}
 
-    public enum IntEnum
-    {
-        Zero,
-        One,
-        Two
-    }
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+public enum LongEnum : long
+{
+    Zero,
+    One,
+    Two
+}
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
-    public enum LongEnum : long
-    {
-        Zero,
-        One,
-        Two
-    }
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+public enum ShortEnum : short
+{
+    Zero,
+    One,
+    Two
+}
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
-    public enum ShortEnum : short
-    {
-        Zero,
-        One,
-        Two
-    }
+public class Target
+{
+    // int
 
-    public class Target
-    {
-        // int
+    public int IntProperty { get; set; }
 
-        public int IntProperty { get; set; }
+    public int? NullableIntProperty { get; set; }
 
-        public int? NullableIntProperty { get; set; }
+    public IntEnum IntEnumProperty { get; set; }
 
-        public IntEnum IntEnumProperty { get; set; }
+    public IntEnum? NullableIntEnumProperty { get; set; }
 
-        public IntEnum? NullableIntEnumProperty { get; set; }
+    // long
 
-        // long
+    public long LongProperty { get; set; }
 
-        public long LongProperty { get; set; }
+    public long? NullableLongProperty { get; set; }
 
-        public long? NullableLongProperty { get; set; }
+    public LongEnum LongEnumProperty { get; set; }
 
-        public LongEnum LongEnumProperty { get; set; }
+    public LongEnum? NullableLongEnumProperty { get; set; }
 
-        public LongEnum? NullableLongEnumProperty { get; set; }
+    // short
 
-        // short
+    public short ShortProperty { get; set; }
 
-        public short ShortProperty { get; set; }
+    public short? NullableShortProperty { get; set; }
 
-        public short? NullableShortProperty { get; set; }
+    public ShortEnum ShortEnumProperty { get; set; }
 
-        public ShortEnum ShortEnumProperty { get; set; }
+    public ShortEnum? NullableShortEnumProperty { get; set; }
 
-        public ShortEnum? NullableShortEnumProperty { get; set; }
+    // decimal
 
-        // decimal
+    public decimal DecimalProperty { get; set; }
 
-        public decimal DecimalProperty { get; set; }
+    public decimal? NullableDecimalProperty { get; set; }
 
-        public decimal? NullableDecimalProperty { get; set; }
+    // DateTime
 
-        // DateTime
+    public DateTime DateTimeProperty { get; set; }
 
-        public DateTime DateTimeProperty { get; set; }
+    public DateTime? NullableDateTimeProperty { get; set; }
 
-        public DateTime? NullableDateTimeProperty { get; set; }
+    // DateTimeOffset
 
-        // DateTimeOffset
+    public DateTimeOffset DateTimeOffsetProperty { get; set; }
 
-        public DateTimeOffset DateTimeOffsetProperty { get; set; }
-
-        public DateTimeOffset? NullableDateTimeOffsetProperty { get; set; }
-    }
+    public DateTimeOffset? NullableDateTimeOffsetProperty { get; set; }
 }

@@ -1,24 +1,23 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+[AttributeUsage(AttributeTargets.Property)]
+public abstract class AbstractMemberMapAttribute : Attribute
 {
-    using System;
+    public int Offset { get; }
 
-    using Smart.IO.ByteMapper.Builders;
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public abstract class AbstractMemberMapAttribute : Attribute
+    protected AbstractMemberMapAttribute(int offset)
     {
-        public int Offset { get; }
-
-        protected AbstractMemberMapAttribute(int offset)
+        if (offset < 0)
         {
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
-
-            Offset = offset;
+            throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        public abstract IMapConverterBuilder GetConverterBuilder();
+        Offset = offset;
     }
+
+    public abstract IMapConverterBuilder GetConverterBuilder();
 }

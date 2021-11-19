@@ -1,34 +1,33 @@
-namespace Smart.AspNetCore.Formatters
+namespace Smart.AspNetCore.Formatters;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+internal static class TypeHelper
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private static readonly Type EnumerableType = typeof(IEnumerable<>);
 
-    internal static class TypeHelper
+    public static bool IsEnumerableType(Type type)
     {
-        private static readonly Type EnumerableType = typeof(IEnumerable<>);
+        return new[] { type }.Where(x => x.IsInterface).Concat(type.GetInterfaces())
+            .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == EnumerableType);
+    }
 
-        public static bool IsEnumerableType(Type type)
+    public static Type GetEnumerableElementType(Type type)
+    {
+        // Array
+        if (type.IsArray)
         {
-            return new[] { type }.Where(x => x.IsInterface).Concat(type.GetInterfaces())
-                .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == EnumerableType);
+            return type.GetElementType();
         }
 
-        public static Type GetEnumerableElementType(Type type)
+        // IEnumerable type
+        if (IsEnumerableType(type))
         {
-            // Array
-            if (type.IsArray)
-            {
-                return type.GetElementType();
-            }
-
-            // IEnumerable type
-            if (IsEnumerableType(type))
-            {
-                return type.GenericTypeArguments[0];
-            }
-
-            return null;
+            return type.GenericTypeArguments[0];
         }
+
+        return null;
     }
 }

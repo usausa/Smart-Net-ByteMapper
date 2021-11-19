@@ -1,7 +1,6 @@
-namespace Smart.AspNetCore
+namespace Smart.AspNetCore;
+
+internal static class Const
 {
-    internal static class Const
-    {
-        public const string ProfileKey = "__ByteMapperProfile";
-    }
+    public const string ProfileKey = "__ByteMapperProfile";
 }

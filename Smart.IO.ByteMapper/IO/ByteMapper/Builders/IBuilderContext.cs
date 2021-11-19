@@ -1,13 +1,12 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using Smart.ComponentModel;
+
+public interface IBuilderContext
 {
-    using Smart.ComponentModel;
+    ComponentContainer Components { get; }
 
-    public interface IBuilderContext
-    {
-        ComponentContainer Components { get; }
+    T GetParameter<T>(string key);
 
-        T GetParameter<T>(string key);
-
-        bool TryGetParameter<T>(string key, out T value);
-    }
+    bool TryGetParameter<T>(string key, out T value);
 }

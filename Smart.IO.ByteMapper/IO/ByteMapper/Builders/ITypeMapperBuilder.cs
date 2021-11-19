@@ -1,13 +1,12 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using Smart.IO.ByteMapper.Mappers;
+
+public interface ITypeMapperBuilder
 {
-    using Smart.IO.ByteMapper.Mappers;
+    int Offset { get; set; }
 
-    public interface ITypeMapperBuilder
-    {
-        int Offset { get; set; }
+    int CalcSize();
 
-        int CalcSize();
-
-        IMapper CreateMapper(IBuilderContext context);
-    }
+    IMapper CreateMapper(IBuilderContext context);
 }

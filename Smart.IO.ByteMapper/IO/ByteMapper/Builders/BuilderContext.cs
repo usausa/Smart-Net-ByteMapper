@@ -1,92 +1,91 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System.Collections.Generic;
+
+using Smart.ComponentModel;
+
+public sealed class BuilderContext : IBuilderContext
 {
-    using System.Collections.Generic;
+    private readonly IDictionary<string, object> globalParameters;
 
-    using Smart.ComponentModel;
+    private readonly IDictionary<string, object> typeParameters;
 
-    public sealed class BuilderContext : IBuilderContext
+    public ComponentContainer Components { get; }
+
+    public BuilderContext(
+        ComponentContainer components,
+        IDictionary<string, object> globalParameters,
+        IDictionary<string, object> typeParameters)
     {
-        private readonly IDictionary<string, object> globalParameters;
+        Components = components;
+        this.globalParameters = globalParameters;
+        this.typeParameters = typeParameters;
+    }
 
-        private readonly IDictionary<string, object> typeParameters;
-
-        public ComponentContainer Components { get; }
-
-        public BuilderContext(
-            ComponentContainer components,
-            IDictionary<string, object> globalParameters,
-            IDictionary<string, object> typeParameters)
+    public T GetParameter<T>(string key)
+    {
+        if (typeParameters.TryGetValue(key, out var obj))
         {
-            Components = components;
-            this.globalParameters = globalParameters;
-            this.typeParameters = typeParameters;
+            if (obj is null)
+            {
+                return default;
+            }
+
+            if (obj is T value)
+            {
+                return value;
+            }
         }
 
-        public T GetParameter<T>(string key)
+        if (globalParameters.TryGetValue(key, out obj))
         {
-            if (typeParameters.TryGetValue(key, out var obj))
+            if (obj is null)
             {
-                if (obj is null)
-                {
-                    return default;
-                }
-
-                if (obj is T value)
-                {
-                    return value;
-                }
+                return default;
             }
 
-            if (globalParameters.TryGetValue(key, out obj))
+            if (obj is T value)
             {
-                if (obj is null)
-                {
-                    return default;
-                }
-
-                if (obj is T value)
-                {
-                    return value;
-                }
+                return value;
             }
-
-            throw new ByteMapperException($"Parameter not found. key=[{key}]");
         }
 
-        public bool TryGetParameter<T>(string key, out T value)
+        throw new ByteMapperException($"Parameter not found. key=[{key}]");
+    }
+
+    public bool TryGetParameter<T>(string key, out T value)
+    {
+        if (typeParameters.TryGetValue(key, out var obj))
         {
-            if (typeParameters.TryGetValue(key, out var obj))
+            if (obj is null)
             {
-                if (obj is null)
-                {
-                    value = default;
-                    return true;
-                }
-
-                if (obj is T t)
-                {
-                    value = t;
-                    return true;
-                }
+                value = default;
+                return true;
             }
 
-            if (globalParameters.TryGetValue(key, out obj))
+            if (obj is T t)
             {
-                if (obj is null)
-                {
-                    value = default;
-                    return true;
-                }
-
-                if (obj is T t)
-                {
-                    value = t;
-                    return true;
-                }
+                value = t;
+                return true;
             }
-
-            value = default;
-            return false;
         }
+
+        if (globalParameters.TryGetValue(key, out obj))
+        {
+            if (obj is null)
+            {
+                value = default;
+                return true;
+            }
+
+            if (obj is T t)
+            {
+                value = t;
+                return true;
+            }
+        }
+
+        value = default;
+        return false;
     }
 }

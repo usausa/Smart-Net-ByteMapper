@@ -1,17 +1,16 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System.Reflection;
+
+using Smart.IO.ByteMapper.Mappers;
+
+public interface IMemberMapperBuilder
 {
-    using System.Reflection;
+    int Offset { get; set; }
 
-    using Smart.IO.ByteMapper.Mappers;
+    PropertyInfo Property { get; set; }
 
-    public interface IMemberMapperBuilder
-    {
-        int Offset { get; set; }
+    int CalcSize();
 
-        PropertyInfo Property { get; set; }
-
-        int CalcSize();
-
-        IMapper CreateMapper(IBuilderContext context);
-    }
+    IMapper CreateMapper(IBuilderContext context);
 }

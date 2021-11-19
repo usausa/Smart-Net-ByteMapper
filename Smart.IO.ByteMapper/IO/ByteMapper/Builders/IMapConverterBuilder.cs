@@ -1,15 +1,14 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System;
+
+using Smart.IO.ByteMapper.Converters;
+
+public interface IMapConverterBuilder
 {
-    using System;
+    bool Match(Type type);
 
-    using Smart.IO.ByteMapper.Converters;
+    int CalcSize(Type type);
 
-    public interface IMapConverterBuilder
-    {
-        bool Match(Type type);
-
-        int CalcSize(Type type);
-
-        IMapConverter CreateConverter(IBuilderContext context, Type type);
-    }
+    IMapConverter CreateConverter(IBuilderContext context, Type type);
 }

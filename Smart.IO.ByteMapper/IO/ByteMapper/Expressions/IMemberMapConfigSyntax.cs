@@ -1,7 +1,6 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+public interface IMemberMapConfigSyntax
 {
-    public interface IMemberMapConfigSyntax
-    {
-        void Map(IMemberMapExpression expression);
-    }
+    void Map(IMemberMapExpression expression);
 }

@@ -1,9 +1,8 @@
-namespace Smart.IO.ByteMapper.Expressions
-{
-    using Smart.IO.ByteMapper.Builders;
+namespace Smart.IO.ByteMapper.Expressions;
 
-    public interface ITypeMapExpression
-    {
-        ITypeMapperBuilder GetTypeMapperBuilder();
-    }
+using Smart.IO.ByteMapper.Builders;
+
+public interface ITypeMapExpression
+{
+    ITypeMapperBuilder GetTypeMapperBuilder();
 }

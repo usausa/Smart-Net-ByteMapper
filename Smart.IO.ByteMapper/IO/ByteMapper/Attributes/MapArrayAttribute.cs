@@ -1,31 +1,30 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+[AttributeUsage(AttributeTargets.Property)]
+public sealed class MapArrayAttribute : Attribute
 {
-    using System;
+    private readonly ArrayConverterBuilder builder = new();
 
-    using Smart.IO.ByteMapper.Builders;
-
-    [AttributeUsage(AttributeTargets.Property)]
-    public sealed class MapArrayAttribute : Attribute
+    public byte Filler
     {
-        private readonly ArrayConverterBuilder builder = new();
-
-        public byte Filler
-        {
-            get => throw new NotSupportedException();
-            set => builder.Filler = value;
-        }
-
-        public MapArrayAttribute(int length)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
-        public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
+        get => throw new NotSupportedException();
+        set => builder.Filler = value;
     }
+
+    public MapArrayAttribute(int length)
+    {
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
+
+        builder.Length = length;
+    }
+
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
+    public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
 }

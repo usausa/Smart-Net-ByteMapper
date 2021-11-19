@@ -1,23 +1,22 @@
-namespace Smart.AspNetCore.Filters
+namespace Smart.AspNetCore.Filters;
+
+using System;
+
+using Microsoft.AspNetCore.Mvc.Filters;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
+public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
 {
-    using System;
+    private readonly string profile;
 
-    using Microsoft.AspNetCore.Mvc.Filters;
-
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
+    public ByteMapperProfileAttribute(string profile)
     {
-        private readonly string profile;
+        this.profile = profile;
+    }
 
-        public ByteMapperProfileAttribute(string profile)
-        {
-            this.profile = profile;
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-        public void OnAuthorization(AuthorizationFilterContext context)
-        {
-            context.HttpContext.Items[Const.ProfileKey] = profile;
-        }
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    public void OnAuthorization(AuthorizationFilterContext context)
+    {
+        context.HttpContext.Items[Const.ProfileKey] = profile;
     }
 }

@@ -1,9 +1,8 @@
-namespace Smart.IO.ByteMapper.Expressions
-{
-    using Smart.IO.ByteMapper.Builders;
+namespace Smart.IO.ByteMapper.Expressions;
 
-    public interface IMemberMapExpression
-    {
-        IMapConverterBuilder GetMapConverterBuilder();
-    }
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMemberMapExpression
+{
+    IMapConverterBuilder GetMapConverterBuilder();
 }

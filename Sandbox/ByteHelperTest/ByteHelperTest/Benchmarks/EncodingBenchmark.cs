@@ -1,46 +1,45 @@
-namespace ByteHelperTest.Benchmarks
+namespace ByteHelperTest.Benchmarks;
+
+using System.Text;
+
+using BenchmarkDotNet.Attributes;
+
+[Config(typeof(BenchmarkConfig))]
+public class EncodingBenchmark
 {
-    using System.Text;
+    private const string Text = "0123456789";
 
-    using BenchmarkDotNet.Attributes;
+    private static readonly byte[] Bytes = Encoding.ASCII.GetBytes(Text);
 
-    [Config(typeof(BenchmarkConfig))]
-    public class EncodingBenchmark
+    private Encoding ascii;
+
+    [GlobalSetup]
+    public void Setup()
     {
-        private const string Text = "0123456789";
+        ascii = Encoding.ASCII;
+    }
 
-        private static readonly byte[] Bytes = Encoding.ASCII.GetBytes(Text);
+    [Benchmark]
+    public void GetBytesByEncoding()
+    {
+        ascii.GetBytes(Text);
+    }
 
-        private Encoding ascii;
+    [Benchmark]
+    public void GetBytesByCustom()
+    {
+        ByteHelper.GetAsciiBytes(Text);
+    }
 
-        [GlobalSetup]
-        public void Setup()
-        {
-            ascii = Encoding.ASCII;
-        }
+    [Benchmark]
+    public void GetStringByEncoding()
+    {
+        ascii.GetString(Bytes);
+    }
 
-        [Benchmark]
-        public void GetBytesByEncoding()
-        {
-            ascii.GetBytes(Text);
-        }
-
-        [Benchmark]
-        public void GetBytesByCustom()
-        {
-            ByteHelper.GetAsciiBytes(Text);
-        }
-
-        [Benchmark]
-        public void GetStringByEncoding()
-        {
-            ascii.GetString(Bytes);
-        }
-
-        [Benchmark]
-        public void GetStringByCustom()
-        {
-            ByteHelper.GetAsciiString(Bytes);
-        }
+    [Benchmark]
+    public void GetStringByCustom()
+    {
+        ByteHelper.GetAsciiString(Bytes);
     }
 }

@@ -1,15 +1,14 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+public static class OptionsParameter
 {
-    public static class OptionsParameter
-    {
-        public const string ZeroFill = nameof(OptionsParameter) + "." + nameof(ZeroFill);
+    public const string ZeroFill = nameof(OptionsParameter) + "." + nameof(ZeroFill);
 
-        public const string UseGrouping = nameof(OptionsParameter) + "." + nameof(UseGrouping);
+    public const string UseGrouping = nameof(OptionsParameter) + "." + nameof(UseGrouping);
 
-        public const string NumberPadding = nameof(OptionsParameter) + "." + nameof(NumberPadding);
+    public const string NumberPadding = nameof(OptionsParameter) + "." + nameof(NumberPadding);
 
-        public const string NumberFiller = nameof(OptionsParameter) + "." + nameof(NumberFiller);
+    public const string NumberFiller = nameof(OptionsParameter) + "." + nameof(NumberFiller);
 
-        public const string UnicodeFiller = nameof(OptionsParameter) + "." + nameof(UnicodeFiller);
-    }
+    public const string UnicodeFiller = nameof(OptionsParameter) + "." + nameof(UnicodeFiller);
 }

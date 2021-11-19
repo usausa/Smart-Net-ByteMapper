@@ -1,39 +1,38 @@
-namespace Smart.IO.ByteMapper.Mappers
+namespace Smart.IO.ByteMapper.Mappers;
+
+using System;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+public sealed class ConstantMapper : IMapper
 {
-    using System;
+    private readonly int offset;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public sealed class ConstantMapper : IMapper
+    private readonly int length;
+
+    private readonly byte[] content;
+
+    public bool CanRead => false;
+
+    public bool CanWrite => true;
+
+    public ConstantMapper(int offset, byte[] content)
     {
-        private readonly int offset;
+        this.offset = offset;
+        length = content.Length;
+        this.content = content;
+    }
 
-        private readonly int length;
+    public void Read(byte[] buffer, int index, object target)
+    {
+        throw new NotSupportedException();
+    }
 
-        private readonly byte[] content;
-
-        public bool CanRead => false;
-
-        public bool CanWrite => true;
-
-        public ConstantMapper(int offset, byte[] content)
+    public unsafe void Write(byte[] buffer, int index, object target)
+    {
+        fixed (byte* pSrc = &content[0])
+        fixed (byte* pDst = &buffer[index + offset])
         {
-            this.offset = offset;
-            length = content.Length;
-            this.content = content;
-        }
-
-        public void Read(byte[] buffer, int index, object target)
-        {
-            throw new NotSupportedException();
-        }
-
-        public unsafe void Write(byte[] buffer, int index, object target)
-        {
-            fixed (byte* pSrc = &content[0])
-            fixed (byte* pDst = &buffer[index + offset])
-            {
-                Buffer.MemoryCopy(pSrc, pDst, length, length);
-            }
+            Buffer.MemoryCopy(pSrc, pDst, length, length);
         }
     }
 }

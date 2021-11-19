@@ -1,46 +1,45 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapBooleanSyntax
 {
-    using Smart.IO.ByteMapper.Builders;
+    IMapBooleanSyntax True(byte value);
 
-    public interface IMapBooleanSyntax
+    IMapBooleanSyntax False(byte value);
+
+    IMapBooleanSyntax Null(byte value);
+}
+
+internal sealed class MapBooleanExpression : IMemberMapExpression, IMapBooleanSyntax
+{
+    private readonly BooleanConverterBuilder builder = new();
+
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapBooleanSyntax True(byte value)
     {
-        IMapBooleanSyntax True(byte value);
-
-        IMapBooleanSyntax False(byte value);
-
-        IMapBooleanSyntax Null(byte value);
+        builder.TrueValue = value;
+        return this;
     }
 
-    internal sealed class MapBooleanExpression : IMemberMapExpression, IMapBooleanSyntax
+    public IMapBooleanSyntax False(byte value)
     {
-        private readonly BooleanConverterBuilder builder = new();
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapBooleanSyntax True(byte value)
-        {
-            builder.TrueValue = value;
-            return this;
-        }
-
-        public IMapBooleanSyntax False(byte value)
-        {
-            builder.FalseValue = value;
-            return this;
-        }
-
-        public IMapBooleanSyntax Null(byte value)
-        {
-            builder.NullValue = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
+        builder.FalseValue = value;
+        return this;
     }
+
+    public IMapBooleanSyntax Null(byte value)
+    {
+        builder.NullValue = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
 }

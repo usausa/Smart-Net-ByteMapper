@@ -1,25 +1,24 @@
-namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers;
+
+using System.Collections.Generic;
+
+using Smart.Collections.Generic;
+using Smart.IO.ByteMapper.Mappers;
+
+internal sealed class MapperPosition
 {
-    using System.Collections.Generic;
+    public static IComparer<MapperPosition> Comparer => Comparers.Delegate<MapperPosition>((x, y) => x.Offset - y.Offset);
 
-    using Smart.Collections.Generic;
-    using Smart.IO.ByteMapper.Mappers;
+    public int Offset { get; }
 
-    internal sealed class MapperPosition
+    public int Size { get; }
+
+    public IMapper Mapper { get; }
+
+    public MapperPosition(int offset, int size, IMapper mapper)
     {
-        public static IComparer<MapperPosition> Comparer => Comparers.Delegate<MapperPosition>((x, y) => x.Offset - y.Offset);
-
-        public int Offset { get; }
-
-        public int Size { get; }
-
-        public IMapper Mapper { get; }
-
-        public MapperPosition(int offset, int size, IMapper mapper)
-        {
-            Offset = offset;
-            Size = size;
-            Mapper = mapper;
-        }
+        Offset = offset;
+        Size = size;
+        Mapper = mapper;
     }
 }

@@ -1,18 +1,17 @@
-namespace Smart.AspNetCore.Formatters
+namespace Smart.AspNetCore.Formatters;
+
+using System.Collections.Generic;
+
+using Smart.IO.ByteMapper;
+using Smart.Reflection;
+
+public class ByteMapperFormatterConfig
 {
-    using System.Collections.Generic;
+    public MapperFactory MapperFactory { get; set; }
 
-    using Smart.IO.ByteMapper;
-    using Smart.Reflection;
+    public IDelegateFactory DelegateFactory { get; set; } = Smart.Reflection.DelegateFactory.Default;
 
-    public class ByteMapperFormatterConfig
-    {
-        public MapperFactory MapperFactory { get; set; }
+    public IList<string> SupportedMediaTypes { get; } = new List<string>();
 
-        public IDelegateFactory DelegateFactory { get; set; } = Smart.Reflection.DelegateFactory.Default;
-
-        public IList<string> SupportedMediaTypes { get; } = new List<string>();
-
-        public int BufferSize { get; set; } = 8192;
-    }
+    public int BufferSize { get; set; } = 8192;
 }

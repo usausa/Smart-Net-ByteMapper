@@ -1,63 +1,62 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class ArrayConverter : IMapConverter
 {
-    using System;
+    private readonly int length;
 
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly byte filler;
 
-    internal sealed class ArrayConverter : IMapConverter
+    private readonly int elementSize;
+
+    private readonly Func<int, Array> allocator;
+
+    private readonly IMapConverter elementConverter;
+
+    public ArrayConverter(Func<int, Array> allocator, int length, byte filler, int elementSize, IMapConverter elementConverter)
     {
-        private readonly int length;
+        this.allocator = allocator;
+        this.length = length;
+        this.filler = filler;
+        this.elementSize = elementSize;
+        this.elementConverter = elementConverter;
+    }
 
-        private readonly byte filler;
+    public object Read(byte[] buffer, int index)
+    {
+        var array = allocator(length);
 
-        private readonly int elementSize;
-
-        private readonly Func<int, Array> allocator;
-
-        private readonly IMapConverter elementConverter;
-
-        public ArrayConverter(Func<int, Array> allocator, int length, byte filler, int elementSize, IMapConverter elementConverter)
+        for (var i = 0; i < length; i++)
         {
-            this.allocator = allocator;
-            this.length = length;
-            this.filler = filler;
-            this.elementSize = elementSize;
-            this.elementConverter = elementConverter;
+            array.SetValue(elementConverter.Read(buffer, index), i);
+            index += elementSize;
         }
 
-        public object Read(byte[] buffer, int index)
-        {
-            var array = allocator(length);
+        return array;
+    }
 
-            for (var i = 0; i < length; i++)
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer, index, length * elementSize, filler);
+        }
+        else
+        {
+            var array = (Array)value;
+
+            for (var i = 0; i < array.Length; i++)
             {
-                array.SetValue(elementConverter.Read(buffer, index), i);
+                elementConverter.Write(buffer, index, array.GetValue(i));
                 index += elementSize;
             }
 
-            return array;
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
+            if (array.Length < length)
             {
-                BytesHelper.Fill(buffer, index, length * elementSize, filler);
-            }
-            else
-            {
-                var array = (Array)value;
-
-                for (var i = 0; i < array.Length; i++)
-                {
-                    elementConverter.Write(buffer, index, array.GetValue(i));
-                    index += elementSize;
-                }
-
-                if (array.Length < length)
-                {
-                    BytesHelper.Fill(buffer, index, (length - array.Length) * elementSize, filler);
-                }
+                BytesHelper.Fill(buffer, index, (length - array.Length) * elementSize, filler);
             }
         }
     }

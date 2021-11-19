@@ -1,53 +1,52 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+using System.Text;
+
+using Xunit;
+
+public class MapConstantAttributeTest
 {
-    using System;
-    using System.Text;
+    //--------------------------------------------------------------------------------
+    // Attribute
+    //--------------------------------------------------------------------------------
 
-    using Xunit;
-
-    public class MapConstantAttributeTest
+    [Fact]
+    public void MapByConstantAttribute()
     {
-        //--------------------------------------------------------------------------------
-        // Attribute
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(0x0D, 0x0A)
+            .CreateMapByAttribute<ConstAttributeObject>()
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<ConstAttributeObject>();
 
-        [Fact]
-        public void MapByConstantAttribute()
-        {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(0x0D, 0x0A)
-                .CreateMapByAttribute<ConstAttributeObject>()
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<ConstAttributeObject>();
+        var buffer = new byte[mapper.Size];
+        var obj = new ConstAttributeObject();
 
-            var buffer = new byte[mapper.Size];
-            var obj = new ConstAttributeObject();
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+        Assert.Equal(Encoding.ASCII.GetBytes("12\r\n"), buffer);
+    }
 
-            Assert.Equal(Encoding.ASCII.GetBytes("12\r\n"), buffer);
-        }
+    //--------------------------------------------------------------------------------
+    // Fix
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
+    [Fact]
+    public void CoverageFix()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Array.Empty<byte>()));
+        Assert.Throws<ArgumentNullException>(() => new MapConstantAttribute(0, null));
+    }
 
-        [Fact]
-        public void CoverageFix()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapConstantAttribute(-1, Array.Empty<byte>()));
-            Assert.Throws<ArgumentNullException>(() => new MapConstantAttribute(0, null));
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        [Map(4, UseDelimiter = true)]
-        [MapConstant(0, new byte[] { 0x31, 0x32 })]
-        internal class ConstAttributeObject
-        {
-        }
+    [Map(4, UseDelimiter = true)]
+    [MapConstant(0, new byte[] { 0x31, 0x32 })]
+    internal class ConstAttributeObject
+    {
     }
 }

@@ -1,32 +1,31 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class ByteConverterTest
 {
-    using Smart.IO.ByteMapper.Mock;
+    private const int Offset = 1;
 
-    using Xunit;
+    private const byte Value = 0x01;
 
-    public class ByteConverterTest
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new[] { Value });
+
+    private readonly IMapConverter converter = ByteConverter.Default;
+
+    [Fact]
+    public void ReadToByte()
     {
-        private const int Offset = 1;
+        Assert.Equal(Value, (byte)converter.Read(ValueBytes, Offset));
+    }
 
-        private const byte Value = 0x01;
+    [Fact]
+    public void WriteByteToBuffer()
+    {
+        var buffer = new byte[1 + Offset];
+        converter.Write(buffer, Offset, Value);
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new[] { Value });
-
-        private readonly IMapConverter converter = ByteConverter.Default;
-
-        [Fact]
-        public void ReadToByte()
-        {
-            Assert.Equal(Value, (byte)converter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteByteToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
-            converter.Write(buffer, Offset, Value);
-
-            Assert.Equal(ValueBytes, buffer);
-        }
+        Assert.Equal(ValueBytes, buffer);
     }
 }

@@ -1,86 +1,85 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+using System.Globalization;
+using System.Text;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class DecimalTextConverterTest
 {
-    using System;
-    using System.Globalization;
-    using System.Text;
+    private const int Offset = 1;
 
-    using Smart.IO.ByteMapper.Mock;
+    private const int Length = 21;
 
-    using Xunit;
+    private const decimal Value = 1234567890.98m;
 
-    public class DecimalTextConverterTest
+    private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
+
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("1234567890.98".PadLeft(Length, ' ')));
+
+    private readonly DecimalTextConverter decimalConverter;
+
+    private readonly DecimalTextConverter nullableDecimalConverter;
+
+    public DecimalTextConverterTest()
     {
-        private const int Offset = 1;
+        decimalConverter = CreateConverter(typeof(decimal));
+        nullableDecimalConverter = CreateConverter(typeof(decimal?));
+    }
 
-        private const int Length = 21;
+    private static DecimalTextConverter CreateConverter(Type type)
+    {
+        return new(Length, null, Encoding.ASCII, true, Padding.Left, 0x20, NumberStyles.Number, NumberFormatInfo.InvariantInfo, type);
+    }
 
-        private const decimal Value = 1234567890.98m;
+    //--------------------------------------------------------------------------------
+    // decimal
+    //--------------------------------------------------------------------------------
 
-        private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
+    [Fact]
+    public void ReadToDecimal()
+    {
+        // Default
+        Assert.Equal(0m, decimalConverter.Read(EmptyBytes, Offset));
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("1234567890.98".PadLeft(Length, ' ')));
+        // Value
+        Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
+    }
 
-        private readonly DecimalTextConverter decimalConverter;
+    [Fact]
+    public void WriteDecimalToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-        private readonly DecimalTextConverter nullableDecimalConverter;
+        // Value
+        decimalConverter.Write(buffer, Offset, Value);
+        Assert.Equal(ValueBytes, buffer);
+    }
 
-        public DecimalTextConverterTest()
-        {
-            decimalConverter = CreateConverter(typeof(decimal));
-            nullableDecimalConverter = CreateConverter(typeof(decimal?));
-        }
+    //--------------------------------------------------------------------------------
+    // decimal?
+    //--------------------------------------------------------------------------------
 
-        private static DecimalTextConverter CreateConverter(Type type)
-        {
-            return new(Length, null, Encoding.ASCII, true, Padding.Left, 0x20, NumberStyles.Number, NumberFormatInfo.InvariantInfo, type);
-        }
+    [Fact]
+    public void ReadToNullableDecimal()
+    {
+        // Null
+        Assert.Null(nullableDecimalConverter.Read(EmptyBytes, Offset));
 
-        //--------------------------------------------------------------------------------
-        // decimal
-        //--------------------------------------------------------------------------------
+        // Value
+        Assert.Equal(Value, nullableDecimalConverter.Read(ValueBytes, Offset));
+    }
 
-        [Fact]
-        public void ReadToDecimal()
-        {
-            // Default
-            Assert.Equal(0m, decimalConverter.Read(EmptyBytes, Offset));
+    [Fact]
+    public void WriteNullableDecimalToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-            // Value
-            Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteDecimalToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Value
-            decimalConverter.Write(buffer, Offset, Value);
-            Assert.Equal(ValueBytes, buffer);
-        }
-
-        //--------------------------------------------------------------------------------
-        // decimal?
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToNullableDecimal()
-        {
-            // Null
-            Assert.Null(nullableDecimalConverter.Read(EmptyBytes, Offset));
-
-            // Value
-            Assert.Equal(Value, nullableDecimalConverter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteNullableDecimalToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Null
-            nullableDecimalConverter.Write(buffer, Offset, null);
-            Assert.Equal(EmptyBytes, buffer);
-        }
+        // Null
+        nullableDecimalConverter.Write(buffer, Offset, null);
+        Assert.Equal(EmptyBytes, buffer);
     }
 }

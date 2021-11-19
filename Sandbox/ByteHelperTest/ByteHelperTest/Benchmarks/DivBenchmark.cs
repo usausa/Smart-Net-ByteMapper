@@ -1,34 +1,33 @@
-namespace ByteHelperTest.Benchmarks
+namespace ByteHelperTest.Benchmarks;
+
+using BenchmarkDotNet.Attributes;
+
+[Config(typeof(BenchmarkConfig))]
+public class DivBenchmark
 {
-    using BenchmarkDotNet.Attributes;
+    private const int Value = 123456789;
 
-    [Config(typeof(BenchmarkConfig))]
-    public class DivBenchmark
+    [Benchmark]
+    public int Div10()
     {
-        private const int Value = 123456789;
-
-        [Benchmark]
-        public int Div10()
+        var value = Value;
+        for (var i = 0; i < 8; i++)
         {
-            var value = Value;
-            for (var i = 0; i < 8; i++)
-            {
-                value = value / 10;
-            }
-
-            return value;
+            value = value / 10;
         }
 
-        [Benchmark]
-        public int FastDiv10()
-        {
-            var value = Value;
-            for (var i = 0; i < 8; i++)
-            {
-                value = ByteHelper.Div10Signed(value);
-            }
+        return value;
+    }
 
-            return value;
+    [Benchmark]
+    public int FastDiv10()
+    {
+        var value = Value;
+        for (var i = 0; i < 8; i++)
+        {
+            value = ByteHelper.Div10Signed(value);
         }
+
+        return value;
     }
 }

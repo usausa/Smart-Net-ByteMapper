@@ -1,65 +1,64 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+using Smart.IO.ByteMapper.Helpers;
+using Smart.IO.ByteMapper.Mappers;
+
+internal class TypeMapper<T> : ITypeMapper<T>
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private readonly IMapper[] readableMappers;
 
-    using Smart.IO.ByteMapper.Helpers;
-    using Smart.IO.ByteMapper.Mappers;
+    private readonly IMapper[] writableMappers;
 
-    internal class TypeMapper<T> : ITypeMapper<T>
+    private readonly byte filler;
+
+    public Type TargetType { get; }
+
+    public int Size { get; }
+
+    public TypeMapper(Type targetType, int size, byte filler, IReadOnlyList<IMapper> mappers)
     {
-        private readonly IMapper[] readableMappers;
+        TargetType = targetType;
+        Size = size;
+        this.filler = filler;
+        readableMappers = mappers.Where(x => x.CanRead).ToArray();
+        writableMappers = mappers.Where(x => x.CanWrite).ToArray();
+    }
 
-        private readonly IMapper[] writableMappers;
+    public void FromByte(byte[] buffer, int index, object target)
+    {
+        FromByte(buffer, index, (T)target);
+    }
 
-        private readonly byte filler;
+    public void ToByte(byte[] buffer, int index, object target)
+    {
+        ToByte(buffer, index, (T)target);
+    }
 
-        public Type TargetType { get; }
-
-        public int Size { get; }
-
-        public TypeMapper(Type targetType, int size, byte filler, IReadOnlyList<IMapper> mappers)
+    public void FromByte(byte[] buffer, int index, T target)
+    {
+        var mappers = readableMappers;
+        for (var i = 0; i < mappers.Length; i++)
         {
-            TargetType = targetType;
-            Size = size;
-            this.filler = filler;
-            readableMappers = mappers.Where(x => x.CanRead).ToArray();
-            writableMappers = mappers.Where(x => x.CanWrite).ToArray();
+            mappers[i].Read(buffer, index, target);
         }
+    }
 
-        public void FromByte(byte[] buffer, int index, object target)
+    public void ToByte(byte[] buffer, int index, T target)
+    {
+        if (target == null)
         {
-            FromByte(buffer, index, (T)target);
+            BytesHelper.Fill(buffer, index, Size, filler);
         }
-
-        public void ToByte(byte[] buffer, int index, object target)
+        else
         {
-            ToByte(buffer, index, (T)target);
-        }
-
-        public void FromByte(byte[] buffer, int index, T target)
-        {
-            var mappers = readableMappers;
+            var mappers = writableMappers;
             for (var i = 0; i < mappers.Length; i++)
             {
-                mappers[i].Read(buffer, index, target);
-            }
-        }
-
-        public void ToByte(byte[] buffer, int index, T target)
-        {
-            if (target == null)
-            {
-                BytesHelper.Fill(buffer, index, Size, filler);
-            }
-            else
-            {
-                var mappers = writableMappers;
-                for (var i = 0; i < mappers.Length; i++)
-                {
-                    mappers[i].Write(buffer, index, target);
-                }
+                mappers[i].Write(buffer, index, target);
             }
         }
     }

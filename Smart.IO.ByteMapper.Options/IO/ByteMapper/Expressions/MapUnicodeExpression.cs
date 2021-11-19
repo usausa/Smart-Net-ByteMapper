@@ -1,63 +1,62 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapUnicodeSyntax
 {
-    using System;
+    IMapUnicodeSyntax Trim(bool value);
 
-    using Smart.IO.ByteMapper.Builders;
+    IMapUnicodeSyntax Padding(Padding value);
 
-    public interface IMapUnicodeSyntax
+    IMapUnicodeSyntax Filler(char value);
+}
+
+internal sealed class MapUnicodeExpression : IMemberMapExpression, IMapUnicodeSyntax
+{
+    private readonly UnicodeConverterBuilder builder = new();
+
+    public MapUnicodeExpression(int length)
     {
-        IMapUnicodeSyntax Trim(bool value);
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
 
-        IMapUnicodeSyntax Padding(Padding value);
+        if (length % 2 != 0)
+        {
+            throw new ArgumentException("Invalid length.", nameof(length));
+        }
 
-        IMapUnicodeSyntax Filler(char value);
+        builder.Length = length;
     }
 
-    internal sealed class MapUnicodeExpression : IMemberMapExpression, IMapUnicodeSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapUnicodeSyntax Trim(bool value)
     {
-        private readonly UnicodeConverterBuilder builder = new();
-
-        public MapUnicodeExpression(int length)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            if (length % 2 != 0)
-            {
-                throw new ArgumentException("Invalid length.", nameof(length));
-            }
-
-            builder.Length = length;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapUnicodeSyntax Trim(bool value)
-        {
-            builder.Trim = value;
-            return this;
-        }
-
-        public IMapUnicodeSyntax Padding(Padding value)
-        {
-            builder.Padding = value;
-            return this;
-        }
-
-        public IMapUnicodeSyntax Filler(char value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        public IMapConverterBuilder GetMapConverterBuilder() => builder;
+        builder.Trim = value;
+        return this;
     }
+
+    public IMapUnicodeSyntax Padding(Padding value)
+    {
+        builder.Padding = value;
+        return this;
+    }
+
+    public IMapUnicodeSyntax Filler(char value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    public IMapConverterBuilder GetMapConverterBuilder() => builder;
 }

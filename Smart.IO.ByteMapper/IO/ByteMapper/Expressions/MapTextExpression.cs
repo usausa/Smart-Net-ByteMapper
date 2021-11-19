@@ -1,72 +1,71 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+using System.Text;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapTextSyntax
 {
-    using System;
-    using System.Text;
+    IMapTextSyntax Encoding(Encoding value);
 
-    using Smart.IO.ByteMapper.Builders;
+    IMapTextSyntax Trim(bool value);
 
-    public interface IMapTextSyntax
+    IMapTextSyntax Padding(Padding value);
+
+    IMapTextSyntax Filler(byte value);
+}
+
+internal sealed class MapTextExpression : IMemberMapExpression, IMapTextSyntax
+{
+    private readonly TextConverterBuilder builder = new();
+
+    public MapTextExpression(int length)
     {
-        IMapTextSyntax Encoding(Encoding value);
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
 
-        IMapTextSyntax Trim(bool value);
-
-        IMapTextSyntax Padding(Padding value);
-
-        IMapTextSyntax Filler(byte value);
+        builder.Length = length;
     }
 
-    internal sealed class MapTextExpression : IMemberMapExpression, IMapTextSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapTextSyntax Encoding(Encoding value)
     {
-        private readonly TextConverterBuilder builder = new();
-
-        public MapTextExpression(int length)
+        if (value is null)
         {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
+            throw new ArgumentNullException(nameof(value));
         }
 
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapTextSyntax Encoding(Encoding value)
-        {
-            if (value is null)
-            {
-                throw new ArgumentNullException(nameof(value));
-            }
-
-            builder.Encoding = value;
-            return this;
-        }
-
-        public IMapTextSyntax Trim(bool value)
-        {
-            builder.Trim = value;
-            return this;
-        }
-
-        public IMapTextSyntax Padding(Padding value)
-        {
-            builder.Padding = value;
-            return this;
-        }
-
-        public IMapTextSyntax Filler(byte value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
+        builder.Encoding = value;
+        return this;
     }
+
+    public IMapTextSyntax Trim(bool value)
+    {
+        builder.Trim = value;
+        return this;
+    }
+
+    public IMapTextSyntax Padding(Padding value)
+    {
+        builder.Padding = value;
+        return this;
+    }
+
+    public IMapTextSyntax Filler(byte value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
 }

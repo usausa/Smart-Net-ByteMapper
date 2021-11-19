@@ -1,30 +1,29 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapBinarySyntax
 {
-    using Smart.IO.ByteMapper.Builders;
+    IMapBinarySyntax Endian(Endian value);
+}
 
-    public interface IMapBinarySyntax
+internal sealed class MapBinaryExpression : IMemberMapExpression, IMapBinarySyntax
+{
+    private readonly BinaryConverterBuilder builder = new();
+
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapBinarySyntax Endian(Endian value)
     {
-        IMapBinarySyntax Endian(Endian value);
+        builder.Endian = value;
+        return this;
     }
 
-    internal sealed class MapBinaryExpression : IMemberMapExpression, IMapBinarySyntax
-    {
-        private readonly BinaryConverterBuilder builder = new();
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapBinarySyntax Endian(Endian value)
-        {
-            builder.Endian = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
-    }
+    IMapConverterBuilder IMemberMapExpression.GetMapConverterBuilder() => builder;
 }

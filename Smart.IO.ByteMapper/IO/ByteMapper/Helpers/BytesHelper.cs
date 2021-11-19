@@ -1,150 +1,149 @@
-namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers;
+
+using System;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+public static class BytesHelper
 {
-    using System;
-    using System.Runtime.CompilerServices;
-    using System.Runtime.InteropServices;
-
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public static class BytesHelper
+    [StructLayout(LayoutKind.Explicit, Pack = 1)]
+    private struct DoubleBit
     {
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
-        private struct DoubleBit
+        [FieldOffset(0)]
+        public double DoubleValue;
+        [FieldOffset(0)]
+        public long LongValue;
+    }
+
+    [StructLayout(LayoutKind.Explicit, Pack = 1)]
+    private struct FloatBit
+    {
+        [FieldOffset(0)]
+        public float FloatValue;
+        [FieldOffset(0)]
+        public int IntValue;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Convert
+    //--------------------------------------------------------------------------------
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static double Int64ToDouble(long value)
+    {
+        var bit = new DoubleBit
         {
-            [FieldOffset(0)]
-            public double DoubleValue;
-            [FieldOffset(0)]
-            public long LongValue;
+            LongValue = value
+        };
+        return bit.DoubleValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static long DoubleToInt64(double value)
+    {
+        var bit = new DoubleBit
+        {
+            DoubleValue = value
+        };
+        return bit.LongValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float Int32ToFloat(int value)
+    {
+        var bit = new FloatBit
+        {
+            IntValue = value
+        };
+        return bit.FloatValue;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int FloatToInt32(float value)
+    {
+        var bit = new FloatBit
+        {
+            FloatValue = value
+        };
+        return bit.IntValue;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Fill
+    //--------------------------------------------------------------------------------
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void Fill(byte[] bytes, int index, int length, byte value)
+    {
+        for (var i = 0; i < length; i++)
+        {
+            bytes[index + i] = value;
         }
+    }
 
-        [StructLayout(LayoutKind.Explicit, Pack = 1)]
-        private struct FloatBit
+    //--------------------------------------------------------------------------------
+    // Copy
+    //--------------------------------------------------------------------------------
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void TrimRange(byte[] buffer, ref int start, ref int size, Padding padding, byte filler)
+    {
+        if (padding == Padding.Left)
         {
-            [FieldOffset(0)]
-            public float FloatValue;
-            [FieldOffset(0)]
-            public int IntValue;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Convert
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static double Int64ToDouble(long value)
-        {
-            var bit = new DoubleBit
+            var end = start + size;
+            while ((start < end) && (buffer[start] == filler))
             {
-                LongValue = value
-            };
-            return bit.DoubleValue;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static long DoubleToInt64(double value)
-        {
-            var bit = new DoubleBit
-            {
-                DoubleValue = value
-            };
-            return bit.LongValue;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static float Int32ToFloat(int value)
-        {
-            var bit = new FloatBit
-            {
-                IntValue = value
-            };
-            return bit.FloatValue;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static int FloatToInt32(float value)
-        {
-            var bit = new FloatBit
-            {
-                FloatValue = value
-            };
-            return bit.IntValue;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Fill
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void Fill(byte[] bytes, int index, int length, byte value)
-        {
-            for (var i = 0; i < length; i++)
-            {
-                bytes[index + i] = value;
+                start++;
+                size--;
             }
         }
-
-        //--------------------------------------------------------------------------------
-        // Copy
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void TrimRange(byte[] buffer, ref int start, ref int size, Padding padding, byte filler)
+        else
         {
-            if (padding == Padding.Left)
+            while ((size > 0) && (buffer[start + size - 1] == filler))
             {
-                var end = start + size;
-                while ((start < end) && (buffer[start] == filler))
-                {
-                    start++;
-                    size--;
-                }
-            }
-            else
-            {
-                while ((size > 0) && (buffer[start + size - 1] == filler))
-                {
-                    size--;
-                }
+                size--;
             }
         }
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
+    {
+        var size = bytes.Length;
+        if (size >= length)
         {
-            var size = bytes.Length;
-            if (size >= length)
+            fixed (byte* pSrc = &bytes[0])
+            fixed (byte* pDst = &buffer[index])
+            {
+                Buffer.MemoryCopy(pSrc, pDst, length, length);
+            }
+        }
+        else if (padding == Padding.Right)
+        {
+            if (size > 0)
             {
                 fixed (byte* pSrc = &bytes[0])
                 fixed (byte* pDst = &buffer[index])
                 {
-                    Buffer.MemoryCopy(pSrc, pDst, length, length);
+                    Buffer.MemoryCopy(pSrc, pDst, size, size);
                 }
             }
-            else if (padding == Padding.Right)
-            {
-                if (size > 0)
-                {
-                    fixed (byte* pSrc = &bytes[0])
-                    fixed (byte* pDst = &buffer[index])
-                    {
-                        Buffer.MemoryCopy(pSrc, pDst, size, size);
-                    }
-                }
 
-                Fill(buffer, index + size, length - size, filler);
-            }
-            else
+            Fill(buffer, index + size, length - size, filler);
+        }
+        else
+        {
+            if (size > 0)
             {
-                if (size > 0)
+                fixed (byte* pSrc = &bytes[0])
+                fixed (byte* pDst = &buffer[index + length - size])
                 {
-                    fixed (byte* pSrc = &bytes[0])
-                    fixed (byte* pDst = &buffer[index + length - size])
-                    {
-                        Buffer.MemoryCopy(pSrc, pDst, size, size);
-                    }
+                    Buffer.MemoryCopy(pSrc, pDst, size, size);
                 }
-
-                Fill(buffer, index, length - size, filler);
             }
+
+            Fill(buffer, index, length - size, filler);
         }
     }
 }

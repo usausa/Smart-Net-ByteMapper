@@ -1,57 +1,56 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System;
+
+using Smart.IO.ByteMapper.Converters;
+
+public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<IntegerConverterBuilder>
 {
-    using System;
+    public int Length { get; set; }
 
-    using Smart.IO.ByteMapper.Converters;
+    public Padding? Padding { get; set; }
 
-    public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<IntegerConverterBuilder>
+    public bool? ZeroFill { get; set; }
+
+    public byte? Filler { get; set; }
+
+    static IntegerConverterBuilder()
     {
-        public int Length { get; set; }
+        AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
+        AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
+        AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
+        AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
+        AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
+        AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
+    }
 
-        public Padding? Padding { get; set; }
+    private IMapConverter CreateInt32Converter(Type type, IBuilderContext context)
+    {
+        return new Int32Converter(
+            Length,
+            Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+            ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+            Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
+            type);
+    }
 
-        public bool? ZeroFill { get; set; }
+    private IMapConverter CreateInt64Converter(Type type, IBuilderContext context)
+    {
+        return new Int64Converter(
+            Length,
+            Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+            ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+            Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
+            type);
+    }
 
-        public byte? Filler { get; set; }
-
-        static IntegerConverterBuilder()
-        {
-            AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-            AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-            AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-            AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-            AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
-            AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
-        }
-
-        private IMapConverter CreateInt32Converter(Type type, IBuilderContext context)
-        {
-            return new Int32Converter(
-                Length,
-                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
-                type);
-        }
-
-        private IMapConverter CreateInt64Converter(Type type, IBuilderContext context)
-        {
-            return new Int64Converter(
-                Length,
-                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
-                type);
-        }
-
-        private IMapConverter CreateInt16Converter(Type type, IBuilderContext context)
-        {
-            return new Int16Converter(
-                Length,
-                Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
-                ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
-                Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
-                type);
-        }
+    private IMapConverter CreateInt16Converter(Type type, IBuilderContext context)
+    {
+        return new Int16Converter(
+            Length,
+            Padding ?? context.GetParameter<Padding>(OptionsParameter.NumberPadding),
+            ZeroFill ?? context.GetParameter<bool>(OptionsParameter.ZeroFill),
+            Filler ?? context.GetParameter<byte>(OptionsParameter.NumberFiller),
+            type);
     }
 }

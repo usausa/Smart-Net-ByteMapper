@@ -1,100 +1,99 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Xunit;
+
+public class MapArrayExpressionTest
 {
-    using System;
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
 
-    using Xunit;
-
-    public class MapArrayExpressionTest
+    [Fact]
+    public void MapByArrayExpression()
     {
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(null)
+            .DefaultFiller(0x00)
+            .DefaultEndian(Endian.Big)
+            .CreateMapByExpression<ArrayExpressionObject>(19, config => config
+                .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
+                .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF)))
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<ArrayExpressionObject>();
 
-        [Fact]
-        public void MapByArrayExpression()
-        {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .DefaultFiller(0x00)
-                .DefaultEndian(Endian.Big)
-                .CreateMapByExpression<ArrayExpressionObject>(19, config => config
-                    .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
-                    .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF)))
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<ArrayExpressionObject>();
+        var buffer = new byte[mapper.Size];
+        var obj = new ArrayExpressionObject();
 
-            var buffer = new byte[mapper.Size];
-            var obj = new ArrayExpressionObject();
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
-
-            Assert.Equal(
-                new byte[]
-                {
-                    0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00,
-                    0x00, 0x00, 0x00, 0x00,
-                    0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-                },
-                buffer);
-
-            // Write
-            obj.ArrayValue = new[] { 1, 2, 3 };
-            obj.ByteArrayValue = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
-
-            mapper.ToByte(buffer, 0, obj);
-
-            Assert.Equal(
-                new byte[]
-                {
-                    0x00, 0x00, 0x00, 0x01,
-                    0x00, 0x00, 0x00, 0x02,
-                    0x00, 0x00, 0x00, 0x03,
-                    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
-                },
-                buffer);
-
-            // Read
-            for (var i = 0; i < buffer.Length; i++)
+        Assert.Equal(
+            new byte[]
             {
-                if (buffer[i] > 0)
-                {
-                    buffer[i]++;
-                }
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+            },
+            buffer);
+
+        // Write
+        obj.ArrayValue = new[] { 1, 2, 3 };
+        obj.ByteArrayValue = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+
+        mapper.ToByte(buffer, 0, obj);
+
+        Assert.Equal(
+            new byte[]
+            {
+                0x00, 0x00, 0x00, 0x01,
+                0x00, 0x00, 0x00, 0x02,
+                0x00, 0x00, 0x00, 0x03,
+                0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
+            },
+            buffer);
+
+        // Read
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            if (buffer[i] > 0)
+            {
+                buffer[i]++;
             }
-
-            mapper.FromByte(buffer, 0, obj);
-
-            Assert.Equal(new[] { 2, 3, 4 }, obj.ArrayValue);
-            Assert.Equal(new byte[] { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }, obj.ByteArrayValue);
         }
 
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
+        mapper.FromByte(buffer, 0, obj);
 
-        [Fact]
-        public void CoverageFix()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MemberConfigExpression().Array(-1, null));
-            Assert.Throws<ArgumentNullException>(() => new MemberConfigExpression().Array(0, null));
-            Assert.Throws<InvalidOperationException>(() => new MemberConfigExpression().Array(0, _ => { }));
+        Assert.Equal(new[] { 2, 3, 4 }, obj.ArrayValue);
+        Assert.Equal(new byte[] { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }, obj.ByteArrayValue);
+    }
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapArrayExpression(-1, null));
+    //--------------------------------------------------------------------------------
+    // Fix
+    //--------------------------------------------------------------------------------
 
-            Assert.Throws<ArgumentNullException>(() => ((IMemberMapConfigSyntax)new ElementConfigExpression()).Map(null));
-        }
+    [Fact]
+    public void CoverageFix()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MemberConfigExpression().Array(-1, null));
+        Assert.Throws<ArgumentNullException>(() => new MemberConfigExpression().Array(0, null));
+        Assert.Throws<InvalidOperationException>(() => new MemberConfigExpression().Array(0, _ => { }));
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapArrayExpression(-1, null));
 
-        internal class ArrayExpressionObject
-        {
-            public int[] ArrayValue { get; set; }
+        Assert.Throws<ArgumentNullException>(() => ((IMemberMapConfigSyntax)new ElementConfigExpression()).Map(null));
+    }
 
-            public byte[] ByteArrayValue { get; set; }
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
+
+    internal class ArrayExpressionObject
+    {
+        public int[] ArrayValue { get; set; }
+
+        public byte[] ByteArrayValue { get; set; }
     }
 }

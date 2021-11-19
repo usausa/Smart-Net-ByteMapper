@@ -1,75 +1,74 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System.Text;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class AsciiConverterTest
 {
-    using System.Text;
+    private const int Offset = 1;
 
-    using Smart.IO.ByteMapper.Mock;
+    private const int Length = 10;
 
-    using Xunit;
+    private const string Value = "1a*";
 
-    public class AsciiConverterTest
+    private const string OverflowValue = "12345678901";
+
+    private static readonly byte[] EmptyBytes;
+
+    private static readonly byte[] ValueBytes;
+
+    private static readonly byte[] OverflowBytes;
+
+    private readonly AsciiConverter converter;
+
+    static AsciiConverterTest()
     {
-        private const int Offset = 1;
+        EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
+        ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(Value.PadRight(Length, ' ')));
+        OverflowBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(OverflowValue[..Length]));
+    }
 
-        private const int Length = 10;
+    public AsciiConverterTest()
+    {
+        converter = new AsciiConverter(
+            Length,
+            true,
+            Padding.Right,
+            0x20);
+    }
 
-        private const string Value = "1a*";
+    //--------------------------------------------------------------------------------
+    // string
+    //--------------------------------------------------------------------------------
 
-        private const string OverflowValue = "12345678901";
+    [Fact]
+    public void ReadToAscii()
+    {
+        // Empty
+        Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
 
-        private static readonly byte[] EmptyBytes;
+        // Value
+        Assert.Equal(Value, converter.Read(ValueBytes, Offset));
+    }
 
-        private static readonly byte[] ValueBytes;
+    [Fact]
+    public void WriteAsciiToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-        private static readonly byte[] OverflowBytes;
+        // Value
+        converter.Write(buffer, Offset, Value);
+        Assert.Equal(ValueBytes, buffer);
 
-        private readonly AsciiConverter converter;
+        // Null
+        converter.Write(buffer, Offset, null);
+        Assert.Equal(EmptyBytes, buffer);
 
-        static AsciiConverterTest()
-        {
-            EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
-            ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(Value.PadRight(Length, ' ')));
-            OverflowBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(OverflowValue[..Length]));
-        }
-
-        public AsciiConverterTest()
-        {
-            converter = new AsciiConverter(
-                Length,
-                true,
-                Padding.Right,
-                0x20);
-        }
-
-        //--------------------------------------------------------------------------------
-        // string
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToAscii()
-        {
-            // Empty
-            Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
-
-            // Value
-            Assert.Equal(Value, converter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteAsciiToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Value
-            converter.Write(buffer, Offset, Value);
-            Assert.Equal(ValueBytes, buffer);
-
-            // Null
-            converter.Write(buffer, Offset, null);
-            Assert.Equal(EmptyBytes, buffer);
-
-            // Overflow
-            converter.Write(buffer, Offset, OverflowValue);
-            Assert.Equal(OverflowBytes, buffer);
-        }
+        // Overflow
+        converter.Write(buffer, Offset, OverflowValue);
+        Assert.Equal(OverflowBytes, buffer);
     }
 }

@@ -1,107 +1,106 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+using System.Globalization;
+using System.Text;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class DateTimeTextConverterTest
 {
-    using System;
-    using System.Globalization;
-    using System.Text;
+    private const int Offset = 1;
 
-    using Smart.IO.ByteMapper.Mock;
+    private const int Length = 14;
 
-    using Xunit;
+    private const string Format = "yyyyMMddHHmmss";
 
-    public class DateTimeTextConverterTest
+    private const string ShortFormat = "yyyyMMdd";
+
+    private static readonly DateTime Value = new(2000, 12, 31, 12, 34, 56);
+
+    private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
+
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456"));
+
+    private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
+
+    private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx"));
+
+    private readonly DateTimeTextConverter decimalConverter;
+
+    private readonly DateTimeTextConverter nullableDateTimeConverter;
+
+    private readonly DateTimeTextConverter shortDecimalConverter;
+
+    public DateTimeTextConverterTest()
     {
-        private const int Offset = 1;
+        decimalConverter = CreateConverter(typeof(DateTime), Format);
+        nullableDateTimeConverter = CreateConverter(typeof(DateTime?), Format);
+        shortDecimalConverter = CreateConverter(typeof(DateTime), ShortFormat);
+    }
 
-        private const int Length = 14;
+    private static DateTimeTextConverter CreateConverter(Type type, string format)
+    {
+        return new(14, format, Encoding.ASCII, 0x20, DateTimeStyles.None, DateTimeFormatInfo.InvariantInfo, type);
+    }
 
-        private const string Format = "yyyyMMddHHmmss";
+    //--------------------------------------------------------------------------------
+    // DateTime
+    //--------------------------------------------------------------------------------
 
-        private const string ShortFormat = "yyyyMMdd";
+    [Fact]
+    public void ReadToDateTime()
+    {
+        // Default
+        Assert.Equal(default(DateTime), decimalConverter.Read(EmptyBytes, Offset));
 
-        private static readonly DateTime Value = new(2000, 12, 31, 12, 34, 56);
+        // Invalid
+        Assert.Equal(default(DateTime), decimalConverter.Read(InvalidBytes, Offset));
 
-        private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
+        // Value
+        Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
+    }
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456"));
+    [Fact]
+    public void WriteDateTimeToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-        private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
+        // Value
+        decimalConverter.Write(buffer, Offset, Value);
+        Assert.Equal(ValueBytes, buffer);
 
-        private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx"));
+        // Short
+        shortDecimalConverter.Write(buffer, Offset, Value);
+        Assert.Equal(ShortBytes, buffer);
+    }
 
-        private readonly DateTimeTextConverter decimalConverter;
+    //--------------------------------------------------------------------------------
+    // DateTime?
+    //--------------------------------------------------------------------------------
 
-        private readonly DateTimeTextConverter nullableDateTimeConverter;
+    [Fact]
+    public void ReadToNullableDateTime()
+    {
+        // Null
+        Assert.Null(nullableDateTimeConverter.Read(EmptyBytes, Offset));
 
-        private readonly DateTimeTextConverter shortDecimalConverter;
+        // Invalid
+        Assert.Null(nullableDateTimeConverter.Read(InvalidBytes, Offset));
 
-        public DateTimeTextConverterTest()
-        {
-            decimalConverter = CreateConverter(typeof(DateTime), Format);
-            nullableDateTimeConverter = CreateConverter(typeof(DateTime?), Format);
-            shortDecimalConverter = CreateConverter(typeof(DateTime), ShortFormat);
-        }
+        // Value
+        Assert.Equal(Value, nullableDateTimeConverter.Read(ValueBytes, Offset));
+    }
 
-        private static DateTimeTextConverter CreateConverter(Type type, string format)
-        {
-            return new(14, format, Encoding.ASCII, 0x20, DateTimeStyles.None, DateTimeFormatInfo.InvariantInfo, type);
-        }
+    [Fact]
+    public void WriteNullDateTimeToBuffer()
+    {
+        var buffer = new byte[Length + Offset];
 
-        //--------------------------------------------------------------------------------
-        // DateTime
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToDateTime()
-        {
-            // Default
-            Assert.Equal(default(DateTime), decimalConverter.Read(EmptyBytes, Offset));
-
-            // Invalid
-            Assert.Equal(default(DateTime), decimalConverter.Read(InvalidBytes, Offset));
-
-            // Value
-            Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteDateTimeToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Value
-            decimalConverter.Write(buffer, Offset, Value);
-            Assert.Equal(ValueBytes, buffer);
-
-            // Short
-            shortDecimalConverter.Write(buffer, Offset, Value);
-            Assert.Equal(ShortBytes, buffer);
-        }
-
-        //--------------------------------------------------------------------------------
-        // DateTime?
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToNullableDateTime()
-        {
-            // Null
-            Assert.Null(nullableDateTimeConverter.Read(EmptyBytes, Offset));
-
-            // Invalid
-            Assert.Null(nullableDateTimeConverter.Read(InvalidBytes, Offset));
-
-            // Value
-            Assert.Equal(Value, nullableDateTimeConverter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteNullDateTimeToBuffer()
-        {
-            var buffer = new byte[Length + Offset];
-
-            // Null
-            nullableDateTimeConverter.Write(buffer, Offset, null);
-            Assert.Equal(EmptyBytes, buffer);
-        }
+        // Null
+        nullableDateTimeConverter.Write(buffer, Offset, null);
+        Assert.Equal(EmptyBytes, buffer);
     }
 }

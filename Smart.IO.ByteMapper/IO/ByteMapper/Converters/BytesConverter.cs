@@ -1,45 +1,44 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class BytesConverter : IMapConverter
 {
-    using System;
+    private readonly int length;
 
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly byte filler;
 
-    internal sealed class BytesConverter : IMapConverter
+    public BytesConverter(int length, byte filler)
     {
-        private readonly int length;
+        this.length = length;
+        this.filler = filler;
+    }
 
-        private readonly byte filler;
+    public unsafe object Read(byte[] buffer, int index)
+    {
+        var bytes = new byte[length];
 
-        public BytesConverter(int length, byte filler)
+        fixed (byte* pSrc = &buffer[index])
+        fixed (byte* pDst = &bytes[0])
         {
-            this.length = length;
-            this.filler = filler;
+            Buffer.MemoryCopy(pSrc, pDst, length, length);
         }
 
-        public unsafe object Read(byte[] buffer, int index)
+        return bytes;
+    }
+
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
         {
-            var bytes = new byte[length];
-
-            fixed (byte* pSrc = &buffer[index])
-            fixed (byte* pDst = &bytes[0])
-            {
-                Buffer.MemoryCopy(pSrc, pDst, length, length);
-            }
-
-            return bytes;
+            BytesHelper.Fill(buffer, index, length, filler);
         }
-
-        public void Write(byte[] buffer, int index, object value)
+        else
         {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                var bytes = (byte[])value;
-                BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
-            }
+            var bytes = (byte[])value;
+            BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
         }
     }
 }

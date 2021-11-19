@@ -1,14 +1,13 @@
-namespace Smart.IO.ByteMapper.Benchmark
+namespace Smart.IO.ByteMapper.Benchmark;
+
+using System.Reflection;
+
+using BenchmarkDotNet.Running;
+
+public static class Program
 {
-    using System.Reflection;
-
-    using BenchmarkDotNet.Running;
-
-    public static class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            BenchmarkSwitcher.FromAssembly(typeof(Program).GetTypeInfo().Assembly).Run(args);
-        }
+        BenchmarkSwitcher.FromAssembly(typeof(Program).GetTypeInfo().Assembly).Run(args);
     }
 }

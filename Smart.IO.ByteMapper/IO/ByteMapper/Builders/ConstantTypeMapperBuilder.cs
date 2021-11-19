@@ -1,19 +1,18 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using Smart.IO.ByteMapper.Mappers;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Ignore")]
+public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
 {
-    using Smart.IO.ByteMapper.Mappers;
+    public int Offset { get; set; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Ignore")]
-    public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
+    public byte[] Content { get; set; }
+
+    public int CalcSize()
     {
-        public int Offset { get; set; }
-
-        public byte[] Content { get; set; }
-
-        public int CalcSize()
-        {
-            return Content.Length;
-        }
-
-        public IMapper CreateMapper(IBuilderContext context) => new ConstantMapper(Offset, Content);
+        return Content.Length;
     }
+
+    public IMapper CreateMapper(IBuilderContext context) => new ConstantMapper(Offset, Content);
 }

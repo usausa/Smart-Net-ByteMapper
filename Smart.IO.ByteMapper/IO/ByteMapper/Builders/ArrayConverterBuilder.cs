@@ -1,40 +1,39 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System;
+
+using Smart.IO.ByteMapper.Converters;
+using Smart.Reflection;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+public sealed class ArrayConverterBuilder : IMapConverterBuilder
 {
-    using System;
+    public int Length { get; set; }
 
-    using Smart.IO.ByteMapper.Converters;
-    using Smart.Reflection;
+    public byte? Filler { get; set; }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-    public sealed class ArrayConverterBuilder : IMapConverterBuilder
+    public IMapConverterBuilder ElementConverterBuilder { get; set; }
+
+    public bool Match(Type type)
     {
-        public int Length { get; set; }
+        return type.IsArray && ElementConverterBuilder.Match(type.GetElementType());
+    }
 
-        public byte? Filler { get; set; }
+    public int CalcSize(Type type)
+    {
+        var elementType = type.GetElementType();
+        return Length * ElementConverterBuilder.CalcSize(elementType);
+    }
 
-        public IMapConverterBuilder ElementConverterBuilder { get; set; }
-
-        public bool Match(Type type)
-        {
-            return type.IsArray && ElementConverterBuilder.Match(type.GetElementType());
-        }
-
-        public int CalcSize(Type type)
-        {
-            var elementType = type.GetElementType();
-            return Length * ElementConverterBuilder.CalcSize(elementType);
-        }
-
-        public IMapConverter CreateConverter(IBuilderContext context, Type type)
-        {
-            var delegateFactory = context.Components.Get<IDelegateFactory>();
-            var elementType = type.GetElementType();
-            return new ArrayConverter(
-                delegateFactory.CreateArrayAllocator(elementType!),
-                Length,
-                Filler ?? context.GetParameter<byte>(Parameter.Filler),
-                ElementConverterBuilder.CalcSize(elementType),
-                ElementConverterBuilder.CreateConverter(context, elementType));
-        }
+    public IMapConverter CreateConverter(IBuilderContext context, Type type)
+    {
+        var delegateFactory = context.Components.Get<IDelegateFactory>();
+        var elementType = type.GetElementType();
+        return new ArrayConverter(
+            delegateFactory.CreateArrayAllocator(elementType!),
+            Length,
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
+            ElementConverterBuilder.CalcSize(elementType),
+            ElementConverterBuilder.CreateConverter(context, elementType));
     }
 }

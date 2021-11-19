@@ -1,62 +1,61 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+using Xunit;
+
+public class MapByteAttributeTest
 {
-    using System;
+    //--------------------------------------------------------------------------------
+    // Attribute
+    //--------------------------------------------------------------------------------
 
-    using Xunit;
-
-    public class MapByteAttributeTest
+    [Fact]
+    public void MapByByteAttribute()
     {
-        //--------------------------------------------------------------------------------
-        // Attribute
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(null)
+            .CreateMapByAttribute<ByteAttributeObject>()
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<ByteAttributeObject>();
 
-        [Fact]
-        public void MapByByteAttribute()
+        var buffer = new byte[mapper.Size];
+        var obj = new ByteAttributeObject
         {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .CreateMapByAttribute<ByteAttributeObject>()
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<ByteAttributeObject>();
+            ByteValue = 1
+        };
 
-            var buffer = new byte[mapper.Size];
-            var obj = new ByteAttributeObject
-            {
-                ByteValue = 1
-            };
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+        Assert.Equal(new byte[] { 0x01 }, buffer);
 
-            Assert.Equal(new byte[] { 0x01 }, buffer);
+        // Read
+        buffer[0] = 0x02;
 
-            // Read
-            buffer[0] = 0x02;
+        mapper.FromByte(buffer, 0, obj);
 
-            mapper.FromByte(buffer, 0, obj);
+        Assert.Equal(2, obj.ByteValue);
+    }
 
-            Assert.Equal(2, obj.ByteValue);
-        }
+    //--------------------------------------------------------------------------------
+    // Fix
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
+    [Fact]
+    public void CoverageFix()
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapByteAttribute(-1));
+    }
 
-        [Fact]
-        public void CoverageFix()
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapByteAttribute(-1));
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
-
-        [Map(1)]
-        internal class ByteAttributeObject
-        {
-            [MapByte(0)]
-            public byte ByteValue { get; set; }
-        }
+    [Map(1)]
+    internal class ByteAttributeObject
+    {
+        [MapByte(0)]
+        public byte ByteValue { get; set; }
     }
 }

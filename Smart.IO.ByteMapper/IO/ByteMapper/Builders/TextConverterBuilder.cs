@@ -1,34 +1,33 @@
-namespace Smart.IO.ByteMapper.Builders
+namespace Smart.IO.ByteMapper.Builders;
+
+using System.Text;
+
+using Smart.IO.ByteMapper.Converters;
+
+public sealed class TextConverterBuilder : AbstractMapConverterBuilder<TextConverterBuilder>
 {
-    using System.Text;
+    public int Length { get; set; }
 
-    using Smart.IO.ByteMapper.Converters;
+    public Encoding Encoding { get; set; }
 
-    public sealed class TextConverterBuilder : AbstractMapConverterBuilder<TextConverterBuilder>
+    public bool? Trim { get; set; }
+
+    public Padding? Padding { get; set; }
+
+    public byte? Filler { get; set; }
+
+    static TextConverterBuilder()
     {
-        public int Length { get; set; }
+        AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateTextConverter(c));
+    }
 
-        public Encoding Encoding { get; set; }
-
-        public bool? Trim { get; set; }
-
-        public Padding? Padding { get; set; }
-
-        public byte? Filler { get; set; }
-
-        static TextConverterBuilder()
-        {
-            AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateTextConverter(c));
-        }
-
-        private IMapConverter CreateTextConverter(IBuilderContext context)
-        {
-            return new TextConverter(
-                Length,
-                Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
-                Trim ?? context.GetParameter<bool>(Parameter.Trim),
-                Padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
-                Filler ?? context.GetParameter<byte>(Parameter.TextFiller));
-        }
+    private IMapConverter CreateTextConverter(IBuilderContext context)
+    {
+        return new TextConverter(
+            Length,
+            Encoding ?? context.GetParameter<Encoding>(Parameter.Encoding),
+            Trim ?? context.GetParameter<bool>(Parameter.Trim),
+            Padding ?? context.GetParameter<Padding>(Parameter.TextPadding),
+            Filler ?? context.GetParameter<byte>(Parameter.TextFiller));
     }
 }

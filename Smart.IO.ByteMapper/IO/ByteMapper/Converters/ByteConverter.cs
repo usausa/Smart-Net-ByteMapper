@@ -1,17 +1,16 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+internal sealed class ByteConverter : IMapConverter
 {
-    internal sealed class ByteConverter : IMapConverter
+    public static ByteConverter Default { get; } = new();
+
+    public object Read(byte[] buffer, int index)
     {
-        public static ByteConverter Default { get; } = new();
+        return buffer[index];
+    }
 
-        public object Read(byte[] buffer, int index)
-        {
-            return buffer[index];
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            buffer[index] = (byte)value;
-        }
+    public void Write(byte[] buffer, int index, object value)
+    {
+        buffer[index] = (byte)value;
     }
 }

@@ -1,17 +1,16 @@
-namespace Example.WebApplication.Models
+namespace Example.WebApplication.Models;
+
+using System;
+
+public class SampleData
 {
-    using System;
+    public string Code { get; set; }
 
-    public class SampleData
-    {
-        public string Code { get; set; }
+    public string Name { get; set; }
 
-        public string Name { get; set; }
+    public int Qty { get; set; }
 
-        public int Qty { get; set; }
+    public decimal Price { get; set; }
 
-        public decimal Price { get; set; }
-
-        public DateTime? Date { get; set; }
-    }
+    public DateTime? Date { get; set; }
 }

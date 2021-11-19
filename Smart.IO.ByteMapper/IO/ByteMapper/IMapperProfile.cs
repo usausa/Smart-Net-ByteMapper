@@ -1,9 +1,8 @@
-namespace Smart.IO.ByteMapper
-{
-    using System.Collections.Generic;
+namespace Smart.IO.ByteMapper;
 
-    public interface IMapperProfile
-    {
-        IEnumerable<IMappingFactory> ResolveMappingFactories();
-    }
+using System.Collections.Generic;
+
+public interface IMapperProfile
+{
+    IEnumerable<IMappingFactory> ResolveMappingFactories();
 }

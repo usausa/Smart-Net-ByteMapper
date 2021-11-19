@@ -1,58 +1,57 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class DecimalConverter : IMapConverter
 {
-    using System;
+    private readonly int length;
 
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly byte scale;
 
-    internal sealed class DecimalConverter : IMapConverter
+    private readonly int groupingSize;
+
+    private readonly Padding padding;
+
+    private readonly bool zerofill;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DecimalConverter(
+        int length,
+        byte scale,
+        int groupingSize,
+        Padding padding,
+        bool zerofill,
+        byte filler,
+        Type type)
     {
-        private readonly int length;
+        this.length = length;
+        this.scale = scale;
+        this.groupingSize = groupingSize <= 0 ? -1 : groupingSize;
+        this.padding = padding;
+        this.zerofill = zerofill;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
 
-        private readonly byte scale;
+    public object Read(byte[] buffer, int index)
+    {
+        return NumberByteHelper.TryParseDecimal(buffer, index, length, filler, out var result) ? result : defaultValue;
+    }
 
-        private readonly int groupingSize;
-
-        private readonly Padding padding;
-
-        private readonly bool zerofill;
-
-        private readonly byte filler;
-
-        private readonly object defaultValue;
-
-        public DecimalConverter(
-            int length,
-            byte scale,
-            int groupingSize,
-            Padding padding,
-            bool zerofill,
-            byte filler,
-            Type type)
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
         {
-            this.length = length;
-            this.scale = scale;
-            this.groupingSize = groupingSize <= 0 ? -1 : groupingSize;
-            this.padding = padding;
-            this.zerofill = zerofill;
-            this.filler = filler;
-            defaultValue = type.GetDefaultValue();
+            BytesHelper.Fill(buffer, index, length, filler);
         }
-
-        public object Read(byte[] buffer, int index)
+        else
         {
-            return NumberByteHelper.TryParseDecimal(buffer, index, length, filler, out var result) ? result : defaultValue;
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                NumberByteHelper.FormatDecimal(buffer, index, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
-            }
+            NumberByteHelper.FormatDecimal(buffer, index, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
         }
     }
 }

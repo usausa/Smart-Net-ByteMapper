@@ -1,29 +1,28 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+public sealed class MapConstantAttribute : AbstractTypeMapAttribute
 {
-    using System;
+    private readonly ConstantTypeMapperBuilder builder = new();
 
-    using Smart.IO.ByteMapper.Builders;
-
-    public sealed class MapConstantAttribute : AbstractTypeMapAttribute
+    public MapConstantAttribute(int offset, byte[] content)
     {
-        private readonly ConstantTypeMapperBuilder builder = new();
-
-        public MapConstantAttribute(int offset, byte[] content)
+        if (offset < 0)
         {
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
-
-            if (content is null)
-            {
-                throw new ArgumentNullException(nameof(content));
-            }
-
-            builder.Offset = offset;
-            builder.Content = content;
+            throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        public override ITypeMapperBuilder GetTypeMapperBuilder() => builder;
+        if (content is null)
+        {
+            throw new ArgumentNullException(nameof(content));
+        }
+
+        builder.Offset = offset;
+        builder.Content = content;
     }
+
+    public override ITypeMapperBuilder GetTypeMapperBuilder() => builder;
 }

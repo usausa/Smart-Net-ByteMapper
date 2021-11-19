@@ -1,64 +1,63 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class BigEndianFloatBinaryConverterTest
 {
-    using Smart.IO.ByteMapper.Mock;
+    private const int Offset = 1;
 
-    using Xunit;
+    private const float Value = 2;
 
-    public class BigEndianFloatBinaryConverterTest
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
     {
-        private const int Offset = 1;
+        0x40, 0x00, 0x00, 0x00
+    });
 
-        private const float Value = 2;
+    private readonly IMapConverter converter = BigEndianFloatBinaryConverter.Default;
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-        {
-            0x40, 0x00, 0x00, 0x00
-        });
-
-        private readonly IMapConverter converter = BigEndianFloatBinaryConverter.Default;
-
-        [Fact]
-        public void ReadToBigEndianFloatBinary()
-        {
-            Assert.Equal(Value, (float)converter.Read(ValueBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteBigEndianFloatBinaryToBuffer()
-        {
-            var buffer = new byte[4 + Offset];
-            converter.Write(buffer, Offset, Value);
-
-            Assert.Equal(ValueBytes, buffer);
-        }
+    [Fact]
+    public void ReadToBigEndianFloatBinary()
+    {
+        Assert.Equal(Value, (float)converter.Read(ValueBytes, Offset));
     }
 
-    public class LittleEndianFloatBinaryConverterTest
+    [Fact]
+    public void WriteBigEndianFloatBinaryToBuffer()
     {
-        private const int Offset = 1;
+        var buffer = new byte[4 + Offset];
+        converter.Write(buffer, Offset, Value);
 
-        private const float Value = 2;
+        Assert.Equal(ValueBytes, buffer);
+    }
+}
 
-        private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-        {
-            0x00, 0x00, 0x00, 0x40
-        });
+public class LittleEndianFloatBinaryConverterTest
+{
+    private const int Offset = 1;
 
-        private readonly IMapConverter converter = LittleEndianFloatBinaryConverter.Default;
+    private const float Value = 2;
 
-        [Fact]
-        public void ReadToLittleEndianFloatBinary()
-        {
-            Assert.Equal(Value, (float)converter.Read(ValueBytes, Offset));
-        }
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
+    {
+        0x00, 0x00, 0x00, 0x40
+    });
 
-        [Fact]
-        public void WriteLittleEndianFloatBinaryToBuffer()
-        {
-            var buffer = new byte[4 + Offset];
-            converter.Write(buffer, Offset, Value);
+    private readonly IMapConverter converter = LittleEndianFloatBinaryConverter.Default;
 
-            Assert.Equal(ValueBytes, buffer);
-        }
+    [Fact]
+    public void ReadToLittleEndianFloatBinary()
+    {
+        Assert.Equal(Value, (float)converter.Read(ValueBytes, Offset));
+    }
+
+    [Fact]
+    public void WriteLittleEndianFloatBinaryToBuffer()
+    {
+        var buffer = new byte[4 + Offset];
+        converter.Write(buffer, Offset, Value);
+
+        Assert.Equal(ValueBytes, buffer);
     }
 }

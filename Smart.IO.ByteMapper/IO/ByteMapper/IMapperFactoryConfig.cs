@@ -1,15 +1,14 @@
-namespace Smart.IO.ByteMapper
+namespace Smart.IO.ByteMapper;
+
+using System.Collections.Generic;
+
+using Smart.ComponentModel;
+
+public interface IMapperFactoryConfig
 {
-    using System.Collections.Generic;
+    ComponentContainer ResolveComponents();
 
-    using Smart.ComponentModel;
+    IDictionary<string, object> ResolveParameters();
 
-    public interface IMapperFactoryConfig
-    {
-        ComponentContainer ResolveComponents();
-
-        IDictionary<string, object> ResolveParameters();
-
-        IEnumerable<IMappingFactory> ResolveMappingFactories();
-    }
+    IEnumerable<IMappingFactory> ResolveMappingFactories();
 }

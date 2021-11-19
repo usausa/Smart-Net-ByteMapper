@@ -1,8 +1,7 @@
-namespace ByteHelperTest
+namespace ByteHelperTest;
+
+public enum Padding
 {
-    public enum Padding
-    {
-        Left,
-        Right
-    }
+    Left,
+    Right
 }

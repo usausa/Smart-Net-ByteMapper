@@ -1,309 +1,308 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using System;
+using System.Globalization;
+using System.Text;
+
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class Int32TextConverter : IMapConverter
 {
-    using System;
-    using System.Globalization;
-    using System.Text;
+    private readonly int length;
 
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly string format;
 
-    internal sealed class Int32TextConverter : IMapConverter
+    private readonly Encoding encoding;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly NumberStyles style;
+
+    private readonly IFormatProvider provider;
+
+    private readonly Type convertEnumType;
+
+    private readonly object defaultValue;
+
+    public Int32TextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        bool trim,
+        Padding padding,
+        byte filler,
+        NumberStyles style,
+        IFormatProvider provider,
+        Type type)
     {
-        private readonly int length;
-
-        private readonly string format;
-
-        private readonly Encoding encoding;
-
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
-        private readonly byte filler;
-
-        private readonly NumberStyles style;
-
-        private readonly IFormatProvider provider;
-
-        private readonly Type convertEnumType;
-
-        private readonly object defaultValue;
-
-        public Int32TextConverter(
-            int length,
-            string format,
-            Encoding encoding,
-            bool trim,
-            Padding padding,
-            byte filler,
-            NumberStyles style,
-            IFormatProvider provider,
-            Type type)
-        {
-            this.length = length;
-            this.format = format;
-            this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
-            this.filler = filler;
-            this.style = style;
-            this.provider = provider;
-            convertEnumType = EnumHelper.GetConvertEnumType(type);
-            defaultValue = type.GetDefaultValue();
-        }
-
-        public object Read(byte[] buffer, int index)
-        {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            var value = encoding.GetString(buffer, start, count);
-            if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
-            {
-                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
-            }
-
-            return defaultValue;
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                BytesHelper.CopyBytes(encoding.GetBytes(((int)value).ToString(format, provider)), buffer, index, length, padding, filler);
-            }
-        }
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        this.style = style;
+        this.provider = provider;
+        convertEnumType = EnumHelper.GetConvertEnumType(type);
+        defaultValue = type.GetDefaultValue();
     }
 
-    internal sealed class Int64TextConverter : IMapConverter
+    public object Read(byte[] buffer, int index)
     {
-        private readonly int length;
-
-        private readonly string format;
-
-        private readonly Encoding encoding;
-
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
-        private readonly byte filler;
-
-        private readonly NumberStyles style;
-
-        private readonly IFormatProvider provider;
-
-        private readonly Type convertEnumType;
-
-        private readonly object defaultValue;
-
-        public Int64TextConverter(
-            int length,
-            string format,
-            Encoding encoding,
-            bool trim,
-            Padding padding,
-            byte filler,
-            NumberStyles style,
-            IFormatProvider provider,
-            Type type)
+        var start = index;
+        var count = length;
+        if (trim)
         {
-            this.length = length;
-            this.format = format;
-            this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
-            this.filler = filler;
-            this.style = style;
-            this.provider = provider;
-            convertEnumType = EnumHelper.GetConvertEnumType(type);
-            defaultValue = type.GetDefaultValue();
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        public object Read(byte[] buffer, int index)
+        var value = encoding.GetString(buffer, start, count);
+        if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            var value = encoding.GetString(buffer, start, count);
-            if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
-            {
-                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
-            }
-
-            return defaultValue;
+            return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
         }
 
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                BytesHelper.CopyBytes(encoding.GetBytes(((long)value).ToString(format, provider)), buffer, index, length, padding, filler);
-            }
-        }
+        return defaultValue;
     }
 
-    internal sealed class Int16TextConverter : IMapConverter
+    public void Write(byte[] buffer, int index, object value)
     {
-        private readonly int length;
-
-        private readonly string format;
-
-        private readonly Encoding encoding;
-
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
-        private readonly byte filler;
-
-        private readonly NumberStyles style;
-
-        private readonly IFormatProvider provider;
-
-        private readonly Type convertEnumType;
-
-        private readonly object defaultValue;
-
-        public Int16TextConverter(
-            int length,
-            string format,
-            Encoding encoding,
-            bool trim,
-            Padding padding,
-            byte filler,
-            NumberStyles style,
-            IFormatProvider provider,
-            Type type)
+        if (value is null)
         {
-            this.length = length;
-            this.format = format;
-            this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
-            this.filler = filler;
-            this.style = style;
-            this.provider = provider;
-            convertEnumType = EnumHelper.GetConvertEnumType(type);
-            defaultValue = type.GetDefaultValue();
+            BytesHelper.Fill(buffer, index, length, filler);
         }
-
-        public object Read(byte[] buffer, int index)
+        else
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            var value = encoding.GetString(buffer, start, count);
-            if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
-            {
-                return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
-            }
-
-            return defaultValue;
-        }
-
-        public void Write(byte[] buffer, int index, object value)
-        {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                BytesHelper.CopyBytes(encoding.GetBytes(((short)value).ToString(format, provider)), buffer, index, length, padding, filler);
-            }
+            BytesHelper.CopyBytes(encoding.GetBytes(((int)value).ToString(format, provider)), buffer, index, length, padding, filler);
         }
     }
+}
 
-    internal sealed class DecimalTextConverter : IMapConverter
+internal sealed class Int64TextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly NumberStyles style;
+
+    private readonly IFormatProvider provider;
+
+    private readonly Type convertEnumType;
+
+    private readonly object defaultValue;
+
+    public Int64TextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        bool trim,
+        Padding padding,
+        byte filler,
+        NumberStyles style,
+        IFormatProvider provider,
+        Type type)
     {
-        private readonly int length;
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        this.style = style;
+        this.provider = provider;
+        convertEnumType = EnumHelper.GetConvertEnumType(type);
+        defaultValue = type.GetDefaultValue();
+    }
 
-        private readonly string format;
-
-        private readonly Encoding encoding;
-
-        private readonly bool trim;
-
-        private readonly Padding padding;
-
-        private readonly byte filler;
-
-        private readonly NumberStyles style;
-
-        private readonly IFormatProvider provider;
-
-        private readonly object defaultValue;
-
-        public DecimalTextConverter(
-            int length,
-            string format,
-            Encoding encoding,
-            bool trim,
-            Padding padding,
-            byte filler,
-            NumberStyles style,
-            IFormatProvider provider,
-            Type type)
+    public object Read(byte[] buffer, int index)
+    {
+        var start = index;
+        var count = length;
+        if (trim)
         {
-            this.length = length;
-            this.format = format;
-            this.encoding = encoding;
-            this.trim = trim;
-            this.padding = padding;
-            this.filler = filler;
-            this.style = style;
-            this.provider = provider;
-            defaultValue = type.GetDefaultValue();
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        public object Read(byte[] buffer, int index)
+        var value = encoding.GetString(buffer, start, count);
+        if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
         {
-            var start = index;
-            var count = length;
-            if (trim)
-            {
-                BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
-            }
-
-            var value = encoding.GetString(buffer, start, count);
-            if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
-            {
-                return result;
-            }
-
-            return defaultValue;
+            return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
         }
 
-        public void Write(byte[] buffer, int index, object value)
+        return defaultValue;
+    }
+
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
         {
-            if (value is null)
-            {
-                BytesHelper.Fill(buffer, index, length, filler);
-            }
-            else
-            {
-                BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, index, length, padding, filler);
-            }
+            BytesHelper.Fill(buffer, index, length, filler);
+        }
+        else
+        {
+            BytesHelper.CopyBytes(encoding.GetBytes(((long)value).ToString(format, provider)), buffer, index, length, padding, filler);
+        }
+    }
+}
+
+internal sealed class Int16TextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly NumberStyles style;
+
+    private readonly IFormatProvider provider;
+
+    private readonly Type convertEnumType;
+
+    private readonly object defaultValue;
+
+    public Int16TextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        bool trim,
+        Padding padding,
+        byte filler,
+        NumberStyles style,
+        IFormatProvider provider,
+        Type type)
+    {
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        this.style = style;
+        this.provider = provider;
+        convertEnumType = EnumHelper.GetConvertEnumType(type);
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(byte[] buffer, int index)
+    {
+        var start = index;
+        var count = length;
+        if (trim)
+        {
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
+        }
+
+        var value = encoding.GetString(buffer, start, count);
+        if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
+        {
+            return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
+        }
+
+        return defaultValue;
+    }
+
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer, index, length, filler);
+        }
+        else
+        {
+            BytesHelper.CopyBytes(encoding.GetBytes(((short)value).ToString(format, provider)), buffer, index, length, padding, filler);
+        }
+    }
+}
+
+internal sealed class DecimalTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly NumberStyles style;
+
+    private readonly IFormatProvider provider;
+
+    private readonly object defaultValue;
+
+    public DecimalTextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        bool trim,
+        Padding padding,
+        byte filler,
+        NumberStyles style,
+        IFormatProvider provider,
+        Type type)
+    {
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        this.style = style;
+        this.provider = provider;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(byte[] buffer, int index)
+    {
+        var start = index;
+        var count = length;
+        if (trim)
+        {
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
+        }
+
+        var value = encoding.GetString(buffer, start, count);
+        if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    public void Write(byte[] buffer, int index, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer, index, length, filler);
+        }
+        else
+        {
+            BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, index, length, padding, filler);
         }
     }
 }

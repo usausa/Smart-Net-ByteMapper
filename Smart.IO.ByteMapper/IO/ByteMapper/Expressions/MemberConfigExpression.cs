@@ -1,44 +1,43 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+internal sealed class MemberConfigExpression : IMemberConfigSyntax
 {
-    using System;
+    public IMemberMapExpression Expression { get; private set; }
 
-    internal sealed class MemberConfigExpression : IMemberConfigSyntax
+    void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
     {
-        public IMemberMapExpression Expression { get; private set; }
+        Expression = expression;
+    }
 
-        void IMemberMapConfigSyntax.Map(IMemberMapExpression expression)
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapArraySyntax Array(int length, Action<IMemberMapConfigSyntax> config)
+    {
+        if (length < 0)
         {
-            Expression = expression;
+            throw new ArgumentOutOfRangeException(nameof(length));
         }
 
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapArraySyntax Array(int length, Action<IMemberMapConfigSyntax> config)
+        if (config is null)
         {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            var element = new ElementConfigExpression();
-            config(element);
-
-            if (element.Expression is null)
-            {
-                throw new InvalidOperationException("Element is not mapped.");
-            }
-
-            var expression = new MapArrayExpression(length, element.Expression.GetMapConverterBuilder());
-            Expression = expression;
-
-            return expression;
+            throw new ArgumentNullException(nameof(config));
         }
+
+        var element = new ElementConfigExpression();
+        config(element);
+
+        if (element.Expression is null)
+        {
+            throw new InvalidOperationException("Element is not mapped.");
+        }
+
+        var expression = new MapArrayExpression(length, element.Expression.GetMapConverterBuilder());
+        Expression = expression;
+
+        return expression;
     }
 }

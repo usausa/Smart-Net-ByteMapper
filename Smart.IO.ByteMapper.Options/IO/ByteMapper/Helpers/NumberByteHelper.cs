@@ -1,384 +1,427 @@
-namespace Smart.IO.ByteMapper.Helpers
+namespace Smart.IO.ByteMapper.Helpers;
+
+using System;
+using System.Runtime.CompilerServices;
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]
+internal static partial class NumberByteHelper
 {
-    using System;
-    using System.Runtime.CompilerServices;
+    private const byte Minus = (byte)'-';
+    private const byte Num0 = (byte)'0';
+    private const byte Dot = (byte)'.';
+    private const byte Comma = (byte)',';
+    private const int DotDiff = Dot - Num0;
+    private const int CommaDiff = Comma - Num0;
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]
-    internal static partial class NumberByteHelper
+    private const int Int32MinValueDiv10 = Int32.MinValue / 10;
+    private const byte Int32MinValueMod10 = Num0 + -(Int32.MinValue % 10);
+    private const long Int64MinValueDiv10 = Int64.MinValue / 10;
+    private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
+    private const ulong UInt64MaxValueDiv10 = UInt64.MaxValue / 10;
+    private const ulong UInt64MaxValueMod10 = UInt64.MaxValue % 10;
+    private const ulong UInt64MaxValueDiv10Minus1 = UInt64MaxValueDiv10 - 1;
+
+    private const int NegativeBitFlag = unchecked((int)0x80000000);
+
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static int Min(int x, int y)
     {
-        private const byte Minus = (byte)'-';
-        private const byte Num0 = (byte)'0';
-        private const byte Dot = (byte)'.';
-        private const byte Comma = (byte)',';
-        private const int DotDiff = Dot - Num0;
-        private const int CommaDiff = Comma - Num0;
+        return x < y ? x : y;
+    }
 
-        private const int Int32MinValueDiv10 = Int32.MinValue / 10;
-        private const byte Int32MinValueMod10 = Num0 + -(Int32.MinValue % 10);
-        private const long Int64MinValueDiv10 = Int64.MinValue / 10;
-        private const byte Int64MinValueMod10 = (byte)(Num0 + -(Int64.MinValue % 10));
-        private const ulong UInt64MaxValueDiv10 = UInt64.MaxValue / 10;
-        private const ulong UInt64MaxValueMod10 = UInt64.MaxValue % 10;
-        private const ulong UInt64MaxValueDiv10Minus1 = UInt64MaxValueDiv10 - 1;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsValidNumber(int value)
+    {
+        return (uint)value < 10;
+    }
 
-        private const int NegativeBitFlag = unchecked((int)0x80000000);
+    //--------------------------------------------------------------------------------
+    // Integer
+    //--------------------------------------------------------------------------------
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryParseInt16(byte[] bytes, int index, int length, byte filler, out short value)
+    {
+        var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
+        value = (short)longValue;
+        return ret;
+    }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static int Min(int x, int y)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool TryParseInt32(byte[] bytes, int index, int length, byte filler, out int value)
+    {
+        var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
+        value = (int)longValue;
+        return ret;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, byte filler, out long value)
+    {
+        fixed (byte* pBytes = &bytes[index])
         {
-            return x < y ? x : y;
-        }
+            value = 0L;
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool IsValidNumber(int value)
-        {
-            return (uint)value < 10;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Integer
-        //--------------------------------------------------------------------------------
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseInt16(byte[] bytes, int index, int length, byte filler, out short value)
-        {
-            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
-            value = (short)longValue;
-            return ret;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryParseInt32(byte[] bytes, int index, int length, byte filler, out int value)
-        {
-            var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
-            value = (int)longValue;
-            return ret;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, byte filler, out long value)
-        {
-            fixed (byte* pBytes = &bytes[index])
+            var i = 0;
+            while ((i < length) && (*(pBytes + i) == filler))
             {
-                value = 0L;
+                i++;
+            }
 
-                var i = 0;
-                while ((i < length) && (*(pBytes + i) == filler))
+            if (i == length)
+            {
+                return false;
+            }
+
+            var sign = *(pBytes + i) == Minus ? -1 : 1;
+            i += sign == -1 ? 1 : 0;
+
+            while (i < length)
+            {
+                var num = *(pBytes + i) - Num0;
+                if (IsValidNumber(num))
                 {
+                    value = (value * 10) + num;
                     i++;
                 }
-
-                if (i == length)
+                else
                 {
-                    return false;
-                }
-
-                var sign = *(pBytes + i) == Minus ? -1 : 1;
-                i += sign == -1 ? 1 : 0;
-
-                while (i < length)
-                {
-                    var num = *(pBytes + i) - Num0;
-                    if (IsValidNumber(num))
+                    while ((i < length) && (*(pBytes + i) == filler))
                     {
-                        value = (value * 10) + num;
                         i++;
                     }
-                    else
-                    {
-                        while ((i < length) && (*(pBytes + i) == filler))
-                        {
-                            i++;
-                        }
 
-                        break;
-                    }
+                    break;
+                }
+            }
+
+            value *= sign;
+            return i == length;
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
+    {
+        FormatInt32(bytes, index, length, value, padding, zerofill, filler);
+    }
+
+    public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+    {
+        fixed (byte* pBytes = &bytes[index])
+        {
+            var i = length - 1;
+
+            if ((value == Int32.MinValue) && (i >= 0))
+            {
+                *(pBytes + i--) = Int32MinValueMod10;
+                value = Int32MinValueDiv10;
+            }
+
+            var negative = value < 0;
+            if (negative)
+            {
+                value = -value;
+            }
+
+            while (i >= 0)
+            {
+                *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                value /= 10;
+                if (value == 0)
+                {
+                    break;
+                }
+            }
+
+            if (zerofill)
+            {
+                while (i >= (negative ? 1 : 0))
+                {
+                    *(pBytes + i--) = Num0;
                 }
 
-                value *= sign;
-                return i == length;
+                if (negative && (i >= 0))
+                {
+                    *pBytes = Minus;
+                }
             }
+            else if (padding == Padding.Left)
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                while (i >= 0)
+                {
+                    *(pBytes + i--) = filler;
+                }
+            }
+            else
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                if (i >= 0)
+                {
+                    var size = length - (i + 1);
+                    Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
+
+                    for (var j = size; j < length; j++)
+                    {
+                        *(pBytes + j) = filler;
+                    }
+                }
+            }
+        }
+    }
+
+    public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+    {
+        fixed (byte* pBytes = &bytes[index])
+        {
+            var i = length - 1;
+
+            if ((value == Int64.MinValue) && (i >= 0))
+            {
+                *(pBytes + i--) = Int64MinValueMod10;
+                value = Int64MinValueDiv10;
+            }
+
+            var negative = value < 0;
+            if (negative)
+            {
+                value = -value;
+            }
+
+            while (i >= 0)
+            {
+                *(pBytes + i--) = (byte)(Num0 + (value % 10));
+
+                value /= 10;
+                if (value == 0)
+                {
+                    break;
+                }
+            }
+
+            if (zerofill)
+            {
+                while (i >= (negative ? 1 : 0))
+                {
+                    *(pBytes + i--) = Num0;
+                }
+
+                if (negative && (i >= 0))
+                {
+                    *pBytes = Minus;
+                }
+            }
+            else if (padding == Padding.Left)
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                while (i >= 0)
+                {
+                    *(pBytes + i--) = filler;
+                }
+            }
+            else
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                if (i >= 0)
+                {
+                    var size = length - (i + 1);
+                    Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
+
+                    for (var j = size; j < length; j++)
+                    {
+                        *(pBytes + j) = filler;
+                    }
+                }
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------
+    // Decimal
+    //--------------------------------------------------------------------------------
+
+    private struct DecimalMantissa
+    {
+        private ulong lomid;
+
+        private long hi;
+
+        public int Lo => (int)(lomid & 0xFFFFFFFF);
+
+        public int Mid => (int)((lomid >> 32) & 0xFFFFFFFF);
+
+        public int Hi => (int)hi;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool Multiply10AndAdd(ulong value)
+        {
+            if (hi == 0)
+            {
+                if (lomid < UInt64MaxValueDiv10Minus1)
+                {
+                    lomid = (lomid * 10) + value;
+                    return true;
+                }
+
+                if ((lomid == UInt64MaxValueDiv10) && (value <= UInt64MaxValueMod10))
+                {
+                    lomid = (lomid * 10) + value;
+                    return true;
+                }
+            }
+
+            var carry2 = (uint)((lomid >> 63) & 0x00000001);
+            var carry8 = (uint)((lomid >> 61) & 0x00000007);
+
+            var shift3 = lomid << 3;
+            var shift1 = lomid << 1;
+
+            var overflow = IsOverflow(shift3, shift1);
+            lomid = shift1 + shift3;
+
+            var addCarry = !overflow && IsOverflow(lomid, value);
+            lomid += value;
+
+            hi = (hi << 3) + (hi << 1) + carry2 + carry8;
+
+            if (overflow)
+            {
+                hi++;
+            }
+            else if (addCarry)
+            {
+                hi++;
+            }
+
+            return hi <= UInt32.MaxValue;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
+        private static bool IsOverflow(ulong value1, ulong value2)
         {
-            FormatInt32(bytes, index, length, value, padding, zerofill, filler);
+            return UInt64.MaxValue - value1 < value2;
         }
 
-        public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Increment()
         {
-            fixed (byte* pBytes = &bytes[index])
+            if (lomid < UInt64.MaxValue)
             {
-                var i = length - 1;
-
-                if ((value == Int32.MinValue) && (i >= 0))
-                {
-                    *(pBytes + i--) = Int32MinValueMod10;
-                    value = Int32MinValueDiv10;
-                }
-
-                var negative = value < 0;
-                if (negative)
-                {
-                    value = -value;
-                }
-
-                while (i >= 0)
-                {
-                    *(pBytes + i--) = (byte)(Num0 + (value % 10));
-
-                    value /= 10;
-                    if (value == 0)
-                    {
-                        break;
-                    }
-                }
-
-                if (zerofill)
-                {
-                    while (i >= (negative ? 1 : 0))
-                    {
-                        *(pBytes + i--) = Num0;
-                    }
-
-                    if (negative && (i >= 0))
-                    {
-                        *pBytes = Minus;
-                    }
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    while (i >= 0)
-                    {
-                        *(pBytes + i--) = filler;
-                    }
-                }
-                else
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    if (i >= 0)
-                    {
-                        var size = length - (i + 1);
-                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
-
-                        for (var j = size; j < length; j++)
-                        {
-                            *(pBytes + j) = filler;
-                        }
-                    }
-                }
+                lomid++;
+            }
+            else
+            {
+                lomid = 0;
+                hi++;
             }
         }
+    }
 
-        public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+    public static unsafe bool TryParseDecimal(byte[] bytes, int index, int length, byte filler, out decimal value)
+    {
+        value = 0m;
+
+        var mantissa = default(DecimalMantissa);
+        fixed (byte* pBytes = &bytes[index])
         {
-            fixed (byte* pBytes = &bytes[index])
+            var i = 0;
+            while ((i < length) && (*(pBytes + i) == filler))
             {
-                var i = length - 1;
-
-                if ((value == Int64.MinValue) && (i >= 0))
-                {
-                    *(pBytes + i--) = Int64MinValueMod10;
-                    value = Int64MinValueDiv10;
-                }
-
-                var negative = value < 0;
-                if (negative)
-                {
-                    value = -value;
-                }
-
-                while (i >= 0)
-                {
-                    *(pBytes + i--) = (byte)(Num0 + (value % 10));
-
-                    value /= 10;
-                    if (value == 0)
-                    {
-                        break;
-                    }
-                }
-
-                if (zerofill)
-                {
-                    while (i >= (negative ? 1 : 0))
-                    {
-                        *(pBytes + i--) = Num0;
-                    }
-
-                    if (negative && (i >= 0))
-                    {
-                        *pBytes = Minus;
-                    }
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    while (i >= 0)
-                    {
-                        *(pBytes + i--) = filler;
-                    }
-                }
-                else
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    if (i >= 0)
-                    {
-                        var size = length - (i + 1);
-                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
-
-                        for (var j = size; j < length; j++)
-                        {
-                            *(pBytes + j) = filler;
-                        }
-                    }
-                }
-            }
-        }
-
-        //--------------------------------------------------------------------------------
-        // Decimal
-        //--------------------------------------------------------------------------------
-
-        private struct DecimalMantissa
-        {
-            private ulong lomid;
-
-            private long hi;
-
-            public int Lo => (int)(lomid & 0xFFFFFFFF);
-
-            public int Mid => (int)((lomid >> 32) & 0xFFFFFFFF);
-
-            public int Hi => (int)hi;
-
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public bool Multiply10AndAdd(ulong value)
-            {
-                if (hi == 0)
-                {
-                    if (lomid < UInt64MaxValueDiv10Minus1)
-                    {
-                        lomid = (lomid * 10) + value;
-                        return true;
-                    }
-
-                    if ((lomid == UInt64MaxValueDiv10) && (value <= UInt64MaxValueMod10))
-                    {
-                        lomid = (lomid * 10) + value;
-                        return true;
-                    }
-                }
-
-                var carry2 = (uint)((lomid >> 63) & 0x00000001);
-                var carry8 = (uint)((lomid >> 61) & 0x00000007);
-
-                var shift3 = lomid << 3;
-                var shift1 = lomid << 1;
-
-                var overflow = IsOverflow(shift3, shift1);
-                lomid = shift1 + shift3;
-
-                var addCarry = !overflow && IsOverflow(lomid, value);
-                lomid += value;
-
-                hi = (hi << 3) + (hi << 1) + carry2 + carry8;
-
-                if (overflow)
-                {
-                    hi++;
-                }
-                else if (addCarry)
-                {
-                    hi++;
-                }
-
-                return hi <= UInt32.MaxValue;
+                i++;
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            private static bool IsOverflow(ulong value1, ulong value2)
+            if (i == length)
             {
-                return UInt64.MaxValue - value1 < value2;
+                return false;
             }
 
-            [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public void Increment()
-            {
-                if (lomid < UInt64.MaxValue)
-                {
-                    lomid++;
-                }
-                else
-                {
-                    lomid = 0;
-                    hi++;
-                }
-            }
-        }
+            var negative = *(pBytes + i) == '-';
+            i += negative ? 1 : 0;
 
-        public static unsafe bool TryParseDecimal(byte[] bytes, int index, int length, byte filler, out decimal value)
-        {
-            value = 0m;
-
-            var mantissa = default(DecimalMantissa);
-            fixed (byte* pBytes = &bytes[index])
+            var count = 0;
+            var dotPos = -1;
+            while (i < length)
             {
-                var i = 0;
-                while ((i < length) && (*(pBytes + i) == filler))
+                var num = *(pBytes + i) - 0x30;
+                if (IsValidNumber(num))
+                {
+                    if (!mantissa.Multiply10AndAdd((ulong)num))
+                    {
+                        return false;
+                    }
+
+                    count++;
+                }
+                else if (num == DotDiff)
+                {
+                    dotPos = count;
+                    i++;
+                    break;
+                }
+                else if (*(pBytes + i) == filler)
                 {
                     i++;
-                }
+                    while ((i < length) && (*(pBytes + i) == filler))
+                    {
+                        i++;
+                    }
 
-                if (i == length)
+                    if (i != length)
+                    {
+                        return false;
+                    }
+
+                    break;
+                }
+                else if (num != CommaDiff)
                 {
                     return false;
                 }
 
-                var negative = *(pBytes + i) == '-';
-                i += negative ? 1 : 0;
+                i++;
+            }
 
-                var count = 0;
-                var dotPos = -1;
+            if (dotPos != -1)
+            {
                 while (i < length)
                 {
                     var num = *(pBytes + i) - 0x30;
                     if (IsValidNumber(num))
                     {
-                        if (!mantissa.Multiply10AndAdd((ulong)num))
+                        if (count >= 29)
                         {
-                            return false;
+                            if (num > 4)
+                            {
+                                mantissa.Increment();
+                            }
+
+                            break;
                         }
 
+                        mantissa.Multiply10AndAdd((ulong)num);
                         count++;
-                    }
-                    else if (num == DotDiff)
-                    {
-                        dotPos = count;
-                        i++;
-                        break;
                     }
                     else if (*(pBytes + i) == filler)
                     {
@@ -395,315 +438,271 @@ namespace Smart.IO.ByteMapper.Helpers
 
                         break;
                     }
-                    else if (num != CommaDiff)
+                    else
                     {
                         return false;
                     }
 
                     i++;
                 }
+            }
 
-                if (dotPos != -1)
-                {
-                    while (i < length)
-                    {
-                        var num = *(pBytes + i) - 0x30;
-                        if (IsValidNumber(num))
-                        {
-                            if (count >= 29)
-                            {
-                                if (num > 4)
-                                {
-                                    mantissa.Increment();
-                                }
+            value = new decimal(
+                mantissa.Lo,
+                mantissa.Mid,
+                mantissa.Hi,
+                negative,
+                (byte)(dotPos == -1 ? 0 : (count - dotPos)));
+            return true;
+        }
+    }
 
-                                break;
-                            }
+    public static unsafe void FormatDecimal(
+        byte[] bytes,
+        int index,
+        int length,
+        decimal value,
+        byte scale,
+        int groupingSize,
+        Padding padding,
+        bool zerofill,
+        byte filler)
+    {
+        var bits = Decimal.GetBits(value);
+        var negative = (bits[3] & NegativeBitFlag) != 0;
+        var decimalScale = (bits[3] >> 16) & 0x7F;
 
-                            mantissa.Multiply10AndAdd((ulong)num);
-                            count++;
-                        }
-                        else if (*(pBytes + i) == filler)
-                        {
-                            i++;
-                            while ((i < length) && (*(pBytes + i) == filler))
-                            {
-                                i++;
-                            }
+        var lo = 0L;
+        var hi = 0L;
 
-                            if (i != length)
-                            {
-                                return false;
-                            }
+        var bit = bits[0];
+        if (bit != 0)
+        {
+            AddBitBlockValue(ref lo, ref hi, 0, bit & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 1, (bit >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 2, (bit >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 3, (bit >> 24) & 0b11111111);
+        }
 
-                            break;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+        bit = bits[1];
+        if (bit != 0)
+        {
+            AddBitBlockValue(ref lo, ref hi, 4, bit & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 5, (bit >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 6, (bit >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 7, (bit >> 24) & 0b11111111);
+        }
 
-                        i++;
-                    }
-                }
+        bit = bits[2];
+        if (bit != 0)
+        {
+            AddBitBlockValue(ref lo, ref hi, 8, bit & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 9, (bit >> 8) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 10, (bit >> 16) & 0b11111111);
+            AddBitBlockValue(ref lo, ref hi, 11, (bit >> 24) & 0b11111111);
+        }
 
-                value = new decimal(
-                    mantissa.Lo,
-                    mantissa.Mid,
-                    mantissa.Hi,
-                    negative,
-                    (byte)(dotPos == -1 ? 0 : (count - dotPos)));
-                return true;
+        var work = stackalloc byte[30];
+        var workSize = 0;
+        var workPointer = 0;
+
+        while (lo > 0)
+        {
+            work[workSize++] = (byte)(lo % 10);
+            lo /= 10;
+        }
+
+        if (hi > 0)
+        {
+            workSize = 15;
+            while (hi > 0)
+            {
+                work[workSize++] = (byte)(hi % 10);
+                hi /= 10;
             }
         }
 
-        public static unsafe void FormatDecimal(
-            byte[] bytes,
-            int index,
-            int length,
-            decimal value,
-            byte scale,
-            int groupingSize,
-            Padding padding,
-            bool zerofill,
-            byte filler)
+        // Fix Scale
+        if (scale < decimalScale)
         {
-            var bits = Decimal.GetBits(value);
-            var negative = (bits[3] & NegativeBitFlag) != 0;
-            var decimalScale = (bits[3] >> 16) & 0x7F;
-
-            var lo = 0L;
-            var hi = 0L;
-
-            var bit = bits[0];
-            if (bit != 0)
+            workPointer = decimalScale - scale;
+            if (work[workPointer - 1] > 4)
             {
-                AddBitBlockValue(ref lo, ref hi, 0, bit & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 1, (bit >> 8) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 2, (bit >> 16) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 3, (bit >> 24) & 0b11111111);
-            }
-
-            bit = bits[1];
-            if (bit != 0)
-            {
-                AddBitBlockValue(ref lo, ref hi, 4, bit & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 5, (bit >> 8) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 6, (bit >> 16) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 7, (bit >> 24) & 0b11111111);
-            }
-
-            bit = bits[2];
-            if (bit != 0)
-            {
-                AddBitBlockValue(ref lo, ref hi, 8, bit & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 9, (bit >> 8) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 10, (bit >> 16) & 0b11111111);
-                AddBitBlockValue(ref lo, ref hi, 11, (bit >> 24) & 0b11111111);
-            }
-
-            var work = stackalloc byte[30];
-            var workSize = 0;
-            var workPointer = 0;
-
-            while (lo > 0)
-            {
-                work[workSize++] = (byte)(lo % 10);
-                lo /= 10;
-            }
-
-            if (hi > 0)
-            {
-                workSize = 15;
-                while (hi > 0)
+                var i = workPointer;
+                var carry = true;
+                while (carry && (i < workSize))
                 {
-                    work[workSize++] = (byte)(hi % 10);
-                    hi /= 10;
-                }
-            }
-
-            // Fix Scale
-            if (scale < decimalScale)
-            {
-                workPointer = decimalScale - scale;
-                if (work[workPointer - 1] > 4)
-                {
-                    var i = workPointer;
-                    var carry = true;
-                    while (carry && (i < workSize))
+                    if (work[i] == 9)
                     {
-                        if (work[i] == 9)
-                        {
-                            work[i++] = 0;
-                        }
-                        else
-                        {
-                            work[i] += 1;
-                            carry = false;
-                        }
+                        work[i++] = 0;
                     }
-
-                    if (carry)
+                    else
                     {
-                        workSize++;
-                        work[i] = 1;
-                    }
-                }
-            }
-
-            fixed (byte* pBytes = &bytes[index])
-            {
-                var i = length - 1;
-
-                if (scale > 0)
-                {
-                    var dotPos = length - scale - 1;
-
-                    var limit = Min(scale - decimalScale, i + 1);
-                    for (var j = 0; j < limit; j++)
-                    {
-                        *(pBytes + i--) = Num0;
-                    }
-
-                    limit = Min(i - dotPos, i + 1);
-                    for (var j = 0; j < limit; j++)
-                    {
-                        if (workPointer < workSize)
-                        {
-                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                        }
-                        else
-                        {
-                            *(pBytes + i--) = Num0;
-                        }
-                    }
-
-                    if ((i == dotPos) && (i >= 0))
-                    {
-                        *(pBytes + i--) = Dot;
+                        work[i] += 1;
+                        carry = false;
                     }
                 }
 
-                var groupingCount = 0;
+                if (carry)
+                {
+                    workSize++;
+                    work[i] = 1;
+                }
+            }
+        }
 
-                if ((workPointer == workSize) && (i >= 0))
+        fixed (byte* pBytes = &bytes[index])
+        {
+            var i = length - 1;
+
+            if (scale > 0)
+            {
+                var dotPos = length - scale - 1;
+
+                var limit = Min(scale - decimalScale, i + 1);
+                for (var j = 0; j < limit; j++)
                 {
                     *(pBytes + i--) = Num0;
                 }
-                else
+
+                limit = Min(i - dotPos, i + 1);
+                for (var j = 0; j < limit; j++)
                 {
-                    if (groupingSize <= 0)
+                    if (workPointer < workSize)
                     {
-                        var limit = Min(workSize - workPointer, i + 1);
-                        for (var j = 0; j < limit; j++)
-                        {
-                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                        }
+                        *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
                     }
                     else
                     {
-                        while ((workPointer < workSize) && (i >= 0))
-                        {
-                            if (groupingCount == groupingSize)
-                            {
-                                *(pBytes + i--) = Comma;
-                                groupingCount = 0;
-                            }
-
-                            if (i >= 0)
-                            {
-                                *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
-                                groupingCount++;
-                            }
-                        }
+                        *(pBytes + i--) = Num0;
                     }
                 }
 
-                if (zerofill)
+                if ((i == dotPos) && (i >= 0))
                 {
-                    var end = negative ? 1 : 0;
-                    if (groupingSize <= 0)
-                    {
-                        while (i >= end)
-                        {
-                            *(pBytes + i--) = Num0;
-                        }
-                    }
-                    else
-                    {
-                        while (i >= end)
-                        {
-                            if (groupingCount == groupingSize)
-                            {
-                                *(pBytes + i--) = Comma;
-                                groupingCount = 0;
-                            }
-
-                            if (i >= end)
-                            {
-                                *(pBytes + i--) = Num0;
-                                groupingCount++;
-                            }
-                        }
-                    }
-
-                    if (negative && (i >= 0))
-                    {
-                        *pBytes = Minus;
-                    }
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    while (i >= 0)
-                    {
-                        *(pBytes + i--) = filler;
-                    }
-                }
-                else
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    if (i >= 0)
-                    {
-                        var size = length - (i + 1);
-                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
-
-                        for (var j = size; j < length; j++)
-                        {
-                            *(pBytes + j) = filler;
-                        }
-                    }
+                    *(pBytes + i--) = Dot;
                 }
             }
-        }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static void AddBitBlockValue(ref long lo, ref long hi, int block, int bits)
-        {
-            var baseIndex = (block << 9) + (bits << 1);
+            var groupingCount = 0;
 
-            int carry;
-            var value = lo + Table[baseIndex];
-            if (value >= 1000000000000000L)
+            if ((workPointer == workSize) && (i >= 0))
             {
-                lo = value - 1000000000000000L;
-                carry = 1;
+                *(pBytes + i--) = Num0;
             }
             else
             {
-                lo = value;
-                carry = 0;
+                if (groupingSize <= 0)
+                {
+                    var limit = Min(workSize - workPointer, i + 1);
+                    for (var j = 0; j < limit; j++)
+                    {
+                        *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                    }
+                }
+                else
+                {
+                    while ((workPointer < workSize) && (i >= 0))
+                    {
+                        if (groupingCount == groupingSize)
+                        {
+                            *(pBytes + i--) = Comma;
+                            groupingCount = 0;
+                        }
+
+                        if (i >= 0)
+                        {
+                            *(pBytes + i--) = (byte)(Num0 + work[workPointer++]);
+                            groupingCount++;
+                        }
+                    }
+                }
             }
 
-            hi = hi + Table[baseIndex + 1] + carry;
+            if (zerofill)
+            {
+                var end = negative ? 1 : 0;
+                if (groupingSize <= 0)
+                {
+                    while (i >= end)
+                    {
+                        *(pBytes + i--) = Num0;
+                    }
+                }
+                else
+                {
+                    while (i >= end)
+                    {
+                        if (groupingCount == groupingSize)
+                        {
+                            *(pBytes + i--) = Comma;
+                            groupingCount = 0;
+                        }
+
+                        if (i >= end)
+                        {
+                            *(pBytes + i--) = Num0;
+                            groupingCount++;
+                        }
+                    }
+                }
+
+                if (negative && (i >= 0))
+                {
+                    *pBytes = Minus;
+                }
+            }
+            else if (padding == Padding.Left)
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                while (i >= 0)
+                {
+                    *(pBytes + i--) = filler;
+                }
+            }
+            else
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
+                }
+
+                if (i >= 0)
+                {
+                    var size = length - (i + 1);
+                    Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
+
+                    for (var j = size; j < length; j++)
+                    {
+                        *(pBytes + j) = filler;
+                    }
+                }
+            }
         }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static void AddBitBlockValue(ref long lo, ref long hi, int block, int bits)
+    {
+        var baseIndex = (block << 9) + (bits << 1);
+
+        int carry;
+        var value = lo + Table[baseIndex];
+        if (value >= 1000000000000000L)
+        {
+            lo = value - 1000000000000000L;
+            carry = 1;
+        }
+        else
+        {
+            lo = value;
+            carry = 0;
+        }
+
+        hi = hi + Table[baseIndex + 1] + carry;
     }
 }

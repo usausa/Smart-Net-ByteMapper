@@ -1,20 +1,19 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using Smart.IO.ByteMapper.Builders;
+
+internal sealed class MapConstantExpression : ITypeMapExpression
 {
-    using Smart.IO.ByteMapper.Builders;
+    private readonly ConstantTypeMapperBuilder builder = new();
 
-    internal sealed class MapConstantExpression : ITypeMapExpression
+    public MapConstantExpression(params byte[] content)
     {
-        private readonly ConstantTypeMapperBuilder builder = new();
-
-        public MapConstantExpression(params byte[] content)
-        {
-            builder.Content = content;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder() => builder;
+        builder.Content = content;
     }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    ITypeMapperBuilder ITypeMapExpression.GetTypeMapperBuilder() => builder;
 }

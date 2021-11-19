@@ -1,34 +1,33 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+public sealed class MapAttribute : Attribute
 {
-    using System;
+    private byte? nullFiller;
 
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-    public sealed class MapAttribute : Attribute
+    public int Size { get; }
+
+    public bool HasNullFiller => nullFiller.HasValue;
+
+    public byte NullFiller
     {
-        private byte? nullFiller;
+        get => nullFiller ?? 0;
+        set => nullFiller = value;
+    }
 
-        public int Size { get; }
+    public bool AutoFiller { get; set; } = true;
 
-        public bool HasNullFiller => nullFiller.HasValue;
+    public bool UseDelimiter { get; set; } = true;
 
-        public byte NullFiller
+    public MapAttribute(int size)
+    {
+        if (size < 0)
         {
-            get => nullFiller ?? 0;
-            set => nullFiller = value;
+            throw new ArgumentOutOfRangeException(nameof(size));
         }
 
-        public bool AutoFiller { get; set; } = true;
-
-        public bool UseDelimiter { get; set; } = true;
-
-        public MapAttribute(int size)
-        {
-            if (size < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(size));
-            }
-
-            Size = size;
-        }
+        Size = size;
     }
 }

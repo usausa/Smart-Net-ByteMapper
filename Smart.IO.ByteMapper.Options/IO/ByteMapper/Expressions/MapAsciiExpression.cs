@@ -1,58 +1,57 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+
+using Smart.IO.ByteMapper.Builders;
+
+public interface IMapAsciiSyntax
 {
-    using System;
+    IMapAsciiSyntax Trim(bool value);
 
-    using Smart.IO.ByteMapper.Builders;
+    IMapAsciiSyntax Padding(Padding value);
 
-    public interface IMapAsciiSyntax
+    IMapAsciiSyntax Filler(byte value);
+}
+
+internal sealed class MapAsciiExpression : IMemberMapExpression, IMapAsciiSyntax
+{
+    private readonly AsciiConverterBuilder builder = new();
+
+    public MapAsciiExpression(int length)
     {
-        IMapAsciiSyntax Trim(bool value);
+        if (length < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length));
+        }
 
-        IMapAsciiSyntax Padding(Padding value);
-
-        IMapAsciiSyntax Filler(byte value);
+        builder.Length = length;
     }
 
-    internal sealed class MapAsciiExpression : IMemberMapExpression, IMapAsciiSyntax
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
+
+    public IMapAsciiSyntax Trim(bool value)
     {
-        private readonly AsciiConverterBuilder builder = new();
-
-        public MapAsciiExpression(int length)
-        {
-            if (length < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(length));
-            }
-
-            builder.Length = length;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
-
-        public IMapAsciiSyntax Trim(bool value)
-        {
-            builder.Trim = value;
-            return this;
-        }
-
-        public IMapAsciiSyntax Padding(Padding value)
-        {
-            builder.Padding = value;
-            return this;
-        }
-
-        public IMapAsciiSyntax Filler(byte value)
-        {
-            builder.Filler = value;
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // Expression
-        //--------------------------------------------------------------------------------
-
-        public IMapConverterBuilder GetMapConverterBuilder() => builder;
+        builder.Trim = value;
+        return this;
     }
+
+    public IMapAsciiSyntax Padding(Padding value)
+    {
+        builder.Padding = value;
+        return this;
+    }
+
+    public IMapAsciiSyntax Filler(byte value)
+    {
+        builder.Filler = value;
+        return this;
+    }
+
+    //--------------------------------------------------------------------------------
+    // Expression
+    //--------------------------------------------------------------------------------
+
+    public IMapConverterBuilder GetMapConverterBuilder() => builder;
 }

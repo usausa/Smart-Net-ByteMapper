@@ -1,65 +1,64 @@
-namespace Smart.IO.ByteMapper.Converters
+namespace Smart.IO.ByteMapper.Converters;
+
+using Smart.IO.ByteMapper.Mock;
+
+using Xunit;
+
+public class NullableBooleanConverterTest
 {
-    using Smart.IO.ByteMapper.Mock;
+    private const int Offset = 1;
 
-    using Xunit;
+    private const byte TrueByte = 0x31;
 
-    public class NullableBooleanConverterTest
+    private const byte FalseByte = 0x30;
+
+    private const byte NullByte = 0x00;
+
+    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+
+    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+
+    private static readonly byte[] NullBytes = TestBytes.Offset(Offset, new[] { NullByte });
+
+    private readonly NullableBooleanConverter converter;
+
+    public NullableBooleanConverterTest()
     {
-        private const int Offset = 1;
+        converter = new NullableBooleanConverter(TrueByte, FalseByte, NullByte);
+    }
 
-        private const byte TrueByte = 0x31;
+    //--------------------------------------------------------------------------------
+    // bool
+    //--------------------------------------------------------------------------------
 
-        private const byte FalseByte = 0x30;
+    [Fact]
+    public void ReadToNullableBoolean()
+    {
+        // True
+        Assert.True((bool?)converter.Read(TrueBytes, Offset));
 
-        private const byte NullByte = 0x00;
+        // False
+        Assert.False((bool?)converter.Read(FalseBytes, Offset));
 
-        private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+        // Null
+        Assert.Null(converter.Read(NullBytes, Offset));
+    }
 
-        private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+    [Fact]
+    public void WriteNullableBooleanToBuffer()
+    {
+        var buffer = new byte[1 + Offset];
 
-        private static readonly byte[] NullBytes = TestBytes.Offset(Offset, new[] { NullByte });
+        // True
+        converter.Write(buffer, Offset, true);
+        Assert.Equal(TrueBytes, buffer);
 
-        private readonly NullableBooleanConverter converter;
+        // False
+        converter.Write(buffer, Offset, false);
+        Assert.Equal(FalseBytes, buffer);
 
-        public NullableBooleanConverterTest()
-        {
-            converter = new NullableBooleanConverter(TrueByte, FalseByte, NullByte);
-        }
-
-        //--------------------------------------------------------------------------------
-        // bool
-        //--------------------------------------------------------------------------------
-
-        [Fact]
-        public void ReadToNullableBoolean()
-        {
-            // True
-            Assert.True((bool?)converter.Read(TrueBytes, Offset));
-
-            // False
-            Assert.False((bool?)converter.Read(FalseBytes, Offset));
-
-            // Null
-            Assert.Null(converter.Read(NullBytes, Offset));
-        }
-
-        [Fact]
-        public void WriteNullableBooleanToBuffer()
-        {
-            var buffer = new byte[1 + Offset];
-
-            // True
-            converter.Write(buffer, Offset, true);
-            Assert.Equal(TrueBytes, buffer);
-
-            // False
-            converter.Write(buffer, Offset, false);
-            Assert.Equal(FalseBytes, buffer);
-
-            // Null
-            converter.Write(buffer, Offset, null);
-            Assert.Equal(NullBytes, buffer);
-        }
+        // Null
+        converter.Write(buffer, Offset, null);
+        Assert.Equal(NullBytes, buffer);
     }
 }

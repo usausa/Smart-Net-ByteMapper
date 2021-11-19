@@ -1,74 +1,73 @@
-namespace Smart.IO.ByteMapper.Attributes
+namespace Smart.IO.ByteMapper.Attributes;
+
+using System;
+
+using Xunit;
+
+public class MapBytesAttributeTest
 {
-    using System;
+    //--------------------------------------------------------------------------------
+    // Attribute
+    //--------------------------------------------------------------------------------
 
-    using Xunit;
-
-    public class MapBytesAttributeTest
+    [Fact]
+    public void MapByBytesAttribute()
     {
-        //--------------------------------------------------------------------------------
-        // Attribute
-        //--------------------------------------------------------------------------------
+        var mapperFactory = new MapperFactoryConfig()
+            .DefaultDelimiter(null)
+            .DefaultFiller(0x30)
+            .CreateMapByAttribute<BytesAttributeObject>()
+            .ToMapperFactory();
+        var mapper = mapperFactory.Create<BytesAttributeObject>();
 
-        [Fact]
-        public void MapByBytesAttribute()
+        var buffer = new byte[mapper.Size];
+        var obj = new BytesAttributeObject
         {
-            var mapperFactory = new MapperFactoryConfig()
-                .DefaultDelimiter(null)
-                .DefaultFiller(0x30)
-                .CreateMapByAttribute<BytesAttributeObject>()
-                .ToMapperFactory();
-            var mapper = mapperFactory.Create<BytesAttributeObject>();
+            BytesValue = new byte[] { 0x01, 0x02, 0x03, 0x04 }
+        };
 
-            var buffer = new byte[mapper.Size];
-            var obj = new BytesAttributeObject
-            {
-                BytesValue = new byte[] { 0x01, 0x02, 0x03, 0x04 }
-            };
+        // Write
+        mapper.ToByte(buffer, 0, obj);
 
-            // Write
-            mapper.ToByte(buffer, 0, obj);
+        Assert.Equal(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30 }, buffer);
 
-            Assert.Equal(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30 }, buffer);
-
-            // Read
-            for (var i = 0; i < buffer.Length; i++)
-            {
-                buffer[i] = 0xff;
-            }
-
-            mapper.FromByte(buffer, 0, obj);
-
-            Assert.Equal(new byte[] { 0xff, 0xff, 0xff, 0xff }, obj.BytesValue);
+        // Read
+        for (var i = 0; i < buffer.Length; i++)
+        {
+            buffer[i] = 0xff;
         }
 
-        //--------------------------------------------------------------------------------
-        // Fix
-        //--------------------------------------------------------------------------------
+        mapper.FromByte(buffer, 0, obj);
 
-        [Fact]
-        public void CoverageFix()
-        {
-            var attribute = new MapBytesAttribute(0, 0);
+        Assert.Equal(new byte[] { 0xff, 0xff, 0xff, 0xff }, obj.BytesValue);
+    }
 
-            Assert.Throws<NotSupportedException>(() => attribute.Filler);
+    //--------------------------------------------------------------------------------
+    // Fix
+    //--------------------------------------------------------------------------------
 
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(-1, 0));
-            Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(0, -1));
-        }
+    [Fact]
+    public void CoverageFix()
+    {
+        var attribute = new MapBytesAttribute(0, 0);
 
-        //--------------------------------------------------------------------------------
-        // Helper
-        //--------------------------------------------------------------------------------
+        Assert.Throws<NotSupportedException>(() => attribute.Filler);
 
-        [Map(8)]
-        internal class BytesAttributeObject
-        {
-            [MapBytes(0, 4)]
-            public byte[] BytesValue { get; set; }
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(-1, 0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new MapBytesAttribute(0, -1));
+    }
 
-            [MapBytes(4, 4, Filler = 0x30)]
-            public byte[] CustomBytesValue { get; set; }
-        }
+    //--------------------------------------------------------------------------------
+    // Helper
+    //--------------------------------------------------------------------------------
+
+    [Map(8)]
+    internal class BytesAttributeObject
+    {
+        [MapBytes(0, 4)]
+        public byte[] BytesValue { get; set; }
+
+        [MapBytes(4, 4, Filler = 0x30)]
+        public byte[] CustomBytesValue { get; set; }
     }
 }

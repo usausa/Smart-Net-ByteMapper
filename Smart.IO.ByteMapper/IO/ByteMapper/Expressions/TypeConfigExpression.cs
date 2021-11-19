@@ -1,206 +1,205 @@
-namespace Smart.IO.ByteMapper.Expressions
+namespace Smart.IO.ByteMapper.Expressions;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+
+using Smart.ComponentModel;
+using Smart.IO.ByteMapper.Builders;
+using Smart.IO.ByteMapper.Helpers;
+
+internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Linq.Expressions;
+    private readonly List<ITypeMapperBuilder> typeMapBuilders = new();
 
-    using Smart.ComponentModel;
-    using Smart.IO.ByteMapper.Builders;
-    using Smart.IO.ByteMapper.Helpers;
+    private readonly List<IMemberMapperBuilder> memberMapBuilders = new();
 
-    internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
+    private readonly Dictionary<string, object> typeParameters = new();
+
+    private readonly int size;
+
+    private bool validation = true;
+
+    private byte? nullFiller;
+
+    private bool autoFiller = true;
+
+    private bool useDelimiter = true;
+
+    private int lastOffset;
+
+    public Type Type { get; }
+
+    public string Name { get; }
+
+    public TypeConfigExpression(Type type, string name, int size)
     {
-        private readonly List<ITypeMapperBuilder> typeMapBuilders = new();
+        Type = type;
+        Name = name;
+        this.size = size;
+    }
 
-        private readonly List<IMemberMapperBuilder> memberMapBuilders = new();
+    //--------------------------------------------------------------------------------
+    // Syntax
+    //--------------------------------------------------------------------------------
 
-        private readonly Dictionary<string, object> typeParameters = new();
+    // Validation
 
-        private readonly int size;
+    public ITypeConfigSyntax<T> WithValidation(bool value)
+    {
+        validation = value;
+        return this;
+    }
 
-        private bool validation = true;
+    // Type setting
 
-        private byte? nullFiller;
+    public ITypeConfigSyntax<T> NullFiller(byte value)
+    {
+        nullFiller = value;
+        return this;
+    }
 
-        private bool autoFiller = true;
+    public ITypeConfigSyntax<T> AutoFiller(bool value)
+    {
+        autoFiller = value;
+        return this;
+    }
 
-        private bool useDelimiter = true;
+    public ITypeConfigSyntax<T> UseDelimiter(bool value)
+    {
+        useDelimiter = value;
+        return this;
+    }
 
-        private int lastOffset;
+    // Type default
 
-        public Type Type { get; }
+    public ITypeConfigSyntax<T> TypeDefault(string key, object value)
+    {
+        typeParameters[key] = value;
+        return this;
+    }
 
-        public string Name { get; }
+    // Mapper
 
-        public TypeConfigExpression(Type type, string name, int size)
+    ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(ITypeMapExpression expression)
+    {
+        return MapInternal(lastOffset, expression);
+    }
+
+    ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(int offset, ITypeMapExpression expression)
+    {
+        return MapInternal(offset, expression);
+    }
+
+    private ITypeConfigSyntax<T> MapInternal(int offset, ITypeMapExpression expression)
+    {
+        if (offset < 0)
         {
-            Type = type;
-            Name = name;
-            this.size = size;
+            throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        //--------------------------------------------------------------------------------
-        // Syntax
-        //--------------------------------------------------------------------------------
+        var builder = expression.GetTypeMapperBuilder();
+        builder.Offset = offset;
+        typeMapBuilders.Add(builder);
 
-        // Validation
+        lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
 
-        public ITypeConfigSyntax<T> WithValidation(bool value)
+        return this;
+    }
+
+    // ForMember
+
+    public ITypeConfigSyntax<T> ForMember(string name, Action<IMemberConfigSyntax> config)
+    {
+        return ForMemberInternal(name, lastOffset, config);
+    }
+
+    public ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberConfigSyntax> config)
+    {
+        return ForMemberInternal(name, offset, config);
+    }
+
+    public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberConfigSyntax> config)
+    {
+        return ForMemberInternal(ExpressionHelper.GetMemberName(expr), lastOffset, config);
+    }
+
+    public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberConfigSyntax> config)
+    {
+        return ForMemberInternal(ExpressionHelper.GetMemberName(expr), offset, config);
+    }
+
+    private ITypeConfigSyntax<T> ForMemberInternal(string name, int offset, Action<IMemberConfigSyntax> config)
+    {
+        if (offset < 0)
         {
-            validation = value;
-            return this;
+            throw new ArgumentOutOfRangeException(nameof(offset));
         }
 
-        // Type setting
-
-        public ITypeConfigSyntax<T> NullFiller(byte value)
+        if (config is null)
         {
-            nullFiller = value;
-            return this;
+            throw new ArgumentNullException(nameof(config));
         }
 
-        public ITypeConfigSyntax<T> AutoFiller(bool value)
+        var type = typeof(T);
+        var pi = type.GetProperty(name);
+        if (pi is null)
         {
-            autoFiller = value;
-            return this;
+            throw new ArgumentException("Name is invalid.", nameof(name));
         }
 
-        public ITypeConfigSyntax<T> UseDelimiter(bool value)
+        var member = new MemberConfigExpression();
+        config(member);
+
+        if (member.Expression is null)
         {
-            useDelimiter = value;
-            return this;
+            throw new InvalidOperationException("Property is not mapped.");
         }
 
-        // Type default
-
-        public ITypeConfigSyntax<T> TypeDefault(string key, object value)
+        var converterBuilder = member.Expression.GetMapConverterBuilder();
+        if (!converterBuilder.Match(pi.PropertyType))
         {
-            typeParameters[key] = value;
-            return this;
+            throw new ByteMapperException(
+                "Expression does not match property. " +
+                $"type=[{pi.DeclaringType.FullName}], " +
+                $"property=[{pi.Name}]");
         }
 
-        // Mapper
-
-        ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(ITypeMapExpression expression)
+        var builder = new MemberMapperBuilder(converterBuilder)
         {
-            return MapInternal(lastOffset, expression);
-        }
+            Property = pi,
+            Offset = offset
+        };
+        memberMapBuilders.Add(builder);
 
-        ITypeConfigSyntax<T> ITypeConfigSyntax<T>.Map(int offset, ITypeMapExpression expression)
-        {
-            return MapInternal(offset, expression);
-        }
+        lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
 
-        private ITypeConfigSyntax<T> MapInternal(int offset, ITypeMapExpression expression)
-        {
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
+        return this;
+    }
 
-            var builder = expression.GetTypeMapperBuilder();
-            builder.Offset = offset;
-            typeMapBuilders.Add(builder);
+    //--------------------------------------------------------------------------------
+    // IMappingFactory
+    //--------------------------------------------------------------------------------
 
-            lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
+    IMapping IMappingFactory.Create(ComponentContainer components, IDictionary<string, object> parameters)
+    {
+        var context = new BuilderContext(components, parameters, typeParameters);
 
-            return this;
-        }
+        var filler = context.GetParameter<byte>(Parameter.Filler);
 
-        // ForMember
+        var list = new List<MapperPosition>();
+        list.AddRange(typeMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
+        list.AddRange(memberMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
 
-        public ITypeConfigSyntax<T> ForMember(string name, Action<IMemberConfigSyntax> config)
-        {
-            return ForMemberInternal(name, lastOffset, config);
-        }
+        MapperPositionHelper.Layout(
+            list,
+            size,
+            Type.FullName,
+            validation,
+            useDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
+            autoFiller ? filler : null);
 
-        public ITypeConfigSyntax<T> ForMember(string name, int offset, Action<IMemberConfigSyntax> config)
-        {
-            return ForMemberInternal(name, offset, config);
-        }
-
-        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, Action<IMemberConfigSyntax> config)
-        {
-            return ForMemberInternal(ExpressionHelper.GetMemberName(expr), lastOffset, config);
-        }
-
-        public ITypeConfigSyntax<T> ForMember(Expression<Func<T, object>> expr, int offset, Action<IMemberConfigSyntax> config)
-        {
-            return ForMemberInternal(ExpressionHelper.GetMemberName(expr), offset, config);
-        }
-
-        private ITypeConfigSyntax<T> ForMemberInternal(string name, int offset, Action<IMemberConfigSyntax> config)
-        {
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset));
-            }
-
-            if (config is null)
-            {
-                throw new ArgumentNullException(nameof(config));
-            }
-
-            var type = typeof(T);
-            var pi = type.GetProperty(name);
-            if (pi is null)
-            {
-                throw new ArgumentException("Name is invalid.", nameof(name));
-            }
-
-            var member = new MemberConfigExpression();
-            config(member);
-
-            if (member.Expression is null)
-            {
-                throw new InvalidOperationException("Property is not mapped.");
-            }
-
-            var converterBuilder = member.Expression.GetMapConverterBuilder();
-            if (!converterBuilder.Match(pi.PropertyType))
-            {
-                throw new ByteMapperException(
-                    "Expression does not match property. " +
-                    $"type=[{pi.DeclaringType.FullName}], " +
-                    $"property=[{pi.Name}]");
-            }
-
-            var builder = new MemberMapperBuilder(converterBuilder)
-            {
-                Property = pi,
-                Offset = offset
-            };
-            memberMapBuilders.Add(builder);
-
-            lastOffset = Math.Max(offset, lastOffset) + builder.CalcSize();
-
-            return this;
-        }
-
-        //--------------------------------------------------------------------------------
-        // IMappingFactory
-        //--------------------------------------------------------------------------------
-
-        IMapping IMappingFactory.Create(ComponentContainer components, IDictionary<string, object> parameters)
-        {
-            var context = new BuilderContext(components, parameters, typeParameters);
-
-            var filler = context.GetParameter<byte>(Parameter.Filler);
-
-            var list = new List<MapperPosition>();
-            list.AddRange(typeMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
-            list.AddRange(memberMapBuilders.Select(x => new MapperPosition(x.Offset, x.CalcSize(), x.CreateMapper(context))));
-
-            MapperPositionHelper.Layout(
-                list,
-                size,
-                Type.FullName,
-                validation,
-                useDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
-                autoFiller ? filler : null);
-
-            return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
-        }
+        return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
     }
 }

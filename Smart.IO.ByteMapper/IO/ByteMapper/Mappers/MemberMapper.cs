@@ -1,43 +1,42 @@
-namespace Smart.IO.ByteMapper.Mappers
+namespace Smart.IO.ByteMapper.Mappers;
+
+using System;
+
+using Smart.IO.ByteMapper.Converters;
+
+public sealed class MemberMapper : IMapper
 {
-    using System;
+    private readonly int offset;
 
-    using Smart.IO.ByteMapper.Converters;
+    private readonly IMapConverter converter;
 
-    public sealed class MemberMapper : IMapper
+    private readonly Func<object, object> getter;
+
+    private readonly Action<object, object> setter;
+
+    public bool CanRead => getter != null;
+
+    public bool CanWrite => setter != null;
+
+    public MemberMapper(
+        int offset,
+        IMapConverter converter,
+        Func<object, object> getter,
+        Action<object, object> setter)
     {
-        private readonly int offset;
+        this.offset = offset;
+        this.converter = converter;
+        this.getter = getter;
+        this.setter = setter;
+    }
 
-        private readonly IMapConverter converter;
+    public void Read(byte[] buffer, int index, object target)
+    {
+        setter(target, converter.Read(buffer, index + offset));
+    }
 
-        private readonly Func<object, object> getter;
-
-        private readonly Action<object, object> setter;
-
-        public bool CanRead => getter != null;
-
-        public bool CanWrite => setter != null;
-
-        public MemberMapper(
-            int offset,
-            IMapConverter converter,
-            Func<object, object> getter,
-            Action<object, object> setter)
-        {
-            this.offset = offset;
-            this.converter = converter;
-            this.getter = getter;
-            this.setter = setter;
-        }
-
-        public void Read(byte[] buffer, int index, object target)
-        {
-            setter(target, converter.Read(buffer, index + offset));
-        }
-
-        public void Write(byte[] buffer, int index, object target)
-        {
-            converter.Write(buffer, index + offset, getter(target));
-        }
+    public void Write(byte[] buffer, int index, object target)
+    {
+        converter.Write(buffer, index + offset, getter(target));
     }
 }
