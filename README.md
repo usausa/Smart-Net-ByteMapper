@@ -104,95 +104,104 @@ Performance in this case.
 
 ## Benchmark
 
-Converter benchmark on Intel Core i7-4771 CPU 3.50GHz (Haswell) / .NET Core SDK=2.1.300.
+``` ini
+BenchmarkDotNet=v0.13.1, OS=Windows 10.0.22000
+AMD Ryzen 9 5900X, 1 CPU, 24 logical and 12 physical cores
+.NET SDK=6.0.100
+  [Host]    : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
+  MediumRun : .NET 6.0.0 (6.0.21.52210), X64 RyuJIT
 
-|                       Method |       Mean |     Error |    StdDev |     Median |  Gen 0 | Allocated |
-|----------------------------- |-----------:|----------:|----------:|-----------:|-------:|----------:|
-|                ReadIntBinary |   6.558 ns | 0.0876 ns | 0.1256 ns |   6.566 ns | 0.0057 |      24 B |
-|                  ReadBoolean |   5.430 ns | 0.1348 ns | 0.2018 ns |   5.422 ns | 0.0057 |      24 B |
-|                  ReadBytes10 |  10.043 ns | 0.0200 ns | 0.0267 ns |  10.049 ns | 0.0095 |      40 B |
-|                  ReadBytes20 |  10.842 ns | 0.1011 ns | 0.1418 ns |  10.790 ns | 0.0114 |      48 B |
-|       ReadSjisText20Single20 | 102.357 ns | 2.2108 ns | 3.0992 ns | 101.409 ns | 0.0170 |      72 B |
-|          ReadSjisText20Wide5 |  67.208 ns | 0.1745 ns | 0.2388 ns |  67.282 ns | 0.0094 |      40 B |
-|          ReadSjisText20Empty |  31.843 ns | 0.2120 ns | 0.3174 ns |  31.814 ns |      - |       0 B |
-|     ReadNumberTextShort4Zero |  91.876 ns | 0.4368 ns | 0.6264 ns |  91.725 ns | 0.0132 |      56 B |
-|      ReadNumberTextShort4Max | 110.076 ns | 0.3555 ns | 0.5211 ns | 110.114 ns | 0.0151 |      64 B |
-|       ReadNumberTextInt8Zero |  92.651 ns | 0.2332 ns | 0.3269 ns |  92.715 ns | 0.0132 |      56 B |
-|        ReadNumberTextInt8Max | 131.123 ns | 0.7586 ns | 1.1355 ns | 131.389 ns | 0.0172 |      72 B |
-|     ReadNumberTextLong18Zero |  96.182 ns | 0.2780 ns | 0.3897 ns |  96.335 ns | 0.0132 |      56 B |
-|      ReadNumberTextLong18Max | 180.025 ns | 0.7178 ns | 1.0522 ns | 179.783 ns | 0.0207 |      88 B |
-|   ReadNumberTextDecimal8Zero | 109.047 ns | 0.4831 ns | 0.6449 ns | 109.030 ns | 0.0151 |      64 B |
-|    ReadNumberTextDecimal8Max | 206.920 ns | 0.7600 ns | 1.1140 ns | 206.509 ns | 0.0188 |      80 B |
-|  ReadNumberTextDecimal18Zero | 124.131 ns | 0.9193 ns | 1.3184 ns | 123.699 ns | 0.0169 |      72 B |
-|   ReadNumberTextDecimal18Max | 373.081 ns | 0.7154 ns | 1.0030 ns | 372.644 ns | 0.0224 |      96 B |
-|  ReadNumberTextDecimal28Zero | 131.337 ns | 0.3463 ns | 0.5183 ns | 131.329 ns | 0.0169 |      72 B |
-|   ReadNumberTextDecimal28Max | 546.280 ns | 1.1682 ns | 1.7124 ns | 545.989 ns | 0.0277 |     120 B |
-|            ReadDateTimeText8 | 239.144 ns | 0.5572 ns | 0.8340 ns | 239.488 ns | 0.0172 |      72 B |
-|           ReadDateTimeText14 | 304.084 ns | 0.8768 ns | 1.3123 ns | 304.399 ns | 0.0186 |      80 B |
-|           ReadDateTimeText17 | 343.828 ns | 1.1230 ns | 1.6809 ns | 344.472 ns | 0.0205 |      88 B |
-|               ReadText13Code |  31.936 ns | 0.1483 ns | 0.2220 ns |  31.903 ns | 0.0133 |      56 B |
-|              ReadAscii13Code |  17.787 ns | 0.3568 ns | 0.5341 ns |  17.871 ns | 0.0133 |      56 B |
-|             ReadText30Wide15 | 106.268 ns | 0.2572 ns | 0.3433 ns | 106.197 ns | 0.0132 |      56 B |
-|          ReadUnicode30Wide15 |  14.486 ns | 0.0289 ns | 0.0385 ns |  14.481 ns | 0.0133 |      56 B |
-|        ReadIntegerShort4Zero |   9.859 ns | 0.0630 ns | 0.0942 ns |   9.870 ns | 0.0057 |      24 B |
-|         ReadIntegerShort4Max |  10.614 ns | 0.0438 ns | 0.0656 ns |  10.623 ns | 0.0057 |      24 B |
-|             ReadInteger8Zero |  11.959 ns | 0.0406 ns | 0.0608 ns |  11.966 ns | 0.0057 |      24 B |
-|              ReadInteger8Max |  14.325 ns | 0.0399 ns | 0.0560 ns |  14.316 ns | 0.0057 |      24 B |
-|               ReadLong18Zero |  17.315 ns | 0.0486 ns | 0.0712 ns |  17.318 ns | 0.0057 |      24 B |
-|                ReadLong18Max |  21.696 ns | 0.0462 ns | 0.0647 ns |  21.686 ns | 0.0057 |      24 B |
-|             ReadDecimal8Zero |  22.598 ns | 0.0903 ns | 0.1351 ns |  22.642 ns | 0.0076 |      32 B |
-|              ReadDecimal8Max |  27.519 ns | 0.0657 ns | 0.0942 ns |  27.491 ns | 0.0076 |      32 B |
-|            ReadDecimal18Zero |  27.512 ns | 0.0838 ns | 0.1228 ns |  27.518 ns | 0.0076 |      32 B |
-|             ReadDecimal18Max |  42.323 ns | 0.1001 ns | 0.1498 ns |  42.357 ns | 0.0076 |      32 B |
-|            ReadDecimal28Zero |  33.580 ns | 0.1151 ns | 0.1723 ns |  33.578 ns | 0.0076 |      32 B |
-|             ReadDecimal28Max |  82.263 ns | 0.2689 ns | 0.3941 ns |  82.320 ns | 0.0075 |      32 B |
-|                ReadDateTime8 |  29.343 ns | 0.1299 ns | 0.1945 ns |  29.382 ns | 0.0057 |      24 B |
-|               ReadDateTime14 |  40.121 ns | 0.1691 ns | 0.2371 ns |  40.036 ns | 0.0057 |      24 B |
-|               ReadDateTime17 |  44.071 ns | 0.1913 ns | 0.2863 ns |  44.150 ns | 0.0057 |      24 B |
+Job=MediumRun  IterationCount=15  LaunchCount=2  
+WarmupCount=10  
+```
 
-|                       Method |       Mean |     Error |    StdDev |     Median |  Gen 0 | Allocated |
-|----------------------------- |-----------:|----------:|----------:|-----------:|-------:|----------:|
-|               WriteIntBinary |   6.838 ns | 0.0186 ns | 0.0278 ns |   6.841 ns | 0.0057 |      24 B |
-|                 WriteBoolean |   5.911 ns | 0.0173 ns | 0.0259 ns |   5.919 ns | 0.0057 |      24 B |
-|                 WriteBytes10 |   9.574 ns | 0.0228 ns | 0.0327 ns |   9.591 ns |      - |       0 B |
-|                 WriteBytes20 |   9.675 ns | 0.0257 ns | 0.0334 ns |   9.682 ns |      - |       0 B |
-|      WriteSjisText20Single20 | 133.279 ns | 0.4189 ns | 0.6269 ns | 133.280 ns | 0.0112 |      48 B |
-|         WriteSjisText20Wide5 |  71.828 ns | 0.2749 ns | 0.4114 ns |  71.920 ns | 0.0094 |      40 B |
-|         WriteSjisText20Empty |  59.160 ns | 0.2015 ns | 0.2890 ns |  59.136 ns | 0.0132 |      56 B |
-|    WriteNumberTextShort4Zero |  62.779 ns | 0.1747 ns | 0.2505 ns |  62.827 ns | 0.0209 |      88 B |
-|     WriteNumberTextShort4Max |  67.673 ns | 0.1883 ns | 0.2701 ns |  67.670 ns | 0.0228 |      96 B |
-|      WriteNumberTextInt8Zero |  64.641 ns | 0.2027 ns | 0.3034 ns |  64.735 ns | 0.0209 |      88 B |
-|       WriteNumberTextInt8Max |  73.018 ns | 0.1542 ns | 0.2307 ns |  73.092 ns | 0.0247 |     104 B |
-|    WriteNumberTextLong18Zero |  71.698 ns | 0.2757 ns | 0.4127 ns |  71.738 ns | 0.0209 |      88 B |
-|     WriteNumberTextLong18Max | 104.549 ns | 0.2349 ns | 0.3515 ns | 104.664 ns | 0.0323 |     136 B |
-|  WriteNumberTextDecimal8Zero |  97.028 ns | 0.2113 ns | 0.3097 ns |  96.963 ns | 0.0228 |      96 B |
-|   WriteNumberTextDecimal8Max | 135.230 ns | 0.3780 ns | 0.5174 ns | 135.231 ns | 0.0284 |     120 B |
-| WriteNumberTextDecimal18Zero | 102.734 ns | 0.2155 ns | 0.3225 ns | 102.774 ns | 0.0228 |      96 B |
-|  WriteNumberTextDecimal18Max | 195.179 ns | 0.5505 ns | 0.7894 ns | 195.228 ns | 0.0343 |     144 B |
-| WriteNumberTextDecimal28Zero | 108.861 ns | 0.3268 ns | 0.4892 ns | 108.920 ns | 0.0228 |      96 B |
-|  WriteNumberTextDecimal28Max | 288.626 ns | 0.9760 ns | 1.4609 ns | 288.748 ns | 0.0415 |     176 B |
-|           WriteDateTimeText8 | 264.831 ns | 0.6020 ns | 0.9011 ns | 265.173 ns | 0.0491 |     208 B |
-|          WriteDateTimeText14 | 331.439 ns | 0.7034 ns | 1.0311 ns | 331.272 ns | 0.0529 |     224 B |
-|          WriteDateTimeText17 | 525.116 ns | 0.9070 ns | 1.3295 ns | 524.813 ns | 0.0639 |     272 B |
-|              WriteText13Code |  40.312 ns | 0.1179 ns | 0.1691 ns |  40.336 ns | 0.0095 |      40 B |
-|             WriteAscii13Code |  26.085 ns | 0.0991 ns | 0.1484 ns |  26.128 ns | 0.0095 |      40 B |
-|            WriteText30Wide15 |  50.745 ns | 0.5329 ns | 0.7976 ns |  50.641 ns | 0.0133 |      56 B |
-|         WriteUnicode30Wide15 |   7.819 ns | 0.0568 ns | 0.0849 ns |   7.813 ns |      - |       0 B |
-|       WriteIntegerShort4Zero |  12.270 ns | 0.0316 ns | 0.0463 ns |  12.261 ns | 0.0057 |      24 B |
-|        WriteIntegerShort4Max |  15.156 ns | 0.0582 ns | 0.0871 ns |  15.178 ns | 0.0057 |      24 B |
-|            WriteInteger8Zero |  13.886 ns | 0.0479 ns | 0.0717 ns |  13.895 ns | 0.0057 |      24 B |
-|             WriteInteger8Max |  21.639 ns | 0.0542 ns | 0.0795 ns |  21.641 ns | 0.0057 |      24 B |
-|              WriteLong18Zero |  19.990 ns | 0.0532 ns | 0.0745 ns |  20.020 ns | 0.0057 |      24 B |
-|               WriteLong18Max |  39.034 ns | 0.0812 ns | 0.1164 ns |  39.069 ns | 0.0057 |      24 B |
-|            WriteDecimal8Zero |  40.795 ns | 0.1712 ns | 0.2400 ns |  40.771 ns | 0.0171 |      72 B |
-|             WriteDecimal8Max |  65.231 ns | 0.1956 ns | 0.2928 ns |  65.294 ns | 0.0170 |      72 B |
-|           WriteDecimal18Zero |  50.994 ns | 0.2025 ns | 0.3030 ns |  50.953 ns | 0.0171 |      72 B |
-|            WriteDecimal18Max |  98.140 ns | 0.2256 ns | 0.3163 ns |  98.253 ns | 0.0170 |      72 B |
-|           WriteDecimal28Zero |  65.313 ns | 0.3273 ns | 0.4898 ns |  65.300 ns | 0.0170 |      72 B |
-|            WriteDecimal28Max | 133.709 ns | 0.2878 ns | 0.4128 ns | 133.790 ns | 0.0169 |      72 B |
-|               WriteDateTime8 |  32.824 ns | 0.2790 ns | 0.4090 ns |  32.595 ns | 0.0057 |      24 B |
-|              WriteDateTime14 |  49.784 ns | 0.1276 ns | 0.1747 ns |  49.784 ns | 0.0057 |      24 B |
-|              WriteDateTime17 |  59.034 ns | 0.6006 ns | 0.8990 ns |  58.959 ns | 0.0057 |      24 B |
+|                       Method |       Mean |     Error |    StdDev |     Median |        Min |        Max |        P90 |  Gen 0 | Allocated |
+|----------------------------- |-----------:|----------:|----------:|-----------:|-----------:|-----------:|-----------:|-------:|----------:|
+|                ReadIntBinary |   3.345 ns | 0.0774 ns | 0.1159 ns |   3.316 ns |   3.230 ns |   3.572 ns |   3.551 ns | 0.0014 |      24 B |
+|                  ReadBoolean |   5.022 ns | 0.0328 ns | 0.0481 ns |   5.033 ns |   4.947 ns |   5.098 ns |   5.085 ns | 0.0014 |      24 B |
+|                  ReadBytes10 |   5.874 ns | 0.0190 ns | 0.0266 ns |   5.874 ns |   5.812 ns |   5.925 ns |   5.904 ns | 0.0024 |      40 B |
+|                  ReadBytes20 |   5.930 ns | 0.0975 ns | 0.1367 ns |   5.857 ns |   5.781 ns |   6.232 ns |   6.067 ns | 0.0029 |      48 B |
+|       ReadSjisText20Single20 |  52.194 ns | 2.2086 ns | 3.1675 ns |  52.198 ns |  48.863 ns |  55.666 ns |  55.373 ns | 0.0038 |      64 B |
+|          ReadSjisText20Wide5 |  32.381 ns | 0.5825 ns | 0.8718 ns |  32.353 ns |  31.328 ns |  33.406 ns |  33.350 ns | 0.0019 |      32 B |
+|          ReadSjisText20Empty |  16.353 ns | 0.0348 ns | 0.0521 ns |  16.340 ns |  16.273 ns |  16.476 ns |  16.427 ns |      - |         - |
+|     ReadNumberTextShort4Zero |  22.510 ns | 0.1019 ns | 0.1461 ns |  22.481 ns |  22.275 ns |  22.772 ns |  22.695 ns | 0.0029 |      48 B |
+|      ReadNumberTextShort4Max |  22.668 ns | 0.3600 ns | 0.5388 ns |  22.439 ns |  22.250 ns |  24.294 ns |  23.354 ns | 0.0033 |      56 B |
+|       ReadNumberTextInt8Zero |  23.409 ns | 0.2145 ns | 0.3144 ns |  23.223 ns |  22.936 ns |  23.848 ns |  23.785 ns | 0.0029 |      48 B |
+|        ReadNumberTextInt8Max |  25.040 ns | 0.0904 ns | 0.1326 ns |  25.066 ns |  24.827 ns |  25.254 ns |  25.190 ns | 0.0038 |      64 B |
+|     ReadNumberTextLong18Zero |  27.307 ns | 0.8070 ns | 1.1829 ns |  26.299 ns |  26.039 ns |  29.010 ns |  28.698 ns | 0.0029 |      48 B |
+|      ReadNumberTextLong18Max |  32.598 ns | 0.4815 ns | 0.7207 ns |  32.372 ns |  31.771 ns |  34.288 ns |  33.701 ns | 0.0052 |      88 B |
+|   ReadNumberTextDecimal8Zero |  41.387 ns | 0.1724 ns | 0.2417 ns |  41.314 ns |  41.043 ns |  41.974 ns |  41.689 ns | 0.0038 |      64 B |
+|    ReadNumberTextDecimal8Max |  53.479 ns | 0.1082 ns | 0.1517 ns |  53.491 ns |  53.180 ns |  53.742 ns |  53.663 ns | 0.0043 |      72 B |
+|  ReadNumberTextDecimal18Zero |  48.544 ns | 0.2512 ns | 0.3438 ns |  48.488 ns |  47.528 ns |  49.079 ns |  48.949 ns | 0.0038 |      64 B |
+|   ReadNumberTextDecimal18Max |  77.345 ns | 0.2930 ns | 0.4385 ns |  77.304 ns |  76.483 ns |  78.244 ns |  77.797 ns | 0.0057 |      96 B |
+|  ReadNumberTextDecimal28Zero |  55.038 ns | 1.2192 ns | 1.6688 ns |  55.033 ns |  53.032 ns |  56.810 ns |  56.744 ns | 0.0038 |      64 B |
+|   ReadNumberTextDecimal28Max | 104.013 ns | 0.4448 ns | 0.6658 ns | 103.908 ns | 103.065 ns | 105.241 ns | 105.076 ns | 0.0066 |     112 B |
+|            ReadDateTimeText8 |  98.251 ns | 0.2435 ns | 0.3644 ns |  98.174 ns |  97.712 ns |  99.111 ns |  98.737 ns | 0.0038 |      64 B |
+|           ReadDateTimeText14 | 140.822 ns | 1.1505 ns | 1.7221 ns | 140.893 ns | 138.492 ns | 143.298 ns | 142.794 ns | 0.0046 |      80 B |
+|           ReadDateTimeText17 | 161.067 ns | 3.1529 ns | 4.5217 ns | 161.275 ns | 155.872 ns | 166.506 ns | 165.891 ns | 0.0046 |      80 B |
+|               ReadText13Code |  14.578 ns | 0.0250 ns | 0.0367 ns |  14.577 ns |  14.524 ns |  14.646 ns |  14.626 ns | 0.0029 |      48 B |
+|              ReadAscii13Code |  10.305 ns | 0.2965 ns | 0.4346 ns |  10.635 ns |   9.792 ns |  10.872 ns |  10.780 ns | 0.0029 |      48 B |
+|             ReadText30Wide15 |  30.066 ns | 0.0541 ns | 0.0792 ns |  30.062 ns |  29.949 ns |  30.206 ns |  30.173 ns | 0.0033 |      56 B |
+|          ReadUnicode30Wide15 |   8.543 ns | 0.4213 ns | 0.6042 ns |   8.905 ns |   7.877 ns |   9.344 ns |   9.172 ns | 0.0033 |      56 B |
+|        ReadIntegerShort4Zero |   5.962 ns | 0.0647 ns | 0.0969 ns |   5.943 ns |   5.829 ns |   6.225 ns |   6.063 ns | 0.0014 |      24 B |
+|         ReadIntegerShort4Max |   5.540 ns | 0.0522 ns | 0.0782 ns |   5.509 ns |   5.457 ns |   5.690 ns |   5.672 ns | 0.0014 |      24 B |
+|             ReadInteger8Zero |   6.964 ns | 0.0525 ns | 0.0736 ns |   6.946 ns |   6.866 ns |   7.066 ns |   7.055 ns | 0.0014 |      24 B |
+|              ReadInteger8Max |   7.221 ns | 0.0165 ns | 0.0232 ns |   7.221 ns |   7.185 ns |   7.284 ns |   7.246 ns | 0.0014 |      24 B |
+|               ReadLong18Zero |  10.934 ns | 0.9761 ns | 1.4610 ns |  11.047 ns |   9.148 ns |  12.452 ns |  12.412 ns | 0.0014 |      24 B |
+|                ReadLong18Max |  12.429 ns | 0.5720 ns | 0.8385 ns |  12.467 ns |  11.590 ns |  13.591 ns |  13.562 ns | 0.0014 |      24 B |
+|             ReadDecimal8Zero |  13.540 ns | 0.0273 ns | 0.0401 ns |  13.539 ns |  13.455 ns |  13.626 ns |  13.599 ns | 0.0019 |      32 B |
+|              ReadDecimal8Max |  15.916 ns | 0.2583 ns | 0.3786 ns |  15.776 ns |  15.613 ns |  16.761 ns |  16.709 ns | 0.0019 |      32 B |
+|            ReadDecimal18Zero |  15.285 ns | 0.0502 ns | 0.0736 ns |  15.287 ns |  15.147 ns |  15.422 ns |  15.377 ns | 0.0019 |      32 B |
+|             ReadDecimal18Max |  24.128 ns | 0.1211 ns | 0.1737 ns |  24.162 ns |  23.854 ns |  24.401 ns |  24.366 ns | 0.0019 |      32 B |
+|            ReadDecimal28Zero |  18.241 ns | 0.0428 ns | 0.0627 ns |  18.249 ns |  18.096 ns |  18.366 ns |  18.311 ns | 0.0019 |      32 B |
+|             ReadDecimal28Max |  45.839 ns | 0.1844 ns | 0.2759 ns |  45.871 ns |  45.398 ns |  46.284 ns |  46.199 ns | 0.0019 |      32 B |
+|                ReadDateTime8 |  15.217 ns | 0.0831 ns | 0.1218 ns |  15.156 ns |  15.050 ns |  15.420 ns |  15.401 ns | 0.0014 |      24 B |
+|               ReadDateTime14 |  22.269 ns | 0.0972 ns | 0.1394 ns |  22.255 ns |  22.033 ns |  22.502 ns |  22.435 ns | 0.0014 |      24 B |
+|               ReadDateTime17 |  30.346 ns | 4.4469 ns | 6.2339 ns |  24.572 ns |  24.269 ns |  36.855 ns |  36.761 ns | 0.0014 |      24 B |
+
+|                       Method |       Mean |     Error |    StdDev |     Median |        Min |        Max |        P90 |  Gen 0 | Allocated |
+|----------------------------- |-----------:|----------:|----------:|-----------:|-----------:|-----------:|-----------:|-------:|----------:|
+|               WriteIntBinary |   3.655 ns | 0.0756 ns | 0.1085 ns |   3.572 ns |   3.539 ns |   3.788 ns |   3.778 ns | 0.0014 |      24 B |
+|                 WriteBoolean |   3.574 ns | 0.0213 ns | 0.0312 ns |   3.570 ns |   3.521 ns |   3.651 ns |   3.619 ns | 0.0014 |      24 B |
+|                 WriteBytes10 |   5.724 ns | 0.0081 ns | 0.0122 ns |   5.722 ns |   5.704 ns |   5.750 ns |   5.741 ns |      - |         - |
+|                 WriteBytes20 |   5.530 ns | 0.0092 ns | 0.0128 ns |   5.530 ns |   5.508 ns |   5.570 ns |   5.541 ns |      - |         - |
+|      WriteSjisText20Single20 |  78.005 ns | 0.1827 ns | 0.2678 ns |  78.046 ns |  77.575 ns |  78.468 ns |  78.314 ns | 0.0028 |      48 B |
+|         WriteSjisText20Wide5 |  34.718 ns | 0.0794 ns | 0.1164 ns |  34.723 ns |  34.472 ns |  35.016 ns |  34.850 ns | 0.0024 |      40 B |
+|         WriteSjisText20Empty |  27.137 ns | 0.0821 ns | 0.1177 ns |  27.099 ns |  26.996 ns |  27.483 ns |  27.283 ns | 0.0033 |      56 B |
+|    WriteNumberTextShort4Zero |  19.482 ns | 0.0531 ns | 0.0779 ns |  19.487 ns |  19.310 ns |  19.637 ns |  19.575 ns | 0.0033 |      56 B |
+|     WriteNumberTextShort4Max |  24.889 ns | 0.1000 ns | 0.1402 ns |  24.890 ns |  24.636 ns |  25.074 ns |  25.047 ns | 0.0052 |      88 B |
+|      WriteNumberTextInt8Zero |  20.650 ns | 0.0463 ns | 0.0649 ns |  20.648 ns |  20.539 ns |  20.802 ns |  20.741 ns | 0.0033 |      56 B |
+|       WriteNumberTextInt8Max |  27.394 ns | 0.0648 ns | 0.0970 ns |  27.395 ns |  27.137 ns |  27.539 ns |  27.528 ns | 0.0057 |      96 B |
+|    WriteNumberTextLong18Zero |  24.486 ns | 0.0733 ns | 0.1051 ns |  24.499 ns |  24.296 ns |  24.687 ns |  24.598 ns | 0.0033 |      56 B |
+|     WriteNumberTextLong18Max |  40.001 ns | 0.1535 ns | 0.2298 ns |  39.962 ns |  39.614 ns |  40.531 ns |  40.260 ns | 0.0081 |     136 B |
+|  WriteNumberTextDecimal8Zero |  43.059 ns | 0.1351 ns | 0.1937 ns |  43.050 ns |  42.661 ns |  43.400 ns |  43.345 ns | 0.0052 |      88 B |
+|   WriteNumberTextDecimal8Max |  62.609 ns | 0.2993 ns | 0.4388 ns |  62.672 ns |  61.817 ns |  63.215 ns |  63.157 ns | 0.0066 |     112 B |
+| WriteNumberTextDecimal18Zero |  45.796 ns | 0.1153 ns | 0.1690 ns |  45.808 ns |  45.393 ns |  46.100 ns |  45.989 ns | 0.0052 |      88 B |
+|  WriteNumberTextDecimal18Max |  91.072 ns | 1.8825 ns | 2.8177 ns |  91.233 ns |  87.864 ns |  94.347 ns |  94.058 ns | 0.0085 |     144 B |
+| WriteNumberTextDecimal28Zero |  49.022 ns | 0.1017 ns | 0.1426 ns |  49.018 ns |  48.593 ns |  49.263 ns |  49.180 ns | 0.0052 |      88 B |
+|  WriteNumberTextDecimal28Max | 126.365 ns | 0.5301 ns | 0.7602 ns | 126.623 ns | 124.858 ns | 127.465 ns | 127.173 ns | 0.0100 |     168 B |
+|           WriteDateTimeText8 |  85.799 ns | 0.6347 ns | 0.9304 ns |  85.524 ns |  84.353 ns |  87.199 ns |  86.820 ns | 0.0057 |      96 B |
+|          WriteDateTimeText14 | 120.636 ns | 0.6155 ns | 0.9212 ns | 120.716 ns | 119.015 ns | 122.145 ns | 121.706 ns | 0.0071 |     120 B |
+|          WriteDateTimeText17 | 210.494 ns | 0.5407 ns | 0.7754 ns | 210.300 ns | 209.300 ns | 212.644 ns | 211.284 ns | 0.0076 |     128 B |
+|              WriteText13Code |  16.510 ns | 0.0571 ns | 0.0837 ns |  16.500 ns |  16.350 ns |  16.698 ns |  16.625 ns | 0.0024 |      40 B |
+|             WriteAscii13Code |  11.706 ns | 0.0357 ns | 0.0524 ns |  11.706 ns |  11.630 ns |  11.819 ns |  11.768 ns | 0.0024 |      40 B |
+|            WriteText30Wide15 |  26.997 ns | 0.0664 ns | 0.0952 ns |  26.991 ns |  26.841 ns |  27.233 ns |  27.104 ns | 0.0033 |      56 B |
+|         WriteUnicode30Wide15 |   4.468 ns | 0.0094 ns | 0.0122 ns |   4.466 ns |   4.451 ns |   4.489 ns |   4.485 ns |      - |         - |
+|       WriteIntegerShort4Zero |   8.110 ns | 0.2074 ns | 0.3040 ns |   7.865 ns |   7.784 ns |   8.469 ns |   8.431 ns | 0.0014 |      24 B |
+|        WriteIntegerShort4Max |  10.172 ns | 0.1290 ns | 0.1891 ns |  10.274 ns |   9.931 ns |  10.420 ns |  10.390 ns | 0.0014 |      24 B |
+|            WriteInteger8Zero |   9.564 ns | 0.1997 ns | 0.2864 ns |   9.549 ns |   9.209 ns |   9.929 ns |   9.874 ns | 0.0014 |      24 B |
+|             WriteInteger8Max |  13.802 ns | 0.0361 ns | 0.0530 ns |  13.804 ns |  13.710 ns |  13.888 ns |  13.869 ns | 0.0014 |      24 B |
+|              WriteLong18Zero |  11.346 ns | 0.0647 ns | 0.0907 ns |  11.390 ns |  11.192 ns |  11.470 ns |  11.439 ns | 0.0014 |      24 B |
+|               WriteLong18Max |  24.592 ns | 0.0493 ns | 0.0722 ns |  24.597 ns |  24.423 ns |  24.758 ns |  24.668 ns | 0.0014 |      24 B |
+|            WriteDecimal8Zero |  17.599 ns | 0.0534 ns | 0.0799 ns |  17.584 ns |  17.446 ns |  17.816 ns |  17.680 ns | 0.0043 |      72 B |
+|             WriteDecimal8Max |  37.087 ns | 0.5286 ns | 0.7748 ns |  37.531 ns |  36.052 ns |  38.028 ns |  37.967 ns | 0.0043 |      72 B |
+|           WriteDecimal18Zero |  19.800 ns | 0.0576 ns | 0.0844 ns |  19.809 ns |  19.653 ns |  19.950 ns |  19.904 ns | 0.0043 |      72 B |
+|            WriteDecimal18Max |  55.634 ns | 0.0986 ns | 0.1446 ns |  55.635 ns |  55.279 ns |  55.912 ns |  55.788 ns | 0.0043 |      72 B |
+|           WriteDecimal28Zero |  22.239 ns | 0.1084 ns | 0.1484 ns |  22.247 ns |  21.996 ns |  22.479 ns |  22.434 ns | 0.0043 |      72 B |
+|            WriteDecimal28Max |  77.243 ns | 0.3443 ns | 0.5047 ns |  77.411 ns |  76.368 ns |  78.150 ns |  77.866 ns | 0.0043 |      72 B |
+|               WriteDateTime8 |  18.810 ns | 0.0582 ns | 0.0853 ns |  18.811 ns |  18.660 ns |  18.963 ns |  18.906 ns | 0.0014 |      24 B |
+|              WriteDateTime14 |  27.737 ns | 0.2297 ns | 0.3294 ns |  27.760 ns |  27.296 ns |  28.201 ns |  28.090 ns | 0.0014 |      24 B |
+|              WriteDateTime17 |  31.469 ns | 0.0764 ns | 0.1096 ns |  31.472 ns |  31.280 ns |  31.674 ns |  31.600 ns | 0.0014 |      24 B |
 
 ## Map by Attribute
 
