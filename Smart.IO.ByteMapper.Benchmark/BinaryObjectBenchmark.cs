@@ -7,9 +7,11 @@ using Smart.IO.ByteMapper.Attributes;
 [Config(typeof(BenchmarkConfig))]
 public class BinaryObjectBenchmark
 {
-    private readonly byte[] buffer = new byte[40];
+    private const int N = 1000;
 
-    private readonly BinaryObject obj = new();
+    private readonly byte[] allocatedBuffer = new byte[40];
+
+    private readonly BinaryObject allocatedData = new();
 
     private ITypeMapper<BinaryObject> mapper;
 
@@ -23,22 +25,41 @@ public class BinaryObjectBenchmark
         mapper = mapperFactory.Create<BinaryObject>();
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadBinaryObject()
     {
-        mapper.FromByte(buffer, obj);
+        var m = mapper;
+        var buffer = allocatedBuffer;
+        var data = allocatedData;
+        for (var i = 0; i < N; i++)
+        {
+            m.FromByte(buffer, data);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteBinaryObject()
     {
-        mapper.ToByte(buffer, obj);
+        var m = mapper;
+        var buffer = allocatedBuffer;
+        var data = allocatedData;
+        for (var i = 0; i < N; i++)
+        {
+            m.ToByte(buffer, data);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public byte[] WriteBinaryObjectWithAllocate()
     {
-        return mapper.ToByte(obj);
+        var m = mapper;
+        var data = allocatedData;
+        var ret = default(byte[]);
+        for (var i = 0; i < N; i++)
+        {
+            ret = m.ToByte(data);
+        }
+        return ret;
     }
 
     [Map(40, UseDelimiter = false, AutoFiller = false)]

@@ -10,9 +10,11 @@ using Smart.Text.Japanese;
 [Config(typeof(BenchmarkConfig))]
 public class ComplexBenchmark
 {
-    private ComplexData allocatedData;
+    private const int N = 1000;
 
     private byte[] allocatedBuffer;
+
+    private ComplexData allocatedData;
 
     private ITypeMapper<ComplexData> mapper;
 
@@ -63,29 +65,51 @@ public class ComplexBenchmark
         mapper.ToByte(allocatedBuffer, 0, allocatedData);
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FromByte()
     {
-        mapper.FromByte(allocatedBuffer, 0, allocatedData);
+        var m = mapper;
+        var buffer = allocatedBuffer;
+        var data = allocatedData;
+        for (var i = 0; i < N; i++)
+        {
+            m.FromByte(buffer, 0, data);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FromByteWithAllocate()
     {
-        mapper.FromByte(allocatedBuffer, 0, new ComplexData());
+        var m = mapper;
+        var buffer = allocatedBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            m.FromByte(buffer, 0, new ComplexData());
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ToByte()
     {
-        mapper.ToByte(allocatedBuffer, 0, allocatedData);
+        var m = mapper;
+        var buffer = allocatedBuffer;
+        var data = allocatedData;
+        for (var i = 0; i < N; i++)
+        {
+            m.ToByte(buffer, 0, data);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ToByteWithAllocate()
     {
-        var buffer = new byte[mapper.Size];
-        mapper.ToByte(buffer, 0, allocatedData);
+        var m = mapper;
+        var data = allocatedData;
+        for (var i = 0; i < N; i++)
+        {
+            var buffer = new byte[mapper.Size];
+            m.ToByte(buffer, 0, data);
+        }
     }
 }
 

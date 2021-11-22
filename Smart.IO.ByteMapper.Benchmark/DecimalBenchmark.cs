@@ -10,6 +10,8 @@ using Smart.IO.ByteMapper.Helpers;
 [Config(typeof(BenchmarkConfig))]
 public class DecimalBenchmark2
 {
+    private const int N = 1000;
+
     private const decimal Value8 = 123456.78m;
 
     private const decimal Value19 = 1234567890123456.789m;
@@ -18,44 +20,68 @@ public class DecimalBenchmark2
 
     // Format
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatDefault8()
     {
-        Encoding.ASCII.GetBytes(Value8.ToString("000000.00"));
+        var value = Value8;
+        for (var i = 0; i < N; i++)
+        {
+            Encoding.ASCII.GetBytes(value.ToString("000000.00"));
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatDefault19()
     {
-        Encoding.ASCII.GetBytes(Value19.ToString("000000000000000000.000"));
+        var value = Value19;
+        for (var i = 0; i < N; i++)
+        {
+            Encoding.ASCII.GetBytes(value.ToString("000000000000000000.000"));
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatDefault28()
     {
-        Encoding.ASCII.GetBytes(Value28.ToString("000000000000000000000000000.000"));
+        var value = Value28;
+        for (var i = 0; i < N; i++)
+        {
+            Encoding.ASCII.GetBytes(value.ToString("000000000000000000000000000.000"));
+        }
     }
 
     // Custom
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatCustom8()
     {
         var buffer = new byte[8];
-        NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value8, 2, -1, Padding.Left, false, 0x20);
+        var value = Value8;
+        for (var i = 0; i < N; i++)
+        {
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, value, 2, -1, Padding.Left, false, 0x20);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatCustom19()
     {
         var buffer = new byte[19];
-        NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value19, 3, -1, Padding.Left, false, 0x20);
+        var value = Value19;
+        for (var i = 0; i < N; i++)
+        {
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, value, 3, -1, Padding.Left, false, 0x20);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void FormatCustom28()
     {
         var buffer = new byte[28];
-        NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, Value28, 4, -1, Padding.Left, false, 0x20);
+        var value = Value28;
+        for (var i = 0; i < N; i++)
+        {
+            NumberByteHelper.FormatDecimal(buffer, 0, buffer.Length, value, 4, -1, Padding.Left, false, 0x20);
+        }
     }
 }

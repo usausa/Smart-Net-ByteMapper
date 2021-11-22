@@ -16,6 +16,8 @@ using Smart.Text.Japanese;
 [Config(typeof(BenchmarkConfig))]
 public class ConverterBenchmark
 {
+    private const int N = 1000;
+
     private const string Text20Single10 = "abcdefghijklmnoqrstu";
     private const string Text20Wide5 = "あいうえお";
     private const string Text20Empty = "";
@@ -298,148 +300,258 @@ public class ConverterBenchmark
 
     // Binary
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
 
     public void ReadIntBinary()
     {
-        intBinaryConverter.Read(intBinaryBuffer, 0);
+        var c = intBinaryConverter;
+        var buffer = intBinaryBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Boolean
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
 
     public void ReadBoolean()
     {
-        booleanConverter.Read(booleanBuffer, 0);
+        var c = booleanConverter;
+        var buffer = booleanBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Bytes
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadBytes10()
     {
-        bytes10Converter.Read(bytes10Buffer, 0);
+        var c = bytes10Converter;
+        var buffer = bytes10Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadBytes20()
     {
-        bytes20Converter.Read(bytes20Buffer, 0);
+        var c = bytes20Converter;
+        var buffer = bytes20Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Text
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadSjisText20Single20()
     {
-        text20Converter.Read(text20Single20Buffer, 0);
+        var c = text20Converter;
+        var buffer = text20Single20Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadSjisText20Wide5()
     {
-        text20Converter.Read(text20Wide10Buffer, 0);
+        var c = text20Converter;
+        var buffer = text20Wide10Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadSjisText20Empty()
     {
-        text20Converter.Read(text20EmptyBuffer, 0);
+        var c = text20Converter;
+        var buffer = text20EmptyBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Number
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextShort4Zero()
     {
-        numberTextShort4Converter.Read(numberTextShort4ZeroBuffer, 0);
+        var c = numberTextShort4Converter;
+        var buffer = numberTextShort4ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextShort4Max()
     {
-        numberTextShort4Converter.Read(numberTextShort4MaxBuffer, 0);
+        var c = numberTextShort4Converter;
+        var buffer = numberTextShort4MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextInt8Zero()
     {
-        numberTextInt8Converter.Read(numberTextInt8ZeroBuffer, 0);
+        var c = numberTextInt8Converter;
+        var buffer = numberTextInt8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextInt8Max()
     {
-        numberTextInt8Converter.Read(numberTextInt8MaxBuffer, 0);
+        var c = numberTextInt8Converter;
+        var buffer = numberTextInt8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextLong18Zero()
     {
-        numberTextLong18Converter.Read(numberTextLong18ZeroBuffer, 0);
+        var c = numberTextLong18Converter;
+        var buffer = numberTextLong18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextLong18Max()
     {
-        numberTextLong18Converter.Read(numberTextLong18MaxBuffer, 0);
+        var c = numberTextLong18Converter;
+        var buffer = numberTextLong18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal8Zero()
     {
-        numberTextDecimal8Converter.Read(numberTextDecimal8ZeroBuffer, 0);
+        var c = numberTextDecimal8Converter;
+        var buffer = numberTextDecimal8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal8Max()
     {
-        numberTextDecimal8Converter.Read(numberTextDecimal8MaxBuffer, 0);
+        var c = numberTextDecimal8Converter;
+        var buffer = numberTextDecimal8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal18Zero()
     {
-        numberTextDecimal18Converter.Read(numberTextDecimal18ZeroBuffer, 0);
+        var c = numberTextDecimal18Converter;
+        var buffer = numberTextDecimal18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal18Max()
     {
-        numberTextDecimal18Converter.Read(numberTextDecimal18MaxBuffer, 0);
+        var c = numberTextDecimal18Converter;
+        var buffer = numberTextDecimal18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal28Zero()
     {
-        numberTextDecimal28Converter.Read(numberTextDecimal28ZeroBuffer, 0);
+        var c = numberTextDecimal28Converter;
+        var buffer = numberTextDecimal28ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadNumberTextDecimal28Max()
     {
-        numberTextDecimal28Converter.Read(numberTextDecimal28MaxBuffer, 0);
+        var c = numberTextDecimal28Converter;
+        var buffer = numberTextDecimal28MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // DateTime
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTimeText8()
     {
-        dateTimeText8Converter.Read(dateTimeText8Buffer, 0);
+        var c = dateTimeText8Converter;
+        var buffer = dateTimeText8Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTimeText14()
     {
-        dateTimeText14Converter.Read(dateTimeText14Buffer, 0);
+        var c = dateTimeText14Converter;
+        var buffer = dateTimeText14Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTimeText17()
     {
-        dateTimeText17Converter.Read(dateTimeText17Buffer, 0);
+        var c = dateTimeText17Converter;
+        var buffer = dateTimeText17Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     //--------------------------------------------------------------------------------
@@ -448,126 +560,221 @@ public class ConverterBenchmark
 
     // ASCII
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadText13Code()
     {
-        text13Converter.Read(ascii13Buffer, 0);
+        var c = text13Converter;
+        var buffer = ascii13Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadAscii13Code()
     {
-        ascii13Converter.Read(ascii13Buffer, 0);
+        var c = ascii13Converter;
+        var buffer = ascii13Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Unicode
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadText30Wide15()
     {
-        text30Converter.Read(unicode30Buffer, 0);
+        var c = text30Converter;
+        var buffer = unicode30Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadUnicode30Wide15()
     {
-        unicode30Converter.Read(unicode30Buffer, 0);
+        var c = unicode30Converter;
+        var buffer = unicode30Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Integer
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadIntegerShort4Zero()
     {
-        short4Converter.Read(short4ZeroBuffer, 0);
+        var c = short4Converter;
+        var buffer = short4ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadIntegerShort4Max()
     {
-        short4Converter.Read(short4MaxBuffer, 0);
+        var c = short4Converter;
+        var buffer = short4MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadInteger8Zero()
     {
-        int8Converter.Read(int8ZeroBuffer, 0);
+        var c = int8Converter;
+        var buffer = int8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadInteger8Max()
     {
-        int8Converter.Read(int8MaxBuffer, 0);
+        var c = int8Converter;
+        var buffer = int8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadLong18Zero()
     {
-        long18Converter.Read(long18ZeroBuffer, 0);
+        var c = long18Converter;
+        var buffer = long18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadLong18Max()
     {
-        long18Converter.Read(long18MaxBuffer, 0);
+        var c = long18Converter;
+        var buffer = long18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // Decimal
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal8Zero()
     {
-        decimal8Converter.Read(decimal8ZeroBuffer, 0);
+        var c = decimal8Converter;
+        var buffer = decimal8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal8Max()
     {
-        decimal8Converter.Read(decimal8MaxBuffer, 0);
+        var c = decimal8Converter;
+        var buffer = decimal8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal18Zero()
     {
-        decimal18Converter.Read(decimal18ZeroBuffer, 0);
+        var c = decimal18Converter;
+        var buffer = decimal18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal18Max()
     {
-        decimal18Converter.Read(decimal18MaxBuffer, 0);
+        var c = decimal18Converter;
+        var buffer = decimal18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal28Zero()
     {
-        decimal28Converter.Read(decimal28ZeroBuffer, 0);
+        var c = decimal28Converter;
+        var buffer = decimal28ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDecimal28Max()
     {
-        decimal28Converter.Read(decimal28MaxBuffer, 0);
+        var c = decimal28Converter;
+        var buffer = decimal28MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     // DateTime
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTime8()
     {
-        dateTime8Converter.Read(dateTime8Buffer, 0);
+        var c = dateTime8Converter;
+        var buffer = dateTime8Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTime14()
     {
-        dateTime14Converter.Read(dateTime14Buffer, 0);
+        var c = dateTime14Converter;
+        var buffer = dateTime14Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void ReadDateTime17()
     {
-        dateTime17Converter.Read(dateTime17Buffer, 0);
+        var c = dateTime17Converter;
+        var buffer = dateTime17Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Read(buffer, 0);
+        }
     }
 
     //--------------------------------------------------------------------------------
@@ -576,148 +783,258 @@ public class ConverterBenchmark
 
     // Binary
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
 
     public void WriteIntBinary()
     {
-        intBinaryConverter.Write(intBinaryBuffer, 0, 0);
+        var c = intBinaryConverter;
+        var buffer = dateTime17Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, 0);
+        }
     }
 
     // Boolean
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
 
     public void WriteBoolean()
     {
-        booleanConverter.Write(booleanBuffer, 0, false);
+        var c = booleanConverter;
+        var buffer = booleanBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, false);
+        }
     }
 
     // Bytes
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteBytes10()
     {
-        bytes10Converter.Write(bytes10Buffer, 0, Bytes10);
+        var c = bytes10Converter;
+        var buffer = bytes10Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Bytes10);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteBytes20()
     {
-        bytes20Converter.Write(bytes20Buffer, 0, Bytes20);
+        var c = bytes20Converter;
+        var buffer = bytes20Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Bytes20);
+        }
     }
 
     // Text
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteSjisText20Single20()
     {
-        text20Converter.Write(text20Single20Buffer, 0, Text20Single10);
+        var c = text20Converter;
+        var buffer = text20Single20Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Text20Single10);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteSjisText20Wide5()
     {
-        text20Converter.Write(text20Wide10Buffer, 0, Text20Wide5);
+        var c = text20Converter;
+        var buffer = text20Wide10Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Text20Wide5);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteSjisText20Empty()
     {
-        text20Converter.Write(text20EmptyBuffer, 0, Text20Empty);
+        var c = text20Converter;
+        var buffer = text20EmptyBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Text20Empty);
+        }
     }
 
     // Number
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextShort4Zero()
     {
-        numberTextShort4Converter.Write(numberTextShort4ZeroBuffer, 0, ZeroShort);
+        var c = numberTextShort4Converter;
+        var buffer = numberTextShort4ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroShort);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextShort4Max()
     {
-        numberTextShort4Converter.Write(numberTextShort4MaxBuffer, 0, Length4Integer);
+        var c = numberTextShort4Converter;
+        var buffer = numberTextShort4MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length4Integer);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextInt8Zero()
     {
-        numberTextInt8Converter.Write(numberTextInt8ZeroBuffer, 0, ZeroInteger);
+        var c = numberTextInt8Converter;
+        var buffer = numberTextInt8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroInteger);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextInt8Max()
     {
-        numberTextInt8Converter.Write(numberTextInt8MaxBuffer, 0, Length8Integer);
+        var c = numberTextInt8Converter;
+        var buffer = numberTextInt8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length8Integer);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextLong18Zero()
     {
-        numberTextLong18Converter.Write(numberTextLong18ZeroBuffer, 0, ZeroLong);
+        var c = numberTextLong18Converter;
+        var buffer = numberTextLong18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroLong);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextLong18Max()
     {
-        numberTextLong18Converter.Write(numberTextLong18MaxBuffer, 0, Length18Integer);
+        var c = numberTextLong18Converter;
+        var buffer = numberTextLong18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length18Integer);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal8Zero()
     {
-        numberTextDecimal8Converter.Write(numberTextDecimal8ZeroBuffer, 0, ZeroDecimal);
+        var c = numberTextDecimal8Converter;
+        var buffer = numberTextDecimal8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal8Max()
     {
-        numberTextDecimal8Converter.Write(numberTextDecimal8MaxBuffer, 0, Length8Decimal);
+        var c = numberTextDecimal8Converter;
+        var buffer = numberTextDecimal8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length8Decimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal18Zero()
     {
-        numberTextDecimal18Converter.Write(numberTextDecimal18ZeroBuffer, 0, ZeroDecimal);
+        var c = numberTextDecimal18Converter;
+        var buffer = numberTextDecimal18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal18Max()
     {
-        numberTextDecimal18Converter.Write(numberTextDecimal18MaxBuffer, 0, Length18Decimal);
+        var c = numberTextDecimal18Converter;
+        var buffer = numberTextDecimal18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length18Decimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal28Zero()
     {
-        numberTextDecimal28Converter.Write(numberTextDecimal28ZeroBuffer, 0, ZeroDecimal);
+        var c = numberTextDecimal28Converter;
+        var buffer = numberTextDecimal28ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteNumberTextDecimal28Max()
     {
-        numberTextDecimal28Converter.Write(numberTextDecimal28MaxBuffer, 0, Length28Decimal);
+        var c = numberTextDecimal28Converter;
+        var buffer = numberTextDecimal28MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length28Decimal);
+        }
     }
 
     // DateTime
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTimeText8()
     {
-        dateTimeText8Converter.Write(dateTimeText8Buffer, 0, DateTime14);
+        var c = dateTimeText8Converter;
+        var buffer = dateTimeText8Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime8);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTimeText14()
     {
-        dateTimeText14Converter.Write(dateTimeText14Buffer, 0, DateTime14);
+        var c = dateTimeText14Converter;
+        var buffer = dateTimeText14Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime14);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTimeText17()
     {
-        dateTimeText17Converter.Write(dateTimeText17Buffer, 0, DateTime14);
+        var c = dateTimeText17Converter;
+        var buffer = dateTimeText17Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime17);
+        }
     }
 
     //--------------------------------------------------------------------------------
@@ -726,125 +1043,220 @@ public class ConverterBenchmark
 
     // ASCII
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteText13Code()
     {
-        text13Converter.Write(ascii13Buffer, 0, Ascii13);
+        var c = text13Converter;
+        var buffer = ascii13Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Ascii13);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteAscii13Code()
     {
-        ascii13Converter.Write(ascii13Buffer, 0, Ascii13);
+        var c = ascii13Converter;
+        var buffer = ascii13Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Ascii13);
+        }
     }
 
     // Unicode
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteText30Wide15()
     {
-        text30Converter.Write(unicode30Buffer, 0, Unicode30Wide15);
+        var c = text30Converter;
+        var buffer = unicode30Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Unicode30Wide15);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteUnicode30Wide15()
     {
-        unicode30Converter.Write(unicode30Buffer, 0, Unicode30Wide15);
+        var c = unicode30Converter;
+        var buffer = unicode30Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Unicode30Wide15);
+        }
     }
 
     // Integer
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteIntegerShort4Zero()
     {
-        short4Converter.Write(short4ZeroBuffer, 0, ZeroShort);
+        var c = short4Converter;
+        var buffer = short4ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroShort);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteIntegerShort4Max()
     {
-        short4Converter.Write(short4MaxBuffer, 0, Length4Integer);
+        var c = short4Converter;
+        var buffer = short4MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length4Integer);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteInteger8Zero()
     {
-        int8Converter.Write(int8ZeroBuffer, 0, ZeroInteger);
+        var c = int8Converter;
+        var buffer = int8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroInteger);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteInteger8Max()
     {
-        int8Converter.Write(int8MaxBuffer, 0, Length8Integer);
+        var c = int8Converter;
+        var buffer = int8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length8Integer);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteLong18Zero()
     {
-        long18Converter.Write(long18ZeroBuffer, 0, ZeroLong);
+        var c = long18Converter;
+        var buffer = long18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroLong);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteLong18Max()
     {
-        long18Converter.Write(long18MaxBuffer, 0, Length18Integer);
+        var c = long18Converter;
+        var buffer = long18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length18Integer);
+        }
     }
 
     // Decimal
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal8Zero()
     {
-        decimal8Converter.Write(decimal8ZeroBuffer, 0, ZeroDecimal);
+        var c = decimal8Converter;
+        var buffer = decimal8ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal8Max()
     {
-        decimal8Converter.Write(decimal8MaxBuffer, 0, Length8Decimal);
+        var c = decimal8Converter;
+        var buffer = decimal8MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length8Decimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal18Zero()
     {
-        decimal18Converter.Write(decimal18ZeroBuffer, 0, ZeroDecimal);
+        var c = decimal18Converter;
+        var buffer = decimal18ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal18Max()
     {
-        decimal18Converter.Write(decimal18MaxBuffer, 0, Length18Decimal);
+        var c = decimal18Converter;
+        var buffer = decimal18MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length18Decimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal28Zero()
     {
-        decimal28Converter.Write(decimal28ZeroBuffer, 0, ZeroDecimal);
+        var c = decimal28Converter;
+        var buffer = decimal28ZeroBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, ZeroDecimal);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDecimal28Max()
     {
-        decimal28Converter.Write(decimal28MaxBuffer, 0, Length28Decimal);
+        var c = decimal28Converter;
+        var buffer = decimal28MaxBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, Length28Decimal);
+        }
     }
 
     // DateTime
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTime8()
     {
-        dateTime8Converter.Write(dateTime8Buffer, 0, DateTime8);
+        var c = dateTime8Converter;
+        var buffer = dateTime8Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime8);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTime14()
     {
-        dateTime14Converter.Write(dateTime14Buffer, 0, DateTime14);
+        var c = dateTime14Converter;
+        var buffer = dateTime14Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime14);
+        }
     }
 
-    [Benchmark]
+    [Benchmark(OperationsPerInvoke = N)]
     public void WriteDateTime17()
     {
-        dateTime17Converter.Write(dateTime17Buffer, 0, DateTime17);
+        var c = dateTime17Converter;
+        var buffer = dateTime17Buffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buffer, 0, DateTime17);
+        }
     }
 }
