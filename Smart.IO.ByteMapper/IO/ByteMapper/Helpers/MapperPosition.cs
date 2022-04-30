@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
-using System.Collections.Generic;
-
 using Smart.Collections.Generic;
 using Smart.IO.ByteMapper.Mappers;
 

@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
-using System;
-
 public static class EnumHelper
 {
     public static Type GetConvertEnumType(Type type)

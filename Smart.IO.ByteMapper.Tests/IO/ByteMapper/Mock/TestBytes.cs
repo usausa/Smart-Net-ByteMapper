@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Mock;
 
-using System;
-
 public static class TestBytes
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]

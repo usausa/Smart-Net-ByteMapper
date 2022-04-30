@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using System.Collections.Generic;
 using System.Globalization;
 
 public enum Culture

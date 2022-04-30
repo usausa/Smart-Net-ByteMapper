@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Builders;
 
-using System;
-
 using Smart.IO.ByteMapper.Converters;
 
 public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<IntegerConverterBuilder>

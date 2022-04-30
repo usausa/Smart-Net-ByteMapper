@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
-using System;
-
 using Xunit;
 
 public class TypeConfigExpressionTest

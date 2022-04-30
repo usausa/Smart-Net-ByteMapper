@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
 using System.Buffers.Binary;
 
 using Smart.IO.ByteMapper.Helpers;

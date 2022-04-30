@@ -1,9 +1,5 @@
 namespace Smart.AspNetCore.Formatters;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 internal static class TypeHelper
 {
     private static readonly Type EnumerableType = typeof(IEnumerable<>);

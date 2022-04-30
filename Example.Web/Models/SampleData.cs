@@ -1,15 +1,10 @@
 namespace Example.Web.Models;
 
-using System;
-using System.Diagnostics.CodeAnalysis;
-
 public class SampleData
 {
-    [AllowNull]
-    public string Code { get; set; }
+    public string Code { get; set; } = default!;
 
-    [AllowNull]
-    public string Name { get; set; }
+    public string Name { get; set; } = default!;
 
     public int Qty { get; set; }
 

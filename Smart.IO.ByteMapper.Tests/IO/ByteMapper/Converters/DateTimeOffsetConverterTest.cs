@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
 using System.Text;
 
 using Smart.IO.ByteMapper.Mock;

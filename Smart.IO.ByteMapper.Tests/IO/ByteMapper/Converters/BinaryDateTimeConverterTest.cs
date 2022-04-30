@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
-
 using Smart.IO.ByteMapper.Mock;
 
 using Xunit;

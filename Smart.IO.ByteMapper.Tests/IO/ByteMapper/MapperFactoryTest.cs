@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper;
 
-using System;
-
 using Xunit;
 
 public class MapperFactoryTest

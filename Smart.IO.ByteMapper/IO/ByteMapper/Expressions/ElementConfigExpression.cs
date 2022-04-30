@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
-using System;
-
 internal sealed class ElementConfigExpression : IMemberMapConfigSyntax
 {
     public IMemberMapExpression Expression { get; private set; }

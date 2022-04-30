@@ -1,9 +1,5 @@
 namespace Example.Web.Controllers;
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using Example.Web.Models;
 
 using Microsoft.AspNetCore.Mvc;

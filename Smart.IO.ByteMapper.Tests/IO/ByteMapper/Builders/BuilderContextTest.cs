@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Builders;
 
-using System.Collections.Generic;
-
 using Xunit;
 
 public class BuilderContextTest

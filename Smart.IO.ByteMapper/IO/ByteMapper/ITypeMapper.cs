@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper;
 
-using System;
-
 public interface ITypeMapper
 {
     Type TargetType { get; }

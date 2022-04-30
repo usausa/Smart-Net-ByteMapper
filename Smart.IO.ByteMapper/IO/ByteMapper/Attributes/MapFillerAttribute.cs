@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using System;
-
 using Smart.IO.ByteMapper.Builders;
 
 public sealed class MapFillerAttribute : AbstractTypeMapAttribute

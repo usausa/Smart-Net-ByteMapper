@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper;
 
-using System;
 using System.Runtime.Serialization;
 
 [Serializable]

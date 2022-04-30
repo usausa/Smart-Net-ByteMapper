@@ -1,10 +1,6 @@
 namespace Smart.AspNetCore.Formatters;
 
-using System;
 using System.Buffers;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 

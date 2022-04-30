@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Mock;
 
-using System;
-
 public enum IntEnum
 {
     Zero,

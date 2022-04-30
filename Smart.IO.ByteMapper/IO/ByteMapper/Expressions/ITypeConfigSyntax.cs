@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
-using System;
 using System.Linq.Expressions;
 
 public interface ITypeConfigSyntax<T>

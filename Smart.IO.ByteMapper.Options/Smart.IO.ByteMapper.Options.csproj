@@ -9,9 +9,9 @@
 
   <PropertyGroup>
     <PackageId>Usa.Smart.IO.ByteMapper.Options</PackageId>
-    <Title>Smart.IO.ByteMapper.Options .NET</Title>
-    <Description>Smart byte mapper library optional converters for .NET</Description>
-    <Summary>Smart byte mapper library optional converters for .NET</Summary>
+    <Title>Smart.IO.ByteMapper.Options</Title>
+    <Description>Smart byte mapper library optional converters</Description>
+    <Summary>Smart byte mapper library optional converters</Summary>
     <PackageTags>smart io mapper</PackageTags>
   </PropertyGroup>
 

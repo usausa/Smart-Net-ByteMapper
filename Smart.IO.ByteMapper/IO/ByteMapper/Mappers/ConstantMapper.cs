@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Mappers;
 
-using System;
-
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
 public sealed class ConstantMapper : IMapper
 {

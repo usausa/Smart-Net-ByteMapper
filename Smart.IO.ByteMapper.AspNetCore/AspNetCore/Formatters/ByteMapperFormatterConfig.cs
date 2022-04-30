@@ -1,7 +1,5 @@
 namespace Smart.AspNetCore.Formatters;
 
-using System.Collections.Generic;
-
 using Smart.IO.ByteMapper;
 using Smart.Reflection;
 

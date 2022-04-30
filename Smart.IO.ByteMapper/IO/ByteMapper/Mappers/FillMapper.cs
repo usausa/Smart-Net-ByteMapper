@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Mappers;
 
-using System;
-
 using Smart.IO.ByteMapper.Helpers;
 
 public sealed class FillMapper : IMapper

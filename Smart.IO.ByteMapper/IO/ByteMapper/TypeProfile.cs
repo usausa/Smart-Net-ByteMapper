@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper;
 
-using System;
-
 internal readonly struct TypeProfile : IEquatable<TypeProfile>
 {
     public Type Type { get; }

@@ -1,7 +1,5 @@
 namespace Smart.AspNetCore.Filters;
 
-using System;
-
 using Microsoft.AspNetCore.Mvc.Filters;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]

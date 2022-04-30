@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
-using System;
 using System.Runtime.CompilerServices;
 
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]

@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
-
 using Smart.IO.ByteMapper.Helpers;
 
 internal sealed class Int32Converter : IMapConverter

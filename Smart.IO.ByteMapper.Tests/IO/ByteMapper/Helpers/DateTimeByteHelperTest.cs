@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
-using System;
 using System.Text;
 
 using Xunit;

@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using System;
 using System.Globalization;
 using System.Text;
 

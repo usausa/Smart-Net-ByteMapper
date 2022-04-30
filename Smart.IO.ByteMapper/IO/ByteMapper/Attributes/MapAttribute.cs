@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using System;
-
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
 public sealed class MapAttribute : Attribute
 {
