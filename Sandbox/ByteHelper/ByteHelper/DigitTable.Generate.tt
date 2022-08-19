@@ -3,8 +3,8 @@ namespace ByteHelper
 {
     public static partial class DigitTable
     {
-		private static readonly byte[] Table =
-		{
+        private static readonly byte[] Table =
+        {
 <#
 for (var i = 0; i < 10000; i++)
 {
@@ -16,12 +16,12 @@ for (var i = 0; i < 10000; i++)
     var b3 = (byte)(value % 10) + (byte)'0';
     value /= 10;
     var b4 = (byte)(value % 10) + (byte)'0';
-	var length = (byte)(i >= 1000 ? 4 : i >= 100 ? 3 : i >= 10 ? 2 : i >= 1 ? 1 : 0);
+    var length = (byte)(i >= 1000 ? 4 : i >= 100 ? 3 : i >= 10 ? 2 : i >= 1 ? 1 : 0);
 #>
             <#= b1 #>, <#= b2 #>, <#= b3 #>, <#= b4 #>, <#= length #>,
 <#
 }
 #>
-		};
+        };
     }
 }

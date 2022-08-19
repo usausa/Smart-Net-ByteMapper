@@ -3,8 +3,8 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 internal static partial class DateTimeByteHelper
 {
-	private static readonly byte[][] Table =
-	{
+    private static readonly byte[][] Table =
+    {
 <#
 for (var i = 0; i < 100; i++)
 {
@@ -13,5 +13,5 @@ for (var i = 0; i < 100; i++)
 <#
 }
 #>
-	};
+    };
 }

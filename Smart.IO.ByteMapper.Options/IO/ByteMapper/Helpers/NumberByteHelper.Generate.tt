@@ -5,9 +5,9 @@
     for (var i = 0; i < 96; i++)
     {
         value = value == 0 ? 1m : value * 2;
-		var workValue = value;
+        var workValue = value;
 
-		var bytes = new byte[29];
+        var bytes = new byte[29];
         var index = 0;
         while (workValue > 0)
         {
@@ -72,7 +72,7 @@ namespace Smart.IO.ByteMapper.Helpers;
 internal static partial class NumberByteHelper
 {
     private static readonly long[] Table =
-	{
+    {
 <#
 for (var i = 0; i < workTable.Length; i += 2)
 {
