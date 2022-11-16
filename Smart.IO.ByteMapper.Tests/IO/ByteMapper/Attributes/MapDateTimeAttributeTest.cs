@@ -4,6 +4,7 @@ using System.Text;
 
 using Xunit;
 
+// ReSharper disable StringLiteralTypo
 public class MapDateTimeAttributeTest
 {
     //--------------------------------------------------------------------------------

@@ -6,6 +6,7 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.Text.Japanese;
 
+// ReSharper disable StringLiteralTypo
 [Config(typeof(BenchmarkConfig))]
 public class ComplexBenchmark
 {

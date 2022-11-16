@@ -6,6 +6,7 @@ using Smart.IO.ByteMapper.Mock;
 
 using Xunit;
 
+// ReSharper disable StringLiteralTypo
 public class DateTimeOffsetConverterTest
 {
     private const int Offset = 1;

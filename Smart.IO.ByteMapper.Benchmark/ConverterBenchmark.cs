@@ -10,6 +10,7 @@ using Smart.IO.ByteMapper.Builders;
 using Smart.IO.ByteMapper.Converters;
 using Smart.Text.Japanese;
 
+// ReSharper disable StringLiteralTypo
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
 [Config(typeof(BenchmarkConfig))]
 public class ConverterBenchmark
