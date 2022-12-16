@@ -31,7 +31,7 @@ public class MapFillerExpressionTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes(" 0 _"), buffer);
+        Assert.Equal(" 0 _"u8.ToArray(), buffer);
     }
 
     //--------------------------------------------------------------------------------

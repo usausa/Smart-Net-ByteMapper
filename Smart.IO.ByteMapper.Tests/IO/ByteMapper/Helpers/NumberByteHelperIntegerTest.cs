@@ -11,32 +11,32 @@ public class NumberByteHelperIntegerTest
     public void ParseInteger()
     {
         // Default
-        var buffer = Encoding.ASCII.GetBytes("1234567890123456789");
+        var buffer = "1234567890123456789"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out var value));
         Assert.Equal(1234567890123456789L, value);
 
         // Negative
-        buffer = Encoding.ASCII.GetBytes("-1234567890123456789");
+        buffer = "-1234567890123456789"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(-1234567890123456789L, value);
 
         // Padded
-        buffer = Encoding.ASCII.GetBytes("0001234567890123456789");
+        buffer = "0001234567890123456789"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(1234567890123456789L, value);
 
         // Padded Negative
-        buffer = Encoding.ASCII.GetBytes("-0001234567890123456789");
+        buffer = "-0001234567890123456789"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(-1234567890123456789L, value);
 
         // Zero
-        buffer = Encoding.ASCII.GetBytes("0");
+        buffer = "0"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(0L, value);
 
         // Minus zero
-        buffer = Encoding.ASCII.GetBytes("-0");
+        buffer = "-0"u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(0L, value);
 
@@ -51,7 +51,7 @@ public class NumberByteHelperIntegerTest
         Assert.Equal(Int64.MinValue, value);
 
         // Trim
-        buffer = Encoding.ASCII.GetBytes(" 1234567890123456789 ");
+        buffer = " 1234567890123456789 "u8.ToArray();
         Assert.True(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out value));
         Assert.Equal(1234567890123456789L, value);
 
@@ -76,17 +76,17 @@ public class NumberByteHelperIntegerTest
         // Failed
 
         // Empty
-        buffer = Encoding.ASCII.GetBytes("                   ");
+        buffer = "                   "u8.ToArray();
         Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
         // Invalid Value
-        buffer = Encoding.ASCII.GetBytes("1234567890 123456789");
+        buffer = "1234567890 123456789"u8.ToArray();
         Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
-        buffer = Encoding.ASCII.GetBytes("a1234567890123456789");
+        buffer = "a1234567890123456789"u8.ToArray();
         Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
 
-        buffer = Encoding.ASCII.GetBytes("1234567890123456789a");
+        buffer = "1234567890123456789a"u8.ToArray();
         Assert.False(NumberByteHelper.TryParseInt64(buffer, 0, buffer.Length, 0x20, out _));
     }
 

@@ -28,7 +28,7 @@ public class MapConstantExpressionTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes("1234\r\n"), buffer);
+        Assert.Equal("1234\r\n"u8.ToArray(), buffer);
     }
 
     //--------------------------------------------------------------------------------

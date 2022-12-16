@@ -81,7 +81,7 @@ public class TypeDefaultExpressionTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes("1_1__1Y*\r\n"), buffer);
+        Assert.Equal("1_1__1Y*\r\n"u8.ToArray(), buffer);
     }
 
     //--------------------------------------------------------------------------------

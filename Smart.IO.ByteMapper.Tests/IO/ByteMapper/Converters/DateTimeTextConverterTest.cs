@@ -22,11 +22,11 @@ public class DateTimeTextConverterTest
 
     private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456"));
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, "20001231123456"u8.ToArray());
 
     private static readonly byte[] ShortBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231".PadRight(Length, ' ')));
 
-    private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxx"));
+    private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, "xxxxxxxxxxxxxx"u8.ToArray());
 
     private readonly DateTimeTextConverter decimalConverter;
 

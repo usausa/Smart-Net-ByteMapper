@@ -26,7 +26,7 @@ public class MapFillerAttributeTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes("    00"), buffer);
+        Assert.Equal("    00"u8.ToArray(), buffer);
     }
 
     //--------------------------------------------------------------------------------

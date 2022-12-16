@@ -19,12 +19,12 @@ public class DateTimeOffsetConverterTest
 
     private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadRight(Length, ' ')));
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("20001231123456789"));
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, "20001231123456789"u8.ToArray());
 
-    private static readonly byte[] MinValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("00010101000000000"));
-    private static readonly byte[] MaxValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("99991232235959999"));
+    private static readonly byte[] MinValueBytes = TestBytes.Offset(Offset, "00010101000000000"u8.ToArray());
+    private static readonly byte[] MaxValueBytes = TestBytes.Offset(Offset, "99991232235959999"u8.ToArray());
 
-    private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("xxxxxxxxxxxxxxxxx"));
+    private static readonly byte[] InvalidBytes = TestBytes.Offset(Offset, "xxxxxxxxxxxxxxxxx"u8.ToArray());
 
     private readonly DateTimeOffsetConverter unspecifiedDateTimeConverter;
 

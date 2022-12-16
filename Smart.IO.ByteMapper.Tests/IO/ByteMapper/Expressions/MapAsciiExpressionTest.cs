@@ -35,10 +35,10 @@ public class MapAsciiExpressionTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes("    ____"), buffer);
+        Assert.Equal("    ____"u8.ToArray(), buffer);
 
         // Read
-        mapper.FromByte(Encoding.ASCII.GetBytes("12  __AB"), 0, obj);
+        mapper.FromByte("12  __AB"u8.ToArray(), 0, obj);
 
         Assert.Equal("12", obj.StringValue);
         Assert.Equal("__AB", obj.CustomStringValue);

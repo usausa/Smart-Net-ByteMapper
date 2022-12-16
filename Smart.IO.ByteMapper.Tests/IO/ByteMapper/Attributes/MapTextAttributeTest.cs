@@ -29,10 +29,10 @@ public class MapTextAttributeTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(Encoding.ASCII.GetBytes("    ______"), buffer);
+        Assert.Equal("    ______"u8.ToArray(), buffer);
 
         // Read
-        mapper.FromByte(Encoding.ASCII.GetBytes("12  __AB*_"), 0, obj);
+        mapper.FromByte("12  __AB*_"u8.ToArray(), 0, obj);
 
         Assert.Equal("12", obj.StringValue);
         Assert.Equal("__AB", obj.CustomStringValue);
