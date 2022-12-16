@@ -45,7 +45,7 @@ public class MapConstantAttributeTest
 
     [Map(4, UseDelimiter = true)]
     [MapConstant(0, new byte[] { 0x31, 0x32 })]
-    internal class ConstAttributeObject
+    internal sealed class ConstAttributeObject
     {
     }
 }

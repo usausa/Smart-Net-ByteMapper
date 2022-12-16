@@ -93,7 +93,7 @@ public class MapDecimalAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(28)]
-    internal class DecimalAttributeObject
+    internal sealed class DecimalAttributeObject
     {
         [MapDecimal(0, 10, 2, UseGrouping = true, GroupingSize = 3)]
         public decimal DecimalValue { get; set; }

@@ -55,7 +55,7 @@ public class MapTextExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class TextExpressionObject
+    internal sealed class TextExpressionObject
     {
         public string StringValue { get; set; }
 

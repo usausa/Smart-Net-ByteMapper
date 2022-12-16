@@ -32,14 +32,14 @@ public class MapperFactoryTest
         void Test();
     }
 
-    internal class Service : IService
+    internal sealed class Service : IService
     {
         public void Test()
         {
         }
     }
 
-    internal class ExceptionProfile : MapperProfile
+    internal sealed class ExceptionProfile : MapperProfile
     {
         public ExceptionProfile()
         {

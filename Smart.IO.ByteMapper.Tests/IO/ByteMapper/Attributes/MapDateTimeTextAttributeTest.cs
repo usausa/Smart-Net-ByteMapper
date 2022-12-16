@@ -91,7 +91,7 @@ public class MapDateTimeTextAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(60)]
-    internal class DateTimeTextAttributeObject
+    internal sealed class DateTimeTextAttributeObject
     {
         [MapDateTimeText(0, 8, "yyyyMMdd")]
         public DateTime DateTimeValue { get; set; }

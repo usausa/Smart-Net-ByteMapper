@@ -3,7 +3,7 @@ namespace Smart.IO.ByteMapper;
 using Smart.IO.ByteMapper.Helpers;
 using Smart.IO.ByteMapper.Mappers;
 
-internal class TypeMapper<T> : ITypeMapper<T>
+internal sealed class TypeMapper<T> : ITypeMapper<T>
 {
     private readonly IMapper[] readableMappers;
 

@@ -51,7 +51,7 @@ public class MapByteAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(1)]
-    internal class ByteAttributeObject
+    internal sealed class ByteAttributeObject
     {
         [MapByte(0)]
         public byte ByteValue { get; set; }

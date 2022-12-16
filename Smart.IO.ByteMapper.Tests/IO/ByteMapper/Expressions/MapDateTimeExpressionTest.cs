@@ -97,7 +97,7 @@ public class MapDateTimeExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class DateTimeExpressionObject
+    internal sealed class DateTimeExpressionObject
     {
         public DateTime DateTimeValue { get; set; }
 

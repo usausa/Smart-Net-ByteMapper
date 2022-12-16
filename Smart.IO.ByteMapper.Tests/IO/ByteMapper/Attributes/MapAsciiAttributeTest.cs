@@ -60,7 +60,7 @@ public class MapAsciiAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(8)]
-    internal class AsciiAttributeObject
+    internal sealed class AsciiAttributeObject
     {
         [MapAscii(0, 4)]
         public string StringValue { get; set; }

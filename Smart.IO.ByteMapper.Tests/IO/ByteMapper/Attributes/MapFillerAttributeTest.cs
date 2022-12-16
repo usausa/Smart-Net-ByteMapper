@@ -51,7 +51,7 @@ public class MapFillerAttributeTest
     [Map(6, AutoFiller = true)]
     [MapFiller(0, 2)]
     [MapFiller(4, 2, Filler = 0x30)]
-    internal class FillerAttributeObject
+    internal sealed class FillerAttributeObject
     {
     }
 }

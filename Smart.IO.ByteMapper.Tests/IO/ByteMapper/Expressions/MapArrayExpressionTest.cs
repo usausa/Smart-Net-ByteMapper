@@ -88,7 +88,7 @@ public class MapArrayExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class ArrayExpressionObject
+    internal sealed class ArrayExpressionObject
     {
         public int[] ArrayValue { get; set; }
 

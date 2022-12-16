@@ -85,7 +85,7 @@ public class MapArrayAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(19)]
-    internal class ArrayAttributeObject
+    internal sealed class ArrayAttributeObject
     {
         [MapArray(3)]
         [MapBinary(0)]

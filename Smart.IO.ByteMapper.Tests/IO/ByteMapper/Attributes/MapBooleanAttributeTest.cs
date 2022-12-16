@@ -76,7 +76,7 @@ public class MapBooleanAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(4)]
-    internal class BooleanAttributeObject
+    internal sealed class BooleanAttributeObject
     {
         [MapBoolean(0)]
         public bool BooleanValue { get; set; }

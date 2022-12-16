@@ -88,7 +88,7 @@ public class MapDecimalExpressionTest
     // Expression
     //--------------------------------------------------------------------------------
 
-    internal class DecimalExpressionObject
+    internal sealed class DecimalExpressionObject
     {
         public decimal DecimalValue { get; set; }
 

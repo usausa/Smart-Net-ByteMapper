@@ -141,7 +141,7 @@ public class MapIntegerExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class IntegerExpressionObject
+    internal sealed class IntegerExpressionObject
     {
         // int
 

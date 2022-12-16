@@ -61,7 +61,7 @@ public class MapUnicodeAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(8)]
-    internal class UnicodeAttributeObject
+    internal sealed class UnicodeAttributeObject
     {
         [MapUnicode(0, 4)]
         public string StringValue { get; set; }

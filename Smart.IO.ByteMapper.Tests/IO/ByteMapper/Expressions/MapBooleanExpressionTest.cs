@@ -63,7 +63,7 @@ public class MapBooleanExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class BooleanExpressionObject
+    internal sealed class BooleanExpressionObject
     {
         public bool BooleanValue { get; set; }
 

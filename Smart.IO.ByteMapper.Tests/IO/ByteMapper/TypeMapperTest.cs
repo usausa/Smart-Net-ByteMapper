@@ -180,7 +180,7 @@ public class TypeMapperTest
     }
 
     [Map(4, UseDelimiter = false)]
-    internal class TargetObject
+    internal sealed class TargetObject
     {
         [MapBinary(0)]
         public int IntValue { get; set; }

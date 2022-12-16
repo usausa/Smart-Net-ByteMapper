@@ -43,7 +43,7 @@ public class AttributeMappingFactoryTest
     //--------------------------------------------------------------------------------
 
     [Map(6, UseDelimiter = false)]
-    internal class OverlapObject
+    internal sealed class OverlapObject
     {
         [MapBinary(0)]
         public int IntValue1 { get; set; }
@@ -53,14 +53,14 @@ public class AttributeMappingFactoryTest
     }
 
     [Map(1, UseDelimiter = false)]
-    internal class UnmatchedObject
+    internal sealed class UnmatchedObject
     {
         [MapBinary(0)]
         public string StringValue { get; set; }
     }
 
     [Map(4, UseDelimiter = false)]
-    internal class NoArrayObject
+    internal sealed class NoArrayObject
     {
         [MapArray(1)]
         [MapBinary(0)]
@@ -68,7 +68,7 @@ public class AttributeMappingFactoryTest
     }
 
     [Map(4, UseDelimiter = false)]
-    internal class ArrayUnmatchedObject
+    internal sealed class ArrayUnmatchedObject
     {
         [MapArray(1)]
         [MapBinary(0)]

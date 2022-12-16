@@ -137,7 +137,7 @@ public class MapIntegerAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(48)]
-    internal class IntegerAttributeObject
+    internal sealed class IntegerAttributeObject
     {
         // int
 

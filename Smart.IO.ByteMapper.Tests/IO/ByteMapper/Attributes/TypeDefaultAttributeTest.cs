@@ -87,7 +87,7 @@ public class TypeDefaultAttributeTest
     [TypeZeroFill(false)]
     [TypeUseGrouping(false)]
     [TypeUnicodeFiller(' ')]
-    internal class TypeDefaultAttributeObject
+    internal sealed class TypeDefaultAttributeObject
     {
         [MapNumberText(0, 2)]
         public int IntValue { get; set; }

@@ -116,7 +116,7 @@ public class MapNumberTextAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(54)]
-    internal class NumberTextAttributeObject
+    internal sealed class NumberTextAttributeObject
     {
         // int
 

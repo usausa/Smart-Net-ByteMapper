@@ -63,7 +63,7 @@ public class MapTextAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(10)]
-    internal class TextAttributeObject
+    internal sealed class TextAttributeObject
     {
         [MapText(0, 4)]
         public string StringValue { get; set; }

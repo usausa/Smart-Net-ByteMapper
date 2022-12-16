@@ -90,11 +90,11 @@ public class ExpressionExtensionsTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class SimpleObject
+    internal sealed class SimpleObject
     {
     }
 
-    internal class AnonymousProfile : MapperProfile
+    internal sealed class AnonymousProfile : MapperProfile
     {
         public AnonymousProfile(Action<MapperProfile> action)
         {
@@ -102,7 +102,7 @@ public class ExpressionExtensionsTest
         }
     }
 
-    internal class NamedProfile : MapperProfile
+    internal sealed class NamedProfile : MapperProfile
     {
         public NamedProfile(string name, Action<MapperProfile> action)
             : base(name)

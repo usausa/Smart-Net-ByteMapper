@@ -27,12 +27,12 @@ public class MapAttributeTest
     }
 
     [Map(2, NullFiller = 0xFF)]
-    internal class MapNullFillerObject
+    internal sealed class MapNullFillerObject
     {
     }
 
     [Map(2)]
-    internal class DefaultNullFillerObject
+    internal sealed class DefaultNullFillerObject
     {
     }
 
@@ -66,17 +66,17 @@ public class MapAttributeTest
 
     [Map(2, AutoFiller = true)]
     [TypeFiller(0xFF)]
-    internal class TypeFillerObject
+    internal sealed class TypeFillerObject
     {
     }
 
     [Map(2, AutoFiller = true)]
-    internal class DefaultFillerObject
+    internal sealed class DefaultFillerObject
     {
     }
 
     [Map(2, AutoFiller = false)]
-    internal class NoFillerObject
+    internal sealed class NoFillerObject
     {
     }
 
@@ -110,17 +110,17 @@ public class MapAttributeTest
 
     [Map(2, AutoFiller = false, UseDelimiter = true)]
     [TypeDelimiter(0xFF)]
-    internal class TypeDelimiterObject
+    internal sealed class TypeDelimiterObject
     {
     }
 
     [Map(2, AutoFiller = false, UseDelimiter = true)]
-    internal class DefaultDelimiterObject
+    internal sealed class DefaultDelimiterObject
     {
     }
 
     [Map(2, AutoFiller = false, UseDelimiter = false)]
-    internal class NoDelimiterObject
+    internal sealed class NoDelimiterObject
     {
     }
 

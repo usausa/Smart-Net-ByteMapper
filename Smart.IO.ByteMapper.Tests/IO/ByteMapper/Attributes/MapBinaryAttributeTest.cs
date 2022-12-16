@@ -110,7 +110,7 @@ public class MapBinaryAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(120)]
-    internal class BinaryAttributeObject
+    internal sealed class BinaryAttributeObject
     {
         [MapBinary(0)]
         public int BigEndianIntValue { get; set; }

@@ -5,7 +5,8 @@ using Example.Web.Models;
 using Smart.AspNetCore.Formatters;
 using Smart.IO.ByteMapper;
 
-#pragma warning disable CA1812
+#pragma warning disable CA1852
+
 var builder = WebApplication.CreateBuilder(args);
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);

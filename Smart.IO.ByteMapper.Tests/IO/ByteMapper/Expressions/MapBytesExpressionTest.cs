@@ -56,7 +56,7 @@ public class MapBytesExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class BytesAttributeObject
+    internal sealed class BytesAttributeObject
     {
         public byte[] BytesValue { get; set; }
 

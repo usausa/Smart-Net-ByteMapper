@@ -83,7 +83,7 @@ public class MapDateTimeAttributeTest
     //--------------------------------------------------------------------------------
 
     [Map(60)]
-    internal class DateTimeAttributeObject
+    internal sealed class DateTimeAttributeObject
     {
         [MapDateTime(0, "yyyyMMdd", DateTimeKind.Unspecified)]
         public DateTime DateTimeValue { get; set; }

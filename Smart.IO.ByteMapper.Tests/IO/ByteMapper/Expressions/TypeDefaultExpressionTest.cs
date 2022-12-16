@@ -88,7 +88,7 @@ public class TypeDefaultExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class TypeDefaultExpressionObject
+    internal sealed class TypeDefaultExpressionObject
     {
         public int IntValue { get; set; }
 

@@ -58,7 +58,7 @@ public class MapAsciiExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class AsciiExpressionObject
+    internal sealed class AsciiExpressionObject
     {
         public string StringValue { get; set; }
 

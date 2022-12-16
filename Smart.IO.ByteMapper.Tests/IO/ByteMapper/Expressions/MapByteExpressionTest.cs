@@ -41,7 +41,7 @@ public class MapByteExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class ByteExpressionObject
+    internal sealed class ByteExpressionObject
     {
         public byte ByteValue { get; set; }
     }

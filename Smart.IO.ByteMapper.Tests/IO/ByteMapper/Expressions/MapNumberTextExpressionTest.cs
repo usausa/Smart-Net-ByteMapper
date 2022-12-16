@@ -126,7 +126,7 @@ public class MapNumberTextExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class NumberTextExpressionObject
+    internal sealed class NumberTextExpressionObject
     {
         // int
 

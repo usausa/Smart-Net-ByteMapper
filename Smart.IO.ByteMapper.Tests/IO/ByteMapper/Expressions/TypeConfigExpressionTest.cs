@@ -26,11 +26,11 @@ public class TypeConfigExpressionTest
         Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(null));
     }
 
-    internal class MapNullFillerObject
+    internal sealed class MapNullFillerObject
     {
     }
 
-    internal class DefaultNullFillerObject
+    internal sealed class DefaultNullFillerObject
     {
     }
 
@@ -62,15 +62,15 @@ public class TypeConfigExpressionTest
         Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
     }
 
-    internal class TypeFillerObject
+    internal sealed class TypeFillerObject
     {
     }
 
-    internal class DefaultFillerObject
+    internal sealed class DefaultFillerObject
     {
     }
 
-    internal class NoFillerObject
+    internal sealed class NoFillerObject
     {
     }
 
@@ -102,15 +102,15 @@ public class TypeConfigExpressionTest
         Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
     }
 
-    internal class TypeDelimiterObject
+    internal sealed class TypeDelimiterObject
     {
     }
 
-    internal class DefaultDelimiterObject
+    internal sealed class DefaultDelimiterObject
     {
     }
 
-    internal class NoDelimiterObject
+    internal sealed class NoDelimiterObject
     {
     }
 
@@ -149,7 +149,7 @@ public class TypeConfigExpressionTest
         Assert.NotNull(mapperFactory.Create<DummyObject>());
     }
 
-    internal class DummyObject
+    internal sealed class DummyObject
     {
         public int IntValue { get; set; }
 

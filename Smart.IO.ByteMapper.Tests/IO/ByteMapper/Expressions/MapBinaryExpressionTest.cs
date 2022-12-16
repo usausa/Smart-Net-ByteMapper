@@ -110,7 +110,7 @@ public class MapBinaryExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class BinaryExpressionObject
+    internal sealed class BinaryExpressionObject
     {
         public int BigEndianIntValue { get; set; }
 

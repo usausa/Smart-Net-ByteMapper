@@ -100,7 +100,7 @@ public class MapUnicodeExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class UnicodeExpressionObject
+    internal sealed class UnicodeExpressionObject
     {
         public string StringValue { get; set; }
 

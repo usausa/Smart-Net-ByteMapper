@@ -35,7 +35,7 @@ public class MapConstantExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class ConstExpressionObject
+    internal sealed class ConstExpressionObject
     {
     }
 }

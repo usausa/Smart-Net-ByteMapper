@@ -49,7 +49,7 @@ public class MapFillerExpressionTest
     // Helper
     //--------------------------------------------------------------------------------
 
-    internal class FillerExpressionObject
+    internal sealed class FillerExpressionObject
     {
     }
 }
