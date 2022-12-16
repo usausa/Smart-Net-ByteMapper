@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using System.Text;
-
 using Xunit;
 
 public class MapFillerAttributeTest

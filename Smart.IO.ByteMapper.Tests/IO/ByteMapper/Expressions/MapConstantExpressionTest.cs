@@ -1,6 +1,5 @@
+// ReSharper disable UseUtf8StringLiteral
 namespace Smart.IO.ByteMapper.Expressions;
-
-using System.Text;
 
 using Xunit;
 

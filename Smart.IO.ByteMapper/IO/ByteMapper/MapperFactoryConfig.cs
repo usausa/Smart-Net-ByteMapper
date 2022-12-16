@@ -20,6 +20,7 @@ public sealed class MapperFactoryConfig : IMapperFactoryConfig
     {
         config.Add<IDelegateFactory>(DelegateFactory.Default);
 
+        // ReSharper disable once UseUtf8StringLiteral
         this.DefaultDelimiter(0x0D, 0x0A);
         this.DefaultEncoding(Encoding.ASCII);
         this.DefaultTrim(true);

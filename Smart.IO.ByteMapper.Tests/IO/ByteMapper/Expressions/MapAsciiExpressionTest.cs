@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
-using System.Text;
-
 using Xunit;
 
 public class MapAsciiExpressionTest
