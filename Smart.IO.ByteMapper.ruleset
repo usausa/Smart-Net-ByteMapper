@@ -24,7 +24,10 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
     <Rule Id="CA1019" Action="Hidden" />
     <Rule Id="CA1034" Action="Hidden" />
+    <Rule Id="CA1510" Action="Hidden" />
+    <Rule Id="CA1512" Action="Hidden" />
     <Rule Id="CA1711" Action="Hidden" />
     <Rule Id="CA1716" Action="Hidden" />
+    <Rule Id="CA1861" Action="Hidden" />
   </Rules>
 </RuleSet>

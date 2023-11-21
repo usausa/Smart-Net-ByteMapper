@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Runtime.CompilerServices;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]
 internal static partial class NumberByteHelper
 {
     private const byte Minus = (byte)'-';

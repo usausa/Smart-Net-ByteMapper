@@ -8,6 +8,6 @@ public sealed class ByteConverterBuilder : AbstractMapConverterBuilder<ByteConve
 
     static ByteConverterBuilder()
     {
-        AddEntry(typeof(byte), 1, (_, _, _) => ByteConverter.Default);
+        AddEntry(typeof(byte), 1, static (_, _, _) => ByteConverter.Default);
     }
 }

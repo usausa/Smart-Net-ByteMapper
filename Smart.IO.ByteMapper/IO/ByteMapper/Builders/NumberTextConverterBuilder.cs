@@ -25,17 +25,17 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
 
     static NumberTextConverterBuilder()
     {
-        AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
-        AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateIntTextConverter(t, c));
-        AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
-        AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateLongTextConverter(t, c));
-        AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
-        AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateShortTextConverter(t, c));
-        AddEntry(typeof(decimal), (b, _) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
-        AddEntry(typeof(decimal?), (b, _) => b.Length, (b, t, c) => b.CreateDecimalTextConverter(t, c));
+        AddEntry(typeof(int), static (b, _) => b.Length, static (b, t, c) => b.CreateIntTextConverter(t, c));
+        AddEntry(typeof(int?), static (b, _) => b.Length, static (b, t, c) => b.CreateIntTextConverter(t, c));
+        AddEntry(typeof(long), static (b, _) => b.Length, static (b, t, c) => b.CreateLongTextConverter(t, c));
+        AddEntry(typeof(long?), static (b, _) => b.Length, static (b, t, c) => b.CreateLongTextConverter(t, c));
+        AddEntry(typeof(short), static (b, _) => b.Length, static (b, t, c) => b.CreateShortTextConverter(t, c));
+        AddEntry(typeof(short?), static (b, _) => b.Length, static (b, t, c) => b.CreateShortTextConverter(t, c));
+        AddEntry(typeof(decimal), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalTextConverter(t, c));
+        AddEntry(typeof(decimal?), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalTextConverter(t, c));
     }
 
-    private IMapConverter CreateIntTextConverter(Type type, IBuilderContext context)
+    private Int32TextConverter CreateIntTextConverter(Type type, IBuilderContext context)
     {
         return new Int32TextConverter(
             Length,
@@ -49,7 +49,7 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
             type);
     }
 
-    private IMapConverter CreateLongTextConverter(Type type, IBuilderContext context)
+    private Int64TextConverter CreateLongTextConverter(Type type, IBuilderContext context)
     {
         return new Int64TextConverter(
             Length,
@@ -63,7 +63,7 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
             type);
     }
 
-    private IMapConverter CreateShortTextConverter(Type type, IBuilderContext context)
+    private Int16TextConverter CreateShortTextConverter(Type type, IBuilderContext context)
     {
         return new Int16TextConverter(
             Length,
@@ -77,7 +77,7 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
             type);
     }
 
-    private IMapConverter CreateDecimalTextConverter(Type type, IBuilderContext context)
+    private DecimalTextConverter CreateDecimalTextConverter(Type type, IBuilderContext context)
     {
         return new DecimalTextConverter(
             Length,

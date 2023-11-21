@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Smart.Collections.Concurrent;
 using Smart.IO.ByteMapper;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
 public class ByteMapperInputFormatter : InputFormatter
 {
     private static readonly Type SingleReaderType = typeof(SingleInputReader<>);
@@ -115,7 +115,7 @@ public class ByteMapperInputFormatter : InputFormatter
             bufferSize = mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -155,7 +155,7 @@ public class ByteMapperInputFormatter : InputFormatter
             readSize = (bufferSize / mapper.Size) * mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -225,7 +225,7 @@ public class ByteMapperInputFormatter : InputFormatter
             readSize = (bufferSize / mapper.Size) * mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);

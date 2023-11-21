@@ -14,10 +14,10 @@ public sealed class AsciiConverterBuilder : AbstractMapConverterBuilder<AsciiCon
 
     static AsciiConverterBuilder()
     {
-        AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateAsciiConverter(c));
+        AddEntry(typeof(string), static (b, _) => b.Length, static (b, _, c) => b.CreateAsciiConverter(c));
     }
 
-    private IMapConverter CreateAsciiConverter(IBuilderContext context)
+    private AsciiConverter CreateAsciiConverter(IBuilderContext context)
     {
         return new AsciiConverter(
             Length,

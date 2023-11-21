@@ -15,7 +15,7 @@ public class BigEndianDoubleBinaryConverterTest
         0x40, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
 
-    private readonly IMapConverter converter = BigEndianDoubleBinaryConverter.Default;
+    private readonly BigEndianDoubleBinaryConverter converter = BigEndianDoubleBinaryConverter.Default;
 
     [Fact]
     public void ReadToBigEndianDoubleBinary()
@@ -44,7 +44,7 @@ public class LittleEndianDoubleBinaryConverterTest
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40
     });
 
-    private readonly IMapConverter converter = LittleEndianDoubleBinaryConverter.Default;
+    private readonly LittleEndianDoubleBinaryConverter converter = LittleEndianDoubleBinaryConverter.Default;
 
     [Fact]
     public void ReadToLittleEndianDoubleBinary()

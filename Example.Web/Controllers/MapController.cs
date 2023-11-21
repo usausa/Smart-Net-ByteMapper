@@ -8,7 +8,7 @@ using Smart.AspNetCore.Filters;
 
 // ReSharper disable StringLiteralTypo
 #pragma warning disable IDE0060
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:ReviewUnusedParameters", Justification = "Ignore")]
 [Route("api/[controller]/[action]")]
 public class MapController : Controller
 {

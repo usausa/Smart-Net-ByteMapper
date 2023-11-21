@@ -18,9 +18,4 @@ public class ByteMapperException : Exception
         : base(message, innerException)
     {
     }
-
-    protected ByteMapperException(SerializationInfo info, StreamingContext context)
-        : base(info, context)
-    {
-    }
 }

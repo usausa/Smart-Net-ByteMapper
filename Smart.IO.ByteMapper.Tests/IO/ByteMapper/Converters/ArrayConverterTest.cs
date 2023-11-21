@@ -24,7 +24,7 @@ public class ArrayConverterTest
         Offset,
         new byte[12]);
 
-    private readonly IMapConverter converter = new ArrayConverter(
+    private readonly ArrayConverter converter = new(
         x => new int[x],
         3,
         0x00,

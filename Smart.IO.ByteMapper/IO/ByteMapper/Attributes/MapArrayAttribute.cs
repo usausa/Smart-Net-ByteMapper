@@ -23,6 +23,6 @@ public sealed class MapArrayAttribute : Attribute
         builder.Length = length;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
     public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
 }

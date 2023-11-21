@@ -6,8 +6,8 @@ internal static class TypeHelper
 
     public static bool IsEnumerableType(Type type)
     {
-        return new[] { type }.Where(x => x.IsInterface).Concat(type.GetInterfaces())
-            .Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == EnumerableType);
+        return new[] { type }.Where(static x => x.IsInterface).Concat(type.GetInterfaces())
+            .Any(static x => x.IsGenericType && x.GetGenericTypeDefinition() == EnumerableType);
     }
 
     public static Type GetEnumerableElementType(Type type)

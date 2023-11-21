@@ -30,6 +30,6 @@ public class MapperProfile : IMapperProfile
     // IByteMapperProfile
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes", Justification = "Ignore")]
     IEnumerable<IMappingFactory> IMapperProfile.ResolveMappingFactories() => factories;
 }

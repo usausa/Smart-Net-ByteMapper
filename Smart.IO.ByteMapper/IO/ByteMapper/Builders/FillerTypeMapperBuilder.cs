@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Builders;
 
 using Smart.IO.ByteMapper.Mappers;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
 public sealed class FillerTypeMapperBuilder : ITypeMapperBuilder
 {
     public int Offset { get; set; }

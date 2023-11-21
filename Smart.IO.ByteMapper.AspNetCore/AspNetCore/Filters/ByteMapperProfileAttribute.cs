@@ -12,7 +12,7 @@ public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
         this.profile = profile;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         context.HttpContext.Items[Const.ProfileKey] = profile;

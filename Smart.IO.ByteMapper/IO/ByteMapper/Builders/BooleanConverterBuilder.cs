@@ -12,18 +12,18 @@ public sealed class BooleanConverterBuilder : AbstractMapConverterBuilder<Boolea
 
     static BooleanConverterBuilder()
     {
-        AddEntry(typeof(bool), 1, (b, _, c) => b.CreateBooleanConverter(c));
-        AddEntry(typeof(bool?), 1, (b, _, c) => b.CreateNullableBooleanConverter(c));
+        AddEntry(typeof(bool), 1, static (b, _, c) => b.CreateBooleanConverter(c));
+        AddEntry(typeof(bool?), 1, static (b, _, c) => b.CreateNullableBooleanConverter(c));
     }
 
-    private IMapConverter CreateBooleanConverter(IBuilderContext context)
+    private BooleanConverter CreateBooleanConverter(IBuilderContext context)
     {
         return new BooleanConverter(
             TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),
             FalseValue ?? context.GetParameter<byte>(Parameter.FalseValue));
     }
 
-    private IMapConverter CreateNullableBooleanConverter(IBuilderContext context)
+    private NullableBooleanConverter CreateNullableBooleanConverter(IBuilderContext context)
     {
         return new NullableBooleanConverter(
             TrueValue ?? context.GetParameter<byte>(Parameter.TrueValue),

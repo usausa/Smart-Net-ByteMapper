@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Builders;
 
 using Smart.IO.ByteMapper.Mappers;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Ignore")]
+#pragma warning disable CA1819
 public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
 {
     public int Offset { get; set; }
@@ -16,3 +16,4 @@ public sealed class ConstantTypeMapperBuilder : ITypeMapperBuilder
 
     public IMapper CreateMapper(IBuilderContext context) => new ConstantMapper(Offset, Content);
 }
+#pragma warning restore CA1819

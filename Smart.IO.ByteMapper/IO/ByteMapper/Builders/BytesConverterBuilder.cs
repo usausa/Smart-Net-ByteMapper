@@ -10,10 +10,10 @@ public sealed class BytesConverterBuilder : AbstractMapConverterBuilder<BytesCon
 
     static BytesConverterBuilder()
     {
-        AddEntry(typeof(byte[]), (b, _) => b.Length, (b, _, c) => b.CreateBytesConverter(c));
+        AddEntry(typeof(byte[]), static (b, _) => b.Length, static (b, _, c) => b.CreateBytesConverter(c));
     }
 
-    private IMapConverter CreateBytesConverter(IBuilderContext context)
+    private BytesConverter CreateBytesConverter(IBuilderContext context)
     {
         return new BytesConverter(
             Length,

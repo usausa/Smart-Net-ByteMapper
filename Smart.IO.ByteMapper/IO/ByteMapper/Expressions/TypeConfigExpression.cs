@@ -89,7 +89,7 @@ internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFa
         return MapInternal(offset, expression);
     }
 
-    private ITypeConfigSyntax<T> MapInternal(int offset, ITypeMapExpression expression)
+    private TypeConfigExpression<T> MapInternal(int offset, ITypeMapExpression expression)
     {
         if (offset < 0)
         {
@@ -127,7 +127,7 @@ internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFa
         return ForMemberInternal(ExpressionHelper.GetMemberName(expr), offset, config);
     }
 
-    private ITypeConfigSyntax<T> ForMemberInternal(string name, int offset, Action<IMemberConfigSyntax> config)
+    private TypeConfigExpression<T> ForMemberInternal(string name, int offset, Action<IMemberConfigSyntax> config)
     {
         if (offset < 0)
         {
@@ -197,6 +197,6 @@ internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFa
             useDelimiter ? context.GetParameter<byte[]>(Parameter.Delimiter) : null,
             autoFiller ? filler : null);
 
-        return new Mapping(Type, size, nullFiller ?? filler, list.Select(x => x.Mapper).ToArray());
+        return new Mapping(Type, size, nullFiller ?? filler, list.Select(static x => x.Mapper).ToArray());
     }
 }

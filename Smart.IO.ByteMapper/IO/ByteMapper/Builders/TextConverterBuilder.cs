@@ -18,10 +18,10 @@ public sealed class TextConverterBuilder : AbstractMapConverterBuilder<TextConve
 
     static TextConverterBuilder()
     {
-        AddEntry(typeof(string), (b, _) => b.Length, (b, _, c) => b.CreateTextConverter(c));
+        AddEntry(typeof(string), static (b, _) => b.Length, static (b, _, c) => b.CreateTextConverter(c));
     }
 
-    private IMapConverter CreateTextConverter(IBuilderContext context)
+    private TextConverter CreateTextConverter(IBuilderContext context)
     {
         return new TextConverter(
             Length,

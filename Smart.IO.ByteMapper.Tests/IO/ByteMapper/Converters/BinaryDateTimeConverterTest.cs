@@ -15,7 +15,7 @@ public class BigEndianDateTimeBinaryConverterTest
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
     });
 
-    private readonly IMapConverter converter = new BigEndianDateTimeBinaryConverter(DateTimeKind.Local);
+    private readonly BigEndianDateTimeBinaryConverter converter = new(DateTimeKind.Local);
 
     [Fact]
     public void ReadToBigEndianDateTimeBinary()
@@ -50,7 +50,7 @@ public class LittleEndianDateTimeBinaryConverterTest
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
 
-    private readonly IMapConverter converter = new LittleEndianDateTimeBinaryConverter(DateTimeKind.Local);
+    private readonly LittleEndianDateTimeBinaryConverter converter = new(DateTimeKind.Local);
 
     [Fact]
     public void ReadToLittleEndianDateTimeBinary()
@@ -85,7 +85,7 @@ public class BigEndianDateTimeOffsetBinaryConverterTest
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00
     });
 
-    private readonly IMapConverter converter = BigEndianDateTimeOffsetBinaryConverter.Default;
+    private readonly BigEndianDateTimeOffsetBinaryConverter converter = BigEndianDateTimeOffsetBinaryConverter.Default;
 
     [Fact]
     public void ReadToBigEndianDateTimeOffsetBinary()
@@ -121,7 +121,7 @@ public class LittleEndianDateTimeOffsetBinaryConverterTest
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
 
-    private readonly IMapConverter converter = LittleEndianDateTimeOffsetBinaryConverter.Default;
+    private readonly LittleEndianDateTimeOffsetBinaryConverter converter = LittleEndianDateTimeOffsetBinaryConverter.Default;
 
     [Fact]
     public void ReadToLittleEndianDateTimeOffsetBinary()

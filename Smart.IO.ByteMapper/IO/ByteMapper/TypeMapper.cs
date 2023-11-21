@@ -20,8 +20,8 @@ internal sealed class TypeMapper<T> : ITypeMapper<T>
         TargetType = targetType;
         Size = size;
         this.filler = filler;
-        readableMappers = mappers.Where(x => x.CanRead).ToArray();
-        writableMappers = mappers.Where(x => x.CanWrite).ToArray();
+        readableMappers = mappers.Where(static x => x.CanRead).ToArray();
+        writableMappers = mappers.Where(static x => x.CanWrite).ToArray();
     }
 
     public void FromByte(byte[] buffer, int index, object target)

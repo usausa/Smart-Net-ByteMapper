@@ -11,7 +11,7 @@ using Smart.IO.ByteMapper.Converters;
 using Smart.Text.Japanese;
 
 // ReSharper disable StringLiteralTypo
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
 [Config(typeof(BenchmarkConfig))]
 public class ConverterBenchmark
 {
@@ -140,7 +140,7 @@ public class ConverterBenchmark
     private IMapConverter dateTime17Converter;
     private byte[] dateTime17Buffer;
 
-    private static IBuilderContext CreateBuilderContext()
+    private static BuilderContext CreateBuilderContext()
     {
         var config = new MapperFactoryConfig()
             .UseOptionsDefault();

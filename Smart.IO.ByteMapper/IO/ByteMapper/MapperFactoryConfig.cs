@@ -12,9 +12,9 @@ public sealed class MapperFactoryConfig : IMapperFactoryConfig
 
     private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
 
-    private readonly IList<IMappingFactory> factories = new List<IMappingFactory>();
+    private readonly List<IMappingFactory> factories = new();
 
-    private readonly IList<IMapperProfile> profiles = new List<IMapperProfile>();
+    private readonly List<IMapperProfile> profiles = new();
 
     public MapperFactoryConfig()
     {

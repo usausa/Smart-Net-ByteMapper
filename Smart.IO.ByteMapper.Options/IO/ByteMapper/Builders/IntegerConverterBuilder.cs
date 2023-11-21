@@ -14,15 +14,15 @@ public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<Intege
 
     static IntegerConverterBuilder()
     {
-        AddEntry(typeof(int), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-        AddEntry(typeof(int?), (b, _) => b.Length, (b, t, c) => b.CreateInt32Converter(t, c));
-        AddEntry(typeof(long), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-        AddEntry(typeof(long?), (b, _) => b.Length, (b, t, c) => b.CreateInt64Converter(t, c));
-        AddEntry(typeof(short), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
-        AddEntry(typeof(short?), (b, _) => b.Length, (b, t, c) => b.CreateInt16Converter(t, c));
+        AddEntry(typeof(int), static (b, _) => b.Length, static (b, t, c) => b.CreateInt32Converter(t, c));
+        AddEntry(typeof(int?), static (b, _) => b.Length, static (b, t, c) => b.CreateInt32Converter(t, c));
+        AddEntry(typeof(long), static (b, _) => b.Length, static (b, t, c) => b.CreateInt64Converter(t, c));
+        AddEntry(typeof(long?), static (b, _) => b.Length, static (b, t, c) => b.CreateInt64Converter(t, c));
+        AddEntry(typeof(short), static (b, _) => b.Length, static (b, t, c) => b.CreateInt16Converter(t, c));
+        AddEntry(typeof(short?), static (b, _) => b.Length, static (b, t, c) => b.CreateInt16Converter(t, c));
     }
 
-    private IMapConverter CreateInt32Converter(Type type, IBuilderContext context)
+    private Int32Converter CreateInt32Converter(Type type, IBuilderContext context)
     {
         return new Int32Converter(
             Length,
@@ -32,7 +32,7 @@ public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<Intege
             type);
     }
 
-    private IMapConverter CreateInt64Converter(Type type, IBuilderContext context)
+    private Int64Converter CreateInt64Converter(Type type, IBuilderContext context)
     {
         return new Int64Converter(
             Length,
@@ -42,7 +42,7 @@ public sealed class IntegerConverterBuilder : AbstractMapConverterBuilder<Intege
             type);
     }
 
-    private IMapConverter CreateInt16Converter(Type type, IBuilderContext context)
+    private Int16Converter CreateInt16Converter(Type type, IBuilderContext context)
     {
         return new Int16Converter(
             Length,

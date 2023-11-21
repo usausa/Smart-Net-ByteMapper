@@ -9,9 +9,9 @@ public sealed class MapperFactory
 {
     private readonly IDictionary<string, object> parameters;
 
-    private readonly IDictionary<Type, IMappingFactory> mappingFactories;
+    private readonly Dictionary<Type, IMappingFactory> mappingFactories;
 
-    private readonly IDictionary<TypeProfile, IMappingFactory> profiledMappingFactories;
+    private readonly Dictionary<TypeProfile, IMappingFactory> profiledMappingFactories;
 
     private readonly ThreadsafeTypeHashArrayMap<object> cache = new();
 
@@ -29,11 +29,11 @@ public sealed class MapperFactory
         Components = config.ResolveComponents();
         parameters = config.ResolveParameters();
         mappingFactories = config.ResolveMappingFactories()
-            .Where(x => String.IsNullOrEmpty(x.Name))
-            .ToDictionary(x => x.Type, x => x);
+            .Where(static x => String.IsNullOrEmpty(x.Name))
+            .ToDictionary(static x => x.Type, static x => x);
         profiledMappingFactories = config.ResolveMappingFactories()
-            .Where(x => !String.IsNullOrEmpty(x.Name))
-            .ToDictionary(x => new TypeProfile(x.Type, x.Name), x => x);
+            .Where(static x => !String.IsNullOrEmpty(x.Name))
+            .ToDictionary(static x => new TypeProfile(x.Type, x.Name), static x => x);
     }
 
     // ------------------------------------------------------------
@@ -106,7 +106,7 @@ public sealed class MapperFactory
         return (ITypeMapper<T>)mapper;
     }
 
-    private ITypeMapper<T> CreateMapper<T>(Type type)
+    private TypeMapper<T> CreateMapper<T>(Type type)
     {
         if (!mappingFactories.TryGetValue(type, out var mappingFactory))
         {
@@ -117,7 +117,7 @@ public sealed class MapperFactory
         return new TypeMapper<T>(mapping.Type, mapping.Size, mapping.Filler, mapping.Mappers);
     }
 
-    private ITypeMapper<T> CreateMapper<T>(Type type, string profile)
+    private TypeMapper<T> CreateMapper<T>(Type type, string profile)
     {
         var key = new TypeProfile(type, profile);
         if (!profiledMappingFactories.TryGetValue(key, out var mappingFactory))

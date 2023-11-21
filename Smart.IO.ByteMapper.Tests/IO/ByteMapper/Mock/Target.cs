@@ -7,7 +7,7 @@ public enum IntEnum
     Two
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
 public enum LongEnum : long
 {
     Zero,
@@ -15,7 +15,7 @@ public enum LongEnum : long
     Two
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
 public enum ShortEnum : short
 {
     Zero,

@@ -8,14 +8,14 @@ public sealed class BinaryConverterBuilder : AbstractMapConverterBuilder<BinaryC
 
     static BinaryConverterBuilder()
     {
-        AddEntry(typeof(int), 4, (b, _, c) => b.CreateIntBinaryConverter(c));
-        AddEntry(typeof(long), 8, (b, _, c) => b.CreateLongBinaryConverter(c));
-        AddEntry(typeof(short), 2, (b, _, c) => b.CreateShortBinaryConverter(c));
-        AddEntry(typeof(double), 8, (b, _, c) => b.CreateDoubleBinaryConverter(c));
-        AddEntry(typeof(float), 4, (b, _, c) => b.CreateFloatBinaryConverter(c));
-        AddEntry(typeof(decimal), 16, (b, _, c) => b.CreateDecimalBinaryConverter(c));
-        AddEntry(typeof(DateTime), 8, (b, _, c) => b.CreateDateTimeBinaryConverter(c));
-        AddEntry(typeof(DateTimeOffset), 10, (b, _, c) => b.CreateDateTimeOffsetBinaryConverter(c));
+        AddEntry(typeof(int), 4, static (b, _, c) => b.CreateIntBinaryConverter(c));
+        AddEntry(typeof(long), 8, static (b, _, c) => b.CreateLongBinaryConverter(c));
+        AddEntry(typeof(short), 2, static (b, _, c) => b.CreateShortBinaryConverter(c));
+        AddEntry(typeof(double), 8, static (b, _, c) => b.CreateDoubleBinaryConverter(c));
+        AddEntry(typeof(float), 4, static (b, _, c) => b.CreateFloatBinaryConverter(c));
+        AddEntry(typeof(decimal), 16, static (b, _, c) => b.CreateDecimalBinaryConverter(c));
+        AddEntry(typeof(DateTime), 8, static (b, _, c) => b.CreateDateTimeBinaryConverter(c));
+        AddEntry(typeof(DateTimeOffset), 10, static (b, _, c) => b.CreateDateTimeOffsetBinaryConverter(c));
     }
 
     private IMapConverter CreateIntBinaryConverter(IBuilderContext context)

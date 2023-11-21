@@ -12,7 +12,7 @@ public class BinaryIntConverterTest
 
     private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[] { 0x00, 0x00, 0x00, 0x01 });
 
-    private readonly IMapConverter converter = BigEndianIntBinaryConverter.Default;
+    private readonly BigEndianIntBinaryConverter converter = BigEndianIntBinaryConverter.Default;
 
     [Fact]
     public void ReadToBigEndianIntBinary()
@@ -38,7 +38,7 @@ public class LittleEndianIntBinaryConverterTest
 
     private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[] { 0x01, 0x00, 0x00, 0x00 });
 
-    private readonly IMapConverter converter = LittleEndianIntBinaryConverter.Default;
+    private readonly LittleEndianIntBinaryConverter converter = LittleEndianIntBinaryConverter.Default;
 
     [Fact]
     public void ReadToLittleEndianIntBinary()

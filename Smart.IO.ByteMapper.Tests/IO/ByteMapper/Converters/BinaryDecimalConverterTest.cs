@@ -15,7 +15,7 @@ public class BigEndianDecimalBinaryConverterTest
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
     });
 
-    private readonly IMapConverter converter = BigEndianDecimalBinaryConverter.Default;
+    private readonly BigEndianDecimalBinaryConverter converter = BigEndianDecimalBinaryConverter.Default;
 
     [Fact]
     public void ReadToBigEndianDecimalBinary()
@@ -44,7 +44,7 @@ public class LittleEndianDecimalBinaryConverterTest
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     });
 
-    private readonly IMapConverter converter = LittleEndianDecimalBinaryConverter.Default;
+    private readonly LittleEndianDecimalBinaryConverter converter = LittleEndianDecimalBinaryConverter.Default;
 
     [Fact]
     public void ReadToLittleEndianDecimalBinary()

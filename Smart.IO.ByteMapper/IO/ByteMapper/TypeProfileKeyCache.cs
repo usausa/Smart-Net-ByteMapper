@@ -203,7 +203,7 @@ public sealed class TypeProfileKeyCache<T>
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(Type type, string profile, [MaybeNullWhen(false)] out T value)
     {
@@ -224,7 +224,7 @@ public sealed class TypeProfileKeyCache<T>
         return false;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public T AddIfNotExist(Type type, string profile, Func<Type, string, T> valueFactory)
     {
         lock (sync)
@@ -253,7 +253,7 @@ public sealed class TypeProfileKeyCache<T>
     // Inner
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Framework only")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Framework only")]
     private sealed class EmptyKey
     {
     }

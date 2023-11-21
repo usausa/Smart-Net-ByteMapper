@@ -1,6 +1,6 @@
 namespace Smart.IO.ByteMapper.Mappers;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
 public sealed class ConstantMapper : IMapper
 {
     private readonly int offset;

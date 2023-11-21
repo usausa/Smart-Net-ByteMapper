@@ -20,11 +20,11 @@ public sealed class DecimalConverterBuilder : AbstractMapConverterBuilder<Decima
 
     static DecimalConverterBuilder()
     {
-        AddEntry(typeof(decimal), (b, _) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
-        AddEntry(typeof(decimal?), (b, _) => b.Length, (b, t, c) => b.CreateDecimalConverter(t, c));
+        AddEntry(typeof(decimal), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalConverter(t, c));
+        AddEntry(typeof(decimal?), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalConverter(t, c));
     }
 
-    private IMapConverter CreateDecimalConverter(Type type, IBuilderContext context)
+    private DecimalConverter CreateDecimalConverter(Type type, IBuilderContext context)
     {
         return new DecimalConverter(
             Length,

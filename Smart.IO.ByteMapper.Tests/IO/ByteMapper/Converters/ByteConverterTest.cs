@@ -12,7 +12,7 @@ public class ByteConverterTest
 
     private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new[] { Value });
 
-    private readonly IMapConverter converter = ByteConverter.Default;
+    private readonly ByteConverter converter = ByteConverter.Default;
 
     [Fact]
     public void ReadToByte()

@@ -4,7 +4,7 @@ using System.Reflection;
 
 using Smart.IO.ByteMapper.Attributes;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
 public static class AttributeExtensions
 {
     //--------------------------------------------------------------------------------
@@ -91,13 +91,13 @@ public static class AttributeExtensions
         }
 
         var targets = types
-            .Where(x => x != null)
-            .Select(x => new
+            .Where(static x => x != null)
+            .Select(static x => new
             {
                 Type = x,
                 Attribute = x.GetCustomAttribute<MapAttribute>()
             })
-            .Where(x => x.Attribute != null);
+            .Where(static x => x.Attribute != null);
         foreach (var pair in targets)
         {
             config.AddMappingFactory(new AttributeMappingFactory(pair.Type, pair.Attribute, profile, validation));
@@ -160,13 +160,13 @@ public static class AttributeExtensions
         }
 
         var targets = types
-            .Where(x => x != null)
-            .Select(x => new
+            .Where(static x => x != null)
+            .Select(static x => new
             {
                 Type = x,
                 Attribute = x.GetCustomAttribute<MapAttribute>()
             })
-            .Where(x => x.Attribute != null);
+            .Where(static x => x.Attribute != null);
         foreach (var pair in targets)
         {
             profile.AddMappingFactory(new AttributeMappingFactory(pair.Type, pair.Attribute, profile.Name, validation));

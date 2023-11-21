@@ -29,7 +29,7 @@ internal sealed class AttributeMappingFactory : IMappingFactory
         var context = new BuilderContext(
             components,
             parameters,
-            Type.GetCustomAttributes().OfType<ITypeDefaultAttribute>().ToDictionary(x => x.Key, x => x.Value));
+            Type.GetCustomAttributes().OfType<ITypeDefaultAttribute>().ToDictionary(static x => x.Key, static x => x.Value));
 
         var filler = context.GetParameter<byte>(Parameter.Filler);
 
@@ -49,7 +49,7 @@ internal sealed class AttributeMappingFactory : IMappingFactory
             Type,
             mapAttribute.Size,
             mapAttribute.HasNullFiller ? mapAttribute.NullFiller : filler,
-            list.Select(x => x.Mapper).ToArray());
+            list.Select(static x => x.Mapper).ToArray());
     }
 
     private IEnumerable<MapperPosition> CreateTypeEntries(IBuilderContext context)
@@ -69,13 +69,13 @@ internal sealed class AttributeMappingFactory : IMappingFactory
     private IEnumerable<MapperPosition> CreateMemberEntries(IBuilderContext context)
     {
         return Type.GetProperties()
-            .Select(x => new
+            .Select(static x => new
             {
                 Property = x,
                 Attribute = x.GetCustomAttributes().OfType<AbstractMemberMapAttribute>().FirstOrDefault(),
                 ArrayAttribute = x.GetCustomAttribute<MapArrayAttribute>()
             })
-            .Where(x => x.Attribute != null)
+            .Where(static x => x.Attribute != null)
             .Select(x =>
             {
                 var converterBuilder = CreateConverterBuilder(x.ArrayAttribute, x.Attribute);

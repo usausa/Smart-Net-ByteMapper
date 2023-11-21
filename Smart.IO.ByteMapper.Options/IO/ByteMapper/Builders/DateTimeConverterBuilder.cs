@@ -12,13 +12,13 @@ public sealed class DateTimeConverterBuilder : AbstractMapConverterBuilder<DateT
 
     static DateTimeConverterBuilder()
     {
-        AddEntry(typeof(DateTime), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
-        AddEntry(typeof(DateTime?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeConverter(t, c));
-        AddEntry(typeof(DateTimeOffset), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
-        AddEntry(typeof(DateTimeOffset?), (b, _) => b.Format.Length, (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
+        AddEntry(typeof(DateTime), static (b, _) => b.Format.Length, static (b, t, c) => b.CreateDateTimeConverter(t, c));
+        AddEntry(typeof(DateTime?), static (b, _) => b.Format.Length, static (b, t, c) => b.CreateDateTimeConverter(t, c));
+        AddEntry(typeof(DateTimeOffset), static (b, _) => b.Format.Length, static (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
+        AddEntry(typeof(DateTimeOffset?), static (b, _) => b.Format.Length, static (b, t, c) => b.CreateDateTimeOffsetConverter(t, c));
     }
 
-    private IMapConverter CreateDateTimeConverter(Type type, IBuilderContext context)
+    private DateTimeConverter CreateDateTimeConverter(Type type, IBuilderContext context)
     {
         return new DateTimeConverter(
             Format,
@@ -27,7 +27,7 @@ public sealed class DateTimeConverterBuilder : AbstractMapConverterBuilder<DateT
             type);
     }
 
-    private IMapConverter CreateDateTimeOffsetConverter(Type type, IBuilderContext context)
+    private DateTimeOffsetConverter CreateDateTimeOffsetConverter(Type type, IBuilderContext context)
     {
         return new DateTimeOffsetConverter(
             Format,
