@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 public class MapperProfile : IMapperProfile
 {
-    private readonly List<IMappingFactory> factories = new();
+    private readonly List<IMappingFactory> factories = [];
 
     public string Name { get; }
 

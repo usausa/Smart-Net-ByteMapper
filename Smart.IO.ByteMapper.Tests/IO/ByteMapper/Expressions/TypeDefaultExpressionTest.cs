@@ -15,6 +15,7 @@ public class TypeDefaultExpressionTest
     [Fact]
     public void MapUseTypeDefaultExpression()
     {
+#pragma warning disable IDE0230
         var mapperFactory = new MapperFactoryConfig()
             .UseOptionsDefault()
             .DefaultDelimiter(null)
@@ -69,6 +70,7 @@ public class TypeDefaultExpressionTest
                 .ForMember(x => x.BoolValue, 6, m => m.Boolean()))
             .ToMapperFactory();
         var mapper = mapperFactory.Create<TypeDefaultExpressionObject>();
+#pragma warning restore IDE0230
 
         var buffer = new byte[mapper.Size];
         var obj = new TypeDefaultExpressionObject

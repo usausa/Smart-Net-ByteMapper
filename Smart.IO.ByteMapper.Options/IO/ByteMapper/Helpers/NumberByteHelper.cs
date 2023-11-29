@@ -267,11 +267,11 @@ internal static partial class NumberByteHelper
 
         private long hi;
 
-        public int Lo => (int)(lomid & 0xFFFFFFFF);
+        public readonly int Lo => (int)(lomid & 0xFFFFFFFF);
 
-        public int Mid => (int)((lomid >> 32) & 0xFFFFFFFF);
+        public readonly int Mid => (int)((lomid >> 32) & 0xFFFFFFFF);
 
-        public int Hi => (int)hi;
+        public readonly int Hi => (int)hi;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Multiply10AndAdd(ulong value)

@@ -8,7 +8,6 @@ using Smart.AspNetCore.Filters;
 
 // ReSharper disable StringLiteralTypo
 #pragma warning disable IDE0060
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA1801:ReviewUnusedParameters", Justification = "Ignore")]
 [Route("api/[controller]/[action]")]
 public class MapController : Controller
 {
@@ -31,8 +30,8 @@ public class MapController : Controller
 
     private static SampleData[] CreateDummyData()
     {
-        return new[]
-        {
+        return
+        [
             new SampleData
             {
                 Code = "1111111111111",
@@ -57,7 +56,7 @@ public class MapController : Controller
                 Price = 49.50m,
                 Date = null
             }
-        };
+        ];
     }
 
     [Produces("text/x-fixedrecord")]
@@ -85,7 +84,7 @@ public class MapController : Controller
     [HttpGet]
     public SampleData[] GetEmpty()
     {
-        return Array.Empty<SampleData>();
+        return [];
     }
 
     [Produces("text/x-fixedrecord")]

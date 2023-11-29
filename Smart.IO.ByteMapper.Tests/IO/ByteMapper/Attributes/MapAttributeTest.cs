@@ -21,9 +21,9 @@ public class MapAttributeTest
         var defaultMapper = mapperFactory.Create<DefaultNullFillerObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0xFF, 0xFF }, mapMapper.ToByte(null));
+        Assert.Equal([0xFF, 0xFF], mapMapper.ToByte(null));
 
-        Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(null));
+        Assert.Equal([0xCC, 0xCC], defaultMapper.ToByte(null));
     }
 
     [Map(2, NullFiller = 0xFF)]
@@ -55,13 +55,13 @@ public class MapAttributeTest
         var noMapper = mapperFactory.Create<NoFillerObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0xFF, 0xFF }, typeMapper.ToByte(new TypeFillerObject()));
+        Assert.Equal([0xFF, 0xFF], typeMapper.ToByte(new TypeFillerObject()));
 
-        Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(new DefaultFillerObject()));
+        Assert.Equal([0xCC, 0xCC], defaultMapper.ToByte(new DefaultFillerObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
         noMapper.ToByte(buffer, 0, new NoFillerObject());
-        Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
+        Assert.Equal([0x11, 0x11], buffer);
     }
 
     [Map(2, AutoFiller = true)]
@@ -99,13 +99,13 @@ public class MapAttributeTest
         var noMapper = mapperFactory.Create<NoDelimiterObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimiterObject()));
+        Assert.Equal([0x00, 0xFF], typeMapper.ToByte(new TypeDelimiterObject()));
 
-        Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimiterObject()));
+        Assert.Equal([0x00, 0xCC], defaultMapper.ToByte(new DefaultDelimiterObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
         noMapper.ToByte(buffer, 0, new NoDelimiterObject());
-        Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
+        Assert.Equal([0x11, 0x11], buffer);
     }
 
     [Map(2, AutoFiller = false, UseDelimiter = true)]

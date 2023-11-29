@@ -25,31 +25,33 @@ public class MapArrayAttributeTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
+#pragma warning disable IDE0055
         Assert.Equal(
-            new byte[]
-            {
+            [
                 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00,
                 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
-            },
+            ],
             buffer);
+#pragma warning restore IDE0055
 
         // Write
-        obj.ArrayValue = new[] { 1, 2, 3 };
-        obj.ByteArrayValue = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07 };
+        obj.ArrayValue = [1, 2, 3];
+        obj.ByteArrayValue = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07];
 
         mapper.ToByte(buffer, 0, obj);
 
+#pragma warning disable IDE0055
         Assert.Equal(
-            new byte[]
-            {
+            [
                 0x00, 0x00, 0x00, 0x01,
                 0x00, 0x00, 0x00, 0x02,
                 0x00, 0x00, 0x00, 0x03,
                 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
-            },
+            ],
             buffer);
+#pragma warning restore IDE0055
 
         // Read
         for (var i = 0; i < buffer.Length; i++)
@@ -62,8 +64,8 @@ public class MapArrayAttributeTest
 
         mapper.FromByte(buffer, 0, obj);
 
-        Assert.Equal(new[] { 2, 3, 4 }, obj.ArrayValue);
-        Assert.Equal(new byte[] { 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }, obj.ByteArrayValue);
+        Assert.Equal((int[])[2, 3, 4], obj.ArrayValue);
+        Assert.Equal([0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08], obj.ByteArrayValue);
     }
 
     //--------------------------------------------------------------------------------

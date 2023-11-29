@@ -14,11 +14,11 @@ public class NullableBooleanConverterTest
 
     private const byte NullByte = 0x00;
 
-    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, [TrueByte]);
 
-    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, [FalseByte]);
 
-    private static readonly byte[] NullBytes = TestBytes.Offset(Offset, new[] { NullByte });
+    private static readonly byte[] NullBytes = TestBytes.Offset(Offset, [NullByte]);
 
     private readonly NullableBooleanConverter converter;
 

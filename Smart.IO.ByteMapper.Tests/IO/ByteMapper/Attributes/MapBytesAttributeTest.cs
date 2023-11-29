@@ -21,13 +21,13 @@ public class MapBytesAttributeTest
         var buffer = new byte[mapper.Size];
         var obj = new BytesAttributeObject
         {
-            BytesValue = new byte[] { 0x01, 0x02, 0x03, 0x04 }
+            BytesValue = [0x01, 0x02, 0x03, 0x04]
         };
 
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(new byte[] { 0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30 }, buffer);
+        Assert.Equal([0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30], buffer);
 
         // Read
         for (var i = 0; i < buffer.Length; i++)
@@ -37,7 +37,7 @@ public class MapBytesAttributeTest
 
         mapper.FromByte(buffer, 0, obj);
 
-        Assert.Equal(new byte[] { 0xff, 0xff, 0xff, 0xff }, obj.BytesValue);
+        Assert.Equal([0xff, 0xff, 0xff, 0xff], obj.BytesValue);
     }
 
     //--------------------------------------------------------------------------------

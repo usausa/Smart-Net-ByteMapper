@@ -43,9 +43,9 @@ public class MapBinaryAttributeTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
+#pragma warning disable IDE0055
         Assert.Equal(
-            new byte[]
-            {
+            [
                 0x00, 0x00, 0x00, 0x01,
                 0x01, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
@@ -62,8 +62,9 @@ public class MapBinaryAttributeTest
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x40,
                 0x40, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x40
-            },
+            ],
             buffer);
+#pragma warning restore IDE0055
 
         // Read
         for (var i = 0; i < buffer.Length - 24; i++)

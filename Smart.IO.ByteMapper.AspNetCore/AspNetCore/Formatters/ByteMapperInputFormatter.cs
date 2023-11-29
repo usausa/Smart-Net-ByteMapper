@@ -231,7 +231,7 @@ public class ByteMapperInputFormatter : InputFormatter
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
             {
-                var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : new List<T>();
+                var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : [];
 
                 int read;
                 while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)

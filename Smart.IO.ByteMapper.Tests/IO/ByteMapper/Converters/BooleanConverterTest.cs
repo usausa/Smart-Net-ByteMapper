@@ -12,11 +12,11 @@ public class BooleanConverterTest
 
     private const byte FalseByte = 0x30;
 
-    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, new[] { TrueByte });
+    private static readonly byte[] TrueBytes = TestBytes.Offset(Offset, [TrueByte]);
 
-    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, new[] { FalseByte });
+    private static readonly byte[] FalseBytes = TestBytes.Offset(Offset, [FalseByte]);
 
-    private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, new byte[] { 0x00 });
+    private static readonly byte[] UnknownBytes = TestBytes.Offset(Offset, [0x00]);
 
     private readonly BooleanConverter converter;
 

@@ -12,13 +12,15 @@ public class MapConstantExpressionTest
     [Fact]
     public void MapByConstantExpression()
     {
+#pragma warning disable IDE0230
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(0x0D, 0x0A)
             .CreateMapByExpression<ConstExpressionObject>(6, config => config
                 .UseDelimiter(true)
-                .Constant(0, new byte[] { 0x31, 0x32 })
-                .Constant(new byte[] { 0x33, 0x34 }))
+                .Constant(0, [0x31, 0x32])
+                .Constant([0x33, 0x34]))
             .ToMapperFactory();
+#pragma warning restore IDE0230
         var mapper = mapperFactory.Create<ConstExpressionObject>();
 
         var buffer = new byte[mapper.Size];

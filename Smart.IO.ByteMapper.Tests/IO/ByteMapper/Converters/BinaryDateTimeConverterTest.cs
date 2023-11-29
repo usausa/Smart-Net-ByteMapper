@@ -10,10 +10,7 @@ public class BigEndianDateTimeBinaryConverterTest
 
     private static readonly DateTime Value = new(1);
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-    {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01
-    });
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01]);
 
     private readonly BigEndianDateTimeBinaryConverter converter = new(DateTimeKind.Local);
 
@@ -26,7 +23,7 @@ public class BigEndianDateTimeBinaryConverterTest
     [Fact]
     public void ReadToBigEndianInvalidDateTimeIsDefault()
     {
-        Assert.Equal(default, (DateTime)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 0));
+        Assert.Equal(default, (DateTime)converter.Read([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF], 0));
     }
 
     [Fact]
@@ -45,10 +42,7 @@ public class LittleEndianDateTimeBinaryConverterTest
 
     private static readonly DateTime Value = new(1);
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-    {
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    });
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
     private readonly LittleEndianDateTimeBinaryConverter converter = new(DateTimeKind.Local);
 
@@ -61,7 +55,7 @@ public class LittleEndianDateTimeBinaryConverterTest
     [Fact]
     public void ReadToLittleEndianInvalidDateTimeIsDefault()
     {
-        Assert.Equal(default, (DateTime)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }, 0));
+        Assert.Equal(default, (DateTime)converter.Read([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF], 0));
     }
 
     [Fact]
@@ -80,10 +74,7 @@ public class BigEndianDateTimeOffsetBinaryConverterTest
 
     private static readonly DateTimeOffset Value = new(new DateTime(1, DateTimeKind.Utc));
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-    {
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00
-    });
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00]);
 
     private readonly BigEndianDateTimeOffsetBinaryConverter converter = BigEndianDateTimeOffsetBinaryConverter.Default;
 
@@ -96,8 +87,8 @@ public class BigEndianDateTimeOffsetBinaryConverterTest
     [Fact]
     public void ReadToBigEndianInvalidDateTimeOffsetIsDefault()
     {
-        Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00 }, 0));
-        Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0xFF }, 0));
+        Assert.Equal(default, (DateTimeOffset)converter.Read([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00], 0));
+        Assert.Equal(default, (DateTimeOffset)converter.Read([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0xFF], 0));
     }
 
     [Fact]
@@ -116,10 +107,7 @@ public class LittleEndianDateTimeOffsetBinaryConverterTest
 
     private static readonly DateTimeOffset Value = new(new DateTime(1, DateTimeKind.Utc));
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new byte[]
-    {
-        0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-    });
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, [0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
     private readonly LittleEndianDateTimeOffsetBinaryConverter converter = LittleEndianDateTimeOffsetBinaryConverter.Default;
 
@@ -132,8 +120,8 @@ public class LittleEndianDateTimeOffsetBinaryConverterTest
     [Fact]
     public void ReadToLittleEndianInvalidDateTimeOffsetIsDefault()
     {
-        Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00 }, 0));
-        Assert.Equal(default, (DateTimeOffset)converter.Read(new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x7F }, 0));
+        Assert.Equal(default, (DateTimeOffset)converter.Read([0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00], 0));
+        Assert.Equal(default, (DateTimeOffset)converter.Read([0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x7F], 0));
     }
 
     [Fact]

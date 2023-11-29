@@ -5,7 +5,7 @@ using Smart.IO.ByteMapper.Converters;
 public abstract class AbstractMapConverterBuilder<TBuilder> : IMapConverterBuilder
     where TBuilder : AbstractMapConverterBuilder<TBuilder>
 {
-    private static readonly Dictionary<Type, Entry> Entries = new();
+    private static readonly Dictionary<Type, Entry> Entries = [];
 
     protected static void AddEntry(Type type, Func<TBuilder, Type, int> calcSize, Func<TBuilder, Type, IBuilderContext, IMapConverter> factory)
     {

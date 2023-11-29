@@ -26,7 +26,7 @@ public class MapByteAttributeTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(new byte[] { 0x01 }, buffer);
+        Assert.Equal([0x01], buffer);
 
         // Read
         buffer[0] = 0x02;

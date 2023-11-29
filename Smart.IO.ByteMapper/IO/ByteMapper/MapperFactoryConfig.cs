@@ -12,16 +12,18 @@ public sealed class MapperFactoryConfig : IMapperFactoryConfig
 
     private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
 
-    private readonly List<IMappingFactory> factories = new();
+    private readonly List<IMappingFactory> factories = [];
 
-    private readonly List<IMapperProfile> profiles = new();
+    private readonly List<IMapperProfile> profiles = [];
 
     public MapperFactoryConfig()
     {
         config.Add<IDelegateFactory>(DelegateFactory.Default);
 
         // ReSharper disable once UseUtf8StringLiteral
+#pragma warning disable IDE0230
         this.DefaultDelimiter(0x0D, 0x0A);
+#pragma warning restore IDE0230
         this.DefaultEncoding(Encoding.ASCII);
         this.DefaultTrim(true);
         this.DefaultTextPadding(Padding.Right);

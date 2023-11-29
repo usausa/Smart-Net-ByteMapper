@@ -11,7 +11,6 @@
     <PackageId>Usa.Smart.IO.ByteMapper</PackageId>
     <Title>Smart.IO.ByteMapper</Title>
     <Description>Smart byte mapper library</Description>
-    <Summary>Smart byte mapper library</Summary>
     <PackageTags>smart io mapper</PackageTags>
   </PropertyGroup>
 

@@ -8,11 +8,11 @@ using Smart.IO.ByteMapper.Helpers;
 
 internal sealed class TypeConfigExpression<T> : ITypeConfigSyntax<T>, IMappingFactory
 {
-    private readonly List<ITypeMapperBuilder> typeMapBuilders = new();
+    private readonly List<ITypeMapperBuilder> typeMapBuilders = [];
 
-    private readonly List<IMemberMapperBuilder> memberMapBuilders = new();
+    private readonly List<IMemberMapperBuilder> memberMapBuilders = [];
 
-    private readonly Dictionary<string, object> typeParameters = new();
+    private readonly Dictionary<string, object> typeParameters = [];
 
     private readonly int size;
 

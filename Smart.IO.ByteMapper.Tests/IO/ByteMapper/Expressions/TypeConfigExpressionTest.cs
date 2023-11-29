@@ -21,9 +21,9 @@ public class TypeConfigExpressionTest
         var defaultMapper = mapperFactory.Create<DefaultNullFillerObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0xFF, 0xFF }, mapMapper.ToByte(null));
+        Assert.Equal([0xFF, 0xFF], mapMapper.ToByte(null));
 
-        Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(null));
+        Assert.Equal([0xCC, 0xCC], defaultMapper.ToByte(null));
     }
 
     internal sealed class MapNullFillerObject
@@ -53,13 +53,13 @@ public class TypeConfigExpressionTest
         var noMapper = mapperFactory.Create<NoFillerObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0xFF, 0xFF }, typeMapper.ToByte(new TypeFillerObject()));
+        Assert.Equal([0xFF, 0xFF], typeMapper.ToByte(new TypeFillerObject()));
 
-        Assert.Equal(new byte[] { 0xCC, 0xCC }, defaultMapper.ToByte(new DefaultFillerObject()));
+        Assert.Equal([0xCC, 0xCC], defaultMapper.ToByte(new DefaultFillerObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
         noMapper.ToByte(buffer, 0, new NoFillerObject());
-        Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
+        Assert.Equal([0x11, 0x11], buffer);
     }
 
     internal sealed class TypeFillerObject
@@ -86,20 +86,20 @@ public class TypeConfigExpressionTest
             .DefaultDelimiter(0xCC)
             .CreateMapByExpression<TypeDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(0xFF))
             .CreateMapByExpression<DefaultDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(true))
-            .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(Array.Empty<byte>()))
+            .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter([]))
             .ToMapperFactory();
         var typeMapper = mapperFactory.Create<TypeDelimiterObject>();
         var defaultMapper = mapperFactory.Create<DefaultDelimiterObject>();
         var noMapper = mapperFactory.Create<NoDelimiterObject>();
 
         // Write
-        Assert.Equal(new byte[] { 0x00, 0xFF }, typeMapper.ToByte(new TypeDelimiterObject()));
+        Assert.Equal([0x00, 0xFF], typeMapper.ToByte(new TypeDelimiterObject()));
 
-        Assert.Equal(new byte[] { 0x00, 0xCC }, defaultMapper.ToByte(new DefaultDelimiterObject()));
+        Assert.Equal([0x00, 0xCC], defaultMapper.ToByte(new DefaultDelimiterObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
         noMapper.ToByte(buffer, 0, new NoDelimiterObject());
-        Assert.Equal(new byte[] { 0x11, 0x11 }, buffer);
+        Assert.Equal([0x11, 0x11], buffer);
     }
 
     internal sealed class TypeDelimiterObject
@@ -123,7 +123,7 @@ public class TypeConfigExpressionTest
     {
         // Map
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.Constant(-1, Array.Empty<byte>())));
+            new MapperFactoryConfig().CreateMapByExpression<DummyObject>(0, c => c.Constant(-1, [])));
 
         // ForMember
         Assert.Throws<ArgumentOutOfRangeException>(() =>

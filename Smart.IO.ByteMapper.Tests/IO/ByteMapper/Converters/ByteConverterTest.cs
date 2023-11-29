@@ -10,7 +10,7 @@ public class ByteConverterTest
 
     private const byte Value = 0x01;
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, new[] { Value });
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, [Value]);
 
     private readonly ByteConverter converter = ByteConverter.Default;
 

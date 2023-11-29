@@ -10,7 +10,6 @@
     <PackageId>Usa.Smart.IO.ByteMapper.AspNetCore</PackageId>
     <Title>Smart.IO.ByteMapper.AspNetCore</Title>
     <Description>Smart byte mapper library ASP.NET Core extensions</Description>
-    <Summary>Smart byte mapper library ASP.NET Core extensions</Summary>
     <PackageTags>smart io mapper aspnet aspnetcore</PackageTags>
   </PropertyGroup>
 

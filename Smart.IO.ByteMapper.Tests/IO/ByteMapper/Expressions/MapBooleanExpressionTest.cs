@@ -41,10 +41,10 @@ public class MapBooleanExpressionTest
         // Write
         mapper.ToByte(buffer, 0, obj);
 
-        Assert.Equal(new[] { False, Filler, No, Filler }, buffer);
+        Assert.Equal((byte[])[False, Filler, No, Filler], buffer);
 
         // Read
-        mapper.FromByte(new[] { True, True, Yes, Yes }, 0, obj);
+        mapper.FromByte([True, True, Yes, Yes], 0, obj);
 
         Assert.True(obj.BooleanValue);
         Assert.True(obj.NullableBooleanValue);
@@ -52,7 +52,7 @@ public class MapBooleanExpressionTest
         Assert.True(obj.CustomNullableBooleanValue);
 
         // Read default
-        mapper.FromByte(new[] { Filler, Filler, Filler, Filler }, 0, obj);
+        mapper.FromByte([Filler, Filler, Filler, Filler], 0, obj);
 
         Assert.False(obj.BooleanValue);
         Assert.Null(obj.NullableBooleanValue);

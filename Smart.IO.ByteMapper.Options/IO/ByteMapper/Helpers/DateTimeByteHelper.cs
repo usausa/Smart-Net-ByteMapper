@@ -28,14 +28,10 @@ internal static partial class DateTimeByteHelper
     private const int DaysPer400Years = (DaysPer100Years * 4) + 1;
 
     private static readonly int[] DaysToMonth365 =
-    {
-        0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
-    };
+        [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
 
     private static readonly int[] DaysToMonth366 =
-    {
-        0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366
-    };
+        [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
 
     //--------------------------------------------------------------------------------
     // Helper
@@ -145,7 +141,7 @@ internal static partial class DateTimeByteHelper
             }
         }
 
-        return list.ToArray();
+        return [.. list];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

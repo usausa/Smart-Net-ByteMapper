@@ -169,7 +169,7 @@ public class ConverterBenchmark
         // Boolean
         var booleanBuilder = new BooleanConverterBuilder();
         booleanConverter = booleanBuilder.CreateConverter(context, typeof(bool));
-        booleanBuffer = new byte[] { 0x30 };
+        booleanBuffer = [0x30];
 
         // bytes
         var bytes10Builder = new BytesConverterBuilder { Length = 10 };
