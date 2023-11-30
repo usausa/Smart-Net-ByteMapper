@@ -141,7 +141,7 @@ internal static partial class DateTimeByteHelper
             }
         }
 
-        return [.. list];
+        return list.ToArray();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
