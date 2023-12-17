@@ -1,6 +1,6 @@
 namespace Example.Web.Models;
 
-public class SampleData
+public sealed class SampleData
 {
     public string Code { get; set; } = default!;
 

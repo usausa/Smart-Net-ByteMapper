@@ -4,9 +4,7 @@ using System.Text;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
-public class Int32ConverterTest
+public sealed class Int32ConverterTest
 {
     private const int Offset = 1;
 

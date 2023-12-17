@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-public class AttributeExtensionsTest
+public sealed class AttributeExtensionsTest
 {
     //--------------------------------------------------------------------------------
     // Call

@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper.Mappings;
 
 using Smart.IO.ByteMapper.Mappers;
 
-using Xunit;
-
-public class CoverageFixTest
+public sealed class CoverageFixTest
 {
     [Fact]
     public void UnreadableMapping()

@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Mappers;
 
-public class Mapping : IMapping
+public sealed class Mapping : IMapping
 {
     public Type Type { get; }
 

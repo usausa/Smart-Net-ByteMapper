@@ -23,6 +23,7 @@ public sealed class MapArrayAttribute : Attribute
         builder.Length = length;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1024:UsePropertiesWhereAppropriate", Justification = "Ignore")]
+#pragma warning disable CA1024
     public ArrayConverterBuilder GetArrayConverterBuilder() => builder;
+#pragma warning restore CA1024
 }

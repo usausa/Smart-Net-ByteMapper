@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
-using Xunit;
-
-public class MapAsciiExpressionTest
+public sealed class MapAsciiExpressionTest
 {
     //--------------------------------------------------------------------------------
     // Expression

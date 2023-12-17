@@ -2,10 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2000:DisposeObjectsBeforeLosingScope", Justification = "Ignore")]
-public class TypeMapperTest
+public sealed class TypeMapperTest
 {
     //--------------------------------------------------------------------------------
     // Generic

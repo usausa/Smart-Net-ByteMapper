@@ -1,9 +1,7 @@
 // ReSharper disable UseUtf8StringLiteral
 namespace Smart.IO.ByteMapper.Expressions;
 
-using Xunit;
-
-public class MapConstantExpressionTest
+public sealed class MapConstantExpressionTest
 {
     //--------------------------------------------------------------------------------
     // Expression

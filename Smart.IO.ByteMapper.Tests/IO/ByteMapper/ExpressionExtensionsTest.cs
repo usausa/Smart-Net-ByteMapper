@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
-using Xunit;
-
-public class ExpressionExtensionsTest
+public sealed class ExpressionExtensionsTest
 {
     //--------------------------------------------------------------------------------
     // Call

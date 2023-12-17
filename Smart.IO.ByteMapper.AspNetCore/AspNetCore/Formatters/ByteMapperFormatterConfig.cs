@@ -3,7 +3,7 @@ namespace Smart.AspNetCore.Formatters;
 using Smart.IO.ByteMapper;
 using Smart.Reflection;
 
-public class ByteMapperFormatterConfig
+public sealed class ByteMapperFormatterConfig
 {
     public MapperFactory MapperFactory { get; set; }
 

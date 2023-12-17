@@ -3,9 +3,7 @@ namespace Smart.IO.ByteMapper.Attributes;
 using System.Globalization;
 using System.Text;
 
-using Xunit;
-
-public class MapNumberTextAttributeTest
+public sealed class MapNumberTextAttributeTest
 {
     //--------------------------------------------------------------------------------
     // Attribute

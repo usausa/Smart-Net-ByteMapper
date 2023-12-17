@@ -7,23 +7,25 @@ public enum IntEnum
     Two
 }
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+#pragma warning disable CA1028
 public enum LongEnum : long
 {
     Zero,
     One,
     Two
 }
+#pragma warning restore CA1028
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1028:EnumStorageShouldBeInt32", Justification = "Ignore")]
+#pragma warning disable CA1028
 public enum ShortEnum : short
 {
     Zero,
     One,
     Two
 }
+#pragma warning restore CA1028
 
-public class Target
+public sealed class Target
 {
     // int
 

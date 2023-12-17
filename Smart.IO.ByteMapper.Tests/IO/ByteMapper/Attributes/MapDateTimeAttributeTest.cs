@@ -2,10 +2,8 @@ namespace Smart.IO.ByteMapper.Attributes;
 
 using System.Text;
 
-using Xunit;
-
 // ReSharper disable StringLiteralTypo
-public class MapDateTimeAttributeTest
+public sealed class MapDateTimeAttributeTest
 {
     //--------------------------------------------------------------------------------
     // Attribute

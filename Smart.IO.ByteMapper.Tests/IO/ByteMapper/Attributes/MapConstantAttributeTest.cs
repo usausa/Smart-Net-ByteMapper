@@ -1,9 +1,7 @@
 // ReSharper disable UseUtf8StringLiteral
 namespace Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-public class MapConstantAttributeTest
+public sealed class MapConstantAttributeTest
 {
     //--------------------------------------------------------------------------------
     // Attribute

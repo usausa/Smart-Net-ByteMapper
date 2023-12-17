@@ -4,7 +4,7 @@ using Smart.ComponentModel;
 
 using Smart.IO.ByteMapper.Builders;
 
-public class MockBuilderContext : IBuilderContext
+public sealed class MockBuilderContext : IBuilderContext
 {
     public ComponentContainer Components { get; } = new ComponentConfig().ToContainer();
 

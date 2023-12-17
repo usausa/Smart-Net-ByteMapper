@@ -5,7 +5,7 @@ using System.Text;
 
 using Smart.IO.ByteMapper.Expressions;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
 public static class ExpressionExtensions
 {
     //--------------------------------------------------------------------------------

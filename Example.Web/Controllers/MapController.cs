@@ -9,7 +9,7 @@ using Smart.AspNetCore.Filters;
 // ReSharper disable StringLiteralTypo
 #pragma warning disable IDE0060
 [Route("api/[controller]/[action]")]
-public class MapController : Controller
+public sealed class MapController : Controller
 {
     private static readonly SampleData[] LargeValues = new SampleData[1000];
 

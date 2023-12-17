@@ -10,10 +10,10 @@ using Smart.IO.ByteMapper.Builders;
 using Smart.IO.ByteMapper.Converters;
 using Smart.Text.Japanese;
 
+#pragma warning disable CA1305
 // ReSharper disable StringLiteralTypo
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
 [Config(typeof(BenchmarkConfig))]
-public class ConverterBenchmark
+public sealed class ConverterBenchmark
 {
     private const int N = 1000;
 

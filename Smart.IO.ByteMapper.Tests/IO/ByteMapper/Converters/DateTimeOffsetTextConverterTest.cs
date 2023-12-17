@@ -5,10 +5,8 @@ using System.Text;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
 // ReSharper disable StringLiteralTypo
-public class DateTimeOffsetTextConverterTest
+public sealed class DateTimeOffsetTextConverterTest
 {
     private const int Offset = 1;
 

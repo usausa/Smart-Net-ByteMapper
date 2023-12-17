@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper.Builders;
 
-using Xunit;
-
-public class BuilderContextTest
+public sealed class BuilderContextTest
 {
     //--------------------------------------------------------------------------------
     // Get

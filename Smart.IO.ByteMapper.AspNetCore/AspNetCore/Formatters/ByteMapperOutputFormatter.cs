@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Smart.Collections.Concurrent;
 using Smart.IO.ByteMapper;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
-public class ByteMapperOutputFormatter : OutputFormatter
+#pragma warning disable CA1062
+public sealed class ByteMapperOutputFormatter : OutputFormatter
 {
     private static readonly Type SingleWriterType = typeof(SingleOutputWriter<>);
 
@@ -99,6 +98,7 @@ public class ByteMapperOutputFormatter : OutputFormatter
         ValueTask WriteAsync(Stream stream, object model);
     }
 
+#pragma warning disable CA1812
     private sealed class SingleOutputWriter<T> : IOutputWriter
     {
         private readonly ITypeMapper<T> mapper;
@@ -111,7 +111,7 @@ public class ByteMapperOutputFormatter : OutputFormatter
             bufferSize = mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+#pragma warning disable CA1835
         public async ValueTask WriteAsync(Stream stream, object model)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -125,8 +125,11 @@ public class ByteMapperOutputFormatter : OutputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+#pragma warning disable CA1835
     }
+#pragma warning restore CA1812
 
+#pragma warning disable CA1812
     private sealed class EnumerableOutputWriter<T> : IOutputWriter
     {
         private readonly ITypeMapper<T> mapper;
@@ -139,7 +142,7 @@ public class ByteMapperOutputFormatter : OutputFormatter
             bufferSize = Math.Max(config.BufferSize, mapper.Size);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+#pragma warning disable CA1835
         public async ValueTask WriteAsync(Stream stream, object model)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -169,7 +172,9 @@ public class ByteMapperOutputFormatter : OutputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+#pragma warning restore CA1835
     }
+#pragma warning restore CA1812
 
     // ------------------------------------------------------------
     // Diagnostics

@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
-public class BigEndianDateTimeBinaryConverterTest
+public sealed class BigEndianDateTimeBinaryConverterTest
 {
     private const int Offset = 1;
 
@@ -36,7 +34,7 @@ public class BigEndianDateTimeBinaryConverterTest
     }
 }
 
-public class LittleEndianDateTimeBinaryConverterTest
+public sealed class LittleEndianDateTimeBinaryConverterTest
 {
     private const int Offset = 1;
 
@@ -68,7 +66,7 @@ public class LittleEndianDateTimeBinaryConverterTest
     }
 }
 
-public class BigEndianDateTimeOffsetBinaryConverterTest
+public sealed class BigEndianDateTimeOffsetBinaryConverterTest
 {
     private const int Offset = 1;
 
@@ -101,7 +99,7 @@ public class BigEndianDateTimeOffsetBinaryConverterTest
     }
 }
 
-public class LittleEndianDateTimeOffsetBinaryConverterTest
+public sealed class LittleEndianDateTimeOffsetBinaryConverterTest
 {
     private const int Offset = 1;
 

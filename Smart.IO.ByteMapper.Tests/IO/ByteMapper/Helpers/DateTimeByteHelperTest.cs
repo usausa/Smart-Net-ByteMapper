@@ -2,10 +2,8 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Text;
 
-using Xunit;
-
 // ReSharper disable StringLiteralTypo
-public class DateTimeByteHelperTest
+public sealed class DateTimeByteHelperTest
 {
     [Fact]
     public void ParseDateTime()

@@ -1,9 +1,7 @@
 // ReSharper disable UseUtf8StringLiteral
 namespace Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-public class MapBooleanAttributeTest
+public sealed class MapBooleanAttributeTest
 {
     private const byte Filler = 0x00;
 

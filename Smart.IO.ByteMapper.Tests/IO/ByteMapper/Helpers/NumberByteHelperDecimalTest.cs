@@ -2,11 +2,9 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Text;
 
-using Xunit;
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
-public class NumberByteHelperDecimalTest
+#pragma warning disable CA1062
+#pragma warning disable CA1305
+public sealed class NumberByteHelperDecimalTest
 {
     [Theory]
     // Default

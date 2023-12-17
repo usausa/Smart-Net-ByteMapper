@@ -3,9 +3,7 @@ namespace Smart.IO.ByteMapper.Helpers;
 using System.Globalization;
 using System.Text;
 
-using Xunit;
-
-public class NumberByteHelperIntegerTest
+public sealed class NumberByteHelperIntegerTest
 {
     [Fact]
     public void ParseInteger()

@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
-public class BinaryIntConverterTest
+public sealed class BinaryIntConverterTest
 {
     private const int Offset = 1;
 
@@ -30,7 +28,7 @@ public class BinaryIntConverterTest
     }
 }
 
-public class LittleEndianIntBinaryConverterTest
+public sealed class LittleEndianIntBinaryConverterTest
 {
     private const int Offset = 1;
 

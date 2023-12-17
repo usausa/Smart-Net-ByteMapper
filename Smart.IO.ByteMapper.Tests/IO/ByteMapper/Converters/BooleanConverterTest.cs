@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
-public class BooleanConverterTest
+public sealed class BooleanConverterTest
 {
     private const int Offset = 1;
 

@@ -1,6 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
+#pragma warning disable CA1062
 public static class OptionsMapperFactoryConfigExtensions
 {
     public static MapperFactoryConfig UseOptionsDefault(this MapperFactoryConfig config)

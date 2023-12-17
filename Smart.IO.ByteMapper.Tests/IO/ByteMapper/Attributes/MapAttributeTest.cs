@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-public class MapAttributeTest
+public sealed class MapAttributeTest
 {
     //--------------------------------------------------------------------------------
     // NullFiller

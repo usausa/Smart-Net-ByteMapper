@@ -32,7 +32,7 @@ public abstract class AbstractMapConverterBuilder<TBuilder> : IMapConverterBuild
         return Entries[type].Factory((TBuilder)this, type, context);
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class Entry
     {
         public readonly Func<TBuilder, Type, int> CalcSize;
@@ -45,4 +45,5 @@ public abstract class AbstractMapConverterBuilder<TBuilder> : IMapConverterBuild
             Factory = factory;
         }
     }
+#pragma warning restore SA1401
 }

@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper.Attributes;
 
-using Xunit;
-
-public class MapBinaryAttributeTest
+public sealed class MapBinaryAttributeTest
 {
     //--------------------------------------------------------------------------------
     // Attribute

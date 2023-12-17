@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Smart.Collections.Concurrent;
 using Smart.IO.ByteMapper;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Ignore")]
-public class ByteMapperInputFormatter : InputFormatter
+#pragma warning disable CA1062
+public sealed class ByteMapperInputFormatter : InputFormatter
 {
     private static readonly Type SingleReaderType = typeof(SingleInputReader<>);
 
@@ -100,6 +99,7 @@ public class ByteMapperInputFormatter : InputFormatter
         ValueTask<object> ReadAsync(Stream stream, long? length);
     }
 
+#pragma warning disable CA1812
     private sealed class SingleInputReader<T> : IInputReader
     {
         private readonly ITypeMapper<T> mapper;
@@ -115,7 +115,7 @@ public class ByteMapperInputFormatter : InputFormatter
             bufferSize = mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+#pragma warning disable CA1835
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -135,8 +135,11 @@ public class ByteMapperInputFormatter : InputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+#pragma warning restore CA1835
     }
+#pragma warning restore CA1812
 
+#pragma warning disable CA1812
     private sealed class ArrayInputReader<T> : IInputReader
     {
         private readonly ITypeMapper<T> mapper;
@@ -155,7 +158,7 @@ public class ByteMapperInputFormatter : InputFormatter
             readSize = (bufferSize / mapper.Size) * mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+#pragma warning disable CA1835
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -205,8 +208,11 @@ public class ByteMapperInputFormatter : InputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+#pragma warning restore CA1835
     }
+#pragma warning restore CA1812
 
+#pragma warning disable CA1812
     private sealed class ListInputReader<T> : IInputReader
     {
         private readonly ITypeMapper<T> mapper;
@@ -225,7 +231,7 @@ public class ByteMapperInputFormatter : InputFormatter
             readSize = (bufferSize / mapper.Size) * mapper.Size;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1835:PreferStreamAsyncMemoryOverlodas", Justification = "Ignore")]
+#pragma warning disable CA1835
         public async ValueTask<object> ReadAsync(Stream stream, long? length)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
@@ -252,7 +258,9 @@ public class ByteMapperInputFormatter : InputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
+#pragma warning restore CA1835
     }
+#pragma warning restore CA1812
 
     // ------------------------------------------------------------
     // Diagnostics

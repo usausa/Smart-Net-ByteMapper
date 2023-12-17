@@ -2,6 +2,7 @@ namespace Smart.AspNetCore.Filters;
 
 using Microsoft.AspNetCore.Mvc.Filters;
 
+#pragma warning disable CA1062
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
 {
@@ -12,7 +13,6 @@ public sealed class ByteMapperProfileAttribute : Attribute, IAuthorizationFilter
         this.profile = profile;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public void OnAuthorization(AuthorizationFilterContext context)
     {
         context.HttpContext.Items[Const.ProfileKey] = profile;

@@ -2,9 +2,7 @@ namespace Smart.IO.ByteMapper.Attributes;
 
 using System.Text;
 
-using Xunit;
-
-public class MapTextAttributeTest
+public sealed class MapTextAttributeTest
 {
     //--------------------------------------------------------------------------------
     // Attribute

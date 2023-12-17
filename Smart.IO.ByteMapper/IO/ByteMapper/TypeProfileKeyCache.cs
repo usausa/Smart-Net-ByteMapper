@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
+#pragma warning disable CA1062
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 public sealed class TypeProfileKeyCache<T>
 {
@@ -203,7 +204,6 @@ public sealed class TypeProfileKeyCache<T>
         }
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(Type type, string profile, [MaybeNullWhen(false)] out T value)
     {
@@ -224,12 +224,11 @@ public sealed class TypeProfileKeyCache<T>
         return false;
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:ValidateArgumentsOfPublicMethods", Justification = "Ignore")]
     public T AddIfNotExist(Type type, string profile, Func<Type, string, T> valueFactory)
     {
         lock (sync)
         {
-            // Double checked locking
+            // Double-checked locking
             if (TryGetValue(type, profile, out var currentValue))
             {
                 return currentValue;
@@ -253,12 +252,11 @@ public sealed class TypeProfileKeyCache<T>
     // Inner
     //--------------------------------------------------------------------------------
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:AvoidUninstantiatedInternalClasses", Justification = "Framework only")]
     private sealed class EmptyKey
     {
     }
 
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Performance")]
+#pragma warning disable SA1401
     private sealed class Node
     {
         public readonly Type Type;
@@ -276,6 +274,7 @@ public sealed class TypeProfileKeyCache<T>
             Value = value;
         }
     }
+#pragma warning restore SA1401
 
     //--------------------------------------------------------------------------------
     // Diagnostics

@@ -2,10 +2,8 @@ namespace Smart.IO.ByteMapper.Expressions;
 
 using System.Text;
 
-using Xunit;
-
 // ReSharper disable StringLiteralTypo
-public class MapDateTimeExpressionTest
+public sealed class MapDateTimeExpressionTest
 {
     //--------------------------------------------------------------------------------
     // Expression

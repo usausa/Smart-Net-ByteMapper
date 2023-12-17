@@ -5,7 +5,7 @@ using BenchmarkDotNet.Attributes;
 using Smart.IO.ByteMapper.Attributes;
 
 [Config(typeof(BenchmarkConfig))]
-public class BinaryObjectBenchmark
+public sealed class BinaryObjectBenchmark
 {
     private const int N = 1000;
 
@@ -63,7 +63,7 @@ public class BinaryObjectBenchmark
     }
 
     [Map(40, UseDelimiter = false, AutoFiller = false)]
-    protected class BinaryObject
+    public class BinaryObject
     {
         [MapBinary(0)]
         public int Value0 { get; set; }

@@ -16,7 +16,7 @@
 
 ```csharp
 // Data class
-public class ComplexData
+public sealed class ComplexData
 {
     public string StringValue1 { get; set; }
     public string StringValue2 { get; set; }
@@ -210,7 +210,7 @@ WarmupCount=10
 [TypeEncoding(932)]
 [TypeTrueValue((byte)'Y')]
 [TypeFalseValue((byte)'N')]
-public class Data
+public sealed class Data
 {
     [MapInteger(0, 8)]
     public int IntValue { get; set; }
@@ -238,7 +238,7 @@ var mapperFactory = new MapperFactoryConfig()
 ## Map by Expression
 
 ```csharp
-public class Data
+public sealed class Data
 {
     public int IntValue { get; set; }
 

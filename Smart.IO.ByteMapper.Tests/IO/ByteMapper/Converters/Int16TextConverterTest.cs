@@ -5,9 +5,7 @@ using System.Text;
 
 using Smart.IO.ByteMapper.Mock;
 
-using Xunit;
-
-public class Int16TextConverterTest
+public sealed class Int16TextConverterTest
 {
     private const int Offset = 1;
 

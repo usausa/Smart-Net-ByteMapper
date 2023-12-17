@@ -6,7 +6,7 @@ using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Exporters;
 using BenchmarkDotNet.Jobs;
 
-public class BenchmarkConfig : ManualConfig
+public sealed class BenchmarkConfig : ManualConfig
 {
     public BenchmarkConfig()
     {

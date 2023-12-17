@@ -2,7 +2,6 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Runtime.CompilerServices;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Maintainability", "CA1508:AvoidDeadConditionalCode", Justification = "Analyzers bug")]
 internal static partial class NumberByteHelper
 {
     private const byte Minus = (byte)'-';
@@ -77,7 +76,7 @@ internal static partial class NumberByteHelper
             }
 
             var sign = *(pBytes + i) == Minus ? -1 : 1;
-            i += sign == -1 ? 1 : 0;
+            i += sign < 0 ? 1 : 0;
 
             while (i < length)
             {

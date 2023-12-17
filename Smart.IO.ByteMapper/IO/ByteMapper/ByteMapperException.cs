@@ -1,7 +1,7 @@
 namespace Smart.IO.ByteMapper;
 
 [Serializable]
-public class ByteMapperException : Exception
+public sealed class ByteMapperException : Exception
 {
     public ByteMapperException()
     {

@@ -1,8 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
-using Xunit;
-
-public class MapperFactoryTest
+public sealed class MapperFactoryTest
 {
     [Fact]
     public void CoverageFix()

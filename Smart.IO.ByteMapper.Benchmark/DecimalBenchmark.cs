@@ -6,9 +6,9 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Helpers;
 
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:SpecifyIFormatProvider", Justification = "Ignore")]
+#pragma warning disable CA1305
 [Config(typeof(BenchmarkConfig))]
-public class DecimalBenchmark2
+public sealed class DecimalBenchmark2
 {
     private const int N = 1000;
 
