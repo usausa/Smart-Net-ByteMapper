@@ -66,7 +66,7 @@ public sealed class MapperFactory
 
         var method = GetType().GetMethod(nameof(CreateInternalWithProfile), BindingFlags.Instance | BindingFlags.NonPublic);
         var genericMethod = method.MakeGenericMethod(type);
-        return (ITypeMapper)genericMethod.Invoke(this, new object[] { profile });
+        return (ITypeMapper)genericMethod.Invoke(this, [profile]);
     }
 
     public ITypeMapper<T> Create<T>()

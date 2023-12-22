@@ -42,11 +42,9 @@ public sealed class MapConstantAttributeTest
     // Helper
     //--------------------------------------------------------------------------------
 
-#pragma warning disable IDE0300
     [Map(4, UseDelimiter = true)]
-    [MapConstant(0, new byte[] { 0x31, 0x32 })]
+    [MapConstant(0, [0x31, 0x32])]
     internal sealed class ConstAttributeObject
     {
     }
-#pragma warning restore IDE0300
 }
