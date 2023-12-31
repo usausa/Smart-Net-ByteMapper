@@ -10,12 +10,6 @@ using Smart.IO.ByteMapper;
 #pragma warning disable CA1062
 public sealed class ByteMapperInputFormatter : InputFormatter
 {
-    private static readonly Type SingleReaderType = typeof(SingleInputReader<>);
-
-    private static readonly Type ArrayReaderType = typeof(ArrayInputReader<>);
-
-    private static readonly Type ListReaderType = typeof(ListInputReader<>);
-
     private readonly ThreadsafeTypeHashArrayMap<IInputReader> readerCache = new();
 
     private readonly TypeProfileKeyCache<IInputReader> profiledReaderCache = new();
@@ -83,15 +77,15 @@ public sealed class ByteMapperInputFormatter : InputFormatter
     {
         if (type.IsArray)
         {
-            return ArrayReaderType.MakeGenericType(type.GetElementType()!);
+            return typeof(ArrayInputReader<>).MakeGenericType(type.GetElementType()!);
         }
 
         if (TypeHelper.IsEnumerableType(type))
         {
-            return ListReaderType.MakeGenericType(type.GenericTypeArguments[0]);
+            return typeof(ListInputReader<>).MakeGenericType(type.GenericTypeArguments[0]);
         }
 
-        return SingleReaderType.MakeGenericType(type);
+        return typeof(SingleInputReader<>).MakeGenericType(type);
     }
 
     private interface IInputReader

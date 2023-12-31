@@ -10,10 +10,6 @@ using Smart.IO.ByteMapper;
 #pragma warning disable CA1062
 public sealed class ByteMapperOutputFormatter : OutputFormatter
 {
-    private static readonly Type SingleWriterType = typeof(SingleOutputWriter<>);
-
-    private static readonly Type EnumerableWriterType = typeof(EnumerableOutputWriter<>);
-
     private readonly ThreadsafeTypeHashArrayMap<IOutputWriter> writerCache = new();
 
     private readonly TypeProfileKeyCache<IOutputWriter> profiledWriterCache = new();
@@ -87,10 +83,10 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         var elementType = TypeHelper.GetEnumerableElementType(type);
         if (elementType is null)
         {
-            return SingleWriterType.MakeGenericType(type);
+            return typeof(SingleOutputWriter<>).MakeGenericType(type);
         }
 
-        return EnumerableWriterType.MakeGenericType(elementType);
+        return typeof(EnumerableOutputWriter<>).MakeGenericType(elementType);
     }
 
     private interface IOutputWriter
@@ -125,7 +121,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
                 ArrayPool<byte>.Shared.Return(buffer);
             }
         }
-#pragma warning disable CA1835
+#pragma warning restore CA1835
     }
 #pragma warning restore CA1812
 
