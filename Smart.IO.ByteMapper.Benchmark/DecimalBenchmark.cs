@@ -8,7 +8,7 @@ using Smart.IO.ByteMapper.Helpers;
 
 #pragma warning disable CA1305
 [Config(typeof(BenchmarkConfig))]
-public sealed class DecimalBenchmark2
+public class DecimalBenchmark2
 {
     private const int N = 1000;
 

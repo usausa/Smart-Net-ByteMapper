@@ -13,7 +13,7 @@ using Smart.Text.Japanese;
 #pragma warning disable CA1305
 // ReSharper disable StringLiteralTypo
 [Config(typeof(BenchmarkConfig))]
-public sealed class ConverterBenchmark
+public class ConverterBenchmark
 {
     private const int N = 1000;
 

@@ -5,7 +5,7 @@ using BenchmarkDotNet.Attributes;
 using Smart.IO.ByteMapper.Attributes;
 
 [Config(typeof(BenchmarkConfig))]
-public sealed class BinaryObjectBenchmark
+public class BinaryObjectBenchmark
 {
     private const int N = 1000;
 

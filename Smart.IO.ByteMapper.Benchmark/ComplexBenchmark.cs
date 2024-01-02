@@ -8,7 +8,7 @@ using Smart.Text.Japanese;
 
 // ReSharper disable StringLiteralTypo
 [Config(typeof(BenchmarkConfig))]
-public sealed class ComplexBenchmark
+public class ComplexBenchmark
 {
     private const int N = 1000;
 
