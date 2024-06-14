@@ -49,7 +49,7 @@ public sealed class TypeMapperTest
         Assert.Equal(mapper.Size, mapper.ToByte(new TargetObject()).Length);
 
         // Multiple collection
-        Assert.Equal(mapper.Size, mapper.ToByteMultiple([typeof(TargetObject)]).Length);
+        Assert.Equal(mapper.Size, mapper.ToByteMultiple([new TargetObject()]).Length);
 
         // Multiple not collection
         Assert.Equal(mapper.Size, mapper.ToByteMultiple(Enumerable.Repeat(new TargetObject(), 1)).Length);
@@ -113,7 +113,7 @@ public sealed class TypeMapperTest
         Assert.Equal(mapper.Size, mapper.ToByte(new TargetObject()).Length);
 
         // Multiple collection
-        Assert.Equal(mapper.Size, mapper.ToByteMultiple([typeof(TargetObject)]).Length);
+        Assert.Equal(mapper.Size, mapper.ToByteMultiple([new TargetObject()]).Length);
 
         // Multiple not collection
         Assert.Equal(mapper.Size, mapper.ToByteMultiple(Enumerable.Repeat(new TargetObject(), 1)).Length);
