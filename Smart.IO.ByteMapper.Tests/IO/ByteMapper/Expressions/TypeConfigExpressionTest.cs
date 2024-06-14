@@ -84,7 +84,7 @@ public sealed class TypeConfigExpressionTest
             .DefaultDelimiter(0xCC)
             .CreateMapByExpression<TypeDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(0xFF))
             .CreateMapByExpression<DefaultDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter(true))
-            .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter([]))
+            .CreateMapByExpression<NoDelimiterObject>(2, c => c.AutoFiller(false).UseDelimiter())
             .ToMapperFactory();
         var typeMapper = mapperFactory.Create<TypeDelimiterObject>();
         var defaultMapper = mapperFactory.Create<DefaultDelimiterObject>();

@@ -67,25 +67,25 @@ public sealed class AttributeExtensionsTest
 
         // Types
         Assert.NotNull(new MapperFactoryConfig()
-            .CreateMapByAttribute(new[] { typeof(SimpleObject) })
+            .CreateMapByAttribute([typeof(SimpleObject)])
             .ToMapperFactory()
             .Create<SimpleObject>());
 
         // Types Named
         Assert.NotNull(new MapperFactoryConfig()
-            .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test")
+            .CreateMapByAttribute([typeof(SimpleObject)], "test")
             .ToMapperFactory()
             .Create<SimpleObject>("test"));
 
         // Types Validation
         Assert.NotNull(new MapperFactoryConfig()
-            .CreateMapByAttribute(new[] { typeof(SimpleObject) }, true)
+            .CreateMapByAttribute([typeof(SimpleObject)], true)
             .ToMapperFactory()
             .Create<SimpleObject>());
 
         // Types Named Validation
         Assert.NotNull(new MapperFactoryConfig()
-            .CreateMapByAttribute(new[] { typeof(SimpleObject) }, "test", true)
+            .CreateMapByAttribute([typeof(SimpleObject)], "test", true)
             .ToMapperFactory()
             .Create<SimpleObject>("test"));
 
@@ -160,13 +160,13 @@ public sealed class AttributeExtensionsTest
 
         // Types
         Assert.NotNull(new MapperFactoryConfig()
-            .AddProfile(new AnonymousProfile(profile => profile.CreateMapByAttribute(new[] { typeof(SimpleObject) })))
+            .AddProfile(new AnonymousProfile(profile => profile.CreateMapByAttribute([typeof(SimpleObject)])))
             .ToMapperFactory()
             .Create<SimpleObject>());
 
         // Types Validation
         Assert.NotNull(new MapperFactoryConfig()
-            .AddProfile(new AnonymousProfile(profile => profile.CreateMapByAttribute(new[] { typeof(SimpleObject) }, true)))
+            .AddProfile(new AnonymousProfile(profile => profile.CreateMapByAttribute([typeof(SimpleObject)], true)))
             .ToMapperFactory()
             .Create<SimpleObject>());
 
