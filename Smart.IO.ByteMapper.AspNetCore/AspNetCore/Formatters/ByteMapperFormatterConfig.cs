@@ -9,7 +9,7 @@ public sealed class ByteMapperFormatterConfig
 
     public IDelegateFactory DelegateFactory { get; set; } = Smart.Reflection.DelegateFactory.Default;
 
-    public IList<string> SupportedMediaTypes { get; } = new List<string>();
+    public IList<string> SupportedMediaTypes { get; } = [];
 
     public int BufferSize { get; set; } = 8192;
 }
