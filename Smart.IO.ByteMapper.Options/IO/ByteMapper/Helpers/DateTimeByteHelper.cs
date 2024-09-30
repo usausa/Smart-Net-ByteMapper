@@ -141,7 +141,7 @@ internal static partial class DateTimeByteHelper
             }
         }
 
-        return list.ToArray();
+        return [.. list];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -267,7 +267,7 @@ internal static partial class DateTimeByteHelper
             }
 
             var y = year - 1;
-            var ticks = (((y * 365) + (y / 4) - (y / 100) + (y / 400)) + days[month - 1] + (day - 1)) * TicksPerDay;
+            var ticks = ((y * 365) + (y / 4) - (y / 100) + (y / 400) + days[month - 1] + (day - 1)) * TicksPerDay;
             ticks += (((long)hour * 3600) + ((long)minute * 60) + second) * TimeSpan.TicksPerSecond;
             if (millisecond > 0)
             {

@@ -149,7 +149,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
             factory = config.DelegateFactory.CreateFactory<T>();
             bufferSize = Math.Max(config.BufferSize, mapper.Size);
-            readSize = (bufferSize / mapper.Size) * mapper.Size;
+            readSize = bufferSize / mapper.Size * mapper.Size;
         }
 
 #pragma warning disable CA1835
@@ -222,7 +222,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             mapper = String.IsNullOrEmpty(profile) ? config.MapperFactory.Create<T>() : config.MapperFactory.Create<T>(profile);
             factory = config.DelegateFactory.CreateFactory<T>();
             bufferSize = Math.Max(config.BufferSize, mapper.Size);
-            readSize = (bufferSize / mapper.Size) * mapper.Size;
+            readSize = bufferSize / mapper.Size * mapper.Size;
         }
 
 #pragma warning disable CA1835
