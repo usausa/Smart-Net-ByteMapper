@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using Smart.IO.ByteMapper.Mock;
 
+#pragma warning disable IDE0320
 public sealed class ArrayConverterTest
 {
     private const int Offset = 1;

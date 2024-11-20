@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Attributes;
 
+#pragma warning disable IDE0320
 #pragma warning disable CA2263
 public sealed class TypeMapperTest
 {

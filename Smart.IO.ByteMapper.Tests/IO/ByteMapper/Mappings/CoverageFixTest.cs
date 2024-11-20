@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Mappings;
 
 using Smart.IO.ByteMapper.Mappers;
 
+#pragma warning disable IDE0320
 public sealed class CoverageFixTest
 {
     [Fact]

@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
+#pragma warning disable IDE0320
 public sealed class MapperFactoryTest
 {
     [Fact]

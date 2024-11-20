@@ -5,7 +5,7 @@ using Smart.IO.ByteMapper.Mappers;
 
 internal sealed class MapperPosition
 {
-    public static IComparer<MapperPosition> Comparer => Comparers.Delegate<MapperPosition>((x, y) => x.Offset - y.Offset);
+    public static IComparer<MapperPosition> Comparer => Comparers.Delegate<MapperPosition>(static (x, y) => x.Offset - y.Offset);
 
     public int Offset { get; }
 
