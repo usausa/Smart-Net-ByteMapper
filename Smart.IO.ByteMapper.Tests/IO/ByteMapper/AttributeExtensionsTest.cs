@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Attributes;
 
+#pragma warning disable CA2263
 public sealed class AttributeExtensionsTest
 {
     //--------------------------------------------------------------------------------
@@ -200,3 +201,4 @@ public sealed class AttributeExtensionsTest
         }
     }
 }
+#pragma warning restore CA2263

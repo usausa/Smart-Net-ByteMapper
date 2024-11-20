@@ -10,7 +10,7 @@ public sealed class MapperFactoryConfig : IMapperFactoryConfig
 {
     private readonly ComponentConfig config = new();
 
-    private readonly IDictionary<string, object> parameters = new Dictionary<string, object>();
+    private readonly Dictionary<string, object> parameters = [];
 
     private readonly List<IMappingFactory> factories = [];
 

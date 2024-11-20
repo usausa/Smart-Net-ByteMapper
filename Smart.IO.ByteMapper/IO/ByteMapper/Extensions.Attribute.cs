@@ -5,6 +5,7 @@ using System.Reflection;
 using Smart.IO.ByteMapper.Attributes;
 
 #pragma warning disable CA1062
+#pragma warning disable CA2263
 public static class AttributeExtensions
 {
     //--------------------------------------------------------------------------------
@@ -175,3 +176,5 @@ public static class AttributeExtensions
         return profile;
     }
 }
+#pragma warning restore CA2263
+#pragma warning restore CA1062
