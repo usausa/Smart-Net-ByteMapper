@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Expressions;
 
 using System.Text;
 
+#pragma warning disable IDE0320
 // ReSharper disable StringLiteralTypo
 public sealed class MapDateTimeExpressionTest
 {
@@ -17,7 +18,7 @@ public sealed class MapDateTimeExpressionTest
             .DefaultDelimiter(null)
             .DefaultTextFiller(0x20)
             .DefaultDateTimeKind(DateTimeKind.Unspecified)
-            .CreateMapByExpression<DateTimeExpressionObject>(60, static config => config
+            .CreateMapByExpression<DateTimeExpressionObject>(60, config => config
                 .ForMember(
                     x => x.DateTimeValue,
                     m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))

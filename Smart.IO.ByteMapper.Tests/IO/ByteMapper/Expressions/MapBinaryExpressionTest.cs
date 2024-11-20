@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
+#pragma warning disable IDE0320
 public sealed class MapBinaryExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -12,7 +13,7 @@ public sealed class MapBinaryExpressionTest
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(null)
             .DefaultEndian(Endian.Big)
-            .CreateMapByExpression<BinaryExpressionObject>(120, static config => config
+            .CreateMapByExpression<BinaryExpressionObject>(120, config => config
                 .ForMember(x => x.BigEndianIntValue, m => m.Binary())
                 .ForMember(x => x.LittleEndianIntValue, m => m.Binary(Endian.Little))
                 .ForMember(x => x.BigEndianLongValue, m => m.Binary())

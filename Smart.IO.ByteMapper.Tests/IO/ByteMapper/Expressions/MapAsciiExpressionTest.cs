@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
+#pragma warning disable IDE0320
 public sealed class MapAsciiExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -15,7 +16,7 @@ public sealed class MapAsciiExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultTextFiller(0x20)
-            .CreateMapByExpression<AsciiExpressionObject>(8, static config => config
+            .CreateMapByExpression<AsciiExpressionObject>(8, config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Ascii(4))

@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Expressions;
 
 using System.Text;
 
+#pragma warning disable IDE0320
 public sealed class MapIntegerExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ public sealed class MapIntegerExpressionTest
             .DefaultZeroFill(false)
             .DefaultNumberPadding(Padding.Left)
             .DefaultNumberFiller(0x20)
-            .CreateMapByExpression<IntegerExpressionObject>(48, static config => config
+            .CreateMapByExpression<IntegerExpressionObject>(48, config => config
                 .ForMember(x => x.IntValue, m => m.Integer(4))
                 .ForMember(x => x.NullableIntValue, m => m.Integer(4).Filler((byte)'_'))
                 .ForMember(x => x.PaddingRightIntValue, m => m.Integer(4).Padding(Padding.Right))

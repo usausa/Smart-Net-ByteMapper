@@ -3,6 +3,7 @@ namespace Smart.IO.ByteMapper.Expressions;
 using System.Globalization;
 using System.Text;
 
+#pragma warning disable IDE0320
 public sealed class MapNumberTextExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -21,7 +22,7 @@ public sealed class MapNumberTextExpressionTest
             .DefaultNumberTextDecimalStyle(NumberStyles.Any)
             .DefaultNumberTextPadding(Padding.Left)
             .DefaultNumberTextFiller(0x20)
-            .CreateMapByExpression<NumberTextExpressionObject>(54, static config => config
+            .CreateMapByExpression<NumberTextExpressionObject>(54, config => config
                 .ForMember(x => x.IntValue, m => m.NumberText(4))
                 .ForMember(x => x.NullableIntValue, m => m.NumberText(4))
                 .ForMember(

@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
+#pragma warning disable IDE0320
 public sealed class MapByteExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -11,7 +12,7 @@ public sealed class MapByteExpressionTest
     {
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(null)
-            .CreateMapByExpression<ByteExpressionObject>(1, static config => config
+            .CreateMapByExpression<ByteExpressionObject>(1, config => config
                 .ForMember(x => x.ByteValue, m => m.Byte()))
             .ToMapperFactory();
         var mapper = mapperFactory.Create<ByteExpressionObject>();

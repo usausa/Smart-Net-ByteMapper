@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Expressions;
 
+#pragma warning disable IDE0320
 public sealed class MapArrayExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -13,7 +14,7 @@ public sealed class MapArrayExpressionTest
             .DefaultDelimiter(null)
             .DefaultFiller(0x00)
             .DefaultEndian(Endian.Big)
-            .CreateMapByExpression<ArrayExpressionObject>(19, static config => config
+            .CreateMapByExpression<ArrayExpressionObject>(19, config => config
                 .ForMember(x => x.ArrayValue, m => m.Array(3, e => e.Binary()))
                 .ForMember(x => x.ByteArrayValue, m => m.Array(7, e => e.Byte()).Filler(0xFF)))
             .ToMapperFactory();

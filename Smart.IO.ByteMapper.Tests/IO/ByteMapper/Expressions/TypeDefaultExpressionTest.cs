@@ -4,6 +4,7 @@ namespace Smart.IO.ByteMapper.Expressions;
 using System.Globalization;
 using System.Text;
 
+#pragma warning disable IDE0320
 public sealed class TypeDefaultExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ public sealed class TypeDefaultExpressionTest
             .DefaultDateTimeTextEncoding(Encoding.UTF8)
             .DefaultDateTimeTextProvider(CultureInfo.CurrentCulture)
             .DefaultDateTimeTextStyle(DateTimeStyles.None)
-            .CreateMapByExpression<TypeDefaultExpressionObject>(10, static config => config
+            .CreateMapByExpression<TypeDefaultExpressionObject>(10, config => config
                 .TypeDelimiter(0x0D, 0x0A)
                 .TypeEncoding(Encoding.ASCII)
                 .TypeTrim(true)

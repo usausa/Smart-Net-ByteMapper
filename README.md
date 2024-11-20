@@ -39,7 +39,7 @@ public sealed class ComplexData
 var mapperFactory = new MapperFactoryConfig()
     .UseOptionsDefault()
     .DefaultEncoding(Encoding.GetEncoding(932))
-    .CreateMapByExpression<ComplexData>(144, static config => config
+    .CreateMapByExpression<ComplexData>(144, config => config
         .ForMember(x => x.StringValue1, m => m.Text(20))
         .ForMember(x => x.StringValue2, m => m.Text(20))
         .ForMember(x => x.StringValue3, m => m.Text(20))
@@ -254,7 +254,7 @@ public sealed class Data
 
 ```csharp
 var mapperFactory = new MapperFactoryConfig()
-    .CreateMapByExpression<Data>(32, static config => config
+    .CreateMapByExpression<Data>(32, config => config
         .NullFiller((byte)'_')
         .TypeEncoding(Encoding.GetEncoding(932))
         .TypeTrueValue((byte)'Y')

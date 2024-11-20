@@ -1,6 +1,7 @@
 // ReSharper disable UseUtf8StringLiteral
 namespace Smart.IO.ByteMapper.Expressions;
 
+#pragma warning disable IDE0320
 public sealed class MapBooleanExpressionTest
 {
     private const byte Filler = 0x00;
@@ -25,7 +26,7 @@ public sealed class MapBooleanExpressionTest
             .DefaultFiller(Filler)
             .DefaultTrueValue(True)
             .DefaultFalseValue(False)
-            .CreateMapByExpression<BooleanExpressionObject>(4, static config => config
+            .CreateMapByExpression<BooleanExpressionObject>(4, config => config
                 .ForMember(x => x.BooleanValue, m => m.Boolean())
                 .ForMember(x => x.NullableBooleanValue, m => m.Boolean())
                 .ForMember(x => x.CustomBooleanValue, m => m.Boolean(Yes, No))

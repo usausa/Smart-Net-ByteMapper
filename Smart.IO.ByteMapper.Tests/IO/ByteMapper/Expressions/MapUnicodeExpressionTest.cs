@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Expressions;
 
 using System.Text;
 
+#pragma warning disable IDE0320
 public sealed class MapUnicodeExpressionTest
 {
     //--------------------------------------------------------------------------------
@@ -17,7 +18,7 @@ public sealed class MapUnicodeExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultUnicodeFiller(' ')
-            .CreateMapByExpression<UnicodeExpressionObject>(8, static config => config
+            .CreateMapByExpression<UnicodeExpressionObject>(8, config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Unicode(4))
@@ -51,7 +52,7 @@ public sealed class MapUnicodeExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultTextFiller((byte)' ')
-            .CreateMapByExpression<UnicodeExpressionObject>(8, static config => config
+            .CreateMapByExpression<UnicodeExpressionObject>(8, config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Unicode(4))

@@ -6,6 +6,7 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.Text.Japanese;
 
+#pragma warning disable IDE0320
 // ReSharper disable StringLiteralTypo
 [Config(typeof(BenchmarkConfig))]
 public class ComplexBenchmark
@@ -26,7 +27,7 @@ public class ComplexBenchmark
         var mapperFactory = new MapperFactoryConfig()
             .UseOptionsDefault()
             .DefaultEncoding(SjisEncoding.Instance)
-            .CreateMapByExpression<ComplexData>(144, static config => config
+            .CreateMapByExpression<ComplexData>(144, config => config
                 .ForMember(x => x.StringValue1, m => m.Text(20))
                 .ForMember(x => x.StringValue2, m => m.Text(20))
                 .ForMember(x => x.StringValue3, m => m.Text(20))
