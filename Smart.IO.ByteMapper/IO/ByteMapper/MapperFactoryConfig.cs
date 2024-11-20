@@ -102,5 +102,5 @@ public sealed class MapperFactoryConfig : IMapperFactoryConfig
 
     IDictionary<string, object> IMapperFactoryConfig.ResolveParameters() => new Dictionary<string, object>(parameters);
 
-    IEnumerable<IMappingFactory> IMapperFactoryConfig.ResolveMappingFactories() => factories.Concat(profiles.SelectMany(x => x.ResolveMappingFactories()));
+    IEnumerable<IMappingFactory> IMapperFactoryConfig.ResolveMappingFactories() => factories.Concat(profiles.SelectMany(static x => x.ResolveMappingFactories()));
 }
