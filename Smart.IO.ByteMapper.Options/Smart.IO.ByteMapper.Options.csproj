@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
     <RootNamespace>Smart</RootNamespace>
-    <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,15 +15,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Usa.Smart.Core" Version="2.3.0" />
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Usa.Smart.Core" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
   <ItemGroup>

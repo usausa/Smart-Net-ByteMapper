@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net8.0;net6.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
     <RootNamespace>Smart</RootNamespace>
-    <CodeAnalysisRuleSet>..\Smart.IO.ByteMapper.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.3.0" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>

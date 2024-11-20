@@ -1,6 +1,6 @@
 # Smart.IO.ByteMapper .NET - byte array mapper library for .NET
 
-[![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper/)
+[![NuGet](https://img.shields.io/nuget/v/Usa.Smart.IO.ByteMapper.svg)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper)
 
 ## What is this ?
 
@@ -98,9 +98,9 @@ Performance in this case.
 
 | Package | Note |
 |-|-|
-| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper/) | Core libyrary |
-| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper.Options)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.Options/) | Optional converters |
-| [![NuGet Badge](https://buildstats.info/nuget/Usa.Smart.IO.ByteMapper.AspNetCore)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.AspNetCore/) | ASP.NET Core integration |
+| [![NuGet](https://img.shields.io/nuget/v/Usa.Smart.IO.ByteMapper.svg)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper/) | Core libyrary |
+| [![NuGet](https://img.shields.io/nuget/v/Usa.Smart.IO.ByteMapper.Options.svg)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.Options/) | Optional converters |
+| [![NuGet](https://img.shields.io/nuget/v/Usa.Smart.IO.ByteMapper.AspNetCore.svg)](https://www.nuget.org/packages/Usa.Smart.IO.ByteMapper.AspNetCore/) | ASP.NET Core integration |
 
 ## Benchmark
 
