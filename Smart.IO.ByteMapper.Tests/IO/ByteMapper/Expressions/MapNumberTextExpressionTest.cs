@@ -21,7 +21,7 @@ public sealed class MapNumberTextExpressionTest
             .DefaultNumberTextDecimalStyle(NumberStyles.Any)
             .DefaultNumberTextPadding(Padding.Left)
             .DefaultNumberTextFiller(0x20)
-            .CreateMapByExpression<NumberTextExpressionObject>(54, config => config
+            .CreateMapByExpression<NumberTextExpressionObject>(54, static config => config
                 .ForMember(x => x.IntValue, m => m.NumberText(4))
                 .ForMember(x => x.NullableIntValue, m => m.NumberText(4))
                 .ForMember(

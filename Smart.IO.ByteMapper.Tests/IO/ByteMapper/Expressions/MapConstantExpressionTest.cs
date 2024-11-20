@@ -13,7 +13,7 @@ public sealed class MapConstantExpressionTest
 #pragma warning disable IDE0230
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(0x0D, 0x0A)
-            .CreateMapByExpression<ConstExpressionObject>(6, config => config
+            .CreateMapByExpression<ConstExpressionObject>(6, static config => config
                 .UseDelimiter(true)
                 .Constant(0, [0x31, 0x32])
                 .Constant([0x33, 0x34]))

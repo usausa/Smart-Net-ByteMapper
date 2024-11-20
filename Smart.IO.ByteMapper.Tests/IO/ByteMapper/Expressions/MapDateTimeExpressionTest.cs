@@ -17,7 +17,7 @@ public sealed class MapDateTimeExpressionTest
             .DefaultDelimiter(null)
             .DefaultTextFiller(0x20)
             .DefaultDateTimeKind(DateTimeKind.Unspecified)
-            .CreateMapByExpression<DateTimeExpressionObject>(60, config => config
+            .CreateMapByExpression<DateTimeExpressionObject>(60, static config => config
                 .ForMember(
                     x => x.DateTimeValue,
                     m => m.DateTime("yyyyMMdd", DateTimeKind.Unspecified))

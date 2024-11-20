@@ -11,7 +11,7 @@ public sealed class MapByteExpressionTest
     {
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(null)
-            .CreateMapByExpression<ByteExpressionObject>(1, config => config
+            .CreateMapByExpression<ByteExpressionObject>(1, static config => config
                 .ForMember(x => x.ByteValue, m => m.Byte()))
             .ToMapperFactory();
         var mapper = mapperFactory.Create<ByteExpressionObject>();

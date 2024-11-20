@@ -12,7 +12,7 @@ public sealed class MapFillerExpressionTest
         var mapperFactory = new MapperFactoryConfig()
             .DefaultDelimiter(null)
             .DefaultFiller((byte)' ')
-            .CreateMapByExpression<FillerExpressionObject>(4, config => config
+            .CreateMapByExpression<FillerExpressionObject>(4, static config => config
                 .AutoFiller(true)
                 .Filler(0, 1)
                 .Filler(1, 1, (byte)'0')

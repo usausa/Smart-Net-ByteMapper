@@ -17,7 +17,7 @@ public sealed class MapTextExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultTextFiller(0x20)
-            .CreateMapByExpression<TextExpressionObject>(8, config => config
+            .CreateMapByExpression<TextExpressionObject>(8, static config => config
                 .ForMember(x => x.StringValue, m => m.Text(4))
                 .ForMember(x => x.CustomStringValue, m => m.Text(4).Encoding(Encoding.ASCII).Trim(false).Padding(Padding.Left).Filler((byte)'_')))
             .ToMapperFactory();

@@ -38,7 +38,7 @@ public sealed class TypeDefaultExpressionTest
             .DefaultDateTimeTextEncoding(Encoding.UTF8)
             .DefaultDateTimeTextProvider(CultureInfo.CurrentCulture)
             .DefaultDateTimeTextStyle(DateTimeStyles.None)
-            .CreateMapByExpression<TypeDefaultExpressionObject>(10, config => config
+            .CreateMapByExpression<TypeDefaultExpressionObject>(10, static config => config
                 .TypeDelimiter(0x0D, 0x0A)
                 .TypeEncoding(Encoding.ASCII)
                 .TypeTrim(true)

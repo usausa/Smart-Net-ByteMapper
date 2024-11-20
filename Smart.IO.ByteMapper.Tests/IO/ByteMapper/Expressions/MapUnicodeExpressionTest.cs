@@ -17,7 +17,7 @@ public sealed class MapUnicodeExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultUnicodeFiller(' ')
-            .CreateMapByExpression<UnicodeExpressionObject>(8, config => config
+            .CreateMapByExpression<UnicodeExpressionObject>(8, static config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Unicode(4))
@@ -51,7 +51,7 @@ public sealed class MapUnicodeExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultTextFiller((byte)' ')
-            .CreateMapByExpression<UnicodeExpressionObject>(8, config => config
+            .CreateMapByExpression<UnicodeExpressionObject>(8, static config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Unicode(4))

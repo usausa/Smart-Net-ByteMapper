@@ -15,7 +15,7 @@ public sealed class MapAsciiExpressionTest
             .DefaultTrim(true)
             .DefaultTextPadding(Padding.Right)
             .DefaultTextFiller(0x20)
-            .CreateMapByExpression<AsciiExpressionObject>(8, config => config
+            .CreateMapByExpression<AsciiExpressionObject>(8, static config => config
                 .ForMember(
                     x => x.StringValue,
                     m => m.Ascii(4))

@@ -20,7 +20,7 @@ public sealed class MapDateTimeTextExpressionTest
             .DefaultDateTimeTextEncoding(Encoding.ASCII)
             .DefaultDateTimeTextProvider(CultureInfo.InvariantCulture)
             .DefaultDateTimeTextStyle(DateTimeStyles.None)
-            .CreateMapByExpression<DateTimeTextExpressionObject>(60, config => config
+            .CreateMapByExpression<DateTimeTextExpressionObject>(60, static config => config
                 .ForMember(
                     x => x.DateTimeValue,
                     m => m.DateTimeText(8, "yyyyMMdd"))
