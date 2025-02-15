@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Analyzers.ruleset" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
+    <File Path="test.runsettings" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="Smart.IO.ByteMapper.AspNetCore/Smart.IO.ByteMapper.AspNetCore.csproj" />
+    <Project Path="Smart.IO.ByteMapper.Options/Smart.IO.ByteMapper.Options.csproj" />
+    <Project Path="Smart.IO.ByteMapper/Smart.IO.ByteMapper.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
+  </Folder>
+  <Folder Name="/Benchmark/">
+    <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
+  </Folder>
+  <Folder Name="/Example/">
+    <Project Path="Example.Web/Example.Web.csproj" />
+  </Folder>
+</Solution>
