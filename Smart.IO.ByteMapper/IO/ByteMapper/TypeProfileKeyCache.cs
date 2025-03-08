@@ -44,7 +44,7 @@ public sealed class TypeProfileKeyCache<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int CalculateHash(Type type, string profile)
     {
-        return type.GetHashCode() ^ StringHash.CalcNameHash(profile);
+        return type.GetHashCode() ^ StringHash.Calc(profile);
     }
 
     private static int CalculateDepth(Node node)

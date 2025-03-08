@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 internal static class StringHash
 {
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int CalcNameHash(string value)
+    public static int Calc(string value)
     {
         unchecked
         {

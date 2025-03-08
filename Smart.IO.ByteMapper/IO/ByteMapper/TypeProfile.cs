@@ -25,7 +25,7 @@ internal readonly struct TypeProfile : IEquatable<TypeProfile>
     public override int GetHashCode()
     {
         var hash = type.GetHashCode();
-        hash ^= StringHash.CalcNameHash(profile);
+        hash ^= StringHash.Calc(profile);
         return hash;
     }
 }
