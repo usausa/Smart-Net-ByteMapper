@@ -1,25 +1,31 @@
 namespace Smart.IO.ByteMapper;
 
+using Smart.IO.ByteMapper.Helpers;
+
 internal readonly struct TypeProfile : IEquatable<TypeProfile>
 {
-    public Type Type { get; }
+    private readonly Type type;
 
-    public string Profile { get; }
+    private readonly string profile;
+
+    public Type Type => type;
+
+    public string Profile => profile;
 
     public TypeProfile(Type type, string profile)
     {
-        Type = type;
-        Profile = profile;
+        this.type = type;
+        this.profile = profile;
     }
 
-    public bool Equals(TypeProfile other) => Type == other.Type && Profile == other.Profile;
+    public bool Equals(TypeProfile other) => type == other.type && profile == other.profile;
 
-    public override bool Equals(object obj) => obj is TypeProfile other && Type == other.Type && Profile == other.Profile;
+    public override bool Equals(object obj) => obj is TypeProfile other && type == other.type && profile == other.profile;
 
     public override int GetHashCode()
     {
-        var hash = Type.GetHashCode();
-        hash ^= Profile.GetHashCode(StringComparison.Ordinal);
+        var hash = type.GetHashCode();
+        hash ^= StringHash.CalcNameHash(profile);
         return hash;
     }
 }

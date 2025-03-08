@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
+using Smart.IO.ByteMapper.Helpers;
+
 #pragma warning disable CA1062
 [DebuggerDisplay("{" + nameof(Diagnostics) + "}")]
 public sealed class TypeProfileKeyCache<T>
@@ -42,7 +44,7 @@ public sealed class TypeProfileKeyCache<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int CalculateHash(Type type, string profile)
     {
-        return type.GetHashCode() ^ profile.GetHashCode(StringComparison.Ordinal);
+        return type.GetHashCode() ^ StringHash.CalcNameHash(profile);
     }
 
     private static int CalculateDepth(Node node)
