@@ -15,8 +15,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="Microsoft.Testing.Extensions.CodeCoverage" Version="17.14.2" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.2" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.4.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.7" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.4.4" />
     <PackageReference Include="xunit.v3" Version="3.0.0" />
   </ItemGroup>
 
