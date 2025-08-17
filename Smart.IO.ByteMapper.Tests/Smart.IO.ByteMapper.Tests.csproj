@@ -8,6 +8,12 @@
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+    <TestingPlatformShowTestsFailure>true</TestingPlatformShowTestsFailure>
+  </PropertyGroup>
+
   <ItemGroup>
     <Content Include="xunit.runner.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
