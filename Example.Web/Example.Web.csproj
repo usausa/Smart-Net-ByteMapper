@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.7" />
-    <PackageReference Include="Usa.Smart.Core" Version="2.4.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.10" />
+    <PackageReference Include="Usa.Smart.Core" Version="2.4.6" />
   </ItemGroup>
 
   <ItemGroup>
