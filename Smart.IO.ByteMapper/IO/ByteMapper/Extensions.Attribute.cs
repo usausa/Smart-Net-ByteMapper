@@ -71,17 +71,17 @@ public static class AttributeExtensions
 
     public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types)
     {
-        return CreateMapByAttribute(config, types, null, true);
+        return config.CreateMapByAttribute(types, null, true);
     }
 
     public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, string profile)
     {
-        return CreateMapByAttribute(config, types, profile, true);
+        return config.CreateMapByAttribute(types, profile, true);
     }
 
     public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, bool validation)
     {
-        return CreateMapByAttribute(config, types, null, validation);
+        return config.CreateMapByAttribute(types, null, validation);
     }
 
     public static MapperFactoryConfig CreateMapByAttribute(this MapperFactoryConfig config, IEnumerable<Type> types, string profile, bool validation)
@@ -150,7 +150,7 @@ public static class AttributeExtensions
 
     public static MapperProfile CreateMapByAttribute(this MapperProfile profile, IEnumerable<Type> types)
     {
-        return CreateMapByAttribute(profile, types, true);
+        return profile.CreateMapByAttribute(types, true);
     }
 
     public static MapperProfile CreateMapByAttribute(this MapperProfile profile, IEnumerable<Type> types, bool validation)
