@@ -58,8 +58,12 @@ internal sealed class DateTimeTextConverter : IMapConverter
         }
         else
         {
-            var bytes = encoding.GetBytes(((DateTime)value).ToString(format, provider));
-            BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
+            var destination = buffer.AsSpan(index, length);
+            var written = encoding.GetBytes(((DateTime)value).ToString(format, provider), destination);
+            if (written < length)
+            {
+                destination[written..].Fill(filler);
+            }
         }
     }
 }
@@ -117,8 +121,12 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         }
         else
         {
-            var bytes = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider));
-            BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
+            var destination = buffer.AsSpan(index, length);
+            var written = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider), destination);
+            if (written < length)
+            {
+                destination[written..].Fill(filler);
+            }
         }
     }
 }

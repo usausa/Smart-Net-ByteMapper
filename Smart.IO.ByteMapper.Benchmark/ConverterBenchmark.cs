@@ -205,8 +205,8 @@ public class ConverterBenchmark
 
         var numberTextDecimal8Builder = new NumberTextConverterBuilder { Length = 8 };
         numberTextDecimal8Converter = numberTextDecimal8Builder.CreateConverter(context, typeof(decimal));
-        numberTextDecimal8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Decimal.ToString(CultureInfo.InvariantCulture), 8, FixedAlignment.Right);
-        numberTextDecimal8ZeroBuffer = SjisEncoding.GetFixedBytes("0.00", 10, FixedAlignment.Right);
+        numberTextDecimal8MaxBuffer = SjisEncoding.GetFixedBytes(Length8Decimal.ToString(CultureInfo.InvariantCulture), 10, FixedAlignment.Right);
+        numberTextDecimal8ZeroBuffer = SjisEncoding.GetFixedBytes("0.00", 8, FixedAlignment.Right);
 
         var numberTextDecimal18Builder = new NumberTextConverterBuilder { Length = 18 };
         numberTextDecimal18Converter = numberTextDecimal18Builder.CreateConverter(context, typeof(decimal));

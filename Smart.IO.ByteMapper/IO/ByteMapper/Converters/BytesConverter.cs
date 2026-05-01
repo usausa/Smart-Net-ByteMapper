@@ -14,17 +14,9 @@ internal sealed class BytesConverter : IMapConverter
         this.filler = filler;
     }
 
-    public unsafe object Read(byte[] buffer, int index)
+    public object Read(byte[] buffer, int index)
     {
-        var bytes = new byte[length];
-
-        fixed (byte* pSrc = &buffer[index])
-        fixed (byte* pDst = &bytes[0])
-        {
-            Buffer.MemoryCopy(pSrc, pDst, length, length);
-        }
-
-        return bytes;
+        return buffer.AsSpan(index, length).ToArray();
     }
 
     public void Write(byte[] buffer, int index, object value)

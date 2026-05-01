@@ -25,12 +25,8 @@ public sealed class ConstantMapper : IMapper
         throw new NotSupportedException();
     }
 
-    public unsafe void Write(byte[] buffer, int index, object target)
+    public void Write(byte[] buffer, int index, object target)
     {
-        fixed (byte* pSrc = &content[0])
-        fixed (byte* pDst = &buffer[index + offset])
-        {
-            Buffer.MemoryCopy(pSrc, pDst, length, length);
-        }
+        content.AsSpan().CopyTo(buffer.AsSpan(index + offset, length));
     }
 }
