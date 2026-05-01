@@ -51,11 +51,18 @@ internal sealed class TextConverter : IMapConverter
         else
         {
             var text = (string)value;
-            var destination = buffer.AsSpan(index, length);
-            var written = encoding.GetBytes(text, destination);
-            if (written < length)
+            if (encoding.GetByteCount(text) <= length)
             {
-                destination[written..].Fill(filler);
+                var destination = buffer.AsSpan(index, length);
+                var written = encoding.GetBytes(text, destination);
+                if (written < length)
+                {
+                    destination[written..].Fill(filler);
+                }
+            }
+            else
+            {
+                BytesHelper.CopyBytes(encoding.GetBytes(text), buffer, index, length, padding, filler);
             }
         }
     }
