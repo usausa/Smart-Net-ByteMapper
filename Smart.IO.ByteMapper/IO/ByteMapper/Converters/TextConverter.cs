@@ -54,10 +54,19 @@ internal sealed class TextConverter : IMapConverter
             if (encoding.GetByteCount(text) <= length)
             {
                 var destination = buffer.AsSpan(index, length);
-                var written = encoding.GetBytes(text, destination);
-                if (written < length)
+                if (padding == Padding.Right)
                 {
-                    destination[written..].Fill(filler);
+                    var written = encoding.GetBytes(text, destination);
+                    if (written < length)
+                    {
+                        destination[written..].Fill(filler);
+                    }
+                }
+                else
+                {
+                    var paddingLength = length - encoding.GetByteCount(text);
+                    destination[..paddingLength].Fill(filler);
+                    encoding.GetBytes(text, destination[paddingLength..]);
                 }
             }
             else
