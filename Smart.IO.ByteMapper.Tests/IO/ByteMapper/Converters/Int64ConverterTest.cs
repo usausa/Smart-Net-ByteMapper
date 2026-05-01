@@ -45,10 +45,10 @@ public sealed class Int64ConverterTest
     public void ReadToLong()
     {
         // Default
-        Assert.Equal(0L, int64Converter.Read(EmptyBytes, Offset));
+        Assert.Equal(0L, int64Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(1L, int64Converter.Read(ValueBytes, Offset));
+        Assert.Equal(1L, int64Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public sealed class Int64ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        int64Converter.Write(buffer, Offset, 1L);
+        int64Converter.Write(buffer.AsSpan(Offset), 1L);
         Assert.Equal(ValueBytes, buffer);
     }
 
@@ -69,10 +69,10 @@ public sealed class Int64ConverterTest
     public void ReadToNullableLong()
     {
         // Null
-        Assert.Null(nullableInt64Converter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableInt64Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(1L, nullableInt64Converter.Read(ValueBytes, Offset));
+        Assert.Equal(1L, nullableInt64Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public sealed class Int64ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableInt64Converter.Write(buffer, Offset, null);
+        nullableInt64Converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 
@@ -93,13 +93,13 @@ public sealed class Int64ConverterTest
     public void ReadToLongEnum()
     {
         // Default
-        Assert.Equal(LongEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(LongEnum.Zero, enumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(LongEnum.One, enumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(LongEnum.One, enumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((LongEnum)(-1L), enumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((LongEnum)(-1L), enumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -108,11 +108,11 @@ public sealed class Int64ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        enumConverter.Write(buffer, Offset, LongEnum.One);
+        enumConverter.Write(buffer.AsSpan(Offset), LongEnum.One);
         Assert.Equal(ValueBytes, buffer);
 
         // Undefined
-        enumConverter.Write(buffer, Offset, (LongEnum)(-1));
+        enumConverter.Write(buffer.AsSpan(Offset), (LongEnum)(-1));
         Assert.Equal(MinusBytes, buffer);
     }
 
@@ -124,13 +124,13 @@ public sealed class Int64ConverterTest
     public void ReadToNullableLongEnum()
     {
         // Null
-        Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableEnumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(LongEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(LongEnum.One, nullableEnumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((LongEnum)(-1L), nullableEnumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((LongEnum)(-1L), nullableEnumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public sealed class Int64ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableEnumConverter.Write(buffer, Offset, null);
+        nullableEnumConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

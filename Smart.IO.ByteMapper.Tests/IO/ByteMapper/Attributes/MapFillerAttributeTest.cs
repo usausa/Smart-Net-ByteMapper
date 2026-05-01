@@ -20,7 +20,7 @@ public sealed class MapFillerAttributeTest
         var obj = new FillerAttributeObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal("    00"u8.ToArray(), buffer);
     }

@@ -6,7 +6,7 @@ public interface IMapper
 
     bool CanWrite { get; }
 
-    void Read(byte[] buffer, int index, object target);
+    void Read(ReadOnlySpan<byte> buffer, object target);
 
-    void Write(byte[] buffer, int index, object target);
+    void Write(Span<byte> buffer, object target);
 }

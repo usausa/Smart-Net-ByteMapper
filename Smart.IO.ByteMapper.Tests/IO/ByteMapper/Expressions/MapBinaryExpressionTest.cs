@@ -55,7 +55,7 @@ public sealed class MapBinaryExpressionTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
 #pragma warning disable IDE0055
         Assert.Equal(
@@ -86,7 +86,7 @@ public sealed class MapBinaryExpressionTest
             buffer[i] = (byte)(buffer[i] << 1);
         }
 
-        mapper.FromByte(buffer, 0, obj);
+        mapper.FromByte(buffer.AsSpan(), obj);
 
         Assert.Equal(2, obj.BigEndianIntValue);
         Assert.Equal(2, obj.LittleEndianIntValue);

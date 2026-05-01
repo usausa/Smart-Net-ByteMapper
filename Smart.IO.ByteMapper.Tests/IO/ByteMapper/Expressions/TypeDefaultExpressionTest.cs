@@ -81,7 +81,7 @@ public sealed class TypeDefaultExpressionTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal("1_1__1Y*\r\n"u8.ToArray(), buffer);
     }

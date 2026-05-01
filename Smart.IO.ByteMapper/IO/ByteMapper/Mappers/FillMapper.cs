@@ -21,13 +21,13 @@ public sealed class FillMapper : IMapper
         this.filler = filler;
     }
 
-    public void Read(byte[] buffer, int index, object target)
+    public void Read(ReadOnlySpan<byte> buffer, object target)
     {
         throw new NotSupportedException();
     }
 
-    public void Write(byte[] buffer, int index, object target)
+    public void Write(Span<byte> buffer, object target)
     {
-        BytesHelper.Fill(buffer, index + offset, length, filler);
+        BytesHelper.Fill(buffer.Slice(offset, length), filler);
     }
 }

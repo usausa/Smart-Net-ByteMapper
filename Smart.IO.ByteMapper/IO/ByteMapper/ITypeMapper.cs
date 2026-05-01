@@ -6,14 +6,14 @@ public interface ITypeMapper
 
     int Size { get; }
 
-    void FromByte(byte[] buffer, int index, object target);
+    void FromByte(ReadOnlySpan<byte> buffer, object target);
 
-    void ToByte(byte[] buffer, int index, object target);
+    void ToByte(Span<byte> buffer, object target);
 }
 
 public interface ITypeMapper<in T> : ITypeMapper
 {
-    void FromByte(byte[] buffer, int index, T target);
+    void FromByte(ReadOnlySpan<byte> buffer, T target);
 
-    void ToByte(byte[] buffer, int index, T target);
+    void ToByte(Span<byte> buffer, T target);
 }

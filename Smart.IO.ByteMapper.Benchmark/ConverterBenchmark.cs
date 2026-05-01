@@ -307,7 +307,7 @@ public class ConverterBenchmark
         var buffer = intBinaryBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -321,7 +321,7 @@ public class ConverterBenchmark
         var buffer = booleanBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -334,7 +334,7 @@ public class ConverterBenchmark
         var buffer = bytes10Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -345,7 +345,7 @@ public class ConverterBenchmark
         var buffer = bytes20Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -358,7 +358,7 @@ public class ConverterBenchmark
         var buffer = text20Single20Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -369,7 +369,7 @@ public class ConverterBenchmark
         var buffer = text20Wide10Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -380,7 +380,7 @@ public class ConverterBenchmark
         var buffer = text20EmptyBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -393,7 +393,7 @@ public class ConverterBenchmark
         var buffer = numberTextShort4ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -404,7 +404,7 @@ public class ConverterBenchmark
         var buffer = numberTextShort4MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -415,7 +415,7 @@ public class ConverterBenchmark
         var buffer = numberTextInt8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -426,7 +426,7 @@ public class ConverterBenchmark
         var buffer = numberTextInt8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -437,7 +437,7 @@ public class ConverterBenchmark
         var buffer = numberTextLong18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -448,7 +448,7 @@ public class ConverterBenchmark
         var buffer = numberTextLong18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -459,7 +459,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -470,7 +470,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -481,7 +481,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -492,7 +492,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -503,7 +503,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal28ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -514,7 +514,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal28MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -527,7 +527,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText8Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -538,7 +538,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText14Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -549,7 +549,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText17Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -566,7 +566,7 @@ public class ConverterBenchmark
         var buffer = ascii13Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -577,7 +577,7 @@ public class ConverterBenchmark
         var buffer = ascii13Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -590,7 +590,7 @@ public class ConverterBenchmark
         var buffer = unicode30Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -601,7 +601,7 @@ public class ConverterBenchmark
         var buffer = unicode30Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -614,7 +614,7 @@ public class ConverterBenchmark
         var buffer = short4ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -625,7 +625,7 @@ public class ConverterBenchmark
         var buffer = short4MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -636,7 +636,7 @@ public class ConverterBenchmark
         var buffer = int8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -647,7 +647,7 @@ public class ConverterBenchmark
         var buffer = int8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -658,7 +658,7 @@ public class ConverterBenchmark
         var buffer = long18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -669,7 +669,7 @@ public class ConverterBenchmark
         var buffer = long18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -682,7 +682,7 @@ public class ConverterBenchmark
         var buffer = decimal8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -693,7 +693,7 @@ public class ConverterBenchmark
         var buffer = decimal8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -704,7 +704,7 @@ public class ConverterBenchmark
         var buffer = decimal18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -715,7 +715,7 @@ public class ConverterBenchmark
         var buffer = decimal18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -726,7 +726,7 @@ public class ConverterBenchmark
         var buffer = decimal28ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -737,7 +737,7 @@ public class ConverterBenchmark
         var buffer = decimal28MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -750,7 +750,7 @@ public class ConverterBenchmark
         var buffer = dateTime8Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -761,7 +761,7 @@ public class ConverterBenchmark
         var buffer = dateTime14Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -772,7 +772,7 @@ public class ConverterBenchmark
         var buffer = dateTime17Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Read(buffer, 0);
+            c.Read(buffer.AsSpan());
         }
     }
 
@@ -790,7 +790,7 @@ public class ConverterBenchmark
         var buffer = dateTime17Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, 0);
+            c.Write(buffer.AsSpan(), 0);
         }
     }
 
@@ -804,7 +804,7 @@ public class ConverterBenchmark
         var buffer = booleanBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, false);
+            c.Write(buffer.AsSpan(), false);
         }
     }
 
@@ -817,7 +817,7 @@ public class ConverterBenchmark
         var buffer = bytes10Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Bytes10);
+            c.Write(buffer.AsSpan(), Bytes10);
         }
     }
 
@@ -828,7 +828,7 @@ public class ConverterBenchmark
         var buffer = bytes20Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Bytes20);
+            c.Write(buffer.AsSpan(), Bytes20);
         }
     }
 
@@ -841,7 +841,7 @@ public class ConverterBenchmark
         var buffer = text20Single20Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Text20Single10);
+            c.Write(buffer.AsSpan(), Text20Single10);
         }
     }
 
@@ -852,7 +852,7 @@ public class ConverterBenchmark
         var buffer = text20Wide10Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Text20Wide5);
+            c.Write(buffer.AsSpan(), Text20Wide5);
         }
     }
 
@@ -863,7 +863,7 @@ public class ConverterBenchmark
         var buffer = text20EmptyBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Text20Empty);
+            c.Write(buffer.AsSpan(), Text20Empty);
         }
     }
 
@@ -876,7 +876,7 @@ public class ConverterBenchmark
         var buffer = numberTextShort4ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroShort);
+            c.Write(buffer.AsSpan(), ZeroShort);
         }
     }
 
@@ -887,7 +887,7 @@ public class ConverterBenchmark
         var buffer = numberTextShort4MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length4Integer);
+            c.Write(buffer.AsSpan(), Length4Integer);
         }
     }
 
@@ -898,7 +898,7 @@ public class ConverterBenchmark
         var buffer = numberTextInt8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroInteger);
+            c.Write(buffer.AsSpan(), ZeroInteger);
         }
     }
 
@@ -909,7 +909,7 @@ public class ConverterBenchmark
         var buffer = numberTextInt8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length8Integer);
+            c.Write(buffer.AsSpan(), Length8Integer);
         }
     }
 
@@ -920,7 +920,7 @@ public class ConverterBenchmark
         var buffer = numberTextLong18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroLong);
+            c.Write(buffer.AsSpan(), ZeroLong);
         }
     }
 
@@ -931,7 +931,7 @@ public class ConverterBenchmark
         var buffer = numberTextLong18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length18Integer);
+            c.Write(buffer.AsSpan(), Length18Integer);
         }
     }
 
@@ -942,7 +942,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -953,7 +953,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length8Decimal);
+            c.Write(buffer.AsSpan(), Length8Decimal);
         }
     }
 
@@ -964,7 +964,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -975,7 +975,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length18Decimal);
+            c.Write(buffer.AsSpan(), Length18Decimal);
         }
     }
 
@@ -986,7 +986,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal28ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -997,7 +997,7 @@ public class ConverterBenchmark
         var buffer = numberTextDecimal28MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length28Decimal);
+            c.Write(buffer.AsSpan(), Length28Decimal);
         }
     }
 
@@ -1010,7 +1010,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText8Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime8);
+            c.Write(buffer.AsSpan(), DateTime8);
         }
     }
 
@@ -1021,7 +1021,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText14Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime14);
+            c.Write(buffer.AsSpan(), DateTime14);
         }
     }
 
@@ -1032,7 +1032,7 @@ public class ConverterBenchmark
         var buffer = dateTimeText17Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime17);
+            c.Write(buffer.AsSpan(), DateTime17);
         }
     }
 
@@ -1049,7 +1049,7 @@ public class ConverterBenchmark
         var buffer = ascii13Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Ascii13);
+            c.Write(buffer.AsSpan(), Ascii13);
         }
     }
 
@@ -1060,7 +1060,7 @@ public class ConverterBenchmark
         var buffer = ascii13Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Ascii13);
+            c.Write(buffer.AsSpan(), Ascii13);
         }
     }
 
@@ -1073,7 +1073,7 @@ public class ConverterBenchmark
         var buffer = unicode30Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Unicode30Wide15);
+            c.Write(buffer.AsSpan(), Unicode30Wide15);
         }
     }
 
@@ -1084,7 +1084,7 @@ public class ConverterBenchmark
         var buffer = unicode30Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Unicode30Wide15);
+            c.Write(buffer.AsSpan(), Unicode30Wide15);
         }
     }
 
@@ -1097,7 +1097,7 @@ public class ConverterBenchmark
         var buffer = short4ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroShort);
+            c.Write(buffer.AsSpan(), ZeroShort);
         }
     }
 
@@ -1108,7 +1108,7 @@ public class ConverterBenchmark
         var buffer = short4MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length4Integer);
+            c.Write(buffer.AsSpan(), Length4Integer);
         }
     }
 
@@ -1119,7 +1119,7 @@ public class ConverterBenchmark
         var buffer = int8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroInteger);
+            c.Write(buffer.AsSpan(), ZeroInteger);
         }
     }
 
@@ -1130,7 +1130,7 @@ public class ConverterBenchmark
         var buffer = int8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length8Integer);
+            c.Write(buffer.AsSpan(), Length8Integer);
         }
     }
 
@@ -1141,7 +1141,7 @@ public class ConverterBenchmark
         var buffer = long18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroLong);
+            c.Write(buffer.AsSpan(), ZeroLong);
         }
     }
 
@@ -1152,7 +1152,7 @@ public class ConverterBenchmark
         var buffer = long18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length18Integer);
+            c.Write(buffer.AsSpan(), Length18Integer);
         }
     }
 
@@ -1165,7 +1165,7 @@ public class ConverterBenchmark
         var buffer = decimal8ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -1176,7 +1176,7 @@ public class ConverterBenchmark
         var buffer = decimal8MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length8Decimal);
+            c.Write(buffer.AsSpan(), Length8Decimal);
         }
     }
 
@@ -1187,7 +1187,7 @@ public class ConverterBenchmark
         var buffer = decimal18ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -1198,7 +1198,7 @@ public class ConverterBenchmark
         var buffer = decimal18MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length18Decimal);
+            c.Write(buffer.AsSpan(), Length18Decimal);
         }
     }
 
@@ -1209,7 +1209,7 @@ public class ConverterBenchmark
         var buffer = decimal28ZeroBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, ZeroDecimal);
+            c.Write(buffer.AsSpan(), ZeroDecimal);
         }
     }
 
@@ -1220,7 +1220,7 @@ public class ConverterBenchmark
         var buffer = decimal28MaxBuffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, Length28Decimal);
+            c.Write(buffer.AsSpan(), Length28Decimal);
         }
     }
 
@@ -1233,7 +1233,7 @@ public class ConverterBenchmark
         var buffer = dateTime8Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime8);
+            c.Write(buffer.AsSpan(), DateTime8);
         }
     }
 
@@ -1244,7 +1244,7 @@ public class ConverterBenchmark
         var buffer = dateTime14Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime14);
+            c.Write(buffer.AsSpan(), DateTime14);
         }
     }
 
@@ -1255,7 +1255,7 @@ public class ConverterBenchmark
         var buffer = dateTime17Buffer;
         for (var i = 0; i < N; i++)
         {
-            c.Write(buffer, 0, DateTime17);
+            c.Write(buffer.AsSpan(), DateTime17);
         }
     }
 }

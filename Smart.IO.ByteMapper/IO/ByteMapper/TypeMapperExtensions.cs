@@ -11,7 +11,7 @@ public static class TypeMapperExtensions
 
     public static void FromByte<T>(this ITypeMapper<T> mapper, byte[] buffer, T target)
     {
-        mapper.FromByte(buffer, 0, target);
+        mapper.FromByte(buffer, target);
     }
 
     public static IEnumerable<T> FromByteMultiple<T>(this ITypeMapper<T> mapper, byte[] buffer, Func<T> factory)
@@ -24,10 +24,10 @@ public static class TypeMapperExtensions
         while (start + mapper.Size <= buffer.Length)
         {
             var target = factory();
-            mapper.FromByte(buffer, start, target);
+            mapper.FromByte(buffer.AsSpan(start, mapper.Size), target);
             yield return target;
 
-            start += buffer.Length;
+            start += mapper.Size;
         }
     }
 
@@ -36,7 +36,7 @@ public static class TypeMapperExtensions
         foreach (var buffer in source)
         {
             var target = factory();
-            mapper.FromByte(buffer, 0, target);
+            mapper.FromByte(buffer, target);
             yield return target;
         }
     }
@@ -49,7 +49,7 @@ public static class TypeMapperExtensions
             return false;
         }
 
-        mapper.FromByte(buffer, 0, target);
+        mapper.FromByte(buffer, target);
         return true;
     }
 
@@ -59,7 +59,7 @@ public static class TypeMapperExtensions
         while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
         {
             var target = factory();
-            mapper.FromByte(buffer, 0, target);
+            mapper.FromByte(buffer, target);
             yield return target;
         }
     }
@@ -70,7 +70,7 @@ public static class TypeMapperExtensions
 
     public static void FromByte(this ITypeMapper mapper, byte[] buffer, object target)
     {
-        mapper.FromByte(buffer, 0, target);
+        mapper.FromByte(buffer, target);
     }
 
     public static IEnumerable<object> FromByteMultiple(this ITypeMapper mapper, byte[] buffer, Func<object> factory)
@@ -83,10 +83,10 @@ public static class TypeMapperExtensions
         while (start + mapper.Size <= buffer.Length)
         {
             var target = factory();
-            mapper.FromByte(buffer, start, target);
+            mapper.FromByte(buffer.AsSpan(start, mapper.Size), target);
             yield return target;
 
-            start += buffer.Length;
+            start += mapper.Size;
         }
     }
 
@@ -95,7 +95,7 @@ public static class TypeMapperExtensions
         foreach (var buffer in source)
         {
             var target = factory();
-            mapper.FromByte(buffer, 0, target);
+            mapper.FromByte(buffer, target);
             yield return target;
         }
     }
@@ -108,7 +108,7 @@ public static class TypeMapperExtensions
             return false;
         }
 
-        mapper.FromByte(buffer, 0, target);
+        mapper.FromByte(buffer, target);
         return true;
     }
 
@@ -118,7 +118,7 @@ public static class TypeMapperExtensions
         while (stream.Read(buffer, 0, buffer.Length) == buffer.Length)
         {
             var target = factory();
-            mapper.FromByte(buffer, 0, target);
+            mapper.FromByte(buffer, target);
             yield return target;
         }
     }
@@ -129,13 +129,13 @@ public static class TypeMapperExtensions
 
     public static void ToByte<T>(this ITypeMapper<T> mapper, byte[] buffer, T target)
     {
-        mapper.ToByte(buffer, 0, target);
+        mapper.ToByte(buffer, target);
     }
 
     public static byte[] ToByte<T>(this ITypeMapper<T> mapper, T target)
     {
         var buffer = new byte[mapper.Size];
-        mapper.ToByte(buffer, 0, target);
+        mapper.ToByte(buffer, target);
         return buffer;
     }
 
@@ -162,7 +162,7 @@ public static class TypeMapperExtensions
     {
         foreach (var target in source)
         {
-            mapper.ToByte(buffer, start, target);
+            mapper.ToByte(buffer.AsSpan(start, mapper.Size), target);
             start += mapper.Size;
         }
     }
@@ -170,8 +170,8 @@ public static class TypeMapperExtensions
     public static void ToStream<T>(this ITypeMapper<T> mapper, Stream stream, T target)
     {
         var buffer = new byte[mapper.Size];
-        mapper.ToByte(buffer, 0, target);
-        stream.Write(buffer, 0, buffer.Length);
+        mapper.ToByte(buffer, target);
+        stream.Write(buffer);
     }
 
     public static void ToStreamMultiple<T>(this ITypeMapper<T> mapper, Stream stream, IEnumerable<T> source)
@@ -179,8 +179,8 @@ public static class TypeMapperExtensions
         var buffer = new byte[mapper.Size];
         foreach (var target in source)
         {
-            mapper.ToByte(buffer, 0, target);
-            stream.Write(buffer, 0, buffer.Length);
+            mapper.ToByte(buffer, target);
+            stream.Write(buffer);
         }
     }
 
@@ -190,13 +190,13 @@ public static class TypeMapperExtensions
 
     public static void ToByte(this ITypeMapper mapper, byte[] buffer, object target)
     {
-        mapper.ToByte(buffer, 0, target);
+        mapper.ToByte(buffer, target);
     }
 
     public static byte[] ToByte(this ITypeMapper mapper, object target)
     {
         var buffer = new byte[mapper.Size];
-        mapper.ToByte(buffer, 0, target);
+        mapper.ToByte(buffer, target);
         return buffer;
     }
 
@@ -223,7 +223,7 @@ public static class TypeMapperExtensions
     {
         foreach (var target in source)
         {
-            mapper.ToByte(buffer, start, target);
+            mapper.ToByte(buffer.AsSpan(start, mapper.Size), target);
             start += mapper.Size;
         }
     }
@@ -231,8 +231,8 @@ public static class TypeMapperExtensions
     public static void ToStream(this ITypeMapper mapper, Stream stream, object target)
     {
         var buffer = new byte[mapper.Size];
-        mapper.ToByte(buffer, 0, target);
-        stream.Write(buffer, 0, buffer.Length);
+        mapper.ToByte(buffer, target);
+        stream.Write(buffer);
     }
 
     public static void ToStreamMultiple(this ITypeMapper mapper, Stream stream, IEnumerable source)
@@ -240,8 +240,8 @@ public static class TypeMapperExtensions
         var buffer = new byte[mapper.Size];
         foreach (var target in source)
         {
-            mapper.ToByte(buffer, 0, target);
-            stream.Write(buffer, 0, buffer.Length);
+            mapper.ToByte(buffer, target);
+            stream.Write(buffer);
         }
     }
 }

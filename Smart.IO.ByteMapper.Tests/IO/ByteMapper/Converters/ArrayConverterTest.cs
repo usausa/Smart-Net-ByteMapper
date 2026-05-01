@@ -33,7 +33,7 @@ public sealed class ArrayConverterTest
     [Fact]
     public void ReadToIntArray()
     {
-        Assert.Equal(Value, (int[])converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, (int[])converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -42,15 +42,15 @@ public sealed class ArrayConverterTest
         var buffer = new byte[12 + Offset];
 
         // Value
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
 
         // ValueShortage
-        converter.Write(buffer, Offset, ValueShortage);
+        converter.Write(buffer.AsSpan(Offset), ValueShortage);
         Assert.Equal(ValueShortageBytes, buffer);
 
         // Null
-        converter.Write(buffer, Offset, null);
+        converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(NullBytes, buffer);
     }
 }

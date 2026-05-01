@@ -15,14 +15,14 @@ public sealed class ByteConverterTest
     [Fact]
     public void ReadToByte()
     {
-        Assert.Equal(Value, (byte)converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, (byte)converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
     public void WriteByteToBuffer()
     {
         var buffer = new byte[1 + Offset];
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
 
         Assert.Equal(ValueBytes, buffer);
     }

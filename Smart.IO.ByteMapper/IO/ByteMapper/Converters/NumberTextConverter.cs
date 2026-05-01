@@ -50,16 +50,16 @@ internal sealed class Int32TextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        var value = encoding.GetString(buffer, start, count);
+        var value = encoding.GetString(buffer.Slice(start, count));
         if ((value.Length > 0) && Int32.TryParse(value, style, provider, out var result))
         {
             return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
@@ -68,15 +68,15 @@ internal sealed class Int32TextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            BytesHelper.CopyBytes(encoding.GetBytes(((int)value).ToString(format, provider)), buffer, index, length, padding, filler);
+            BytesHelper.CopyBytes(encoding.GetBytes(((int)value).ToString(format, provider)), buffer, length, padding, filler);
         }
     }
 }
@@ -126,16 +126,16 @@ internal sealed class Int64TextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        var value = encoding.GetString(buffer, start, count);
+        var value = encoding.GetString(buffer.Slice(start, count));
         if ((value.Length > 0) && Int64.TryParse(value, style, provider, out var result))
         {
             return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
@@ -144,15 +144,15 @@ internal sealed class Int64TextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            BytesHelper.CopyBytes(encoding.GetBytes(((long)value).ToString(format, provider)), buffer, index, length, padding, filler);
+            BytesHelper.CopyBytes(encoding.GetBytes(((long)value).ToString(format, provider)), buffer, length, padding, filler);
         }
     }
 }
@@ -202,16 +202,16 @@ internal sealed class Int16TextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        var value = encoding.GetString(buffer, start, count);
+        var value = encoding.GetString(buffer.Slice(start, count));
         if ((value.Length > 0) && Int16.TryParse(value, style, provider, out var result))
         {
             return convertEnumType is null ? result : Enum.ToObject(convertEnumType, result);
@@ -220,15 +220,15 @@ internal sealed class Int16TextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            BytesHelper.CopyBytes(encoding.GetBytes(((short)value).ToString(format, provider)), buffer, index, length, padding, filler);
+            BytesHelper.CopyBytes(encoding.GetBytes(((short)value).ToString(format, provider)), buffer, length, padding, filler);
         }
     }
 }
@@ -275,16 +275,16 @@ internal sealed class DecimalTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        var value = encoding.GetString(buffer, start, count);
+        var value = encoding.GetString(buffer.Slice(start, count));
         if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
         {
             return result;
@@ -293,15 +293,15 @@ internal sealed class DecimalTextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, index, length, padding, filler);
+            BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, length, padding, filler);
         }
     }
 }

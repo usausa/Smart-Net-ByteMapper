@@ -28,13 +28,13 @@ public sealed class MemberMapper : IMapper
         this.setter = setter;
     }
 
-    public void Read(byte[] buffer, int index, object target)
+    public void Read(ReadOnlySpan<byte> buffer, object target)
     {
-        setter(target, converter.Read(buffer, index + offset));
+        setter(target, converter.Read(buffer[offset..]));
     }
 
-    public void Write(byte[] buffer, int index, object target)
+    public void Write(Span<byte> buffer, object target)
     {
-        converter.Write(buffer, index + offset, getter(target));
+        converter.Write(buffer[offset..], getter(target));
     }
 }

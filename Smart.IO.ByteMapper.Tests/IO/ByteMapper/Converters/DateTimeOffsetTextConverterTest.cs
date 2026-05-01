@@ -52,13 +52,13 @@ public sealed class DateTimeOffsetTextConverterTest
     public void ReadToDateTimeOffset()
     {
         // Default
-        Assert.Equal(default(DateTimeOffset), decimalConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(default(DateTimeOffset), decimalConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Invalid
-        Assert.Equal(default(DateTimeOffset), decimalConverter.Read(InvalidBytes, Offset));
+        Assert.Equal(default(DateTimeOffset), decimalConverter.Read(InvalidBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, decimalConverter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -67,11 +67,11 @@ public sealed class DateTimeOffsetTextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        decimalConverter.Write(buffer, Offset, Value);
+        decimalConverter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
 
         // Short
-        shortDecimalConverter.Write(buffer, Offset, Value);
+        shortDecimalConverter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ShortBytes, buffer);
     }
 
@@ -83,13 +83,13 @@ public sealed class DateTimeOffsetTextConverterTest
     public void ReadToNullableDateTimeOffset()
     {
         // Null
-        Assert.Null(nullableDateTimeOffsetConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableDateTimeOffsetConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Invalid
-        Assert.Null(nullableDateTimeOffsetConverter.Read(InvalidBytes, Offset));
+        Assert.Null(nullableDateTimeOffsetConverter.Read(InvalidBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public sealed class DateTimeOffsetTextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableDateTimeOffsetConverter.Write(buffer, Offset, null);
+        nullableDateTimeOffsetConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

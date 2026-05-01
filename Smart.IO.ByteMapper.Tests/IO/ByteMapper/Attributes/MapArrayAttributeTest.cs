@@ -21,7 +21,7 @@ public sealed class MapArrayAttributeTest
         var obj = new ArrayAttributeObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
 #pragma warning disable IDE0055
         Assert.Equal(
@@ -38,7 +38,7 @@ public sealed class MapArrayAttributeTest
         obj.ArrayValue = [1, 2, 3];
         obj.ByteArrayValue = [0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07];
 
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
 #pragma warning disable IDE0055
         Assert.Equal(
@@ -60,7 +60,7 @@ public sealed class MapArrayAttributeTest
             }
         }
 
-        mapper.FromByte(buffer, 0, obj);
+        mapper.FromByte(buffer.AsSpan(), obj);
 
         Assert.Equal((int[])[2, 3, 4], obj.ArrayValue);
         Assert.Equal([0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08], obj.ByteArrayValue);

@@ -23,7 +23,7 @@ public sealed class MapConstantAttributeTest
         var obj = new ConstAttributeObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal("12\r\n"u8.ToArray(), buffer);
     }

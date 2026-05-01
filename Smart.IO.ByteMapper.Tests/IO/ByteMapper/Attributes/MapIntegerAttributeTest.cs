@@ -36,7 +36,7 @@ public sealed class MapIntegerAttributeTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
         Assert.Equal(
             Encoding.ASCII.GetBytes(
                 "   1" +

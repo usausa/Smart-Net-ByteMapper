@@ -30,30 +30,30 @@ internal sealed class TextConverter : IMapConverter
         this.filler = filler;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        return encoding.GetString(buffer, start, count);
+        return encoding.GetString(buffer.Slice(start, count));
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
             var text = (string)value;
             if (encoding.GetByteCount(text) <= length)
             {
-                var destination = buffer.AsSpan(index, length);
+                var destination = buffer[..length];
                 if (padding == Padding.Right)
                 {
                     var written = encoding.GetBytes(text, destination);
@@ -71,7 +71,7 @@ internal sealed class TextConverter : IMapConverter
             }
             else
             {
-                BytesHelper.CopyBytes(encoding.GetBytes(text), buffer, index, length, padding, filler);
+                BytesHelper.CopyBytes(encoding.GetBytes(text), buffer, length, padding, filler);
             }
         }
     }

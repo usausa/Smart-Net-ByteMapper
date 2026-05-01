@@ -24,20 +24,20 @@ internal sealed class UnicodeConverter : IMapConverter
         this.filler = filler;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return EncodingByteHelper.GetUnicodeString(buffer, index, length, trim, padding, filler);
+        return EncodingByteHelper.GetUnicodeString(buffer, 0, length, trim, padding, filler);
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            EncodingByteHelper.FillUnicode(buffer, index, length, filler);
+            EncodingByteHelper.FillUnicode(buffer[..length], filler);
         }
         else
         {
-            EncodingByteHelper.CopyUnicodeBytes((string)value, buffer, index, length, padding, filler);
+            EncodingByteHelper.CopyUnicodeBytes((string)value, buffer, 0, length, padding, filler);
         }
     }
 }

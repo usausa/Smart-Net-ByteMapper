@@ -23,24 +23,23 @@ internal sealed class ArrayConverter : IMapConverter
         this.elementConverter = elementConverter;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
         var array = allocator(length);
 
         for (var i = 0; i < length; i++)
         {
-            array.SetValue(elementConverter.Read(buffer, index), i);
-            index += elementSize;
+            array.SetValue(elementConverter.Read(buffer[(i * elementSize)..]), i);
         }
 
         return array;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length * elementSize, filler);
+            BytesHelper.Fill(buffer[..(length * elementSize)], filler);
         }
         else
         {
@@ -48,13 +47,12 @@ internal sealed class ArrayConverter : IMapConverter
 
             for (var i = 0; i < array.Length; i++)
             {
-                elementConverter.Write(buffer, index, array.GetValue(i));
-                index += elementSize;
+                elementConverter.Write(buffer[(i * elementSize)..], array.GetValue(i));
             }
 
             if (array.Length < length)
             {
-                BytesHelper.Fill(buffer, index, (length - array.Length) * elementSize, filler);
+                BytesHelper.Fill(buffer.Slice(array.Length * elementSize, (length - array.Length) * elementSize), filler);
             }
         }
     }

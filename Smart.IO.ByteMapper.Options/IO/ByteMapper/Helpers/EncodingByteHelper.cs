@@ -32,14 +32,14 @@ internal static class EncodingByteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe string GetAsciiString(byte[] bytes, int index, int length)
+    public static unsafe string GetAsciiString(ReadOnlySpan<byte> bytes, int index, int length)
     {
         var str = new string('\0', length);
 
-        fixed (byte* pSrc = &bytes[index])
+        fixed (byte* pBase = bytes)
         fixed (char* pDst = str)
         {
-            var ps = pSrc;
+            var ps = pBase + index;
             var pd = pDst;
 
             for (var i = 0; i < length; i++)
@@ -58,7 +58,7 @@ internal static class EncodingByteHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe string GetUnicodeString(byte[] buffer, int index, int length, bool trim, Padding padding, char filler)
+    public static unsafe string GetUnicodeString(ReadOnlySpan<byte> buffer, int index, int length, bool trim, Padding padding, char filler)
     {
         var filler1 = (byte)(filler & 0xff);
         var filler2 = (byte)((filler >> 8) & 0xff);
@@ -89,9 +89,10 @@ internal static class EncodingByteHelper
         }
 
         var str = new string('\0', length / 2);
-        fixed (byte* pSrc = &buffer[index])
+        fixed (byte* pBase = buffer)
         fixed (char* pDst = str)
         {
+            var pSrc = pBase + index;
             Buffer.MemoryCopy(pSrc, pDst, length, length);
         }
 
@@ -99,14 +100,15 @@ internal static class EncodingByteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void CopyUnicodeBytes(string str, byte[] buffer, int index, int length, Padding padding, char filler)
+    public static unsafe void CopyUnicodeBytes(string str, Span<byte> buffer, int index, int length, Padding padding, char filler)
     {
         var size = str.Length * 2;
         if (size >= length)
         {
             fixed (char* pSrc = str)
-            fixed (byte* pDst = &buffer[index])
+            fixed (byte* pBase = buffer)
             {
+                var pDst = pBase + index;
                 Buffer.MemoryCopy(pSrc, pDst, length, length);
             }
         }
@@ -115,39 +117,41 @@ internal static class EncodingByteHelper
             if (size > 0)
             {
                 fixed (char* pSrc = str)
-                fixed (byte* pDst = &buffer[index])
+                fixed (byte* pBase = buffer)
                 {
+                    var pDst = pBase + index;
                     Buffer.MemoryCopy(pSrc, pDst, size, size);
                 }
             }
 
-            FillUnicode(buffer, index + size, length - size, filler);
+            FillUnicode(buffer.Slice(index + size, length - size), filler);
         }
         else
         {
             if (size > 0)
             {
                 fixed (char* pSrc = str)
-                fixed (byte* pDst = &buffer[index + length - size])
+                fixed (byte* pBase = buffer)
                 {
+                    var pDst = pBase + index + length - size;
                     Buffer.MemoryCopy(pSrc, pDst, size, size);
                 }
             }
 
-            FillUnicode(buffer, index, length - size, filler);
+            FillUnicode(buffer.Slice(index, length - size), filler);
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FillUnicode(byte[] bytes, int index, int length, char filler)
+    public static void FillUnicode(Span<byte> bytes, char filler)
     {
         var filler1 = (byte)(filler & 0xff);
         var filler2 = (byte)((filler >> 8) & 0xff);
 
-        for (var i = 0; i < length; i += 2)
+        for (var i = 0; i < bytes.Length; i += 2)
         {
-            bytes[index++] = filler1;
-            bytes[index++] = filler2;
+            bytes[i] = filler1;
+            bytes[i + 1] = filler2;
         }
     }
 }

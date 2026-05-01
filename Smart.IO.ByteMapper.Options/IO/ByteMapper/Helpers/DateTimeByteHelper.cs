@@ -154,10 +154,11 @@ internal static partial class DateTimeByteHelper
     // Parse
     //--------------------------------------------------------------------------------
 
-    public static unsafe bool TryParseDateTime(byte[] bytes, int index, DateTimeFormatEntry[] entries, DateTimeKind kind, out DateTime value)
+    public static unsafe bool TryParseDateTime(ReadOnlySpan<byte> bytes, int index, DateTimeFormatEntry[] entries, DateTimeKind kind, out DateTime value)
     {
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pPinned = bytes)
         {
+            var pBytes = pPinned + index;
             var year = 0;
             var month = 1;
             var day = 1;
@@ -352,7 +353,7 @@ internal static partial class DateTimeByteHelper
     // Format
     //--------------------------------------------------------------------------------
 
-    public static unsafe void FormatDateTime(byte[] bytes, int index, bool hasDatePart, DateTimeFormatEntry[] entries, DateTime dateTime)
+    public static unsafe void FormatDateTime(Span<byte> bytes, int index, bool hasDatePart, DateTimeFormatEntry[] entries, DateTime dateTime)
     {
         var year = 0;
         var month = 0;
@@ -362,8 +363,9 @@ internal static partial class DateTimeByteHelper
             GetDatePart(dateTime.Ticks, out year, out month, out day);
         }
 
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pPinned = bytes)
         {
+            var pBytes = pPinned + index;
             var offset = 0;
             for (var i = 0; i < entries.Length; i++)
             {

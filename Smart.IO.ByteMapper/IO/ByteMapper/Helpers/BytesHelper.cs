@@ -38,9 +38,9 @@ public static class BytesHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void Fill(byte[] bytes, int index, int length, byte value)
+    public static void Fill(Span<byte> bytes, byte value)
     {
-        bytes.AsSpan(index, length).Fill(value);
+        bytes.Fill(value);
     }
 
     //--------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ public static class BytesHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void TrimRange(byte[] buffer, ref int start, ref int size, Padding padding, byte filler)
+    public static void TrimRange(ReadOnlySpan<byte> buffer, ref int start, ref int size, Padding padding, byte filler)
     {
         if (padding == Padding.Left)
         {
@@ -69,30 +69,30 @@ public static class BytesHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void CopyBytes(byte[] bytes, byte[] buffer, int index, int length, Padding padding, byte filler)
+    public static void CopyBytes(ReadOnlySpan<byte> bytes, Span<byte> buffer, int length, Padding padding, byte filler)
     {
         var size = bytes.Length;
         if (size >= length)
         {
-            bytes.AsSpan(0, length).CopyTo(buffer.AsSpan(index, length));
+            bytes[..length].CopyTo(buffer[..length]);
         }
         else if (padding == Padding.Right)
         {
             if (size > 0)
             {
-                bytes.AsSpan().CopyTo(buffer.AsSpan(index, size));
+                bytes.CopyTo(buffer[..size]);
             }
 
-            Fill(buffer, index + size, length - size, filler);
+            Fill(buffer[size..length], filler);
         }
         else
         {
             if (size > 0)
             {
-                bytes.AsSpan().CopyTo(buffer.AsSpan(index + length - size, size));
+                bytes.CopyTo(buffer[(length - size)..length]);
             }
 
-            Fill(buffer, index, length - size, filler);
+            Fill(buffer[..(length - size)], filler);
         }
     }
 }

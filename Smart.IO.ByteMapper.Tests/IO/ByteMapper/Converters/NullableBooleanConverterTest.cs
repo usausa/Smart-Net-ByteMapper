@@ -33,13 +33,13 @@ public sealed class NullableBooleanConverterTest
     public void ReadToNullableBoolean()
     {
         // True
-        Assert.True((bool?)converter.Read(TrueBytes, Offset));
+        Assert.True((bool?)converter.Read(TrueBytes.AsSpan(Offset)));
 
         // False
-        Assert.False((bool?)converter.Read(FalseBytes, Offset));
+        Assert.False((bool?)converter.Read(FalseBytes.AsSpan(Offset)));
 
         // Null
-        Assert.Null(converter.Read(NullBytes, Offset));
+        Assert.Null(converter.Read(NullBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -48,15 +48,15 @@ public sealed class NullableBooleanConverterTest
         var buffer = new byte[1 + Offset];
 
         // True
-        converter.Write(buffer, Offset, true);
+        converter.Write(buffer.AsSpan(Offset), true);
         Assert.Equal(TrueBytes, buffer);
 
         // False
-        converter.Write(buffer, Offset, false);
+        converter.Write(buffer.AsSpan(Offset), false);
         Assert.Equal(FalseBytes, buffer);
 
         // Null
-        converter.Write(buffer, Offset, null);
+        converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(NullBytes, buffer);
     }
 }

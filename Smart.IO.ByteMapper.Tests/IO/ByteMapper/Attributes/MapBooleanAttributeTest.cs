@@ -33,12 +33,12 @@ public sealed class MapBooleanAttributeTest
         var obj = new BooleanAttributeObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal((byte[])[False, Filler, No, Filler], buffer);
 
         // Read
-        mapper.FromByte([True, True, Yes, Yes], 0, obj);
+        mapper.FromByte(((byte[])[True, True, Yes, Yes]).AsSpan(), obj);
 
         Assert.True(obj.BooleanValue);
         Assert.True(obj.NullableBooleanValue);
@@ -46,7 +46,7 @@ public sealed class MapBooleanAttributeTest
         Assert.True(obj.CustomNullableBooleanValue);
 
         // Read default
-        mapper.FromByte([Filler, Filler, Filler, Filler], 0, obj);
+        mapper.FromByte(((byte[])[Filler, Filler, Filler, Filler]).AsSpan(), obj);
 
         Assert.False(obj.BooleanValue);
         Assert.Null(obj.NullableBooleanValue);

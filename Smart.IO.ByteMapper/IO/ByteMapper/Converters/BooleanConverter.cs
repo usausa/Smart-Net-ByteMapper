@@ -12,14 +12,14 @@ internal sealed class BooleanConverter : IMapConverter
         this.falseValue = falseValue;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return buffer[index] == trueValue;
+        return buffer[0] == trueValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
-        buffer[index] = (bool)value ? trueValue : falseValue;
+        buffer[0] = (bool)value ? trueValue : falseValue;
     }
 }
 
@@ -38,15 +38,15 @@ internal sealed class NullableBooleanConverter : IMapConverter
         this.nullValue = nullValue;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var b = buffer[index];
+        var b = buffer[0];
         return b == trueValue ? true : b == nullValue ? null : false;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         var b = (bool?)value;
-        buffer[index] = b.HasValue ? (b.Value ? trueValue : falseValue) : nullValue;
+        buffer[0] = b.HasValue ? (b.Value ? trueValue : falseValue) : nullValue;
     }
 }

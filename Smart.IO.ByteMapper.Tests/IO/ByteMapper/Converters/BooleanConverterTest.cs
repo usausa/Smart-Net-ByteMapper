@@ -31,13 +31,13 @@ public sealed class BooleanConverterTest
     public void ReadToBoolean()
     {
         // True
-        Assert.True((bool)converter.Read(TrueBytes, Offset));
+        Assert.True((bool)converter.Read(TrueBytes.AsSpan(Offset)));
 
         // False
-        Assert.False((bool)converter.Read(FalseBytes, Offset));
+        Assert.False((bool)converter.Read(FalseBytes.AsSpan(Offset)));
 
         // Unknown
-        Assert.False((bool)converter.Read(UnknownBytes, Offset));
+        Assert.False((bool)converter.Read(UnknownBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -46,11 +46,11 @@ public sealed class BooleanConverterTest
         var buffer = new byte[1 + Offset];
 
         // True
-        converter.Write(buffer, Offset, true);
+        converter.Write(buffer.AsSpan(Offset), true);
         Assert.Equal(TrueBytes, buffer);
 
         // False
-        converter.Write(buffer, Offset, false);
+        converter.Write(buffer.AsSpan(Offset), false);
         Assert.Equal(FalseBytes, buffer);
     }
 }

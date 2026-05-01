@@ -17,14 +17,14 @@ public sealed class BigEndianDoubleBinaryConverterTest
     [Fact]
     public void ReadToBigEndianDoubleBinary()
     {
-        Assert.Equal(Value, (double)converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, (double)converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
     public void WriteBigEndianDoubleBinaryToBuffer()
     {
         var buffer = new byte[8 + Offset];
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
 
         Assert.Equal(ValueBytes, buffer);
     }
@@ -45,14 +45,14 @@ public sealed class LittleEndianDoubleBinaryConverterTest
     [Fact]
     public void ReadToLittleEndianDoubleBinary()
     {
-        Assert.Equal(Value, (double)converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, (double)converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
     public void WriteLittleEndianDoubleBinaryToBuffer()
     {
         var buffer = new byte[8 + Offset];
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
 
         Assert.Equal(ValueBytes, buffer);
     }

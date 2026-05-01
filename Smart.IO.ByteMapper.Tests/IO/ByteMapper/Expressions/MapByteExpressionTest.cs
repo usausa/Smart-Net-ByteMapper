@@ -24,14 +24,14 @@ public sealed class MapByteExpressionTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal([0x01], buffer);
 
         // Read
         buffer[0] = 0x02;
 
-        mapper.FromByte(buffer, 0, obj);
+        mapper.FromByte(buffer.AsSpan(), obj);
 
         Assert.Equal(2, obj.ByteValue);
     }

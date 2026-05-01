@@ -24,37 +24,37 @@ internal sealed class TypeMapper<T> : ITypeMapper<T>
         writableMappers = mappers.Where(static x => x.CanWrite).ToArray();
     }
 
-    public void FromByte(byte[] buffer, int index, object target)
+    public void FromByte(ReadOnlySpan<byte> buffer, object target)
     {
-        FromByte(buffer, index, (T)target);
+        FromByte(buffer, (T)target);
     }
 
-    public void ToByte(byte[] buffer, int index, object target)
+    public void ToByte(Span<byte> buffer, object target)
     {
-        ToByte(buffer, index, (T)target);
+        ToByte(buffer, (T)target);
     }
 
-    public void FromByte(byte[] buffer, int index, T target)
+    public void FromByte(ReadOnlySpan<byte> buffer, T target)
     {
         var mappers = readableMappers;
         for (var i = 0; i < mappers.Length; i++)
         {
-            mappers[i].Read(buffer, index, target);
+            mappers[i].Read(buffer, target);
         }
     }
 
-    public void ToByte(byte[] buffer, int index, T target)
+    public void ToByte(Span<byte> buffer, T target)
     {
         if (target == null)
         {
-            BytesHelper.Fill(buffer, index, Size, filler);
+            BytesHelper.Fill(buffer[..Size], filler);
         }
         else
         {
             var mappers = writableMappers;
             for (var i = 0; i < mappers.Length; i++)
             {
-                mappers[i].Write(buffer, index, target);
+                mappers[i].Write(buffer, target);
             }
         }
     }

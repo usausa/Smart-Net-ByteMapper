@@ -39,9 +39,9 @@ internal sealed class DateTimeTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var value = encoding.GetString(buffer, index, length);
+        var value = encoding.GetString(buffer[..length]);
         if (DateTime.TryParseExact(value, format, provider, style, out var result))
         {
             return result;
@@ -50,15 +50,15 @@ internal sealed class DateTimeTextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            var destination = buffer.AsSpan(index, length);
+            var destination = buffer[..length];
             var written = encoding.GetBytes(((DateTime)value).ToString(format, provider), destination);
             if (written < length)
             {
@@ -102,9 +102,9 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var value = encoding.GetString(buffer, index, length);
+        var value = encoding.GetString(buffer[..length]);
         if (DateTimeOffset.TryParseExact(value, format, provider, style, out var result))
         {
             return result;
@@ -113,15 +113,15 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            var destination = buffer.AsSpan(index, length);
+            var destination = buffer[..length];
             var written = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider), destination);
             if (written < length)
             {

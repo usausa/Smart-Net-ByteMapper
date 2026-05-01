@@ -55,27 +55,27 @@ public sealed class DateTimeOffsetConverterTest
         var offset = TimeZoneInfo.Local.GetUtcOffset(DateTime.Now).Ticks;
 
         // Default
-        Assert.Equal(default(DateTimeOffset), unspecifiedDateTimeConverter.Read(EmptyBytes, Offset));
-        Assert.Equal(default(DateTimeOffset), utcDateTimeConverter.Read(EmptyBytes, Offset));
-        Assert.Equal(default(DateTimeOffset), localDateTimeConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(default(DateTimeOffset), unspecifiedDateTimeConverter.Read(EmptyBytes.AsSpan(Offset)));
+        Assert.Equal(default(DateTimeOffset), utcDateTimeConverter.Read(EmptyBytes.AsSpan(Offset)));
+        Assert.Equal(default(DateTimeOffset), localDateTimeConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Invalid
-        Assert.Equal(default(DateTimeOffset), unspecifiedDateTimeConverter.Read(InvalidBytes, Offset));
-        Assert.Equal(default(DateTimeOffset), utcDateTimeConverter.Read(InvalidBytes, Offset));
-        Assert.Equal(default(DateTimeOffset), localDateTimeConverter.Read(InvalidBytes, Offset));
+        Assert.Equal(default(DateTimeOffset), unspecifiedDateTimeConverter.Read(InvalidBytes.AsSpan(Offset)));
+        Assert.Equal(default(DateTimeOffset), utcDateTimeConverter.Read(InvalidBytes.AsSpan(Offset)));
+        Assert.Equal(default(DateTimeOffset), localDateTimeConverter.Read(InvalidBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, unspecifiedDateTimeConverter.Read(ValueBytes, Offset));
-        Assert.Equal(Value, utcDateTimeConverter.Read(ValueBytes, Offset));
-        Assert.Equal(new DateTimeOffset(Value.DateTime, new TimeSpan(offset)), localDateTimeConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, unspecifiedDateTimeConverter.Read(ValueBytes.AsSpan(Offset)));
+        Assert.Equal(Value, utcDateTimeConverter.Read(ValueBytes.AsSpan(Offset)));
+        Assert.Equal(new DateTimeOffset(Value.DateTime, new TimeSpan(offset)), localDateTimeConverter.Read(ValueBytes.AsSpan(Offset)));
 
         if (offset > 0)
         {
-            Assert.Equal(DateTimeOffset.MinValue, localDateTimeConverter.Read(MinValueBytes, Offset));
+            Assert.Equal(DateTimeOffset.MinValue, localDateTimeConverter.Read(MinValueBytes.AsSpan(Offset)));
         }
         else if (offset < 0)
         {
-            Assert.Equal(DateTimeOffset.MaxValue, localDateTimeConverter.Read(MaxValueBytes, Offset));
+            Assert.Equal(DateTimeOffset.MaxValue, localDateTimeConverter.Read(MaxValueBytes.AsSpan(Offset)));
         }
     }
 
@@ -85,7 +85,7 @@ public sealed class DateTimeOffsetConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        unspecifiedDateTimeConverter.Write(buffer, Offset, Value);
+        unspecifiedDateTimeConverter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
     }
 
@@ -97,13 +97,13 @@ public sealed class DateTimeOffsetConverterTest
     public void ReadToNullableDateTimeOffset()
     {
         // Null
-        Assert.Null(nullableDateTimeOffsetConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableDateTimeOffsetConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Invalid
-        Assert.Null(nullableDateTimeOffsetConverter.Read(InvalidBytes, Offset));
+        Assert.Null(nullableDateTimeOffsetConverter.Read(InvalidBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, nullableDateTimeOffsetConverter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -112,7 +112,7 @@ public sealed class DateTimeOffsetConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableDateTimeOffsetConverter.Write(buffer, Offset, null);
+        nullableDateTimeOffsetConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

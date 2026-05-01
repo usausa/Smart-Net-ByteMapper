@@ -26,7 +26,7 @@ public sealed class MapConstantExpressionTest
         var obj = new ConstExpressionObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal("1234\r\n"u8.ToArray(), buffer);
     }

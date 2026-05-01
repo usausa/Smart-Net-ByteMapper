@@ -23,7 +23,7 @@ public sealed class MapBytesAttributeTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal([0x01, 0x02, 0x03, 0x04, 0x30, 0x30, 0x30, 0x30], buffer);
 
@@ -33,7 +33,7 @@ public sealed class MapBytesAttributeTest
             buffer[i] = 0xff;
         }
 
-        mapper.FromByte(buffer, 0, obj);
+        mapper.FromByte(buffer.AsSpan(), obj);
 
         Assert.Equal([0xff, 0xff, 0xff, 0xff], obj.BytesValue);
     }

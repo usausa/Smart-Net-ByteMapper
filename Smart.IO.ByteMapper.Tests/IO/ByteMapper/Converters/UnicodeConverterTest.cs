@@ -46,10 +46,10 @@ public sealed class UnicodeConverterTest
     public void ReadToUnicode()
     {
         // Empty
-        Assert.Equal(string.Empty, converter.Read(EmptyBytes, Offset));
+        Assert.Equal(string.Empty, converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -58,15 +58,15 @@ public sealed class UnicodeConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
 
         // Null
-        converter.Write(buffer, Offset, null);
+        converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
 
         // Overflow
-        converter.Write(buffer, Offset, OverflowValue);
+        converter.Write(buffer.AsSpan(Offset), OverflowValue);
         Assert.Equal(OverflowBytes, buffer);
     }
 }

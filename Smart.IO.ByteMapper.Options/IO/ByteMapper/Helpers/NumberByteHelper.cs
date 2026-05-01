@@ -42,7 +42,7 @@ internal static partial class NumberByteHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryParseInt16(byte[] bytes, int index, int length, byte filler, out short value)
+    public static bool TryParseInt16(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out short value)
     {
         var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
         value = (short)longValue;
@@ -50,7 +50,7 @@ internal static partial class NumberByteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryParseInt32(byte[] bytes, int index, int length, byte filler, out int value)
+    public static bool TryParseInt32(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out int value)
     {
         var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
         value = (int)longValue;
@@ -58,10 +58,11 @@ internal static partial class NumberByteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe bool TryParseInt64(byte[] bytes, int index, int length, byte filler, out long value)
+    public static unsafe bool TryParseInt64(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out long value)
     {
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pBase = bytes)
         {
+            var pBytes = pBase + index;
             value = 0L;
 
             var i = 0;
@@ -103,15 +104,16 @@ internal static partial class NumberByteHelper
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FormatInt16(byte[] bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
+    public static void FormatInt16(Span<byte> bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
     {
         FormatInt32(bytes, index, length, value, padding, zerofill, filler);
     }
 
-    public static unsafe void FormatInt32(byte[] bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
+    public static unsafe void FormatInt32(Span<byte> bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
     {
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pBase = bytes)
         {
+            var pBytes = pBase + index;
             var i = length - 1;
 
             if ((value == Int32.MinValue) && (i >= 0))
@@ -182,10 +184,11 @@ internal static partial class NumberByteHelper
         }
     }
 
-    public static unsafe void FormatInt64(byte[] bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
+    public static unsafe void FormatInt64(Span<byte> bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
     {
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pBase = bytes)
         {
+            var pBytes = pBase + index;
             var i = length - 1;
 
             if ((value == Int64.MinValue) && (i >= 0))
@@ -337,13 +340,14 @@ internal static partial class NumberByteHelper
         }
     }
 
-    public static unsafe bool TryParseDecimal(byte[] bytes, int index, int length, byte filler, out decimal value)
+    public static unsafe bool TryParseDecimal(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out decimal value)
     {
         value = 0m;
 
         var mantissa = default(DecimalMantissa);
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pBase = bytes)
         {
+            var pBytes = pBase + index;
             var i = 0;
             while ((i < length) && (*(pBytes + i) == filler))
             {
@@ -456,7 +460,7 @@ internal static partial class NumberByteHelper
     }
 
     public static unsafe void FormatDecimal(
-        byte[] bytes,
+        Span<byte> bytes,
         int index,
         int length,
         decimal value,
@@ -549,8 +553,9 @@ internal static partial class NumberByteHelper
             }
         }
 
-        fixed (byte* pBytes = &bytes[index])
+        fixed (byte* pBase = bytes)
         {
+            var pBytes = pBase + index;
             var i = length - 1;
 
             if (scale > 0)

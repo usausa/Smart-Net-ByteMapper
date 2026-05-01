@@ -26,7 +26,7 @@ public sealed class MapFillerExpressionTest
         var obj = new FillerExpressionObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal(" 0 _"u8.ToArray(), buffer);
     }

@@ -59,7 +59,7 @@ public sealed class MapAttributeTest
         Assert.Equal([0xCC, 0xCC], defaultMapper.ToByte(new DefaultFillerObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
-        noMapper.ToByte(buffer, 0, new NoFillerObject());
+        noMapper.ToByte(buffer.AsSpan(), new NoFillerObject());
         Assert.Equal([0x11, 0x11], buffer);
     }
 
@@ -103,7 +103,7 @@ public sealed class MapAttributeTest
         Assert.Equal([0x00, 0xCC], defaultMapper.ToByte(new DefaultDelimiterObject()));
 
         var buffer = new byte[noMapper.Size].Also(x => x.AsSpan().Fill(0x11));
-        noMapper.ToByte(buffer, 0, new NoDelimiterObject());
+        noMapper.ToByte(buffer.AsSpan(), new NoDelimiterObject());
         Assert.Equal([0x11, 0x11], buffer);
     }
 

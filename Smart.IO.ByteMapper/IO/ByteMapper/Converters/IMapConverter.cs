@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Converters;
 
 public interface IMapConverter
 {
-    object Read(byte[] buffer, int index);
+    object Read(ReadOnlySpan<byte> buffer);
 
-    void Write(byte[] buffer, int index, object value);
+    void Write(Span<byte> buffer, object value);
 }

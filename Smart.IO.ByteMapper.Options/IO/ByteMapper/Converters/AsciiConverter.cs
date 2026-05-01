@@ -24,9 +24,9 @@ internal sealed class AsciiConverter : IMapConverter
         this.filler = filler;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        var start = index;
+        var start = 0;
         var count = length;
         if (trim)
         {
@@ -36,15 +36,15 @@ internal sealed class AsciiConverter : IMapConverter
         return count == 0 ? string.Empty : EncodingByteHelper.GetAsciiString(buffer, start, count);
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            BytesHelper.CopyBytes(EncodingByteHelper.GetAsciiBytes((string)value), buffer, index, length, padding, filler);
+            BytesHelper.CopyBytes(EncodingByteHelper.GetAsciiBytes((string)value), buffer, length, padding, filler);
         }
     }
 }

@@ -30,7 +30,7 @@ public sealed class MapDecimalAttributeTest
         };
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
         Assert.Equal(
             Encoding.ASCII.GetBytes(
                 "  1,234.50" +

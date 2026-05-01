@@ -40,10 +40,10 @@ public sealed class DecimalTextConverterTest
     public void ReadToDecimal()
     {
         // Default
-        Assert.Equal(0m, decimalConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(0m, decimalConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, decimalConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, decimalConverter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class DecimalTextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        decimalConverter.Write(buffer, Offset, Value);
+        decimalConverter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
     }
 
@@ -64,10 +64,10 @@ public sealed class DecimalTextConverterTest
     public void ReadToNullableDecimal()
     {
         // Null
-        Assert.Null(nullableDecimalConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableDecimalConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(Value, nullableDecimalConverter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, nullableDecimalConverter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -76,7 +76,7 @@ public sealed class DecimalTextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableDecimalConverter.Write(buffer, Offset, null);
+        nullableDecimalConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

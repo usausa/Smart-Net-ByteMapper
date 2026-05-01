@@ -25,22 +25,22 @@ internal sealed class DateTimeConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return DateTimeByteHelper.TryParseDateTime(buffer, index, entries, kind, out var result)
+        return DateTimeByteHelper.TryParseDateTime(buffer, 0, entries, kind, out var result)
             ? result
             : defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            DateTimeByteHelper.FormatDateTime(buffer, index, hasDatePart, entries, (DateTime)value);
+            DateTimeByteHelper.FormatDateTime(buffer, 0, hasDatePart, entries, (DateTime)value);
         }
     }
 }
@@ -68,9 +68,9 @@ internal sealed class DateTimeOffsetConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        if (DateTimeByteHelper.TryParseDateTime(buffer, index, entries, kind, out var result))
+        if (DateTimeByteHelper.TryParseDateTime(buffer, 0, entries, kind, out var result))
         {
             if (kind == DateTimeKind.Unspecified)
             {
@@ -93,15 +93,15 @@ internal sealed class DateTimeOffsetConverter : IMapConverter
         return defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            DateTimeByteHelper.FormatDateTime(buffer, index, hasDatePart, entries, ((DateTimeOffset)value).UtcDateTime);
+            DateTimeByteHelper.FormatDateTime(buffer, 0, hasDatePart, entries, ((DateTimeOffset)value).UtcDateTime);
         }
     }
 }

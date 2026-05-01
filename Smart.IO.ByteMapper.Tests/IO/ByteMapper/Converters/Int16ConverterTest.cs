@@ -45,10 +45,10 @@ public sealed class Int16ConverterTest
     public void ReadToShort()
     {
         // Default
-        Assert.Equal((short)0, int16Converter.Read(EmptyBytes, Offset));
+        Assert.Equal((short)0, int16Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal((short)1, int16Converter.Read(ValueBytes, Offset));
+        Assert.Equal((short)1, int16Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public sealed class Int16ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        int16Converter.Write(buffer, Offset, (short)1);
+        int16Converter.Write(buffer.AsSpan(Offset), (short)1);
         Assert.Equal(ValueBytes, buffer);
     }
 
@@ -69,10 +69,10 @@ public sealed class Int16ConverterTest
     public void ReadToNullableShort()
     {
         // Null
-        Assert.Null(nullableInt16Converter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableInt16Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal((short)1, nullableInt16Converter.Read(ValueBytes, Offset));
+        Assert.Equal((short)1, nullableInt16Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -81,7 +81,7 @@ public sealed class Int16ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableInt16Converter.Write(buffer, Offset, null);
+        nullableInt16Converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 
@@ -93,13 +93,13 @@ public sealed class Int16ConverterTest
     public void ReadToShortEnum()
     {
         // Default
-        Assert.Equal(ShortEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(ShortEnum.Zero, enumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(ShortEnum.One, enumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(ShortEnum.One, enumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((ShortEnum)(-1), enumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((ShortEnum)(-1), enumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -108,11 +108,11 @@ public sealed class Int16ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        enumConverter.Write(buffer, Offset, ShortEnum.One);
+        enumConverter.Write(buffer.AsSpan(Offset), ShortEnum.One);
         Assert.Equal(ValueBytes, buffer);
 
         // Undefined
-        enumConverter.Write(buffer, Offset, (ShortEnum)(-1));
+        enumConverter.Write(buffer.AsSpan(Offset), (ShortEnum)(-1));
         Assert.Equal(MinusBytes, buffer);
     }
 
@@ -124,13 +124,13 @@ public sealed class Int16ConverterTest
     public void ReadToNullableShortEnum()
     {
         // Null
-        Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableEnumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(ShortEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(ShortEnum.One, nullableEnumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((ShortEnum)(-1), nullableEnumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((ShortEnum)(-1), nullableEnumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -139,7 +139,7 @@ public sealed class Int16ConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableEnumConverter.Write(buffer, Offset, null);
+        nullableEnumConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

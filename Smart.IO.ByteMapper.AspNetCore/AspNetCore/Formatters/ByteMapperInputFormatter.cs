@@ -121,7 +121,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                 }
 
                 var target = factory();
-                mapper.FromByte(buffer, 0, target);
+                mapper.FromByte(buffer.AsSpan(0, bufferSize), target);
                 return target;
             }
             finally
@@ -170,7 +170,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                         for (var pos = 0; pos <= limit; pos += mapper.Size)
                         {
                             var target = factory();
-                            mapper.FromByte(buffer, pos, target);
+                            mapper.FromByte(buffer.AsSpan(pos, mapper.Size), target);
                             array[index] = target;
                             index++;
                         }
@@ -189,7 +189,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                         for (var pos = 0; pos <= limit; pos += mapper.Size)
                         {
                             var target = factory();
-                            mapper.FromByte(buffer, pos, target);
+                            mapper.FromByte(buffer.AsSpan(pos, mapper.Size), target);
                             list.Add(target);
                         }
                     }
@@ -240,7 +240,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                     for (var pos = 0; pos <= limit; pos += mapper.Size)
                     {
                         var target = factory();
-                        mapper.FromByte(buffer, pos, target);
+                        mapper.FromByte(buffer.AsSpan(pos, mapper.Size), target);
                         list.Add(target);
                     }
                 }

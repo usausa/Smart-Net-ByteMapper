@@ -36,20 +36,20 @@ internal sealed class DecimalConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return NumberByteHelper.TryParseDecimal(buffer, index, length, filler, out var result) ? result : defaultValue;
+        return NumberByteHelper.TryParseDecimal(buffer, 0, length, filler, out var result) ? result : defaultValue;
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
-            NumberByteHelper.FormatDecimal(buffer, index, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
+            NumberByteHelper.FormatDecimal(buffer, 0, length, (decimal)value, scale, groupingSize, padding, zerofill, filler);
         }
     }
 }

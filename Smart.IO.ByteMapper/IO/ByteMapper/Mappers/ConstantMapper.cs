@@ -20,13 +20,13 @@ public sealed class ConstantMapper : IMapper
         this.content = content;
     }
 
-    public void Read(byte[] buffer, int index, object target)
+    public void Read(ReadOnlySpan<byte> buffer, object target)
     {
         throw new NotSupportedException();
     }
 
-    public void Write(byte[] buffer, int index, object target)
+    public void Write(Span<byte> buffer, object target)
     {
-        content.AsSpan().CopyTo(buffer.AsSpan(index + offset, length));
+        content.AsSpan().CopyTo(buffer.Slice(offset, length));
     }
 }

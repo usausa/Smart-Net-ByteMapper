@@ -113,7 +113,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
             {
-                mapper.ToByte(buffer, 0, (T)model);
+                mapper.ToByte(buffer.AsSpan(0, bufferSize), (T)model);
                 await stream.WriteAsync(buffer, 0, bufferSize).ConfigureAwait(false);
             }
             finally
@@ -148,7 +148,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
                 var limit = buffer.Length - mapper.Size;
                 foreach (var target in (IEnumerable<T>)model)
                 {
-                    mapper.ToByte(buffer, pos, target);
+                    mapper.ToByte(buffer.AsSpan(pos, mapper.Size), target);
 
                     pos += mapper.Size;
                     if (pos > limit)

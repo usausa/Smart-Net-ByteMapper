@@ -46,10 +46,10 @@ public sealed class Int32TextConverterTest
     public void ReadToInt()
     {
         // Default
-        Assert.Equal(0, int32Converter.Read(EmptyBytes, Offset));
+        Assert.Equal(0, int32Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(1, int32Converter.Read(ValueBytes, Offset));
+        Assert.Equal(1, int32Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -58,7 +58,7 @@ public sealed class Int32TextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        int32Converter.Write(buffer, Offset, 1);
+        int32Converter.Write(buffer.AsSpan(Offset), 1);
         Assert.Equal(ValueBytes, buffer);
     }
 
@@ -70,10 +70,10 @@ public sealed class Int32TextConverterTest
     public void ReadToNullableInt()
     {
         // Null
-        Assert.Null(nullableInt32Converter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableInt32Converter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(1, nullableInt32Converter.Read(ValueBytes, Offset));
+        Assert.Equal(1, nullableInt32Converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -82,7 +82,7 @@ public sealed class Int32TextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableInt32Converter.Write(buffer, Offset, null);
+        nullableInt32Converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 
@@ -94,13 +94,13 @@ public sealed class Int32TextConverterTest
     public void ReadToIntEnum()
     {
         // Default
-        Assert.Equal(IntEnum.Zero, enumConverter.Read(EmptyBytes, Offset));
+        Assert.Equal(IntEnum.Zero, enumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(IntEnum.One, enumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(IntEnum.One, enumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((IntEnum)(-1), enumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((IntEnum)(-1), enumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -109,11 +109,11 @@ public sealed class Int32TextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        enumConverter.Write(buffer, Offset, IntEnum.One);
+        enumConverter.Write(buffer.AsSpan(Offset), IntEnum.One);
         Assert.Equal(ValueBytes, buffer);
 
         // Undefined
-        enumConverter.Write(buffer, Offset, (IntEnum)(-1));
+        enumConverter.Write(buffer.AsSpan(Offset), (IntEnum)(-1));
         Assert.Equal(MinusBytes, buffer);
     }
 
@@ -125,13 +125,13 @@ public sealed class Int32TextConverterTest
     public void ReadToNullableIntEnum()
     {
         // Null
-        Assert.Null(nullableEnumConverter.Read(EmptyBytes, Offset));
+        Assert.Null(nullableEnumConverter.Read(EmptyBytes.AsSpan(Offset)));
 
         // Value
-        Assert.Equal(IntEnum.One, nullableEnumConverter.Read(ValueBytes, Offset));
+        Assert.Equal(IntEnum.One, nullableEnumConverter.Read(ValueBytes.AsSpan(Offset)));
 
         // Undefined
-        Assert.Equal((IntEnum)(-1), nullableEnumConverter.Read(MinusBytes, Offset));
+        Assert.Equal((IntEnum)(-1), nullableEnumConverter.Read(MinusBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -140,7 +140,7 @@ public sealed class Int32TextConverterTest
         var buffer = new byte[Length + Offset];
 
         // Null
-        nullableEnumConverter.Write(buffer, Offset, null);
+        nullableEnumConverter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
     }
 }

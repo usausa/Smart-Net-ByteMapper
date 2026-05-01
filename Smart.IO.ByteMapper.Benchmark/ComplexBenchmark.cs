@@ -63,7 +63,7 @@ public class ComplexBenchmark
             DateTimeValue2 = null
         };
 
-        mapper.ToByte(allocatedBuffer, 0, allocatedData);
+        mapper.ToByte(allocatedBuffer.AsSpan(), allocatedData);
     }
 
     [Benchmark(OperationsPerInvoke = N)]
@@ -74,7 +74,7 @@ public class ComplexBenchmark
         var data = allocatedData;
         for (var i = 0; i < N; i++)
         {
-            m.FromByte(buffer, 0, data);
+            m.FromByte(buffer.AsSpan(), data);
         }
     }
 
@@ -85,7 +85,7 @@ public class ComplexBenchmark
         var buffer = allocatedBuffer;
         for (var i = 0; i < N; i++)
         {
-            m.FromByte(buffer, 0, new ComplexData());
+            m.FromByte(buffer.AsSpan(), new ComplexData());
         }
     }
 
@@ -97,7 +97,7 @@ public class ComplexBenchmark
         var data = allocatedData;
         for (var i = 0; i < N; i++)
         {
-            m.ToByte(buffer, 0, data);
+            m.ToByte(buffer.AsSpan(), data);
         }
     }
 
@@ -109,7 +109,7 @@ public class ComplexBenchmark
         for (var i = 0; i < N; i++)
         {
             var buffer = new byte[mapper.Size];
-            m.ToByte(buffer, 0, data);
+            m.ToByte(buffer.AsSpan(), data);
         }
     }
 }

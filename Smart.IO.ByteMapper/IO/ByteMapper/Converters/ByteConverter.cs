@@ -4,13 +4,13 @@ internal sealed class ByteConverter : IMapConverter
 {
     public static ByteConverter Default { get; } = new();
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return buffer[index];
+        return buffer[0];
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
-        buffer[index] = (byte)value;
+        buffer[0] = (byte)value;
     }
 }

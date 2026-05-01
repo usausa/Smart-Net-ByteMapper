@@ -41,7 +41,7 @@ public sealed class BytesConverterTest
     [Fact]
     public void ReadToBytes()
     {
-        Assert.Equal(Value, converter.Read(ValueBytes, Offset));
+        Assert.Equal(Value, converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
@@ -50,19 +50,19 @@ public sealed class BytesConverterTest
         var buffer = new byte[Length + Offset];
 
         // Value
-        converter.Write(buffer, Offset, Value);
+        converter.Write(buffer.AsSpan(Offset), Value);
         Assert.Equal(ValueBytes, buffer);
 
         // Null
-        converter.Write(buffer, Offset, null);
+        converter.Write(buffer.AsSpan(Offset), null);
         Assert.Equal(EmptyBytes, buffer);
 
         // Short
-        converter.Write(buffer, Offset, ShortValue);
+        converter.Write(buffer.AsSpan(Offset), ShortValue);
         Assert.Equal(ShortValueBytes, buffer);
 
         // Overflow
-        converter.Write(buffer, Offset, OverflowValue);
+        converter.Write(buffer.AsSpan(Offset), OverflowValue);
         Assert.Equal(ValueBytes, buffer);
     }
 }

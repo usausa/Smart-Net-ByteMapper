@@ -14,21 +14,21 @@ internal sealed class BytesConverter : IMapConverter
         this.filler = filler;
     }
 
-    public object Read(byte[] buffer, int index)
+    public object Read(ReadOnlySpan<byte> buffer)
     {
-        return buffer.AsSpan(index, length).ToArray();
+        return buffer[..length].ToArray();
     }
 
-    public void Write(byte[] buffer, int index, object value)
+    public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
         {
-            BytesHelper.Fill(buffer, index, length, filler);
+            BytesHelper.Fill(buffer[..length], filler);
         }
         else
         {
             var bytes = (byte[])value;
-            BytesHelper.CopyBytes(bytes, buffer, index, length, Padding.Right, filler);
+            BytesHelper.CopyBytes(bytes, buffer, length, Padding.Right, filler);
         }
     }
 }

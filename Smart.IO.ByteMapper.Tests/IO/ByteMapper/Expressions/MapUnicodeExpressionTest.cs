@@ -32,12 +32,12 @@ public sealed class MapUnicodeExpressionTest
         var obj = new UnicodeExpressionObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal(Encoding.Unicode.GetBytes("  __"), buffer);
 
         // Read
-        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A"), 0, obj);
+        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A").AsSpan(), obj);
 
         Assert.Equal("1", obj.StringValue);
         Assert.Equal("_A", obj.CustomStringValue);
@@ -66,19 +66,19 @@ public sealed class MapUnicodeExpressionTest
         var obj = new UnicodeExpressionObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal(Encoding.Unicode.GetBytes("  __"), buffer);
 
         // Write2
         obj.StringValue = "1";
         obj.CustomStringValue = "A";
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal(Encoding.Unicode.GetBytes("1 _A"), buffer);
 
         // Read
-        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A"), 0, obj);
+        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A").AsSpan(), obj);
 
         Assert.Equal("1", obj.StringValue);
         Assert.Equal("A", obj.CustomStringValue);

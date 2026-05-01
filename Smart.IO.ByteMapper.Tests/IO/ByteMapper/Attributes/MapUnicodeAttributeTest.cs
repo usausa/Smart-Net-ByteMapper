@@ -25,12 +25,12 @@ public sealed class MapUnicodeAttributeTest
         var obj = new UnicodeAttributeObject();
 
         // Write
-        mapper.ToByte(buffer, 0, obj);
+        mapper.ToByte(buffer.AsSpan(), obj);
 
         Assert.Equal(Encoding.Unicode.GetBytes("  __"), buffer);
 
         // Read
-        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A"), 0, obj);
+        mapper.FromByte(Encoding.Unicode.GetBytes("1 _A").AsSpan(), obj);
 
         Assert.Equal("1", obj.StringValue);
         Assert.Equal("_A", obj.CustomStringValue);
