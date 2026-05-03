@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 
 using Smart.IO.ByteMapper.Helpers;
@@ -22,7 +23,7 @@ public sealed class TypeProfileKeyCache<T>
     private readonly object sync = new();
 #endif
 
-    private Node[] nodes;
+    private volatile Node[] nodes;
 
     private int depth;
 
@@ -45,6 +46,26 @@ public sealed class TypeProfileKeyCache<T>
     private static int CalculateHash(Type type, string profile)
     {
         return type.GetHashCode() ^ StringHash.Calc(profile);
+    }
+
+    private static int CalculateCount(Node[] targetNodes)
+    {
+        var count = 0;
+        for (var i = 0; i < targetNodes.Length; i++)
+        {
+            var node = targetNodes[i];
+            if (node != EmptyNode)
+            {
+                do
+                {
+                    count++;
+                    node = node.Next;
+                }
+                while (node is not null);
+            }
+        }
+
+        return count;
     }
 
     private static int CalculateDepth(Node node)
@@ -78,25 +99,13 @@ public sealed class TypeProfileKeyCache<T>
 
     private static int CalculateSize(int requestSize)
     {
-        uint size = 0;
-
-        for (var i = 1L; i < requestSize; i *= 2)
-        {
-            size = (size << 1) + 1;
-        }
-
-        return (int)(size + 1);
+        return (int)BitOperations.RoundUpToPowerOf2((uint)requestSize);
     }
 
     private static Node[] CreateInitialTable()
     {
         var newNodes = new Node[InitialSize];
-
-        for (var i = 0; i < newNodes.Length; i++)
-        {
-            newNodes[i] = EmptyNode;
-        }
-
+        newNodes.AsSpan().Fill(EmptyNode);
         return newNodes;
     }
 
@@ -123,50 +132,46 @@ public sealed class TypeProfileKeyCache<T>
         }
     }
 
-    private static void RelocateNodes(Node[] nodes, Node[] oldNodes)
+    private static void RelocateNodes(Node[] newNodes, Node[] oldNodes, int count)
     {
-        for (var i = 0; i < oldNodes.Length; i++)
+        var remaining = count;
+        for (var i = 0; (i < oldNodes.Length) && (remaining > 0); i++)
         {
-            var node = oldNodes[i];
-            if (node == EmptyNode)
+            var current = oldNodes[i];
+            if (current == EmptyNode)
             {
                 continue;
             }
 
             do
             {
-                var next = node.Next;
-                node.Next = null;
+                UpdateLink(ref newNodes[CalculateHash(current.Type, current.Profile) & (newNodes.Length - 1)], new Node(current.Type, current.Profile, current.Value));
 
-                UpdateLink(ref nodes[CalculateHash(node.Type, node.Profile) & (nodes.Length - 1)], node);
-
-                node = next;
+                current = current.Next;
+                remaining--;
             }
-            while (node is not null);
+            while (current is not null);
         }
     }
 
     private void AddNode(Node node)
     {
+        var currentNodes = nodes;
+
         var requestSize = Math.Max(InitialSize, (count + 1) * Factor);
         var size = CalculateSize(requestSize);
-        if (size > nodes.Length)
+        if (size > currentNodes.Length)
         {
             var newNodes = new Node[size];
-            for (var i = 0; i < newNodes.Length; i++)
-            {
-                newNodes[i] = EmptyNode;
-            }
+            newNodes.AsSpan().Fill(EmptyNode);
 
-            RelocateNodes(newNodes, nodes);
+            RelocateNodes(newNodes, currentNodes, count);
 
             UpdateLink(ref newNodes[CalculateHash(node.Type, node.Profile) & (newNodes.Length - 1)], node);
 
-            Interlocked.MemoryBarrier();
-
             nodes = newNodes;
             depth = CalculateDepth(newNodes);
-            count++;
+            count = CalculateCount(newNodes);
         }
         else
         {
@@ -174,9 +179,9 @@ public sealed class TypeProfileKeyCache<T>
 
             var hash = CalculateHash(node.Type, node.Profile);
 
-            UpdateLink(ref nodes[hash & (nodes.Length - 1)], node);
+            UpdateLink(ref currentNodes[hash & (currentNodes.Length - 1)], node);
 
-            depth = Math.Max(CalculateDepth(nodes[hash & (nodes.Length - 1)]), depth);
+            depth = Math.Max(CalculateDepth(currentNodes[hash & (currentNodes.Length - 1)]), depth);
             count++;
         }
     }
@@ -202,14 +207,13 @@ public sealed class TypeProfileKeyCache<T>
         {
             var newNodes = CreateInitialTable();
 
-            Interlocked.MemoryBarrier();
-
             nodes = newNodes;
             depth = 0;
             count = 0;
         }
     }
 
+    [SkipLocalsInit]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryGetValue(Type type, string profile, [MaybeNullWhen(false)] out T value)
     {
