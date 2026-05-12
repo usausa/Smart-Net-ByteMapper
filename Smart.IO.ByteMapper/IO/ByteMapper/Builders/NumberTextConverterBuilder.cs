@@ -11,13 +11,14 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
 
     public string Format { get; set; }
 
-    public Encoding Encoding { get; set; }
-
     public bool? Trim { get; set; }
 
     public Padding? Padding { get; set; }
 
     public byte? Filler { get; set; }
+
+    // Decimal only
+    public Encoding Encoding { get; set; }
 
     public NumberStyles? Style { get; set; }
 
@@ -40,12 +41,9 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
         return new Int32TextConverter(
             Length,
             Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
-            Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
             type);
     }
 
@@ -54,12 +52,9 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
         return new Int64TextConverter(
             Length,
             Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
-            Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
             type);
     }
 
@@ -68,12 +63,9 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
         return new Int16TextConverter(
             Length,
             Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
-            Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextNumberStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
             type);
     }
 

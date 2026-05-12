@@ -1,8 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System.Globalization;
-using System.Text;
-
 using Smart.IO.ByteMapper.Mock;
 
 public sealed class Int32TextConverterTest
@@ -11,11 +8,11 @@ public sealed class Int32TextConverterTest
 
     private const int Length = 8;
 
-    private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes(string.Empty.PadLeft(Length, ' ')));
+    private static readonly byte[] EmptyBytes = TestBytes.Offset(Offset, "        "u8.ToArray());
 
-    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("1".PadLeft(Length, ' ')));
+    private static readonly byte[] ValueBytes = TestBytes.Offset(Offset, "       1"u8.ToArray());
 
-    private static readonly byte[] MinusBytes = TestBytes.Offset(Offset, Encoding.ASCII.GetBytes("-1".PadLeft(Length, ' ')));
+    private static readonly byte[] MinusBytes = TestBytes.Offset(Offset, "      -1"u8.ToArray());
 
     private readonly Int32TextConverter int32Converter;
 
@@ -35,7 +32,7 @@ public sealed class Int32TextConverterTest
 
     private static Int32TextConverter CreateConverter(Type type)
     {
-        return new(Length, null, Encoding.ASCII, true, Padding.Left, 0x20, NumberStyles.Integer, NumberFormatInfo.InvariantInfo, type);
+        return new(Length, null, true, Padding.Left, 0x20, type);
     }
 
     //--------------------------------------------------------------------------------
