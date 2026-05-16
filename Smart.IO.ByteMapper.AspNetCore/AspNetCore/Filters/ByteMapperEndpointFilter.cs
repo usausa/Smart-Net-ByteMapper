@@ -50,10 +50,14 @@ public sealed class ByteMapperEndpointFilter : IEndpointFilter
         var result = await next(context).ConfigureAwait(false);
         if (result is not null)
         {
-            await SerializeResponseAsync(context.HttpContext, result).ConfigureAwait(false);
+            var mapper = TryGetMapper(result.GetType());
+            if (mapper is not null)
+            {
+                return new ByteMapperResult(result, mapper);
+            }
         }
 
-        return null;
+        return result;
     }
 
     private async ValueTask DeserializeRequestAsync(EndpointFilterInvocationContext context)
@@ -104,33 +108,6 @@ public sealed class ByteMapperEndpointFilter : IEndpointFilter
         }
     }
 
-    private async ValueTask SerializeResponseAsync(HttpContext httpContext, object result)
-    {
-        var resultType = result.GetType();
-        var mapper = TryGetMapper(resultType);
-        if (mapper is null)
-        {
-            return;
-        }
-
-        var bufferLength = mapper.Size;
-        var buffer = ArrayPool<byte>.Shared.Rent(bufferLength);
-        try
-        {
-            mapper.ToByte(buffer.AsSpan(0, bufferLength), result);
-
-            httpContext.Response.ContentType = "application/octet-stream";
-            httpContext.Response.ContentLength = bufferLength;
-#pragma warning disable CA1835
-            await httpContext.Response.Body.WriteAsync(buffer.AsMemory(0, bufferLength), httpContext.RequestAborted).ConfigureAwait(false);
-#pragma warning restore CA1835
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
-    }
-
     private ITypeMapper TryGetMapper(Type type)
     {
 #pragma warning disable CA1031
@@ -154,6 +131,40 @@ public sealed class ByteMapperEndpointFilter : IEndpointFilter
         internal static Func<object> GetOrCreate(Type type, IDelegateFactory delegateFactory)
         {
             return Cache.GetOrAdd(type, delegateFactory.CreateFactory);
+        }
+    }
+
+    // IResult implementation that writes the mapped binary directly to the response.
+    private sealed class ByteMapperResult : IResult
+    {
+        private readonly object value;
+
+        private readonly ITypeMapper mapper;
+
+        internal ByteMapperResult(object value, ITypeMapper mapper)
+        {
+            this.value = value;
+            this.mapper = mapper;
+        }
+
+        public async Task ExecuteAsync(HttpContext httpContext)
+        {
+            var bufferLength = mapper.Size;
+            var buffer = ArrayPool<byte>.Shared.Rent(bufferLength);
+            try
+            {
+                mapper.ToByte(buffer.AsSpan(0, bufferLength), value);
+
+                httpContext.Response.ContentType = "application/octet-stream";
+                httpContext.Response.ContentLength = bufferLength;
+#pragma warning disable CA1835
+                await httpContext.Response.Body.WriteAsync(buffer.AsMemory(0, bufferLength), httpContext.RequestAborted).ConfigureAwait(false);
+#pragma warning restore CA1835
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(buffer);
+            }
         }
     }
 }
