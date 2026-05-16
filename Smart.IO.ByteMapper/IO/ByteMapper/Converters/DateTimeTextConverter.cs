@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Converters;
 
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using Smart.IO.ByteMapper.Helpers;
@@ -39,10 +40,12 @@ internal sealed class DateTimeTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
+    [SkipLocalsInit]
     public object Read(ReadOnlySpan<byte> buffer)
     {
-        var value = encoding.GetString(buffer[..length]);
-        if (DateTime.TryParseExact(value, format, provider, style, out var result))
+        Span<char> chars = stackalloc char[length];
+        var charCount = encoding.GetChars(buffer[..length], chars);
+        if (DateTime.TryParseExact(chars[..charCount], format, provider, style, out var result))
         {
             return result;
         }
@@ -50,6 +53,7 @@ internal sealed class DateTimeTextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -59,7 +63,9 @@ internal sealed class DateTimeTextConverter : IMapConverter
         else
         {
             var destination = buffer[..length];
-            var written = encoding.GetBytes(((DateTime)value).ToString(format, provider), destination);
+            Span<char> chars = stackalloc char[length + 16];
+            ((DateTime)value).TryFormat(chars, out var charWritten, format, provider);
+            var written = encoding.GetBytes(chars[..charWritten], destination);
             if (written < length)
             {
                 destination[written..].Fill(filler);
@@ -102,10 +108,12 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
+    [SkipLocalsInit]
     public object Read(ReadOnlySpan<byte> buffer)
     {
-        var value = encoding.GetString(buffer[..length]);
-        if (DateTimeOffset.TryParseExact(value, format, provider, style, out var result))
+        Span<char> chars = stackalloc char[length];
+        var charCount = encoding.GetChars(buffer[..length], chars);
+        if (DateTimeOffset.TryParseExact(chars[..charCount], format, provider, style, out var result))
         {
             return result;
         }
@@ -113,6 +121,7 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -122,7 +131,189 @@ internal sealed class DateTimeOffsetTextConverter : IMapConverter
         else
         {
             var destination = buffer[..length];
-            var written = encoding.GetBytes(((DateTimeOffset)value).ToString(format, provider), destination);
+            Span<char> chars = stackalloc char[length + 16];
+            ((DateTimeOffset)value).TryFormat(chars, out var charWritten, format, provider);
+            var written = encoding.GetBytes(chars[..charWritten], destination);
+            if (written < length)
+            {
+                destination[written..].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class TimeSpanTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public TimeSpanTextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        byte filler,
+        Type type)
+    {
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    [SkipLocalsInit]
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        Span<char> chars = stackalloc char[length];
+        var charCount = encoding.GetChars(buffer[..length], chars);
+        if (TimeSpan.TryParseExact(chars[..charCount], format, null, out var result))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    [SkipLocalsInit]
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            var destination = buffer[..length];
+            Span<char> chars = stackalloc char[length + 16];
+            ((TimeSpan)value).TryFormat(chars, out var charWritten, format, null);
+            var written = encoding.GetBytes(chars[..charWritten], destination);
+            if (written < length)
+            {
+                destination[written..].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class DateOnlyTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DateOnlyTextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        byte filler,
+        Type type)
+    {
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    [SkipLocalsInit]
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        Span<char> chars = stackalloc char[length];
+        var charCount = encoding.GetChars(buffer[..length], chars);
+        if (DateOnly.TryParseExact(chars[..charCount], format, null, DateTimeStyles.None, out var result))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    [SkipLocalsInit]
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            var destination = buffer[..length];
+            Span<char> chars = stackalloc char[length + 16];
+            ((DateOnly)value).TryFormat(chars, out var charWritten, format, null);
+            var written = encoding.GetBytes(chars[..charWritten], destination);
+            if (written < length)
+            {
+                destination[written..].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class TimeOnlyTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly string format;
+
+    private readonly Encoding encoding;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public TimeOnlyTextConverter(
+        int length,
+        string format,
+        Encoding encoding,
+        byte filler,
+        Type type)
+    {
+        this.length = length;
+        this.format = format;
+        this.encoding = encoding;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    [SkipLocalsInit]
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        Span<char> chars = stackalloc char[length];
+        var charCount = encoding.GetChars(buffer[..length], chars);
+        if (TimeOnly.TryParseExact(chars[..charCount], format, null, DateTimeStyles.None, out var result))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    [SkipLocalsInit]
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            var destination = buffer[..length];
+            Span<char> chars = stackalloc char[length + 16];
+            ((TimeOnly)value).TryFormat(chars, out var charWritten, format, null);
+            var written = encoding.GetBytes(chars[..charWritten], destination);
             if (written < length)
             {
                 destination[written..].Fill(filler);

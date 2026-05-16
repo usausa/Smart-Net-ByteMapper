@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Converters;
 
 using System.Buffers.Binary;
+using System.Runtime.CompilerServices;
 
 using Smart.IO.ByteMapper.Helpers;
 
@@ -15,8 +16,16 @@ internal sealed class BigEndianIntBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt32BigEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..4].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt32BigEndian(buffer, (int)value);
+    }
 }
 
 internal sealed class LittleEndianIntBinaryConverter : IMapConverter
@@ -26,8 +35,16 @@ internal sealed class LittleEndianIntBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt32LittleEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..4].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt32LittleEndian(buffer, (int)value);
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -41,8 +58,16 @@ internal sealed class BigEndianLongBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt64BigEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64BigEndian(buffer, (long)value);
+    }
 }
 
 internal sealed class LittleEndianLongBinaryConverter : IMapConverter
@@ -52,8 +77,16 @@ internal sealed class LittleEndianLongBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt64LittleEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64LittleEndian(buffer, (long)value);
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -67,8 +100,16 @@ internal sealed class BigEndianShortBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt16BigEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..2].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt16BigEndian(buffer, (short)value);
+    }
 }
 
 internal sealed class LittleEndianShortBinaryConverter : IMapConverter
@@ -78,8 +119,16 @@ internal sealed class LittleEndianShortBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BinaryPrimitives.ReadInt16LittleEndian(buffer);
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..2].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt16LittleEndian(buffer, (short)value);
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -93,8 +142,16 @@ internal sealed class BigEndianDoubleBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64BigEndian(buffer));
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64BigEndian(buffer, BytesHelper.DoubleToInt64((double)value));
+    }
 }
 
 internal sealed class LittleEndianDoubleBinaryConverter : IMapConverter
@@ -104,8 +161,16 @@ internal sealed class LittleEndianDoubleBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BytesHelper.Int64ToDouble(BinaryPrimitives.ReadInt64LittleEndian(buffer));
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64LittleEndian(buffer, BytesHelper.DoubleToInt64((double)value));
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -119,8 +184,16 @@ internal sealed class BigEndianFloatBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32BigEndian(buffer));
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..4].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt32BigEndian(buffer, BytesHelper.FloatToInt32((float)value));
+    }
 }
 
 internal sealed class LittleEndianFloatBinaryConverter : IMapConverter
@@ -130,8 +203,16 @@ internal sealed class LittleEndianFloatBinaryConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer) =>
         BytesHelper.Int32ToFloat(BinaryPrimitives.ReadInt32LittleEndian(buffer));
 
-    public void Write(Span<byte> buffer, object value) =>
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            buffer[..4].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt32LittleEndian(buffer, BytesHelper.FloatToInt32((float)value));
+    }
 }
 
 //--------------------------------------------------------------------------------
@@ -152,10 +233,18 @@ internal sealed class BigEndianDecimalBinaryConverter : IMapConverter
         return DecimalHelper.FromBits(lo, mid, hi, flag);
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..16].Clear();
+            return;
+        }
+
         var span = buffer;
-        var bits = Decimal.GetBits((decimal)value);
+        Span<int> bits = stackalloc int[4];
+        Decimal.GetBits((decimal)value, bits);
         BinaryPrimitives.WriteInt32BigEndian(span, bits[3]);
         BinaryPrimitives.WriteInt32BigEndian(span[4..], bits[2]);
         BinaryPrimitives.WriteInt32BigEndian(span[8..], bits[1]);
@@ -177,10 +266,18 @@ internal sealed class LittleEndianDecimalBinaryConverter : IMapConverter
         return DecimalHelper.FromBits(lo, mid, hi, flag);
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..16].Clear();
+            return;
+        }
+
         var span = buffer;
-        var bits = Decimal.GetBits((decimal)value);
+        Span<int> bits = stackalloc int[4];
+        Decimal.GetBits((decimal)value, bits);
         BinaryPrimitives.WriteInt32LittleEndian(span, bits[0]);
         BinaryPrimitives.WriteInt32LittleEndian(span[4..], bits[1]);
         BinaryPrimitives.WriteInt32LittleEndian(span[8..], bits[2]);
@@ -211,6 +308,12 @@ internal sealed class BigEndianDateTimeBinaryConverter : IMapConverter
 
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64BigEndian(buffer, ((DateTime)value).Ticks);
     }
 }
@@ -234,6 +337,12 @@ internal sealed class LittleEndianDateTimeBinaryConverter : IMapConverter
 
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..8].Clear();
+            return;
+        }
+
         BinaryPrimitives.WriteInt64LittleEndian(buffer, ((DateTime)value).Ticks);
     }
 }
@@ -258,6 +367,12 @@ internal sealed class BigEndianDateTimeOffsetBinaryConverter : IMapConverter
 
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..10].Clear();
+            return;
+        }
+
         var span = buffer;
         var dateTime = (DateTimeOffset)value;
         BinaryPrimitives.WriteInt64BigEndian(span, dateTime.UtcTicks);
@@ -281,6 +396,12 @@ internal sealed class LittleEndianDateTimeOffsetBinaryConverter : IMapConverter
 
     public void Write(Span<byte> buffer, object value)
     {
+        if (value is null)
+        {
+            buffer[..10].Clear();
+            return;
+        }
+
         var span = buffer;
         var dateTime = (DateTimeOffset)value;
         BinaryPrimitives.WriteInt64LittleEndian(span, dateTime.UtcTicks);

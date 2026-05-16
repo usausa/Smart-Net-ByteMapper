@@ -25,6 +25,12 @@ public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<D
         AddEntry(typeof(DateTime?), static (b, _) => b.Length, static (b, t, c) => b.CreateDateTimeTextConverter(t, c));
         AddEntry(typeof(DateTimeOffset), static (b, _) => b.Length, static (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
         AddEntry(typeof(DateTimeOffset?), static (b, _) => b.Length, static (b, t, c) => b.CreateDateTimeOffsetTextConverter(t, c));
+        AddEntry(typeof(TimeSpan), static (b, _) => b.Length, static (b, t, c) => b.CreateTimeSpanTextConverter(t, c));
+        AddEntry(typeof(TimeSpan?), static (b, _) => b.Length, static (b, t, c) => b.CreateTimeSpanTextConverter(t, c));
+        AddEntry(typeof(DateOnly), static (b, _) => b.Length, static (b, t, c) => b.CreateDateOnlyTextConverter(t, c));
+        AddEntry(typeof(DateOnly?), static (b, _) => b.Length, static (b, t, c) => b.CreateDateOnlyTextConverter(t, c));
+        AddEntry(typeof(TimeOnly), static (b, _) => b.Length, static (b, t, c) => b.CreateTimeOnlyTextConverter(t, c));
+        AddEntry(typeof(TimeOnly?), static (b, _) => b.Length, static (b, t, c) => b.CreateTimeOnlyTextConverter(t, c));
     }
 
     private DateTimeTextConverter CreateDateTimeTextConverter(Type type, IBuilderContext context)
@@ -48,6 +54,36 @@ public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<D
             Filler ?? context.GetParameter<byte>(Parameter.Filler),
             Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeTextStyle),
             Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeTextProvider),
+            type);
+    }
+
+    private TimeSpanTextConverter CreateTimeSpanTextConverter(Type type, IBuilderContext context)
+    {
+        return new TimeSpanTextConverter(
+            Length,
+            Format,
+            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
+            type);
+    }
+
+    private DateOnlyTextConverter CreateDateOnlyTextConverter(Type type, IBuilderContext context)
+    {
+        return new DateOnlyTextConverter(
+            Length,
+            Format,
+            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
+            type);
+    }
+
+    private TimeOnlyTextConverter CreateTimeOnlyTextConverter(Type type, IBuilderContext context)
+    {
+        return new TimeOnlyTextConverter(
+            Length,
+            Format,
+            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
+            Filler ?? context.GetParameter<byte>(Parameter.Filler),
             type);
     }
 }

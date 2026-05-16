@@ -4,13 +4,11 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Helpers;
 
-/// <summary>
-/// Benchmark for methods targeted by intrinsics-opportunities.md:
-///   §1 BytesHelper.TrimRange
-///   §2 EncodingByteHelper.GetAsciiBytes / GetAsciiString
-///   §3 EncodingByteHelper.FillUnicode
-///   §5 NumberByteHelper.FormatInt32 / FormatInt64
-/// </summary>
+// Benchmark for methods targeted by intrinsics-opportunities.md:
+//   §1 BytesHelper.TrimRange
+//   §2 EncodingByteHelper.GetAsciiBytes / GetAsciiString
+//   §3 EncodingByteHelper.FillUnicode
+//   §5 NumberByteHelper.FormatInt32 / FormatInt64
 [Config(typeof(BenchmarkConfig))]
 public class IntrinsicsBenchmark
 {
@@ -48,13 +46,27 @@ public class IntrinsicsBenchmark
 
         if (padding == Padding.Left)
         {
-            for (var i = 0; i < 10; i++) buf[i] = (byte)' ';
-            for (var i = 10; i < 20; i++) buf[i] = (byte)'A';
+            for (var i = 0; i < 10; i++)
+            {
+                buf[i] = (byte)' ';
+            }
+
+            for (var i = 10; i < 20; i++)
+            {
+                buf[i] = (byte)'A';
+            }
         }
         else
         {
-            for (var i = 0; i < 10; i++) buf[i] = (byte)'A';
-            for (var i = 10; i < 20; i++) buf[i] = (byte)' ';
+            for (var i = 0; i < 10; i++)
+            {
+                buf[i] = (byte)'A';
+            }
+
+            for (var i = 10; i < 20; i++)
+            {
+                buf[i] = (byte)' ';
+            }
         }
 
         return buf;
@@ -99,15 +111,6 @@ public class IntrinsicsBenchmark
     }
 
     // ===================== §2 ASCII =====================
-
-    [Benchmark(OperationsPerInvoke = N)]
-    public void GetAsciiBytes20()
-    {
-        for (var i = 0; i < N; i++)
-        {
-            _ = EncodingByteHelper.GetAsciiBytes(Ascii20);
-        }
-    }
 
     [Benchmark(OperationsPerInvoke = N)]
     public void GetAsciiString20()

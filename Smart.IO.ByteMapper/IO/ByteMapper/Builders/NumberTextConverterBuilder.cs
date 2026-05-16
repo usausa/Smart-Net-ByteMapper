@@ -32,6 +32,10 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
         AddEntry(typeof(long?), static (b, _) => b.Length, static (b, t, c) => b.CreateLongTextConverter(t, c));
         AddEntry(typeof(short), static (b, _) => b.Length, static (b, t, c) => b.CreateShortTextConverter(t, c));
         AddEntry(typeof(short?), static (b, _) => b.Length, static (b, t, c) => b.CreateShortTextConverter(t, c));
+        AddEntry(typeof(float), static (b, _) => b.Length, static (b, t, c) => b.CreateFloatTextConverter(t, c));
+        AddEntry(typeof(float?), static (b, _) => b.Length, static (b, t, c) => b.CreateFloatTextConverter(t, c));
+        AddEntry(typeof(double), static (b, _) => b.Length, static (b, t, c) => b.CreateDoubleTextConverter(t, c));
+        AddEntry(typeof(double?), static (b, _) => b.Length, static (b, t, c) => b.CreateDoubleTextConverter(t, c));
         AddEntry(typeof(decimal), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalTextConverter(t, c));
         AddEntry(typeof(decimal?), static (b, _) => b.Length, static (b, t, c) => b.CreateDecimalTextConverter(t, c));
     }
@@ -80,6 +84,26 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
             Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextDecimalStyle),
             Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
+            type);
+    }
+
+    private FloatTextConverter CreateFloatTextConverter(Type type, IBuilderContext context)
+    {
+        return new FloatTextConverter(
+            Length,
+            Trim ?? context.GetParameter<bool>(Parameter.Trim),
+            Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+            Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
+            type);
+    }
+
+    private DoubleTextConverter CreateDoubleTextConverter(Type type, IBuilderContext context)
+    {
+        return new DoubleTextConverter(
+            Length,
+            Trim ?? context.GetParameter<bool>(Parameter.Trim),
+            Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
+            Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
             type);
     }
 }

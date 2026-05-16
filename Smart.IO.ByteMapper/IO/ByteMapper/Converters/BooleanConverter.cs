@@ -2,6 +2,9 @@ namespace Smart.IO.ByteMapper.Converters;
 
 internal sealed class BooleanConverter : IMapConverter
 {
+    private static readonly object BoxedTrue = true;
+    private static readonly object BoxedFalse = false;
+
     private readonly byte trueValue;
 
     private readonly byte falseValue;
@@ -14,7 +17,7 @@ internal sealed class BooleanConverter : IMapConverter
 
     public object Read(ReadOnlySpan<byte> buffer)
     {
-        return buffer[0] == trueValue;
+        return buffer[0] == trueValue ? BoxedTrue : BoxedFalse;
     }
 
     public void Write(Span<byte> buffer, object value)
@@ -25,6 +28,9 @@ internal sealed class BooleanConverter : IMapConverter
 
 internal sealed class NullableBooleanConverter : IMapConverter
 {
+    private static readonly object BoxedTrue = true;
+    private static readonly object BoxedFalse = false;
+
     private readonly byte trueValue;
 
     private readonly byte falseValue;
@@ -41,7 +47,7 @@ internal sealed class NullableBooleanConverter : IMapConverter
     public object Read(ReadOnlySpan<byte> buffer)
     {
         var b = buffer[0];
-        return b == trueValue ? true : b == nullValue ? null : false;
+        return b == trueValue ? BoxedTrue : b == nullValue ? null : BoxedFalse;
     }
 
     public void Write(Span<byte> buffer, object value)

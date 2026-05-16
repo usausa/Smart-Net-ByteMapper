@@ -3,11 +3,12 @@ namespace Smart.IO.ByteMapper.Converters;
 using System.Buffers;
 using System.Buffers.Text;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 using Smart.IO.ByteMapper.Helpers;
 
-file static class NumberTextConverterHelper
+internal static class NumberTextConverterHelper
 {
     // Map a numeric format string (e.g. "D2", "N", null) to a Utf8Formatter StandardFormat.
     // Utf8Formatter supports: 'D' (decimal integer), 'G', 'N', 'X' (hex), 'E' (scientific).
@@ -87,6 +88,7 @@ internal sealed class Int32TextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -152,6 +154,7 @@ internal sealed class Int64TextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -217,6 +220,7 @@ internal sealed class Int16TextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -274,6 +278,7 @@ internal sealed class DecimalTextConverter : IMapConverter
         defaultValue = type.GetDefaultValue();
     }
 
+    [SkipLocalsInit]
     public object Read(ReadOnlySpan<byte> buffer)
     {
         var start = 0;
@@ -283,8 +288,14 @@ internal sealed class DecimalTextConverter : IMapConverter
             BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        var value = encoding.GetString(buffer.Slice(start, count));
-        if ((value.Length > 0) && Decimal.TryParse(value, style, provider, out var result))
+        if (count == 0)
+        {
+            return defaultValue;
+        }
+
+        Span<char> chars = stackalloc char[count];
+        var charCount = encoding.GetChars(buffer.Slice(start, count), chars);
+        if (charCount > 0 && Decimal.TryParse(chars[..charCount], style, provider, out var result))
         {
             return result;
         }
@@ -292,6 +303,7 @@ internal sealed class DecimalTextConverter : IMapConverter
         return defaultValue;
     }
 
+    [SkipLocalsInit]
     public void Write(Span<byte> buffer, object value)
     {
         if (value is null)
@@ -300,7 +312,130 @@ internal sealed class DecimalTextConverter : IMapConverter
         }
         else
         {
-            BytesHelper.CopyBytes(encoding.GetBytes(((decimal)value).ToString(format, provider)), buffer, length, padding, filler);
+            Span<char> chars = stackalloc char[length + 32];
+            ((decimal)value).TryFormat(chars, out var charWritten, format, provider);
+            var maxBytes = encoding.GetMaxByteCount(charWritten);
+            var tmp = maxBytes <= 256 ? stackalloc byte[maxBytes] : new byte[maxBytes];
+            var byteWritten = encoding.GetBytes(chars[..charWritten], tmp);
+            BytesHelper.CopyBytes(tmp[..byteWritten], buffer, length, padding, filler);
+        }
+    }
+}
+
+internal sealed class FloatTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public FloatTextConverter(
+        int length,
+        bool trim,
+        Padding padding,
+        byte filler,
+        Type type)
+    {
+        this.length = length;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        var start = 0;
+        var count = length;
+        if (trim)
+        {
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
+        }
+
+        if (count > 0 && Utf8Parser.TryParse(buffer.Slice(start, count), out float result, out _))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    [SkipLocalsInit]
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            Span<byte> tmp = stackalloc byte[32];
+            Utf8Formatter.TryFormat((float)value, tmp, out var written);
+            BytesHelper.CopyBytes(tmp[..written], buffer, length, padding, filler);
+        }
+    }
+}
+
+internal sealed class DoubleTextConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly bool trim;
+
+    private readonly Padding padding;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DoubleTextConverter(
+        int length,
+        bool trim,
+        Padding padding,
+        byte filler,
+        Type type)
+    {
+        this.length = length;
+        this.trim = trim;
+        this.padding = padding;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        var start = 0;
+        var count = length;
+        if (trim)
+        {
+            BytesHelper.TrimRange(buffer, ref start, ref count, padding, filler);
+        }
+
+        if (count > 0 && Utf8Parser.TryParse(buffer.Slice(start, count), out double result, out _))
+        {
+            return result;
+        }
+
+        return defaultValue;
+    }
+
+    [SkipLocalsInit]
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            Span<byte> tmp = stackalloc byte[32];
+            Utf8Formatter.TryFormat((double)value, tmp, out var written);
+            BytesHelper.CopyBytes(tmp[..written], buffer, length, padding, filler);
         }
     }
 }

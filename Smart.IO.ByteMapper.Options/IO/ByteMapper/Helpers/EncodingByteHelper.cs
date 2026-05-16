@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 
 internal static class EncodingByteHelper
@@ -8,14 +9,6 @@ internal static class EncodingByteHelper
     //--------------------------------------------------------------------------------
     // ASCII
     //--------------------------------------------------------------------------------
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static byte[] GetAsciiBytes(string str)
-    {
-        var bytes = new byte[str.Length];
-        Ascii.FromUtf16(str, bytes, out _);
-        return bytes;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetAsciiString(ReadOnlySpan<byte> bytes, int index, int length)
@@ -28,11 +21,11 @@ internal static class EncodingByteHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe string GetUnicodeString(ReadOnlySpan<byte> buffer, int index, int length, bool trim, Padding padding, char filler)
+    public static string GetUnicodeString(ReadOnlySpan<byte> buffer, int index, int length, bool trim, Padding padding, char filler)
     {
+        var chars = MemoryMarshal.Cast<byte, char>(buffer.Slice(index, length));
         if (trim)
         {
-            var chars = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, char>(buffer.Slice(index, length));
             if (padding == Padding.Left)
             {
                 var idx = chars.IndexOfAnyExcept(filler);
@@ -40,8 +33,7 @@ internal static class EncodingByteHelper
                 {
                     return string.Empty;
                 }
-                index += idx * 2;
-                length -= idx * 2;
+                chars = chars[idx..];
             }
             else
             {
@@ -50,71 +42,42 @@ internal static class EncodingByteHelper
                 {
                     return string.Empty;
                 }
-                length = (idx + 1) * 2;
+                chars = chars[..(idx + 1)];
             }
         }
-        if (length == 0)
-        {
-            return string.Empty;
-        }
-
-        var str = new string('\0', length / 2);
-        fixed (byte* pBase = buffer)
-        fixed (char* pDst = str)
-        {
-            var pSrc = pBase + index;
-            Buffer.MemoryCopy(pSrc, pDst, length, length);
-        }
-
-        return str;
+        return chars.Length == 0 ? string.Empty : new string(chars);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe void CopyUnicodeBytes(string str, Span<byte> buffer, int index, int length, Padding padding, char filler)
+    public static void CopyUnicodeBytes(string str, Span<byte> buffer, int index, int length, Padding padding, char filler)
     {
+        var destination = buffer.Slice(index, length);
         var size = str.Length * 2;
         if (size >= length)
         {
-            fixed (char* pSrc = str)
-            fixed (byte* pBase = buffer)
-            {
-                var pDst = pBase + index;
-                Buffer.MemoryCopy(pSrc, pDst, length, length);
-            }
+            MemoryMarshal.Cast<char, byte>(str.AsSpan(0, length / 2)).CopyTo(destination);
         }
         else if (padding == Padding.Right)
         {
             if (size > 0)
             {
-                fixed (char* pSrc = str)
-                fixed (byte* pBase = buffer)
-                {
-                    var pDst = pBase + index;
-                    Buffer.MemoryCopy(pSrc, pDst, size, size);
-                }
+                MemoryMarshal.Cast<char, byte>(str.AsSpan()).CopyTo(destination[..size]);
             }
-
-            FillUnicode(buffer.Slice(index + size, length - size), filler);
+            FillUnicode(destination[size..], filler);
         }
         else
         {
             if (size > 0)
             {
-                fixed (char* pSrc = str)
-                fixed (byte* pBase = buffer)
-                {
-                    var pDst = pBase + index + length - size;
-                    Buffer.MemoryCopy(pSrc, pDst, size, size);
-                }
+                MemoryMarshal.Cast<char, byte>(str.AsSpan()).CopyTo(destination[(length - size)..]);
             }
-
-            FillUnicode(buffer.Slice(index, length - size), filler);
+            FillUnicode(destination[..(length - size)], filler);
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void FillUnicode(Span<byte> bytes, char filler)
     {
-        System.Runtime.InteropServices.MemoryMarshal.Cast<byte, char>(bytes).Fill(filler);
+        MemoryMarshal.Cast<byte, char>(bytes).Fill(filler);
     }
 }

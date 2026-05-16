@@ -35,8 +35,9 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             : GetReader(context.ModelType, profile);
 
         var request = context.HttpContext.Request;
+        var cancellationToken = context.HttpContext.RequestAborted;
 
-        var model = await reader.ReadAsync(request.Body, request.ContentLength).ConfigureAwait(false);
+        var model = await reader.ReadAsync(request.Body, request.ContentLength, cancellationToken).ConfigureAwait(false);
 
         return await InputFormatterResult.SuccessAsync(model).ConfigureAwait(false);
     }
@@ -63,34 +64,46 @@ public sealed class ByteMapperInputFormatter : InputFormatter
 
     private IInputReader CreateReader(Type type)
     {
-        var readerType = ResolveReaderType(type);
-        return (IInputReader)Activator.CreateInstance(readerType, config, null);
+        return ResolveReaderFactory(type)(config, null);
     }
 
     private IInputReader CreateReader(Type type, string profile)
     {
-        var readerType = ResolveReaderType(type);
-        return (IInputReader)Activator.CreateInstance(readerType, config, profile);
+        return ResolveReaderFactory(type)(config, profile);
     }
 
-    private static Type ResolveReaderType(Type type)
+    private static Func<ByteMapperFormatterConfig, string, IInputReader> ResolveReaderFactory(Type type)
     {
         if (type.IsArray)
         {
-            return typeof(ArrayInputReader<>).MakeGenericType(type.GetElementType()!);
+            return ReaderFactoryCache.GetOrCreate(typeof(ArrayInputReader<>).MakeGenericType(type.GetElementType()!));
         }
 
         if (TypeHelper.IsEnumerableType(type))
         {
-            return typeof(ListInputReader<>).MakeGenericType(type.GenericTypeArguments[0]);
+            return ReaderFactoryCache.GetOrCreate(typeof(ListInputReader<>).MakeGenericType(type.GenericTypeArguments[0]));
         }
 
-        return typeof(SingleInputReader<>).MakeGenericType(type);
+        return ReaderFactoryCache.GetOrCreate(typeof(SingleInputReader<>).MakeGenericType(type));
+    }
+
+    private static class ReaderFactoryCache
+    {
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, Func<ByteMapperFormatterConfig, string, IInputReader>> Cache = new();
+
+        internal static Func<ByteMapperFormatterConfig, string, IInputReader> GetOrCreate(Type readerType)
+        {
+            return Cache.GetOrAdd(readerType, static t =>
+            {
+                var ctor = t.GetConstructor([typeof(ByteMapperFormatterConfig), typeof(string)])!;
+                return (cfg, profile) => (IInputReader)ctor.Invoke([cfg, profile]);
+            });
+        }
     }
 
     private interface IInputReader
     {
-        ValueTask<object> ReadAsync(Stream stream, long? length);
+        ValueTask<object> ReadAsync(Stream stream, long? length, CancellationToken cancellationToken);
     }
 
 #pragma warning disable CA1812
@@ -110,12 +123,12 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         }
 
 #pragma warning disable CA1835
-        public async ValueTask<object> ReadAsync(Stream stream, long? length)
+        public async ValueTask<object> ReadAsync(Stream stream, long? length, CancellationToken cancellationToken)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
             {
-                if (await stream.ReadAsync(buffer, 0, bufferSize).ConfigureAwait(false) != bufferSize)
+                if (await stream.ReadAsync(buffer.AsMemory(0, bufferSize), cancellationToken).ConfigureAwait(false) != bufferSize)
                 {
                     return default;
                 }
@@ -153,7 +166,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         }
 
 #pragma warning disable CA1835
-        public async ValueTask<object> ReadAsync(Stream stream, long? length)
+        public async ValueTask<object> ReadAsync(Stream stream, long? length, CancellationToken cancellationToken)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
@@ -164,7 +177,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
 
                     var index = 0;
                     int read;
-                    while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
+                    while ((read = await stream.ReadAsync(buffer.AsMemory(0, readSize), cancellationToken).ConfigureAwait(false)) > 0)
                     {
                         var limit = read - mapper.Size;
                         for (var pos = 0; pos <= limit; pos += mapper.Size)
@@ -183,7 +196,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                     var list = new List<T>();
 
                     int read;
-                    while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
+                    while ((read = await stream.ReadAsync(buffer.AsMemory(0, readSize), cancellationToken).ConfigureAwait(false)) > 0)
                     {
                         var limit = read - mapper.Size;
                         for (var pos = 0; pos <= limit; pos += mapper.Size)
@@ -226,7 +239,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         }
 
 #pragma warning disable CA1835
-        public async ValueTask<object> ReadAsync(Stream stream, long? length)
+        public async ValueTask<object> ReadAsync(Stream stream, long? length, CancellationToken cancellationToken)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
@@ -234,7 +247,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
                 var list = length.HasValue ? new List<T>((int)(length.Value / mapper.Size)) : [];
 
                 int read;
-                while ((read = await stream.ReadAsync(buffer, 0, readSize).ConfigureAwait(false)) > 0)
+                while ((read = await stream.ReadAsync(buffer.AsMemory(0, readSize), cancellationToken).ConfigureAwait(false)) > 0)
                 {
                     var limit = read - mapper.Size;
                     for (var pos = 0; pos <= limit; pos += mapper.Size)

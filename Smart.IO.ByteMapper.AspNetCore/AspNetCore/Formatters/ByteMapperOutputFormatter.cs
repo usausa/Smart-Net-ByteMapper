@@ -40,10 +40,11 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
             : GetWriter(context.ObjectType, profile);
 
         var stream = context.HttpContext.Response.Body;
+        var cancellationToken = context.HttpContext.RequestAborted;
 
-        await writer.WriteAsync(stream, context.Object).ConfigureAwait(false);
+        await writer.WriteAsync(stream, context.Object, cancellationToken).ConfigureAwait(false);
 
-        await stream.FlushAsync().ConfigureAwait(false);
+        await stream.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private IOutputWriter GetWriter(Type type)
@@ -68,30 +69,40 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
 
     private IOutputWriter CreateWriter(Type type)
     {
-        var writerType = ResolveWriterType(type);
-        return (IOutputWriter)Activator.CreateInstance(writerType, config, null);
+        return ResolveWriterFactory(type)(config, null);
     }
 
     private IOutputWriter CreateWriter(Type type, string profile)
     {
-        var writerType = ResolveWriterType(type);
-        return (IOutputWriter)Activator.CreateInstance(writerType, config, profile);
+        return ResolveWriterFactory(type)(config, profile);
     }
 
-    private static Type ResolveWriterType(Type type)
+    private static Func<ByteMapperFormatterConfig, string, IOutputWriter> ResolveWriterFactory(Type type)
     {
         var elementType = TypeHelper.GetEnumerableElementType(type);
-        if (elementType is null)
-        {
-            return typeof(SingleOutputWriter<>).MakeGenericType(type);
-        }
+        var writerType = elementType is null
+            ? typeof(SingleOutputWriter<>).MakeGenericType(type)
+            : typeof(EnumerableOutputWriter<>).MakeGenericType(elementType);
+        return WriterFactoryCache.GetOrCreate(writerType);
+    }
 
-        return typeof(EnumerableOutputWriter<>).MakeGenericType(elementType);
+    private static class WriterFactoryCache
+    {
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, Func<ByteMapperFormatterConfig, string, IOutputWriter>> Cache = new();
+
+        internal static Func<ByteMapperFormatterConfig, string, IOutputWriter> GetOrCreate(Type writerType)
+        {
+            return Cache.GetOrAdd(writerType, static t =>
+            {
+                var ctor = t.GetConstructor([typeof(ByteMapperFormatterConfig), typeof(string)])!;
+                return (cfg, profile) => (IOutputWriter)ctor.Invoke([cfg, profile]);
+            });
+        }
     }
 
     private interface IOutputWriter
     {
-        ValueTask WriteAsync(Stream stream, object model);
+        ValueTask WriteAsync(Stream stream, object model, CancellationToken cancellationToken);
     }
 
 #pragma warning disable CA1812
@@ -108,13 +119,13 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         }
 
 #pragma warning disable CA1835
-        public async ValueTask WriteAsync(Stream stream, object model)
+        public async ValueTask WriteAsync(Stream stream, object model, CancellationToken cancellationToken)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
             {
                 mapper.ToByte(buffer.AsSpan(0, bufferSize), (T)model);
-                await stream.WriteAsync(buffer, 0, bufferSize).ConfigureAwait(false);
+                await stream.WriteAsync(buffer.AsMemory(0, bufferSize), cancellationToken).ConfigureAwait(false);
             }
             finally
             {
@@ -139,7 +150,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         }
 
 #pragma warning disable CA1835
-        public async ValueTask WriteAsync(Stream stream, object model)
+        public async ValueTask WriteAsync(Stream stream, object model, CancellationToken cancellationToken)
         {
             var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
             try
@@ -153,14 +164,14 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
                     pos += mapper.Size;
                     if (pos > limit)
                     {
-                        await stream.WriteAsync(buffer, 0, pos).ConfigureAwait(false);
+                        await stream.WriteAsync(buffer.AsMemory(0, pos), cancellationToken).ConfigureAwait(false);
                         pos = 0;
                     }
                 }
 
                 if (pos > 0)
                 {
-                    await stream.WriteAsync(buffer, 0, pos).ConfigureAwait(false);
+                    await stream.WriteAsync(buffer.AsMemory(0, pos), cancellationToken).ConfigureAwait(false);
                 }
             }
             finally
