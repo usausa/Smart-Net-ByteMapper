@@ -256,6 +256,40 @@ public static class ExpressionExtensions
         syntax.Map(expression);
     }
 
+    // Guid
+
+#pragma warning disable CA1720
+    public static IMapGuidSyntax Guid(this IMemberMapConfigSyntax syntax)
+    {
+        var expression = new MapGuidExpression();
+        syntax.Map(expression);
+        return expression;
+    }
+
+    public static void Guid(this IMemberMapConfigSyntax syntax, Endian endian)
+    {
+        var expression = new MapGuidExpression();
+        expression.Endian(endian);
+        syntax.Map(expression);
+    }
+#pragma warning restore CA1720
+
+    // GuidText
+
+    public static IMapGuidTextSyntax GuidText(this IMemberMapConfigSyntax syntax, int length)
+    {
+        var expression = new MapGuidTextExpression(length, "D");
+        syntax.Map(expression);
+        return expression;
+    }
+
+    public static IMapGuidTextSyntax GuidText(this IMemberMapConfigSyntax syntax, int length, string format)
+    {
+        var expression = new MapGuidTextExpression(length, format);
+        syntax.Map(expression);
+        return expression;
+    }
+
     // Boolean
 
     public static IMapBooleanSyntax Boolean(this IMemberMapConfigSyntax syntax)
