@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Runtime.CompilerServices;
+using System.Text;
 
 internal static class EncodingByteHelper
 {
@@ -9,48 +10,17 @@ internal static class EncodingByteHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe byte[] GetAsciiBytes(string str)
+    public static byte[] GetAsciiBytes(string str)
     {
-        var length = str.Length;
-        var bytes = new byte[length];
-
-        fixed (char* pSrc = str)
-        fixed (byte* pDst = &bytes[0])
-        {
-            var ps = pSrc;
-            var pd = pDst;
-
-            for (var i = 0; i < length; i++)
-            {
-                *pd = (byte)*ps;
-                ps++;
-                pd++;
-            }
-        }
-
+        var bytes = new byte[str.Length];
+        Ascii.FromUtf16(str, bytes, out _);
         return bytes;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static unsafe string GetAsciiString(ReadOnlySpan<byte> bytes, int index, int length)
+    public static string GetAsciiString(ReadOnlySpan<byte> bytes, int index, int length)
     {
-        var str = new string('\0', length);
-
-        fixed (byte* pBase = bytes)
-        fixed (char* pDst = str)
-        {
-            var ps = pBase + index;
-            var pd = pDst;
-
-            for (var i = 0; i < length; i++)
-            {
-                *pd = (char)*ps;
-                ps++;
-                pd++;
-            }
-        }
-
-        return str;
+        return Encoding.ASCII.GetString(bytes.Slice(index, length));
     }
 
     //--------------------------------------------------------------------------------
@@ -60,29 +30,29 @@ internal static class EncodingByteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe string GetUnicodeString(ReadOnlySpan<byte> buffer, int index, int length, bool trim, Padding padding, char filler)
     {
-        var filler1 = (byte)(filler & 0xff);
-        var filler2 = (byte)((filler >> 8) & 0xff);
-
         if (trim)
         {
+            var chars = System.Runtime.InteropServices.MemoryMarshal.Cast<byte, char>(buffer.Slice(index, length));
             if (padding == Padding.Left)
             {
-                var end = index + length;
-                while ((index + 1 < end) && (buffer[index] == filler1) && (buffer[index + 1] == filler2))
+                var idx = chars.IndexOfAnyExcept(filler);
+                if (idx < 0)
                 {
-                    index += 2;
-                    length -= 2;
+                    return string.Empty;
                 }
+                index += idx * 2;
+                length -= idx * 2;
             }
             else
             {
-                while ((length > 1) && (buffer[index + length - 2] == filler1) && (buffer[index + length - 1] == filler2))
+                var idx = chars.LastIndexOfAnyExcept(filler);
+                if (idx < 0)
                 {
-                    length -= 2;
+                    return string.Empty;
                 }
+                length = (idx + 1) * 2;
             }
         }
-
         if (length == 0)
         {
             return string.Empty;
@@ -145,13 +115,6 @@ internal static class EncodingByteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void FillUnicode(Span<byte> bytes, char filler)
     {
-        var filler1 = (byte)(filler & 0xff);
-        var filler2 = (byte)((filler >> 8) & 0xff);
-
-        for (var i = 0; i < bytes.Length; i += 2)
-        {
-            bytes[i] = filler1;
-            bytes[i + 1] = filler2;
-        }
+        System.Runtime.InteropServices.MemoryMarshal.Cast<byte, char>(bytes).Fill(filler);
     }
 }

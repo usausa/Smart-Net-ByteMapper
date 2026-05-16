@@ -52,19 +52,24 @@ public static class BytesHelper
     {
         if (padding == Padding.Left)
         {
-            var end = start + size;
-            while ((start < end) && (buffer[start] == filler))
+            var slice = buffer.Slice(start, size);
+            var idx = slice.IndexOfAnyExcept(filler);
+            if (idx < 0)
             {
-                start++;
-                size--;
+                start += size;
+                size = 0;
+            }
+            else
+            {
+                start += idx;
+                size -= idx;
             }
         }
         else
         {
-            while ((size > 0) && (buffer[start + size - 1] == filler))
-            {
-                size--;
-            }
+            var slice = buffer.Slice(start, size);
+            var idx = slice.LastIndexOfAnyExcept(filler);
+            size = idx < 0 ? 0 : idx + 1;
         }
     }
 

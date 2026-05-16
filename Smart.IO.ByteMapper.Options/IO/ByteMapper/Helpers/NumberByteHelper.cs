@@ -21,6 +21,20 @@ internal static partial class NumberByteHelper
 
     private const int NegativeBitFlag = unchecked((int)0x80000000);
 
+    // 2-digit ASCII lookup table: index 0..99, each entry encodes [tens digit, units digit] as ushort
+    // hi byte = tens, lo byte = units
+    private static readonly ushort[] Digits2Table = CreateDigits2Table();
+
+    private static ushort[] CreateDigits2Table()
+    {
+        var table = new ushort[100];
+        for (var i = 0; i < 100; i++)
+        {
+            table[i] = (ushort)(((Num0 + (i / 10)) << 8) | (Num0 + (i % 10)));
+        }
+        return table;
+    }
+
     //--------------------------------------------------------------------------------
     // Helper
     //--------------------------------------------------------------------------------
@@ -112,6 +126,7 @@ internal static partial class NumberByteHelper
     public static unsafe void FormatInt32(Span<byte> bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
     {
         fixed (byte* pBase = bytes)
+        fixed (ushort* pTable = Digits2Table)
         {
             var pBytes = pBase + index;
             var i = length - 1;
@@ -128,14 +143,23 @@ internal static partial class NumberByteHelper
                 value = -value;
             }
 
-            while (i >= 0)
+            // Process 2 digits at a time when there are 2+ digits and enough space
+            while ((i >= 1) && (value >= 10))
             {
-                *(pBytes + i--) = (byte)(Num0 + (value % 10));
+                var q = value / 100;
+                var r = value - (q * 100);
+                var pair = pTable[r];
+                *(pBytes + i--) = (byte)pair;
+                *(pBytes + i--) = (byte)(pair >> 8);
+                value = q;
+            }
 
-                value /= 10;
-                if (value == 0)
+            // Process remaining 1 digit
+            if (value > 0)
+            {
+                if (i >= 0)
                 {
-                    break;
+                    *(pBytes + i--) = (byte)(Num0 + value);
                 }
             }
 
@@ -187,6 +211,7 @@ internal static partial class NumberByteHelper
     public static unsafe void FormatInt64(Span<byte> bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
     {
         fixed (byte* pBase = bytes)
+        fixed (ushort* pTable = Digits2Table)
         {
             var pBytes = pBase + index;
             var i = length - 1;
@@ -203,14 +228,23 @@ internal static partial class NumberByteHelper
                 value = -value;
             }
 
-            while (i >= 0)
+            // Process 2 digits at a time when there are 2+ digits and enough space
+            while ((i >= 1) && (value >= 10))
             {
-                *(pBytes + i--) = (byte)(Num0 + (value % 10));
+                var q = value / 100;
+                var r = value - (q * 100);
+                var pair = pTable[r];
+                *(pBytes + i--) = (byte)pair;
+                *(pBytes + i--) = (byte)(pair >> 8);
+                value = q;
+            }
 
-                value /= 10;
-                if (value == 0)
+            // Process remaining 1 digit
+            if (value > 0)
+            {
+                if (i >= 0)
                 {
-                    break;
+                    *(pBytes + i--) = (byte)(Num0 + value);
                 }
             }
 
