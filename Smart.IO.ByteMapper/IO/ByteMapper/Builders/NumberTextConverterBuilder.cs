@@ -78,12 +78,9 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
         return new DecimalTextConverter(
             Length,
             Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.NumberTextEncoding),
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
-            Style ?? context.GetParameter<NumberStyles>(Parameter.NumberTextDecimalStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.NumberTextProvider),
             type);
     }
 
@@ -91,6 +88,7 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
     {
         return new FloatTextConverter(
             Length,
+            Format,
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
@@ -101,6 +99,7 @@ public sealed class NumberTextConverterBuilder : AbstractMapConverterBuilder<Num
     {
         return new DoubleTextConverter(
             Length,
+            Format,
             Trim ?? context.GetParameter<bool>(Parameter.Trim),
             Padding ?? context.GetParameter<Padding>(Parameter.NumberTextPadding),
             Filler ?? context.GetParameter<byte>(Parameter.NumberTextFiller),
