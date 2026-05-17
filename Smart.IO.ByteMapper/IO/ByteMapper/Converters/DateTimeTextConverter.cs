@@ -362,6 +362,48 @@ internal sealed class TimeSpanTextConverter : IMapConverter
     }
 }
 
+internal sealed class TimeSpanTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly TimeSpanFormatFast formatter;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public TimeSpanTextFastConverter(int length, TimeSpanFormatFast formatter, byte filler, Type type)
+    {
+        this.length = length;
+        this.formatter = formatter;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+        => formatter.TryParse(buffer[..length], out var result) ? result : defaultValue;
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+            return;
+        }
+
+        if (!formatter.TryFormat(buffer[..formatter.Width], (TimeSpan)value))
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+            return;
+        }
+
+        if (formatter.Width < length)
+        {
+            buffer[formatter.Width..length].Fill(filler);
+        }
+    }
+}
+
 internal sealed class DateOnlyTextConverter : IMapConverter
 {
     private readonly int length;

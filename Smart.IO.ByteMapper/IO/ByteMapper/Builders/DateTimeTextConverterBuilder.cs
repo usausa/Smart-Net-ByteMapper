@@ -76,14 +76,20 @@ public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<D
         return new DateTimeOffsetTextConverter(length, format, encoding, filler, style, provider, type);
     }
 
-    private TimeSpanTextConverter CreateTimeSpanTextConverter(Type type, IBuilderContext context)
+    private IMapConverter CreateTimeSpanTextConverter(Type type, IBuilderContext context)
     {
-        return new TimeSpanTextConverter(
-            Length,
-            Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
-            Filler ?? context.GetParameter<byte>(Parameter.Filler),
-            type);
+        var length = Length;
+        var format = Format;
+        var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding);
+        var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
+
+        var fast = TimeSpanFormatFast.TryCreate(format);
+        if (fast is not null && (fast.Width <= length) && (encoding.GetByteCount(format) == format.Length))
+        {
+            return new TimeSpanTextFastConverter(length, fast, filler, type);
+        }
+
+        return new TimeSpanTextConverter(length, format, encoding, filler, type);
     }
 
     private IMapConverter CreateDateOnlyTextConverter(Type type, IBuilderContext context)
