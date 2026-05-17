@@ -23,12 +23,18 @@ internal sealed class TimeSpanFormatFast
 
     private enum BlockKind : byte
     {
-        Days,     // Data = digit count (1-8)
-        Hour,     // Data = digit count (1 or 2)
-        Minute,   // Data = digit count (1 or 2)
-        Second,   // Data = digit count (1 or 2)
-        Fraction, // Data = digit count (1-7)
-        Literal   // Data = literal byte
+        // Data = digit count (1-8)
+        Days,
+        // Data = digit count (1 or 2)
+        Hour,
+        // Data = digit count (1 or 2)
+        Minute,
+        // Data = digit count (1 or 2)
+        Second,
+        // Data = digit count (1-7)
+        Fraction,
+        // Data = literal byte
+        Literal
     }
 
     private readonly struct Block
@@ -359,10 +365,10 @@ internal sealed class TimeSpanFormatFast
         }
 
         value = new TimeSpan(
-            ((long)days * TimeSpan.TicksPerDay) +
-            ((long)hours * TimeSpan.TicksPerHour) +
-            ((long)minutes * TimeSpan.TicksPerMinute) +
-            ((long)seconds * TimeSpan.TicksPerSecond) +
+            (days * TimeSpan.TicksPerDay) +
+            (hours * TimeSpan.TicksPerHour) +
+            (minutes * TimeSpan.TicksPerMinute) +
+            (seconds * TimeSpan.TicksPerSecond) +
             fractionTicks);
         return true;
     }
