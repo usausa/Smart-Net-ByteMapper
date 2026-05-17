@@ -1,5 +1,7 @@
 namespace Smart.IO.ByteMapper.Converters;
 
+using System.Buffers;
+using System.Buffers.Text;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -117,6 +119,92 @@ internal sealed class NullableGuidTextConverter : IMapConverter
         if (written < length)
         {
             destination[written..].Fill(filler);
+        }
+    }
+}
+
+internal sealed class GuidTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly char formatChar;
+
+    private readonly int width;
+
+    private readonly StandardFormat standardFormat;
+
+    private readonly byte filler;
+
+    public GuidTextFastConverter(int length, char formatChar, int width, byte filler)
+    {
+        this.length = length;
+        this.formatChar = formatChar;
+        this.width = width;
+        standardFormat = new StandardFormat(formatChar);
+        this.filler = filler;
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return Utf8Parser.TryParse(buffer[..width], out Guid result, out _, formatChar) ? result : default;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            Utf8Formatter.TryFormat((Guid)value, buffer[..width], out _, standardFormat);
+            if (width < length)
+            {
+                buffer[width..length].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class NullableGuidTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly char formatChar;
+
+    private readonly int width;
+
+    private readonly StandardFormat standardFormat;
+
+    private readonly byte filler;
+
+    public NullableGuidTextFastConverter(int length, char formatChar, int width, byte filler)
+    {
+        this.length = length;
+        this.formatChar = formatChar;
+        this.width = width;
+        standardFormat = new StandardFormat(formatChar);
+        this.filler = filler;
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return Utf8Parser.TryParse(buffer[..width], out Guid result, out _, formatChar) ? (Guid?)result : null;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            Utf8Formatter.TryFormat((Guid)(Guid?)value, buffer[..width], out _, standardFormat);
+            if (width < length)
+            {
+                buffer[width..length].Fill(filler);
+            }
         }
     }
 }

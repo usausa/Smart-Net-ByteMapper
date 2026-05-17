@@ -17,7 +17,7 @@ public sealed class BigEndianGuidBinaryConverterTest
             0x12, 0x34,              // Data2 big-endian
             0x12, 0x34,              // Data3 big-endian
             0x12, 0x34,              // Data4[0-1]
-            0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC   // Data4[2-7]
+            0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC // Data4[2-7]
         ]);
 
     private readonly BigEndianGuidBinaryConverter converter = BigEndianGuidBinaryConverter.Default;

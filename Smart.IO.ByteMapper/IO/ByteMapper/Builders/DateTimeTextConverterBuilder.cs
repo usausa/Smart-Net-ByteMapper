@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Text;
 
 using Smart.IO.ByteMapper.Converters;
+using Smart.IO.ByteMapper.Helpers;
 
 public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<DateTimeTextConverterBuilder>
 {
@@ -33,28 +34,46 @@ public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<D
         AddEntry(typeof(TimeOnly?), static (b, _) => b.Length, static (b, t, c) => b.CreateTimeOnlyTextConverter(t, c));
     }
 
-    private DateTimeTextConverter CreateDateTimeTextConverter(Type type, IBuilderContext context)
+    private IMapConverter CreateDateTimeTextConverter(Type type, IBuilderContext context)
     {
-        return new DateTimeTextConverter(
-            Length,
-            Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
-            Filler ?? context.GetParameter<byte>(Parameter.Filler),
-            Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeTextStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeTextProvider),
-            type);
+        var length = Length;
+        var format = Format;
+        var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding);
+        var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
+        var style = Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeTextStyle);
+        var provider = Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeTextProvider);
+
+        if (style == DateTimeStyles.None)
+        {
+            var fast = DateTimeFormatFast.TryCreate(format, DateTimeFormatBlocks.Date | DateTimeFormatBlocks.Time);
+            if (fast is not null && (fast.Width <= length) && (encoding.GetByteCount(format) == format.Length))
+            {
+                return new DateTimeTextFastConverter(length, fast, filler, type);
+            }
+        }
+
+        return new DateTimeTextConverter(length, format, encoding, filler, style, provider, type);
     }
 
-    private DateTimeOffsetTextConverter CreateDateTimeOffsetTextConverter(Type type, IBuilderContext context)
+    private IMapConverter CreateDateTimeOffsetTextConverter(Type type, IBuilderContext context)
     {
-        return new DateTimeOffsetTextConverter(
-            Length,
-            Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
-            Filler ?? context.GetParameter<byte>(Parameter.Filler),
-            Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeTextStyle),
-            Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeTextProvider),
-            type);
+        var length = Length;
+        var format = Format;
+        var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding);
+        var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
+        var style = Style ?? context.GetParameter<DateTimeStyles>(Parameter.DateTimeTextStyle);
+        var provider = Provider ?? context.GetParameter<IFormatProvider>(Parameter.DateTimeTextProvider);
+
+        if (style == DateTimeStyles.None)
+        {
+            var fast = DateTimeFormatFast.TryCreate(format, DateTimeFormatBlocks.Date | DateTimeFormatBlocks.Time | DateTimeFormatBlocks.Offset);
+            if (fast is not null && (fast.Width <= length) && (encoding.GetByteCount(format) == format.Length))
+            {
+                return new DateTimeOffsetTextFastConverter(length, fast, filler, type);
+            }
+        }
+
+        return new DateTimeOffsetTextConverter(length, format, encoding, filler, style, provider, type);
     }
 
     private TimeSpanTextConverter CreateTimeSpanTextConverter(Type type, IBuilderContext context)
@@ -67,23 +86,35 @@ public sealed class DateTimeTextConverterBuilder : AbstractMapConverterBuilder<D
             type);
     }
 
-    private DateOnlyTextConverter CreateDateOnlyTextConverter(Type type, IBuilderContext context)
+    private IMapConverter CreateDateOnlyTextConverter(Type type, IBuilderContext context)
     {
-        return new DateOnlyTextConverter(
-            Length,
-            Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
-            Filler ?? context.GetParameter<byte>(Parameter.Filler),
-            type);
+        var length = Length;
+        var format = Format;
+        var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding);
+        var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
+
+        var fast = DateTimeFormatFast.TryCreate(format, DateTimeFormatBlocks.Date);
+        if (fast is not null && (fast.Width <= length) && (encoding.GetByteCount(format) == format.Length))
+        {
+            return new DateOnlyTextFastConverter(length, fast, filler, type);
+        }
+
+        return new DateOnlyTextConverter(length, format, encoding, filler, type);
     }
 
-    private TimeOnlyTextConverter CreateTimeOnlyTextConverter(Type type, IBuilderContext context)
+    private IMapConverter CreateTimeOnlyTextConverter(Type type, IBuilderContext context)
     {
-        return new TimeOnlyTextConverter(
-            Length,
-            Format,
-            Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding),
-            Filler ?? context.GetParameter<byte>(Parameter.Filler),
-            type);
+        var length = Length;
+        var format = Format;
+        var encoding = Encoding ?? context.GetParameter<Encoding>(Parameter.DateTimeTextEncoding);
+        var filler = Filler ?? context.GetParameter<byte>(Parameter.Filler);
+
+        var fast = DateTimeFormatFast.TryCreate(format, DateTimeFormatBlocks.Time);
+        if (fast is not null && (fast.Width <= length) && (encoding.GetByteCount(format) == format.Length))
+        {
+            return new TimeOnlyTextFastConverter(length, fast, filler, type);
+        }
+
+        return new TimeOnlyTextConverter(length, format, encoding, filler, type);
     }
 }

@@ -74,6 +74,166 @@ internal sealed class DateTimeTextConverter : IMapConverter
     }
 }
 
+internal sealed class DateTimeTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly DateTimeFormatFast formatter;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DateTimeTextFastConverter(int length, DateTimeFormatFast formatter, byte filler, Type type)
+    {
+        this.length = length;
+        this.formatter = formatter;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return formatter.TryParse(buffer[..length], out DateTime result) ? result : defaultValue;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            formatter.TryFormat(buffer[..length], (DateTime)value);
+            if (formatter.Width < length)
+            {
+                buffer[formatter.Width..length].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class DateOnlyTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly DateTimeFormatFast formatter;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DateOnlyTextFastConverter(int length, DateTimeFormatFast formatter, byte filler, Type type)
+    {
+        this.length = length;
+        this.formatter = formatter;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return formatter.TryParse(buffer[..length], out DateOnly result) ? result : defaultValue;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            formatter.TryFormat(buffer[..length], (DateOnly)value);
+            if (formatter.Width < length)
+            {
+                buffer[formatter.Width..length].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class TimeOnlyTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly DateTimeFormatFast formatter;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public TimeOnlyTextFastConverter(int length, DateTimeFormatFast formatter, byte filler, Type type)
+    {
+        this.length = length;
+        this.formatter = formatter;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return formatter.TryParse(buffer[..length], out TimeOnly result) ? result : defaultValue;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            formatter.TryFormat(buffer[..length], (TimeOnly)value);
+            if (formatter.Width < length)
+            {
+                buffer[formatter.Width..length].Fill(filler);
+            }
+        }
+    }
+}
+
+internal sealed class DateTimeOffsetTextFastConverter : IMapConverter
+{
+    private readonly int length;
+
+    private readonly DateTimeFormatFast formatter;
+
+    private readonly byte filler;
+
+    private readonly object defaultValue;
+
+    public DateTimeOffsetTextFastConverter(int length, DateTimeFormatFast formatter, byte filler, Type type)
+    {
+        this.length = length;
+        this.formatter = formatter;
+        this.filler = filler;
+        defaultValue = type.GetDefaultValue();
+    }
+
+    public object Read(ReadOnlySpan<byte> buffer)
+    {
+        return formatter.TryParse(buffer[..length], out DateTimeOffset result) ? result : defaultValue;
+    }
+
+    public void Write(Span<byte> buffer, object value)
+    {
+        if (value is null)
+        {
+            BytesHelper.Fill(buffer[..length], filler);
+        }
+        else
+        {
+            formatter.TryFormat(buffer[..length], (DateTimeOffset)value);
+            if (formatter.Width < length)
+            {
+                buffer[formatter.Width..length].Fill(filler);
+            }
+        }
+    }
+}
+
 internal sealed class DateTimeOffsetTextConverter : IMapConverter
 {
     private readonly int length;
