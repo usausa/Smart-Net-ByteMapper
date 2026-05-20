@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Smart.IO.ByteMapper.Generator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Develop\\Develop.csproj"
+    }
+  }
+}

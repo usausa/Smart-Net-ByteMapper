@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <LangVersion>preview</LangVersion>
-    <!--<Nullable>enable</Nullable>-->
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <Deterministic>true</Deterministic>
     <MSBuildWarningsAsMessages>SA0001</MSBuildWarningsAsMessages>
@@ -21,15 +21,15 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.7.0</Version>
+    <Version>0.0.1</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <Authors>machi_pon</Authors>
-    <Copyright>Copyright (c) 2022 machi_pon</Copyright>
+    <Copyright>Copyright (c) 2024 machi_pon</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/usausa/Smart-Net-ByteMapper</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/usausa/template-library-with-generator</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 

@@ -11,20 +11,13 @@
     <File Path="Directory.Build.targets" />
     <File Path="LICENSE" />
     <File Path="README.md" />
+    <File Path="Smart.IO.ByteMapper.props" />
     <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
   </Folder>
-  <Folder Name="/Library/">
-    <Project Path="Smart.IO.ByteMapper.AspNetCore/Smart.IO.ByteMapper.AspNetCore.csproj" />
-    <Project Path="Smart.IO.ByteMapper.Options/Smart.IO.ByteMapper.Options.csproj" />
-    <Project Path="Smart.IO.ByteMapper/Smart.IO.ByteMapper.csproj" />
-  </Folder>
-  <Folder Name="/Tests/">
-    <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
-  </Folder>
-  <Folder Name="/Benchmark/">
-    <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
-  </Folder>
-  <Folder Name="/Example/">
-    <Project Path="Example.Web/Example.Web.csproj" />
-  </Folder>
+  <Project Path="Develop/Develop.csproj" DefaultStartup="true" />
+  <Project Path="Smart.IO.ByteMapper/Smart.IO.ByteMapper.csproj">
+    <BuildDependency Project="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
+  </Project>
+  <Project Path="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
+  <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
 </Solution>

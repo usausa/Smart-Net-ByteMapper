@@ -2,20 +2,32 @@
 
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
-    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-    <RootNamespace>Smart</RootNamespace>
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
+    <NoWarn>$(NoWarn);NU5118;NU5129</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
-    <PackageId>Usa.Smart.IO.ByteMapper</PackageId>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
+  </PropertyGroup>
+
+  <Target Name="PackBuildOutputs" DependsOnTargets="SatelliteDllsProjectOutputGroup;DebugSymbolsProjectOutputGroup">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="..\Smart.IO.ByteMapper.props" PackagePath="build" />
+      <TfmSpecificPackageFile Include="..\Smart.IO.ByteMapper.Generator\bin\$(Configuration)\netstandard2.0\Smart.IO.ByteMapper.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <TfmSpecificPackageFile Include="$(PKGSourceGenerateHelper)\lib\netstandard2.0\SourceGenerateHelper.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
+    <PackageId>Smart.IO.ByteMapper</PackageId>
     <Title>Smart.IO.ByteMapper</Title>
-    <Description>Smart byte mapper library</Description>
-    <PackageTags>smart io mapper</PackageTags>
+    <Description>Template source generator.</Description>
+    <PackageTags>sourcegenerator</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Usa.Smart.Core" Version="2.8.0" />
+    <PackageReference Include="SourceGenerateHelper" Version="1.7.0" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>
