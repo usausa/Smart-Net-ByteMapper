@@ -50,11 +50,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         ["System.UInt64"] = 8,
         ["System.Single"] = 4,
         ["System.Double"] = 8,
-        ["System.Decimal"] = 16,
+        ["System.Decimal"] = 16
     };
 
     // default CRLF
-    private static readonly byte[] DefaultDelimiter = [0x0D, 0x0A];
+    private static readonly byte[] DefaultDelimiter = "\r\n"u8.ToArray();
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -705,7 +705,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             // Report per-method diagnostics
             foreach (var m in group)
             {
-                foreach (var err in m.Errors.ToArray())
+                foreach (var err in m.Errors.AsArray())
                 {
                     context.ReportDiagnostic(err);
                 }
@@ -718,7 +718,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             {
                 var m = methods[i];
                 // Reassign field names with correct method index
-                var fixedMembers = m.Members.ToArray().Select((member, pi) =>
+                var fixedMembers = m.Members.AsArray().Select((member, pi) =>
                     member with
                     {
                         PropertyIndex = pi,
@@ -763,7 +763,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         // Emit all converter fields first
         foreach (var method in methods)
         {
-            foreach (var member in method.Members.ToArray())
+            foreach (var member in method.Members.AsArray())
             {
                 builder.Indent()
                     .Append("// [")
@@ -777,7 +777,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(" ")
                     .Append(member.Converter.FieldName)
                     .Append(" = new(")
-                    .Append(String.Join(", ", member.Converter.CtorArgExpressions.ToArray()))
+                    .Append(String.Join(", ", member.Converter.CtorArgExpressions.AsArray()))
                     .Append(");")
                     .NewLine();
             }
@@ -818,7 +818,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(method.TargetTypeFqn).Append(" target)")
                     .NewLine();
                 builder.BeginScope();
-                foreach (var member in method.Members.ToArray())
+                foreach (var member in method.Members.AsArray())
                 {
                     EmitReadMember(builder, member);
                 }
@@ -836,7 +836,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append("var target = new ").Append(method.TargetTypeFqn).Append("();")
                     .NewLine();
-                foreach (var member in method.Members.ToArray())
+                foreach (var member in method.Members.AsArray())
                 {
                     EmitReadMember(builder, member);
                 }
@@ -911,7 +911,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static void EmitWriteBody(SourceBuilder builder, MapperMethodModel method, string spanVarName = "buffer")
     {
         // Write constants/fillers
-        foreach (var tm in method.TypeMappings.ToArray())
+        foreach (var tm in method.TypeMappings.AsArray())
         {
             if (tm.Kind == TypeMappingKind.Filler)
             {
@@ -921,14 +921,14 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
             else if (tm.Kind == TypeMappingKind.Constant)
             {
-                var bytes = String.Join(", ", tm.Constant.ToArray().Select(b => $"0x{b:X2}"));
+                var bytes = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
                 builder.Indent()
                     .Append($"{{ var c = new byte[] {{ {bytes} }}; c.CopyTo({spanVarName}.Slice({tm.Offset}, {tm.Size})); }}")
                     .NewLine();
             }
         }
 
-        foreach (var member in method.Members.ToArray())
+        foreach (var member in method.Members.AsArray())
         {
             string size;
             if (member.Converter.SizeKind == SizeKind.Const)
