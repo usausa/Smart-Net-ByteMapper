@@ -21,5 +21,7 @@
   <Project Path="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
   <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
   <Project Path="Smart.IO.ByteMapper.Fast/Smart.IO.ByteMapper.Fast.csproj" />
+  <Project Path="Example.Web/Example.Web.csproj" />
+  <Project Path="Smart.IO.ByteMapper.AspNetCore/Smart.IO.ByteMapper.AspNetCore.csproj" />
   <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
 </Solution>
