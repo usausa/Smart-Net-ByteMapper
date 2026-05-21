@@ -6,6 +6,20 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);PackBuildOutputs</TargetsForTfmSpecificContentInPackage>
+    <NoWarn>$(NoWarn);NU5118;NU5129</NoWarn>
+  </PropertyGroup>
+
+  <Target Name="PackBuildOutputs" DependsOnTargets="SatelliteDllsProjectOutputGroup;DebugSymbolsProjectOutputGroup">
+    <ItemGroup>
+      <TfmSpecificPackageFile Include="..\Smart.IO.ByteMapper.AspNetCore.props" PackagePath="build" />
+      <TfmSpecificPackageFile Include="..\Smart.IO.ByteMapper.AspNetCore.Generator\bin\$(Configuration)\netstandard2.0\Smart.IO.ByteMapper.AspNetCore.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+      <TfmSpecificPackageFile Include="$(PKGSourceGenerateHelper)\lib\netstandard2.0\SourceGenerateHelper.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+  </Target>
+
+  <PropertyGroup>
     <PackageId>Smart.IO.ByteMapper.AspNetCore</PackageId>
     <Title>Smart.IO.ByteMapper.AspNetCore</Title>
     <Description>Smart byte mapper library ASP.NET Core extensions (AOT compatible).</Description>
@@ -14,6 +28,10 @@
 
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SourceGenerateHelper" Version="1.9.0" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup>
