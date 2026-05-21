@@ -1,16 +1,14 @@
-namespace Smart.IO.ByteMapper.Generator;
+namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
 using SourceGenerateHelper;
+
+using System.Text;
 
 /// <summary>
 /// Incremental generator that emits ByteMapperBinding factory methods,
@@ -27,7 +25,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        // Detect classes annotated with [ByteMapperEndpoint]
         var endpoints = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 ByteMapperEndpointAttributeName,
@@ -52,7 +49,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             return null;
         }
 
-        // Read [ByteMapperEndpoint] arguments
         var endpointAttr = classSymbol.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteMapperEndpointAttributeName);
         if (endpointAttr is null) return null;
@@ -65,7 +61,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             if (na.Key == "GenerateArrayBinding" && na.Value.Value is bool b) generateArray = b;
         }
 
-        // Find [ByteReader] and [ByteWriter] methods in the class
         string? readerMethodName = null;
         string? writerMethodName = null;
         ITypeSymbol? entityType = null;
@@ -81,7 +76,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             if (isReader && readerMethodName is null)
             {
                 readerMethodName = method.Name;
-                // entity type: second param (in-place) or return type (new-instance)
                 if (!method.ReturnsVoid && method.Parameters.Length == 1)
                 {
                     entityType = method.ReturnType;
@@ -95,7 +89,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             if (isWriter && writerMethodName is null)
             {
                 writerMethodName = method.Name;
-                // entity type: first param when void Write(T source, Span<byte> dest)
                 if (method.ReturnsVoid && method.Parameters.Length == 2 && entityType is null)
                 {
                     entityType = method.Parameters[0].Type;
@@ -108,7 +101,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             return null;
         }
 
-        // Resolve map size from [Map] on entityType
         var mapAttr = entityType.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
         var size = mapAttr is not null && mapAttr.ConstructorArguments.Length > 0
@@ -136,18 +128,16 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
     private static string DetermineRootNamespace(INamedTypeSymbol symbol)
     {
-        // Walk up the namespace chain to find root
         var ns = symbol.ContainingNamespace;
         if (ns.IsGlobalNamespace) return string.Empty;
 
-        var parts = new List<string>();
-        while (!ns.IsGlobalNamespace)
+        var root = ns;
+        while (!root.ContainingNamespace.IsGlobalNamespace)
         {
-            parts.Insert(0, ns.Name);
-            ns = ns.ContainingNamespace;
+            root = root.ContainingNamespace;
         }
 
-        return parts[0]; // root segment
+        return root.Name;
     }
 
     // -------------------------------------------------------
@@ -160,123 +150,147 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
     {
         if (endpoints.IsDefaultOrEmpty) return;
 
-        // 1) Per-class: emit CreateByteMapperBinding / CreateByteMapperArrayBinding
+        var builder = new SourceBuilder();
+
         foreach (var ep in endpoints)
         {
-            var source = BuildBindingSource(ep);
+            builder.Clear();
+            BuildBindingSource(builder, ep);
             var filename = MakeFilename(ep.Namespace, ep.ClassName) + ".AspNetCore.g.cs";
-            spc.AddSource(filename, SourceText.From(source, Encoding.UTF8));
+            spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
         }
 
-        // 2) Assembly-level bootstrap + AddByteMapperFormatters
-        var bootstrap = BuildBootstrapSource(endpoints);
-        spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", SourceText.From(bootstrap, Encoding.UTF8));
+        builder.Clear();
+        BuildBootstrapSource(builder, endpoints);
+        spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", SourceText.From(builder.ToString(), Encoding.UTF8));
     }
 
     // -------------------------------------------------------
     // Source builders
     // -------------------------------------------------------
 
-    private static string BuildBindingSource(EndpointModel ep)
+    private static void BuildBindingSource(SourceBuilder builder, EndpointModel ep)
     {
-        var sb = new StringBuilder();
+        builder.AutoGenerated();
+        builder.EnableNullable();
+        builder.NewLine();
+
         if (!string.IsNullOrEmpty(ep.Namespace))
         {
-            sb.AppendLine($"namespace {ep.Namespace};");
-            sb.AppendLine();
+            builder.Namespace(ep.Namespace);
+            builder.NewLine();
         }
 
-        sb.AppendLine($"partial class {ep.ClassName}");
-        sb.AppendLine("{");
+        builder.Indent().Append("partial class ").Append(ep.ClassName).NewLine();
+        builder.BeginScope();
 
         // Single binding factory
-        sb.AppendLine($"    public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<{ep.EntityTypeFqn}> CreateByteMapperBinding()");
-        sb.AppendLine("        => new(");
-        sb.AppendLine($"            size: {ep.Size},");
-        sb.AppendLine($"            read:  static (s, t) => {ep.ReaderMethodName}(s, t),");
-        sb.AppendLine($"            write: static (s, d) => {ep.WriterMethodName}(s, d),");
-        sb.AppendLine($"            factory: static () => new {ep.EntityTypeFqn}());");
-        sb.AppendLine();
+        builder.Indent()
+            .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<").Append(ep.EntityTypeFqn).Append("> CreateByteMapperBinding()")
+            .NewLine();
+        builder.Indent().Append("    => new(").NewLine();
+        builder.Indent().Append("        size: ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
+        builder.Indent().Append("        read:    static (s, t) => ").Append(ep.ReaderMethodName).Append("(s, t),").NewLine();
+        builder.Indent().Append("        write:   static (s, d) => ").Append(ep.WriterMethodName).Append("(s, d),").NewLine();
+        builder.Indent().Append("        factory: static () => new ").Append(ep.EntityTypeFqn).Append("());").NewLine();
 
         if (ep.GenerateArrayBinding)
         {
+            builder.NewLine();
+
             // Array binding factory
-            sb.AppendLine($"    public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<{ep.EntityTypeFqn}> CreateByteMapperArrayBinding()");
-            sb.AppendLine("        => new(");
-            sb.AppendLine($"            elementSize: {ep.Size},");
-            sb.AppendLine($"            readElement:  static (s, t) => {ep.ReaderMethodName}(s, t),");
-            sb.AppendLine($"            writeElement: static (s, d) => {ep.WriterMethodName}(s, d),");
-            sb.AppendLine($"            factory:      static () => new {ep.EntityTypeFqn}());");
+            builder.Indent()
+                .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<").Append(ep.EntityTypeFqn).Append("> CreateByteMapperArrayBinding()")
+                .NewLine();
+            builder.Indent().Append("    => new(").NewLine();
+            builder.Indent().Append("        elementSize:  ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
+            builder.Indent().Append("        readElement:  static (s, t) => ").Append(ep.ReaderMethodName).Append("(s, t),").NewLine();
+            builder.Indent().Append("        writeElement: static (s, d) => ").Append(ep.WriterMethodName).Append("(s, d),").NewLine();
+            builder.Indent().Append("        factory:      static () => new ").Append(ep.EntityTypeFqn).Append("());").NewLine();
         }
 
-        sb.AppendLine("}");
-        return sb.ToString();
+        builder.EndScope();
     }
 
-    private static string BuildBootstrapSource(ImmutableArray<EndpointModel> endpoints)
+    private static void BuildBootstrapSource(SourceBuilder builder, ImmutableArray<EndpointModel> endpoints)
     {
-        // Use the root namespace of the first endpoint (or a fixed ns)
-        var rootNs = endpoints.Select(e => e.RootNamespace).FirstOrDefault(n => !string.IsNullOrEmpty(n))
-                     ?? "ByteMapperGenerated";
+        var rootNs = string.Empty;
+        foreach (var e in endpoints)
+        {
+            if (!string.IsNullOrEmpty(e.RootNamespace))
+            {
+                rootNs = e.RootNamespace;
+                break;
+            }
+        }
+        if (string.IsNullOrEmpty(rootNs)) rootNs = "ByteMapperGenerated";
 
-        var sb = new StringBuilder();
-        sb.AppendLine("// <auto-generated />");
-        sb.AppendLine("#nullable enable");
-        sb.AppendLine($"namespace {rootNs};");
-        sb.AppendLine();
-        sb.AppendLine("using System.Collections.Generic;");
-        sb.AppendLine();
-        sb.AppendLine("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
-        sb.AppendLine("internal static class __ByteMapperAspNetCoreBootstrap");
-        sb.AppendLine("{");
-        sb.AppendLine("    public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry Build()");
-        sb.AppendLine("    {");
-        sb.AppendLine("        var single = new Dictionary<(global::System.Type, string?), global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding>");
-        sb.AppendLine("        {");
+        builder.AutoGenerated();
+        builder.EnableNullable();
+        builder.NewLine();
+        builder.Namespace(rootNs);
+        builder.NewLine();
+        builder.Indent().Append("using System.Collections.Generic;").NewLine();
+        builder.NewLine();
+
+        // Bootstrap class
+        builder.Indent().Append("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").NewLine();
+        builder.Indent().Append("internal static class __ByteMapperAspNetCoreBootstrap").NewLine();
+        builder.BeginScope();
+
+        builder.Indent().Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry Build()").NewLine();
+        builder.BeginScope();
+
+        builder.Indent().Append("var single = new Dictionary<(global::System.Type, string?), global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding>").NewLine();
+        builder.Indent().Append("{").NewLine();
         foreach (var ep in endpoints)
         {
             var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileKey is null ? "null" : $"\"{ep.ProfileKey}\"";
-            sb.AppendLine($"            {{ (typeof({ep.EntityTypeFqn}), {profileLiteral}), {qualifiedClass}.CreateByteMapperBinding() }},");
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperBinding() },").NewLine();
         }
-        sb.AppendLine("        };");
-        sb.AppendLine();
-        sb.AppendLine("        var array = new Dictionary<(global::System.Type, string?), object>");
-        sb.AppendLine("        {");
-        foreach (var ep in endpoints.Where(e => e.GenerateArrayBinding))
+        builder.Indent().Append("};").NewLine();
+        builder.NewLine();
+
+        builder.Indent().Append("var array = new Dictionary<(global::System.Type, string?), object>").NewLine();
+        builder.Indent().Append("{").NewLine();
+        foreach (var ep in endpoints)
         {
+            if (!ep.GenerateArrayBinding) continue;
             var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileKey is null ? "null" : $"\"{ep.ProfileKey}\"";
-            sb.AppendLine($"            {{ (typeof({ep.EntityTypeFqn}), {profileLiteral}), {qualifiedClass}.CreateByteMapperArrayBinding() }},");
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperArrayBinding() },").NewLine();
         }
-        sb.AppendLine("        };");
-        sb.AppendLine();
-        sb.AppendLine("        return new global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry(single, array);");
-        sb.AppendLine("    }");
-        sb.AppendLine("}");
-        sb.AppendLine();
+        builder.Indent().Append("};").NewLine();
+        builder.NewLine();
 
-        // AddByteMapperFormatters extension emitted into user assembly
-        sb.AppendLine("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
-        sb.AppendLine($"internal static class __ByteMapperServiceCollectionExtensions");
-        sb.AppendLine("{");
-        sb.AppendLine("    /// <summary>");
-        sb.AppendLine("    /// Registers ByteMapper registry, formatters, and options. Generated by source generator.");
-        sb.AppendLine("    /// </summary>");
-        sb.AppendLine("    public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddByteMapperFormatters(");
-        sb.AppendLine("        this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services,");
-        sb.AppendLine("        global::System.Action<global::Smart.IO.ByteMapper.AspNetCore.ByteMapperFormatterOptions>? configure = null)");
-        sb.AppendLine("        => global::Smart.IO.ByteMapper.AspNetCore.ByteMapperServiceCollectionExtensions.AddByteMapperFormatters(");
-        sb.AppendLine("            services,");
-        sb.AppendLine("            __ByteMapperAspNetCoreBootstrap.Build(),");
-        sb.AppendLine("            configure);");
-        sb.AppendLine("}");
+        builder.Indent().Append("return new global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry(single, array);").NewLine();
+        builder.EndScope();
 
-        return sb.ToString();
+        builder.EndScope();
+        builder.NewLine();
+
+        // AddByteMapperFormatters extension
+        builder.Indent().Append("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]").NewLine();
+        builder.Indent().Append("internal static class __ByteMapperServiceCollectionExtensions").NewLine();
+        builder.BeginScope();
+
+        builder.Indent().Append("/// <summary>").NewLine();
+        builder.Indent().Append("/// Registers ByteMapper registry, formatters, and options. Generated by source generator.").NewLine();
+        builder.Indent().Append("/// </summary>").NewLine();
+        builder.Indent().Append("public static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AddByteMapperFormatters(").NewLine();
+        builder.Indent().Append("    this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services,").NewLine();
+        builder.Indent().Append("    global::System.Action<global::Smart.IO.ByteMapper.AspNetCore.ByteMapperFormatterOptions>? configure = null)").NewLine();
+        builder.Indent().Append("    => global::Smart.IO.ByteMapper.AspNetCore.ByteMapperServiceCollectionExtensions.AddByteMapperFormatters(").NewLine();
+        builder.Indent().Append("        services,").NewLine();
+        builder.Indent().Append("        __ByteMapperAspNetCoreBootstrap.Build(),").NewLine();
+        builder.Indent().Append("        configure);").NewLine();
+
+        builder.EndScope();
     }
 
     private static string MakeFilename(string ns, string className)
