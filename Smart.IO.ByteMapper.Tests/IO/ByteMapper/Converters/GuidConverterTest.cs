@@ -111,7 +111,7 @@ public sealed class LittleEndianNullableGuidBinaryConverterTest
     [Fact]
     public void ReadToNullableGuid()
     {
-        Assert.Equal((Guid?)GuidValue, (Guid?)converter.Read(ValueBytes.AsSpan(Offset)));
+        Assert.Equal(GuidValue, (Guid?)converter.Read(ValueBytes.AsSpan(Offset)));
     }
 
     [Fact]
