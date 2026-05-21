@@ -13,8 +13,8 @@ public sealed class ByteConverter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public byte Read(ReadOnlySpan<byte> source) => source[0];
+    public static byte Read(ReadOnlySpan<byte> source) => source[0];
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(Span<byte> destination, byte value) => destination[0] = value;
+    public static void Write(Span<byte> destination, byte value) => destination[0] = value;
 }

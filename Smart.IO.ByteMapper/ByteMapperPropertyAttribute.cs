@@ -9,7 +9,6 @@ public abstract class ByteMapperPropertyAttribute : Attribute
 
     protected ByteMapperPropertyAttribute(int offset)
     {
-        if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
         Offset = offset;
     }
 }

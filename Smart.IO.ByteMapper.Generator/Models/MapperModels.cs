@@ -12,17 +12,17 @@ internal enum MapperKind
 
 internal enum MapperShape
 {
-    InPlace,      // void Read(ReadOnlySpan<byte> buffer, T target)
+    InPlace,     // void Read(ReadOnlySpan<byte> buffer, T target)
     NewInstance,  // T Read(ReadOnlySpan<byte> buffer)
     WriteSpan,    // void Write(T source, Span<byte> buffer)
-    WriteAlloc    // byte[] Write(T source)
+    WriteAlloc // byte[] Write(T source)
 }
 
 internal enum SizeKind
 {
     Const,
     Instance,
-    StaticMember  // static readonly Size on the converter type (e.g. BinaryConverter<T>.Size)
+    StaticMember // static readonly Size on the converter type (e.g. BinaryConverter<T>.Size)
 }
 
 internal enum TypeMappingKind

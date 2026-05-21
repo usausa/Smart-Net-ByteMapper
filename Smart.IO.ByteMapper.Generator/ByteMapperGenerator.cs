@@ -10,10 +10,10 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
-using SourceGenerateHelper;
-
 using Smart.IO.ByteMapper.Generator.Helpers;
 using Smart.IO.ByteMapper.Generator.Models;
+
+using SourceGenerateHelper;
 
 [Generator]
 public sealed class ByteMapperGenerator : IIncrementalGenerator
@@ -61,26 +61,39 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     {
         var syntax = (MethodDeclarationSyntax)context.TargetNode;
         if (context.SemanticModel.GetDeclaredSymbol(syntax) is not IMethodSymbol symbol)
+        {
             return Results.Error<MapperMethodModel>(null);
+        }
 
         if (!symbol.IsStatic || !symbol.IsPartialDefinition)
+        {
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodDefinition, syntax.GetLocation(), symbol.Name));
+        }
 
         // Determine shape and target type
         var (shape, targetType, errors) = DetermineShape(symbol, kind);
         if (errors.Count > 0)
+        {
             return Results.Error<MapperMethodModel>(errors[0]);
+        }
+
         if (targetType == null)
+        {
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.GetLocation(), symbol.Name));
+        }
 
         // Check for SBM0014: return-value reader requires parameterless constructor
         if (shape == MapperShape.NewInstance)
         {
-            var namedTarget = targetType as INamedTypeSymbol;
-            var hasDefaultCtor = namedTarget != null && (namedTarget.IsValueType ||
-                namedTarget.InstanceConstructors.Any(c => c.Parameters.Length == 0 && c.DeclaredAccessibility == Accessibility.Public));
-            if (!hasDefaultCtor)
-                return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.TargetNotInstantiatable, syntax.GetLocation(), symbol.Name));
+            if (targetType is INamedTypeSymbol namedTarget)
+            {
+                var hasDefaultCtor = namedTarget.IsValueType ||
+                    namedTarget.InstanceConstructors.Any(c => (c.Parameters.Length == 0) && (c.DeclaredAccessibility == Accessibility.Public));
+                if (!hasDefaultCtor)
+                {
+                    return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.TargetNotInstantiatable, syntax.GetLocation(), symbol.Name));
+                }
+            }
         }
 
         // Get ByteReader/Writer attribute
@@ -93,8 +106,15 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         {
             foreach (var na in methodAttr.NamedArguments)
             {
-                if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt) profileType = pt;
-                if (na.Key == "ValidateLayout" && na.Value.Value is bool vl) validateLayout = vl;
+                if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                {
+                    profileType = pt;
+                }
+
+                if (na.Key == "ValidateLayout" && na.Value.Value is bool vl)
+                {
+                    validateLayout = vl;
+                }
             }
         }
 
@@ -116,15 +136,29 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         byte[]? delimiter = null;
         foreach (var na in mapAttr.NamedArguments)
         {
-            if (na.Key == "AutoFiller" && na.Value.Value is bool af) autoFiller = af;
-            if (na.Key == "UseDelimiter" && na.Value.Value is bool ud) useDelimiter = ud;
-            if (na.Key == "NullFiller" && na.Value.Value is byte nf) nullFiller = nf;
+            if (na.Key == "AutoFiller" && na.Value.Value is bool af)
+            {
+                autoFiller = af;
+            }
+
+            if (na.Key == "UseDelimiter" && na.Value.Value is bool ud)
+            {
+                useDelimiter = ud;
+            }
+
+            if (na.Key == "NullFiller" && na.Value.Value is byte nf)
+            {
+                nullFiller = nf;
+            }
+
             if (na.Key == "Delimiter" && na.Value.Kind == TypedConstantKind.Array)
+            {
                 delimiter = na.Value.Values.Select(v => (byte)(v.Value ?? 0)).ToArray();
+            }
         }
 
         var containingType = symbol.ContainingType;
-        var ns = string.IsNullOrEmpty(containingType.ContainingNamespace.Name)
+        var ns = String.IsNullOrEmpty(containingType.ContainingNamespace.Name)
             ? string.Empty
             : containingType.ContainingNamespace.ToDisplayString();
 
@@ -137,17 +171,33 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var converterAttrBase = compilation.GetTypeByMetadataName(ByteMapperConverterAttributeOpenName);
 
         if (propertyAttrBase == null || converterAttrBase == null)
+        {
             return Results.Error<MapperMethodModel>(null);
+        }
 
         var diagErrors = new List<DiagnosticInfo>();
         var members = CollectMembers(
-            symbol, attrSourceType, targetType, profileType, propertyAttrBase, converterAttrBase,
-            syntax, diagErrors);
+            symbol,
+            attrSourceType,
+            targetType,
+            profileType,
+            propertyAttrBase,
+            converterAttrBase,
+            syntax,
+            diagErrors);
 
         // Layout resolution
-        var delimiterBytes = useDelimiter ? (delimiter ?? DefaultDelimiter) : Array.Empty<byte>();
+        var delimiterBytes = useDelimiter ? (delimiter ?? DefaultDelimiter) : [];
         var fillerByte = (byte)0x20;
-        ResolveLayout(members, typeMappings, mapSize, delimiterBytes, autoFiller, fillerByte, validateLayout, attrSourceType.Name, syntax, diagErrors);
+        ResolveLayout(
+            members,
+            typeMappings,
+            mapSize,
+            delimiterBytes,
+            validateLayout,
+            attrSourceType.Name,
+            syntax,
+            diagErrors);
 
         // Determine method index placeholder (will be assigned by Execute)
         var layoutModel = new LayoutModel(
@@ -179,7 +229,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return Results.Success(model);
     }
 
-    private static (MapperShape shape, ITypeSymbol? targetType, List<DiagnosticInfo> errors) DetermineShape(
+    private static (MapperShape Shape, ITypeSymbol? TargetType, List<DiagnosticInfo> Errors) DetermineShape(
         IMethodSymbol symbol, MapperKind kind)
     {
         var errors = new List<DiagnosticInfo>();
@@ -228,8 +278,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 var length = (int)(attr.ConstructorArguments[1].Value ?? 0);
                 var filler = (byte)0x20;
                 foreach (var na in attr.NamedArguments)
-                    if (na.Key == "Filler" && na.Value.Value is byte f) filler = f;
-                result.Add(new TypeMappingModel(offset, length, TypeMappingKind.Filler, new EquatableArray<byte>(Array.Empty<byte>()), filler));
+                {
+                    if ((na.Key == "Filler") && (na.Value.Value is byte f))
+                    {
+                        filler = f;
+                    }
+                }
+                result.Add(new TypeMappingModel(offset, length, TypeMappingKind.Filler, new EquatableArray<byte>([]), filler));
             }
             else if (attrClass == MapConstantAttributeName)
             {
@@ -259,8 +314,15 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         {
             foreach (var attr in member.GetAttributes())
             {
-                if (attr.AttributeClass == null) continue;
-                if (!attr.AttributeClass.InheritsFrom(propertyAttrBase)) continue;
+                if (attr.AttributeClass == null)
+                {
+                    continue;
+                }
+
+                if (!attr.AttributeClass.InheritsFrom(propertyAttrBase))
+                {
+                    continue;
+                }
 
                 var offset = (int)(attr.ConstructorArguments[0].Value ?? 0);
 
@@ -279,13 +341,16 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
                 // Try to get Converter type from ByteMapperConverterAttribute<TConverter>
                 var converterBase = attr.AttributeClass.FindConverterAttributeBase(converterAttrBase);
-                if (converterBase == null) continue; // MapArray or unrecognized - skip for now
+                if (converterBase == null)
+                {
+                    continue; // MapArray or unrecognized - skip for now
+                }
 
                 var converterType = converterBase.TypeArguments[0];
                 var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
                 // Build ctor arg expressions
-                var ctorArgs = BuildConverterCtorArgs(attr, converterType, errors, syntax, methodSymbol.Name, member.Name);
+                var ctorArgs = BuildConverterCtorArgs(attr, converterType);
 
                 // Determine size
                 var (sizeKind, constSize) = DetermineConverterSize(converterType, ctorArgs);
@@ -321,16 +386,14 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
     private static List<string> BuildConverterCtorArgs(
         AttributeData attr,
-        ITypeSymbol converterType,
-        List<DiagnosticInfo> errors,
-        MethodDeclarationSyntax syntax,
-        string methodName,
-        string propertyName)
+        ITypeSymbol converterType)
     {
         // Collect ctor args from attribute: skip first arg (offset)
         var args = new List<string>();
         for (var i = 1; i < attr.ConstructorArguments.Length; i++)
+        {
             args.Add(attr.ConstructorArguments[i].ToLiteralExpression());
+        }
 
         // Build lookup of named arguments (user-specified)
         var namedArgs = attr.NamedArguments.ToDictionary(na => na.Key, na => na.Value.ToLiteralExpression());
@@ -384,12 +447,22 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();
-        if (attrClass == null) return result;
+        if (attrClass == null)
+        {
+            return result;
+        }
 
         foreach (var member in attrClass.GetMembers())
         {
-            if (member is not IPropertySymbol prop) continue;
-            if (prop.IsStatic || prop.DeclaredAccessibility != Accessibility.Public) continue;
+            if (member is not IPropertySymbol prop)
+            {
+                continue;
+            }
+
+            if (prop.IsStatic || (prop.DeclaredAccessibility != Accessibility.Public))
+            {
+                continue;
+            }
 
             foreach (var syntaxRef in prop.DeclaringSyntaxReferences)
             {
@@ -406,7 +479,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return result;
     }
 
-
     private static string GetDefaultLiteral(IParameterSymbol param)
     {
         if (param.HasExplicitDefaultValue)
@@ -418,7 +490,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 foreach (var member in param.Type.GetMembers())
                 {
                     if (member is IFieldSymbol f && f.HasConstantValue && Equals(f.ConstantValue, param.ExplicitDefaultValue))
+                    {
                         return $"{fqn}.{f.Name}";
+                    }
                 }
                 return $"({fqn}){param.ExplicitDefaultValue}";
             }
@@ -434,9 +508,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return "default";
     }
 
-    private static (SizeKind sizeKind, int? constSize) DetermineConverterSize(ITypeSymbol converterType, List<string> ctorArgs)
+    private static (SizeKind SizeKind, int? ConstSize) DetermineConverterSize(ITypeSymbol converterType, List<string> ctorArgs)
     {
-        if (converterType is not INamedTypeSymbol namedConverter) return (SizeKind.Instance, null);
+        if (converterType is not INamedTypeSymbol namedConverter)
+        {
+            return (SizeKind.Instance, null);
+        }
 
         // Check for const Size field or static readonly Size field
         foreach (var member in namedConverter.GetMembers("Size"))
@@ -444,26 +521,35 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             if (member is IFieldSymbol field)
             {
                 if (field.IsConst && field.HasConstantValue)
-                    return (SizeKind.Const, Convert.ToInt32(field.ConstantValue));
+                {
+                    return (SizeKind.Const, Convert.ToInt32(field.ConstantValue, System.Globalization.CultureInfo.InvariantCulture));
+                }
+
                 // static readonly int Size = Unsafe.SizeOf<T>() - value not known at compile time
-                    // treat as StaticMember so emitter uses ConverterTypeFqn.Size
-                    if (field.IsStatic && field.IsReadOnly)
-                    {
-                        return (SizeKind.StaticMember, null);
-                    }
+                // treat as StaticMember so emitter uses ConverterTypeFqn.Size
+                if (field.IsStatic && field.IsReadOnly)
+                {
+                    return (SizeKind.StaticMember, null);
+                }
             }
+
             if (member is IPropertySymbol { IsStatic: false })
             {
                 // Instance Size property - try to determine from ctor args (first arg is length)
-                if (ctorArgs.Count > 0 && int.TryParse(ctorArgs[0], out var len))
+                if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var len))
+                {
                     return (SizeKind.Instance, len);
+                }
+
                 return (SizeKind.Instance, null);
             }
         }
 
         // Fallback: use first ctor arg as size
-        if (ctorArgs.Count > 0 && int.TryParse(ctorArgs[0], out var fallback))
+        if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var fallback))
+        {
             return (SizeKind.Instance, fallback);
+        }
 
         return (SizeKind.Instance, null);
     }
@@ -473,8 +559,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         List<TypeMappingModel> typeMappings,
         int mapSize,
         byte[] delimiter,
-        bool autoFiller,
-        byte fillerByte,
         bool validateLayout,
         string typeName,
         MethodDeclarationSyntax syntax,
@@ -484,8 +568,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         if (delimiter.Length > 0)
         {
             var delimOffset = mapSize - delimiter.Length;
-            typeMappings.Add(new TypeMappingModel(delimOffset, delimiter.Length, TypeMappingKind.Constant,
-                new EquatableArray<byte>(delimiter), 0));
+            typeMappings.Add(new TypeMappingModel(
+                delimOffset,
+                delimiter.Length,
+                TypeMappingKind.Constant,
+                new EquatableArray<byte>(delimiter),
+                0));
         }
 
         // Sort members by offset
@@ -504,7 +592,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             {
                 var end = allRanges[i].Offset + allRanges[i].Size;
                 if (end > allRanges[i + 1].Offset)
+                {
                     errors.Add(new DiagnosticInfo(Diagnostics.RangeOverlap, syntax.GetLocation(), typeName));
+                }
             }
         }
     }
@@ -516,7 +606,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static void Execute(SourceProductionContext context, ImmutableArray<Result<MapperMethodModel>> results)
     {
         foreach (var error in results.SelectError())
+        {
             context.ReportDiagnostic(error);
+        }
 
         var builder = new SourceBuilder();
 
@@ -531,7 +623,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             foreach (var m in group)
             {
                 foreach (var err in m.Errors.ToArray())
+                {
                     context.ReportDiagnostic(err);
+                }
             }
 
             // Assign method indices within the group
@@ -570,7 +664,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         builder.EnableNullable();
         builder.NewLine();
 
-        if (!string.IsNullOrEmpty(first.Namespace))
+        if (!String.IsNullOrEmpty(first.Namespace))
         {
             builder.Namespace(first.Namespace);
             builder.NewLine();
@@ -592,7 +686,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append("// [")
                     .Append(member.PropertyName)
                     .Append("] offset=")
-                    .Append(member.Offset.ToString())
+                    .Append(member.Offset.ToString(System.Globalization.CultureInfo.InvariantCulture))
                     .NewLine();
                 builder.Indent()
                     .Append("private static readonly ")
@@ -600,7 +694,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(" ")
                     .Append(member.Converter.FieldName)
                     .Append(" = new(")
-                    .Append(string.Join(", ", member.Converter.CtorArgExpressions.ToArray()))
+                    .Append(String.Join(", ", member.Converter.CtorArgExpressions.ToArray()))
                     .Append(");")
                     .NewLine();
             }
@@ -610,7 +704,10 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var methodFirst = true;
         foreach (var method in methods)
         {
-            if (!methodFirst) builder.NewLine();
+            if (!methodFirst)
+            {
+                builder.NewLine();
+            }
             methodFirst = false;
 
             builder.NewLine();
@@ -638,12 +735,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(method.TargetTypeFqn).Append(" target)")
                     .NewLine();
                 builder.BeginScope();
-                if (method.Layout.Validation)
-                {
-                    builder.Indent()
-                        .Append($"if (buffer.Length < {method.Layout.Size}) throw new global::Smart.IO.ByteMapper.ByteMapperException(\"Buffer too small.\");")
-                        .NewLine();
-                }
                 foreach (var member in method.Members.ToArray())
                 {
                     EmitReadMember(builder, member);
@@ -659,12 +750,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append("(global::System.ReadOnlySpan<byte> buffer)")
                     .NewLine();
                 builder.BeginScope();
-                if (method.Layout.Validation)
-                {
-                    builder.Indent()
-                        .Append($"if (buffer.Length < {method.Layout.Size}) throw new global::Smart.IO.ByteMapper.ByteMapperException(\"Buffer too small.\");")
-                        .NewLine();
-                }
                 builder.Indent()
                     .Append("var target = new ").Append(method.TargetTypeFqn).Append("();")
                     .NewLine();
@@ -683,12 +768,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append("(").Append(method.TargetTypeFqn).Append(" source, global::System.Span<byte> buffer)")
                     .NewLine();
                 builder.BeginScope();
-                if (method.Layout.Validation)
-                {
-                    builder.Indent()
-                        .Append($"if (buffer.Length < {method.Layout.Size}) throw new global::Smart.IO.ByteMapper.ByteMapperException(\"Buffer too small.\");")
-                        .NewLine();
-                }
                 EmitWriteBody(builder, method);
                 builder.EndScope();
                 break;
@@ -717,13 +796,21 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     {
         string size;
         if (member.Converter.SizeKind == SizeKind.Const)
-            size = member.Converter.ConstSize!.Value.ToString();
+        {
+            size = $"{member.Converter.ConstSize!.Value}";
+        }
         else if (member.Converter.SizeKind == SizeKind.StaticMember)
+        {
             size = $"{member.Converter.ConverterTypeFqn}.Size";
+        }
         else if (member.Converter.ConstSize.HasValue)
-            size = member.Converter.ConstSize.Value.ToString();
+        {
+            size = $"{member.Converter.ConstSize.Value}";
+        }
         else
+        {
             size = $"{member.Converter.FieldName}.Size";
+        }
 
         builder.Indent()
             .Append("target.")
@@ -731,7 +818,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             .Append(" = ")
             .Append(member.Converter.FieldName)
             .Append(".Read(buffer.Slice(")
-            .Append(member.Offset.ToString())
+            .Append($"{member.Offset}")
             .Append(", ")
             .Append(size)
             .Append("));")
@@ -751,7 +838,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
             else if (tm.Kind == TypeMappingKind.Constant)
             {
-                var bytes = string.Join(", ", tm.Constant.ToArray().Select(b => $"0x{b:X2}"));
+                var bytes = String.Join(", ", tm.Constant.ToArray().Select(b => $"0x{b:X2}"));
                 builder.Indent()
                     .Append($"{{ var c = new byte[] {{ {bytes} }}; c.CopyTo({spanVarName}.Slice({tm.Offset}, {tm.Size})); }}")
                     .NewLine();
@@ -762,18 +849,26 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         {
             string size;
             if (member.Converter.SizeKind == SizeKind.Const)
-                size = member.Converter.ConstSize!.Value.ToString();
+            {
+                size = $"{member.Converter.ConstSize!.Value}";
+            }
             else if (member.Converter.SizeKind == SizeKind.StaticMember)
+            {
                 size = $"{member.Converter.ConverterTypeFqn}.Size";
+            }
             else if (member.Converter.ConstSize.HasValue)
-                size = member.Converter.ConstSize.Value.ToString();
+            {
+                size = $"{member.Converter.ConstSize.Value}";
+            }
             else
+            {
                 size = $"{member.Converter.FieldName}.Size";
+            }
 
             builder.Indent()
                 .Append(member.Converter.FieldName)
                 .Append($".Write({spanVarName}.Slice(")
-                .Append(member.Offset.ToString())
+                .Append($"{member.Offset}")
                 .Append(", ")
                 .Append(size)
                 .Append("), source.")
@@ -790,7 +885,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static string MakeFilename(string ns, string className)
     {
         var buffer = new StringBuilder();
-        if (!string.IsNullOrEmpty(ns))
+        if (!String.IsNullOrEmpty(ns))
         {
             buffer.Append(ns.Replace('.', '_'));
             buffer.Append('_');

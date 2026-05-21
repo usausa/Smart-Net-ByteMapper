@@ -23,9 +23,14 @@ internal static class SymbolExtensions
     public static bool IsNullableSymbol(this ITypeSymbol type)
     {
         if (type.NullableAnnotation == NullableAnnotation.Annotated)
+        {
             return true;
+        }
+
         if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+        {
             return true;
+        }
         return false;
     }
 
@@ -35,9 +40,14 @@ internal static class SymbolExtensions
     public static ITypeSymbol GetNonNullableType(this ITypeSymbol type)
     {
         if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
+        {
             return ((INamedTypeSymbol)type).TypeArguments[0];
+        }
+
         if (type.NullableAnnotation == NullableAnnotation.Annotated)
+        {
             return type.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+        }
         return type;
     }
 
@@ -52,7 +62,9 @@ internal static class SymbolExtensions
         while (current != null)
         {
             if (SymbolEqualityComparer.Default.Equals(current.OriginalDefinition, converterAttributeOpenGeneric))
+            {
                 return current;
+            }
             current = current.BaseType;
         }
         return null;
@@ -67,7 +79,9 @@ internal static class SymbolExtensions
         while (current != null)
         {
             if (SymbolEqualityComparer.Default.Equals(current.OriginalDefinition, baseType.OriginalDefinition))
+            {
                 return true;
+            }
             current = current.BaseType;
         }
         return false;
@@ -88,7 +102,7 @@ internal static class SymbolExtensions
                 byte b => $"(byte)0x{b:X2}",
                 sbyte sb => $"(sbyte){sb}",
                 char c => $"'{c}'",
-                _ => constant.Value?.ToString() ?? "null"
+                _ => constant.Value!.ToString() ?? "null"
             };
         }
         if (constant.Kind == TypedConstantKind.Enum && constant.Type != null)
@@ -101,18 +115,22 @@ internal static class SymbolExtensions
             var elements = string.Join(", ", constant.Values.Select(v => v.ToLiteralExpression()));
             return $"new byte[] {{ {elements} }}";
         }
-        if (constant.Value == null) return "null";
-        return constant.Value.ToString() ?? "null";
+        return constant.Value?.ToString() ?? "null";
     }
 
     private static string GetEnumMemberName(TypedConstant constant)
     {
-        if (constant.Type == null || constant.Value == null) return constant.Value?.ToString() ?? "0";
+        if ((constant.Type == null) || (constant.Value == null))
+        {
+            return constant.Value?.ToString() ?? "0";
+        }
         var enumType = constant.Type;
         foreach (var member in enumType.GetMembers())
         {
             if (member is IFieldSymbol field && field.HasConstantValue && Equals(field.ConstantValue, constant.Value))
+            {
                 return field.Name;
+            }
         }
         return constant.Value.ToString() ?? "0";
     }

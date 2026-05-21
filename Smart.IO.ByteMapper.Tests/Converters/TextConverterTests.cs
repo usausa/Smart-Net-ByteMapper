@@ -26,7 +26,9 @@ public class TextConverterTests
         Assert.Equal((byte)'A', buffer[0]);
         Assert.Equal((byte)'B', buffer[1]);
         for (var i = 2; i < 8; i++)
+        {
             Assert.Equal(0x20, buffer[i]);
+        }
     }
 
     [Fact]
@@ -37,7 +39,9 @@ public class TextConverterTests
         converter.Write(buffer, "AB");
         // "      AB"
         for (var i = 0; i < 6; i++)
+        {
             Assert.Equal(0x20, buffer[i]);
+        }
         Assert.Equal((byte)'A', buffer[6]);
         Assert.Equal((byte)'B', buffer[7]);
     }

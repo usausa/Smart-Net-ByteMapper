@@ -31,12 +31,11 @@ public sealed class MapBytesAttribute : ByteMapperConverterAttribute<BytesConver
 {
     public int Length { get; }
 
-    public byte Filler { get; init; } = 0x00;
+    public byte Filler { get; init; }
 
     public MapBytesAttribute(int offset, int length)
         : base(offset)
     {
-        if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
         Length = length;
     }
 }
@@ -57,7 +56,6 @@ public sealed class MapTextAttribute : ByteMapperConverterAttribute<TextConverte
     public MapTextAttribute(int offset, int length)
         : base(offset)
     {
-        if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
         Length = length;
     }
 }
@@ -99,7 +97,6 @@ public sealed class MapNumberTextAttribute<T> : ByteMapperConverterAttribute<Num
     public MapNumberTextAttribute(int offset, int length)
         : base(offset)
     {
-        if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
         Length = length;
     }
 }
@@ -122,8 +119,6 @@ public sealed class MapDateTimeTextAttribute<T> : ByteMapperConverterAttribute<D
     public MapDateTimeTextAttribute(int offset, int length, string format)
         : base(offset)
     {
-        if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
-        if (string.IsNullOrEmpty(format)) throw new ArgumentNullException(nameof(format));
         Length = length;
         Format = format;
     }
@@ -136,12 +131,11 @@ public sealed class MapArrayAttribute<TElementAttribute> : ByteMapperPropertyAtt
 {
     public int Count { get; }
 
-    public byte Filler { get; init; } = 0x00;
+    public byte Filler { get; init; }
 
     public MapArrayAttribute(int offset, int count)
         : base(offset)
     {
-        if (count <= 0) throw new ArgumentOutOfRangeException(nameof(count));
         Count = count;
     }
 }

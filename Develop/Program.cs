@@ -29,7 +29,7 @@ internal static class Program
     }
 }
 
-[Map(36)]
+[Map(36, UseDelimiter = false)]
 internal sealed class SampleRecord
 {
     [MapBinary<int>(0)]

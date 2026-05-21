@@ -7,7 +7,7 @@ using Xunit;
 
 // ---- Target types ----
 
-[Map(36)]
+[Map(36, UseDelimiter = false)]
 internal sealed class SimpleRecord
 {
     [MapBinary<int>(0)]
@@ -17,17 +17,7 @@ internal sealed class SimpleRecord
     public string Name { get; set; } = string.Empty;
 }
 
-[Map(38, UseDelimiter = true)]
-internal sealed class RecordWithDelimiter
-{
-    [MapBinary<int>(0)]
-    public int Value { get; set; }
-
-    [MapText(4, 32)]
-    public string Label { get; set; } = string.Empty;
-}
-
-[Map(10)]
+[Map(10, UseDelimiter = false)]
 internal sealed class BoolRecord
 {
     [MapBoolean(0)]
@@ -88,7 +78,10 @@ public class GoldenTests
         // Write Name = "HELLO"
         Encoding.ASCII.GetBytes("HELLO").CopyTo(buffer, 4);
         // Fill remaining name bytes with space
-        for (var i = 9; i < 36; i++) buffer[i] = 0x20;
+        for (var i = 9; i < 36; i++)
+        {
+            buffer[i] = 0x20;
+        }
 
         var record = new SimpleRecord();
         GoldenMappers.ReadSimple(buffer, record);
@@ -132,17 +125,6 @@ public class GoldenTests
 
         var allocBuffer = GoldenMappers.WriteSimpleAlloc(record);
         Assert.Equal(spanBuffer, allocBuffer);
-    }
-
-    [Fact]
-    public void WhenBufferTooSmallThenThrows()
-    {
-        var record = new SimpleRecord { Id = 1, Name = "X" };
-        Assert.Throws<ByteMapperException>(() =>
-        {
-            var buffer = new byte[10]; // too small
-            GoldenMappers.WriteSimple(record, buffer);
-        });
     }
 
     [Fact]

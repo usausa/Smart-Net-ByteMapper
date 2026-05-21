@@ -46,7 +46,10 @@ public sealed class NumberTextConverter<T>
         {
             ByteMapperHelpers.TrimRange(source, ref start, ref size, padding, filler);
         }
-        if (size == 0) return default!;
+        if (size == 0)
+        {
+            return default!;
+        }
         var str = encoding.GetString(source.Slice(start, size));
         return ParseValue(str);
     }
@@ -55,7 +58,7 @@ public sealed class NumberTextConverter<T>
     public void Write(Span<byte> destination, T value)
     {
         var str = FormatValue(value);
-        if (string.IsNullOrEmpty(str))
+        if (String.IsNullOrEmpty(str))
         {
             destination[..Size].Fill(filler);
             return;
@@ -67,24 +70,75 @@ public sealed class NumberTextConverter<T>
 
     private T ParseValue(string str)
     {
-        if (typeof(T) == typeof(int)) return (T)(object)int.Parse(str, style, provider);
-        if (typeof(T) == typeof(int?)) return (T)(object)(int?)int.Parse(str, style, provider);
-        if (typeof(T) == typeof(long)) return (T)(object)long.Parse(str, style, provider);
-        if (typeof(T) == typeof(long?)) return (T)(object)(long?)long.Parse(str, style, provider);
-        if (typeof(T) == typeof(short)) return (T)(object)short.Parse(str, style, provider);
-        if (typeof(T) == typeof(short?)) return (T)(object)(short?)short.Parse(str, style, provider);
-        if (typeof(T) == typeof(float)) return (T)(object)float.Parse(str, style, provider);
-        if (typeof(T) == typeof(float?)) return (T)(object)(float?)float.Parse(str, style, provider);
-        if (typeof(T) == typeof(double)) return (T)(object)double.Parse(str, style, provider);
-        if (typeof(T) == typeof(double?)) return (T)(object)(double?)double.Parse(str, style, provider);
-        if (typeof(T) == typeof(decimal)) return (T)(object)decimal.Parse(str, style, provider);
-        if (typeof(T) == typeof(decimal?)) return (T)(object)(decimal?)decimal.Parse(str, style, provider);
+        if (typeof(T) == typeof(int))
+        {
+            return (T)(object)Int32.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(int?))
+        {
+            return (T)(object)(int?)Int32.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(long))
+        {
+            return (T)(object)Int64.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(long?))
+        {
+            return (T)(object)(long?)Int64.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(short))
+        {
+            return (T)(object)Int16.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(short?))
+        {
+            return (T)(object)(short?)Int16.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(float))
+        {
+            return (T)(object)Single.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(float?))
+        {
+            return (T)(object)(float?)Single.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(double))
+        {
+            return (T)(object)Double.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(double?))
+        {
+            return (T)(object)(double?)Double.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(decimal))
+        {
+            return (T)(object)Decimal.Parse(str, style, provider);
+        }
+
+        if (typeof(T) == typeof(decimal?))
+        {
+            return (T)(object)(decimal?)Decimal.Parse(str, style, provider);
+        }
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
     private string FormatValue(T value)
     {
-        if (value is IFormattable f) return f.ToString(format, provider);
+        if (value is IFormattable f)
+        {
+            return f.ToString(format, provider);
+        }
+
         return value?.ToString() ?? string.Empty;
     }
 

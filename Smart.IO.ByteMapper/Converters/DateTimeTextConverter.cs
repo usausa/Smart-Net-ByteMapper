@@ -36,8 +36,16 @@ public sealed class DateTimeTextConverter<T>
     {
         // trim filler from right
         var size = Size;
-        while (size > 0 && source[size - 1] == filler) size--;
-        if (size == 0) return default!;
+        while ((size > 0) && (source[size - 1] == filler))
+        {
+            size--;
+        }
+
+        if (size == 0)
+        {
+            return default!;
+        }
+
         var str = encoding.GetString(source[..size]);
         return ParseValue(str);
     }
@@ -51,7 +59,7 @@ public sealed class DateTimeTextConverter<T>
             return;
         }
         var str = FormatValue(value);
-        if (string.IsNullOrEmpty(str))
+        if (String.IsNullOrEmpty(str))
         {
             destination[..Size].Fill(filler);
             return;
@@ -60,25 +68,43 @@ public sealed class DateTimeTextConverter<T>
         var count = encoding.GetBytes(str, encoded);
         var written = Math.Min(count, Size);
         encoded[..written].CopyTo(destination[..written]);
-        if (written < Size) destination[written..Size].Fill(filler);
+        if (written < Size)
+        {
+            destination[written..Size].Fill(filler);
+        }
     }
 
     private T ParseValue(string str)
     {
         if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+        {
             return (T)(object)DateTime.ParseExact(str, format, provider, style);
+        }
+
         if (typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(DateTimeOffset?))
+        {
             return (T)(object)DateTimeOffset.ParseExact(str, format, provider, style);
+        }
+
         if (typeof(T) == typeof(DateOnly) || typeof(T) == typeof(DateOnly?))
+        {
             return (T)(object)DateOnly.ParseExact(str, format, provider);
+        }
+
         if (typeof(T) == typeof(TimeOnly) || typeof(T) == typeof(TimeOnly?))
+        {
             return (T)(object)TimeOnly.ParseExact(str, format, provider);
+        }
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
     private string FormatValue(T value)
     {
-        if (value is IFormattable f) return f.ToString(format, provider);
+        if (value is IFormattable f)
+        {
+            return f.ToString(format, provider);
+        }
+
         return value?.ToString() ?? string.Empty;
     }
 

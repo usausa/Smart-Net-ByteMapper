@@ -17,7 +17,6 @@ public sealed class MapAttribute : Attribute
 
     public MapAttribute(int size)
     {
-        if (size <= 0) throw new ArgumentOutOfRangeException(nameof(size));
         Size = size;
     }
 }
@@ -33,8 +32,6 @@ public sealed class MapFillerAttribute : Attribute
 
     public MapFillerAttribute(int offset, int length)
     {
-        if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
-        if (length <= 0) throw new ArgumentOutOfRangeException(nameof(length));
         Offset = offset;
         Length = length;
     }
@@ -49,7 +46,6 @@ public sealed class MapConstantAttribute : Attribute
 
     public MapConstantAttribute(int offset, byte[] content)
     {
-        if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
         Offset = offset;
         Content = content;
     }

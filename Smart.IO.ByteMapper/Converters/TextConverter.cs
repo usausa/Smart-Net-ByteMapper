@@ -30,14 +30,18 @@ public sealed class TextConverter
         {
             ByteMapperHelpers.TrimRange(source, ref start, ref size, padding, filler);
         }
-        if (size == 0) return string.Empty;
+        if (size == 0)
+        {
+            return string.Empty;
+        }
+
         return encoding.GetString(source.Slice(start, size));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, string value)
     {
-        if (string.IsNullOrEmpty(value))
+        if (String.IsNullOrEmpty(value))
         {
             destination[..Size].Fill(filler);
             return;

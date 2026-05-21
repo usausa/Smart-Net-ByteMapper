@@ -8,21 +8,21 @@ public class BooleanConverterTests
     public void WhenReadTrueValueThenTrue()
     {
         var converter = new BooleanConverter(0x31, 0x30, 0x20);
-        Assert.Equal(true, converter.Read(new byte[] { 0x31 }));
+        Assert.Equal(true, converter.Read([0x31]));
     }
 
     [Fact]
     public void WhenReadFalseValueThenFalse()
     {
         var converter = new BooleanConverter(0x31, 0x30, 0x20);
-        Assert.Equal(false, converter.Read(new byte[] { 0x30 }));
+        Assert.Equal(false, converter.Read([0x30]));
     }
 
     [Fact]
     public void WhenReadNullValueThenNull()
     {
         var converter = new BooleanConverter(0x31, 0x30, 0x20);
-        Assert.Null(converter.Read(new byte[] { 0x20 }));
+        Assert.Null(converter.Read([0x20]));
     }
 
     [Fact]

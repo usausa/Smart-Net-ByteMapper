@@ -21,8 +21,16 @@ public sealed class BooleanConverter
     public bool? Read(ReadOnlySpan<byte> source)
     {
         var b = source[0];
-        if (b == trueValue) return true;
-        if (b == falseValue) return false;
+        if (b == trueValue)
+        {
+            return true;
+        }
+
+        if (b == falseValue)
+        {
+            return false;
+        }
+
         return null;
     }
 
