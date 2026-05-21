@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Fast.Helpers;
 
 using System.Runtime.CompilerServices;
 
-internal static partial class DateTimeByteHelper
+internal static partial class FastDateTimeByteHelper
 {
     private const byte Num0 = (byte)'0';
     private const byte Space = (byte)' ';
@@ -92,10 +92,10 @@ internal static partial class DateTimeByteHelper
         return c == FormatYear || c == FormatMonth || c == FormatDay;
     }
 
-    public static DateTimeFormatEntry[] ParseDateTimeFormat(string format, out bool hasDatePart)
+    public static FastDateTimeFormatEntry[] ParseDateTimeFormat(string format, out bool hasDatePart)
     {
         hasDatePart = false;
-        var list = new List<DateTimeFormatEntry>();
+        var list = new List<FastDateTimeFormatEntry>();
 
         var index = 0;
         while (index < format.Length)
@@ -115,7 +115,7 @@ internal static partial class DateTimeByteHelper
                     throw new FormatException($"Invalid format. format=[{format}]");
                 }
 
-                list.Add(new DateTimeFormatEntry(c, length, null));
+                list.Add(new FastDateTimeFormatEntry(c, length, null));
 
                 if (IsDatePartChar(c))
                 {
@@ -137,7 +137,7 @@ internal static partial class DateTimeByteHelper
                     bytes[i] = (byte)format[start + i];
                 }
 
-                list.Add(new DateTimeFormatEntry((char)0, length, bytes));
+                list.Add(new FastDateTimeFormatEntry((char)0, length, bytes));
             }
         }
 
@@ -154,7 +154,7 @@ internal static partial class DateTimeByteHelper
     // Parse
     //--------------------------------------------------------------------------------
 
-    public static unsafe bool TryParseDateTime(ReadOnlySpan<byte> bytes, int index, DateTimeFormatEntry[] entries, DateTimeKind kind, out DateTime value)
+    public static unsafe bool TryParseDateTime(ReadOnlySpan<byte> bytes, int index, FastDateTimeFormatEntry[] entries, DateTimeKind kind, out DateTime value)
     {
         fixed (byte* pPinned = bytes)
         {
@@ -353,7 +353,7 @@ internal static partial class DateTimeByteHelper
     // Format
     //--------------------------------------------------------------------------------
 
-    public static unsafe void FormatDateTime(Span<byte> bytes, int index, bool hasDatePart, DateTimeFormatEntry[] entries, DateTime dateTime)
+    public static unsafe void FormatDateTime(Span<byte> bytes, int index, bool hasDatePart, FastDateTimeFormatEntry[] entries, DateTime dateTime)
     {
         var year = 0;
         var month = 0;

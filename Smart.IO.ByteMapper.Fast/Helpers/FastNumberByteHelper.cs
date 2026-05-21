@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Fast.Helpers;
 
 using System.Runtime.CompilerServices;
 
-internal static partial class NumberByteHelper
+internal static partial class FastNumberByteHelper
 {
     private const byte Minus = (byte)'-';
     private const byte Num0 = (byte)'0';
@@ -43,22 +43,6 @@ internal static partial class NumberByteHelper
     private static bool IsValidNumber(int value)
     {
         return (uint)value < 10;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryParseInt16(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out short value)
-    {
-        var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
-        value = (short)longValue;
-        return ret;
-    }
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static bool TryParseInt32(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out int value)
-    {
-        var ret = TryParseInt64(bytes, index, length, filler, out var longValue);
-        value = (int)longValue;
-        return ret;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -107,10 +91,49 @@ internal static partial class NumberByteHelper
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void FormatInt16(Span<byte> bytes, int index, int length, short value, Padding padding, bool zerofill, byte filler)
+    public static unsafe bool TryParseInt32(ReadOnlySpan<byte> bytes, int index, int length, byte filler, out int value)
     {
-        FormatInt32(bytes, index, length, value, padding, zerofill, filler);
+        fixed (byte* pBase = bytes)
+        {
+            var pBytes = pBase + index;
+            value = 0;
+
+            var i = 0;
+            while ((i < length) && (*(pBytes + i) == filler))
+            {
+                i++;
+            }
+
+            if (i == length)
+            {
+                return false;
+            }
+
+            var sign = *(pBytes + i) == Minus ? -1 : 1;
+            i += sign < 0 ? 1 : 0;
+
+            while (i < length)
+            {
+                var num = *(pBytes + i) - Num0;
+                if (IsValidNumber(num))
+                {
+                    value = (value * 10) + num;
+                    i++;
+                }
+                else
+                {
+                    while ((i < length) && (*(pBytes + i) == filler))
+                    {
+                        i++;
+                    }
+
+                    break;
+                }
+            }
+
+            value *= sign;
+            return i == length;
+        }
     }
 
     public static unsafe void FormatInt32(Span<byte> bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)

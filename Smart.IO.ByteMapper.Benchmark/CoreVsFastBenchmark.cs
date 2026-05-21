@@ -11,8 +11,8 @@ using Smart.IO.ByteMapper.Fast.Converters;
 /// 対象ペア:
 ///   ASCII 文字列   : Core=TextConverter(ASCII)      vs Fast=AsciiConverter
 ///   整数テキスト   : Core=NumberTextConverter&lt;int&gt;  vs Fast=IntegerConverter&lt;int&gt;
-///   decimal テキスト: Core=NumberTextConverter&lt;decimal&gt; vs Fast=DecimalConverter
-///   DateTime テキスト: Core=DateTimeTextConverter&lt;DateTime&gt; vs Fast=DateTimeConverter
+///   decimal テキスト: Core=NumberTextConverter&lt;decimal&gt; vs Fast=FastDecimalConverter
+///   DateTime テキスト: Core=DateTimeTextConverter&lt;DateTime&gt; vs Fast=FastDateTimeConverter
 /// </summary>
 [Config(typeof(BenchmarkConfig))]
 public class CoreVsFastBenchmark
@@ -30,7 +30,7 @@ public class CoreVsFastBenchmark
 
     // ---- 整数テキスト ----
     private readonly NumberTextConverter<int> coreInt = new(10);
-    private readonly IntegerConverter<int> fastInt = new(10);
+    private readonly FastIntegerConverter<int> fastInt = new(10);
 
     private readonly byte[] intReadBuffer = new byte[10];
     private readonly byte[] intWriteBuffer = new byte[10];
@@ -38,7 +38,7 @@ public class CoreVsFastBenchmark
 
     // ---- decimal テキスト ----
     private readonly NumberTextConverter<decimal> coreDec = new(20, style: System.Globalization.NumberStyles.Number);
-    private readonly DecimalConverter fastDec = new(20);
+    private readonly FastDecimalConverter fastDec = new(20);
 
     private readonly byte[] decReadBuffer = new byte[20];
     private readonly byte[] decWriteBuffer = new byte[20];
@@ -47,7 +47,7 @@ public class CoreVsFastBenchmark
     // ---- DateTime テキスト ----
     private const string DateFormat = "yyyyMMddHHmmss";
     private readonly DateTimeTextConverter<DateTime> coreDt = new(DateFormat.Length, DateFormat);
-    private readonly DateTimeConverter fastDt = new(DateFormat);
+    private readonly FastDateTimeConverter fastDt = new(DateFormat);
 
     private readonly byte[] dtReadBuffer = new byte[14];
     private readonly byte[] dtWriteBuffer = new byte[14];

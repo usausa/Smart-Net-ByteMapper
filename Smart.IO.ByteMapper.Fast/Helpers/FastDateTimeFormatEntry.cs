@@ -1,6 +1,6 @@
 namespace Smart.IO.ByteMapper.Fast.Helpers;
 
-internal sealed class DateTimeFormatEntry
+internal sealed class FastDateTimeFormatEntry
 {
     public char Part { get; }
 
@@ -8,7 +8,7 @@ internal sealed class DateTimeFormatEntry
 
     public byte[]? Bytes { get; }
 
-    public DateTimeFormatEntry(char part, int length, byte[]? bytes)
+    public FastDateTimeFormatEntry(char part, int length, byte[]? bytes)
     {
         Part = part;
         Length = length;

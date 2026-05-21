@@ -100,7 +100,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenIntegerReadValidValueThenReturnsInt()
     {
-        var converter = new IntegerConverter<int>(6);
+        var converter = new FastIntegerConverter<int>(6);
         var buffer = "   123"u8.ToArray().AsSpan();
         Assert.Equal(123, converter.Read(buffer));
     }
@@ -108,7 +108,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenIntegerReadEmptyThenReturnsNull()
     {
-        var converter = new IntegerConverter<int>(4);
+        var converter = new FastIntegerConverter<int>(4);
         var buffer = "    "u8.ToArray().AsSpan();
         Assert.Null(converter.Read(buffer));
     }
@@ -116,7 +116,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenIntegerWriteZerofillThenPadsWithZero()
     {
-        var converter = new IntegerConverter<int>(6, zerofill: true);
+        var converter = new FastIntegerConverter<int>(6, zerofill: true);
         Span<byte> buffer = stackalloc byte[6];
         converter.Write(buffer, 42);
         Assert.Equal("000042", System.Text.Encoding.ASCII.GetString(buffer));
@@ -125,20 +125,20 @@ public class OptionsConverterTests
     [Fact]
     public void WhenIntegerRoundTripNegativeThenValuePreserved()
     {
-        var converter = new IntegerConverter<int>(8);
+        var converter = new FastIntegerConverter<int>(8);
         Span<byte> buffer = stackalloc byte[8];
         converter.Write(buffer, -9876);
         Assert.Equal(-9876, converter.Read(buffer));
     }
 
     //--------------------------------------------------------------------------------
-    // DecimalConverter
+    // FastDecimalConverter
     //--------------------------------------------------------------------------------
 
     [Fact]
     public void WhenDecimalReadValidValueThenReturnsDecimal()
     {
-        var converter = new DecimalConverter(10);
+        var converter = new FastDecimalConverter(10);
         var buffer = "    123.45"u8.ToArray().AsSpan();
         Assert.Equal(123.45m, converter.Read(buffer));
     }
@@ -146,7 +146,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDecimalReadEmptyThenReturnsNull()
     {
-        var converter = new DecimalConverter(8);
+        var converter = new FastDecimalConverter(8);
         var buffer = "        "u8.ToArray().AsSpan();
         Assert.Null(converter.Read(buffer));
     }
@@ -154,7 +154,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDecimalWriteWithScaleThenFormatsCorrectly()
     {
-        var converter = new DecimalConverter(10, scale: 2, zerofill: true);
+        var converter = new FastDecimalConverter(10, scale: 2, zerofill: true);
         Span<byte> buffer = stackalloc byte[10];
         converter.Write(buffer, 12.3m);
         Assert.Equal("0000012.30", System.Text.Encoding.ASCII.GetString(buffer));
@@ -163,20 +163,20 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDecimalRoundTripThenValuePreserved()
     {
-        var converter = new DecimalConverter(12, scale: 3);
+        var converter = new FastDecimalConverter(12, scale: 3);
         Span<byte> buffer = stackalloc byte[12];
         converter.Write(buffer, 999.123m);
         Assert.Equal(999.123m, converter.Read(buffer));
     }
 
     //--------------------------------------------------------------------------------
-    // DateTimeConverter
+    // FastDateTimeConverter
     //--------------------------------------------------------------------------------
 
     [Fact]
     public void WhenDateTimeReadValidDateThenReturnsDateTime()
     {
-        var converter = new DateTimeConverter("yyyyMMdd");
+        var converter = new FastDateTimeConverter("yyyyMMdd");
         var buffer = "20240315"u8.ToArray().AsSpan();
         var result = converter.Read(buffer);
         Assert.Equal(new DateTime(2024, 3, 15), result);
@@ -185,7 +185,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDateTimeReadEmptyThenReturnsNull()
     {
-        var converter = new DateTimeConverter("yyyyMMdd");
+        var converter = new FastDateTimeConverter("yyyyMMdd");
         var buffer = "        "u8.ToArray().AsSpan();
         Assert.Null(converter.Read(buffer));
     }
@@ -193,7 +193,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDateTimeWriteNullThenFillsFiller()
     {
-        var converter = new DateTimeConverter("yyyyMMdd");
+        var converter = new FastDateTimeConverter("yyyyMMdd");
         Span<byte> buffer = stackalloc byte[8];
         converter.Write(buffer, null);
         Assert.Equal("        ", System.Text.Encoding.ASCII.GetString(buffer));
@@ -202,7 +202,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenDateTimeRoundTripThenValuePreserved()
     {
-        var converter = new DateTimeConverter("yyyyMMddHHmmss");
+        var converter = new FastDateTimeConverter("yyyyMMddHHmmss");
         var dt = new DateTime(2024, 6, 1, 12, 30, 59);
         Span<byte> buffer = stackalloc byte[14];
         converter.Write(buffer, dt);
@@ -210,13 +210,13 @@ public class OptionsConverterTests
     }
 
     //--------------------------------------------------------------------------------
-    // UnicodeConverter
+    // FastUnicodeConverter
     //--------------------------------------------------------------------------------
 
     [Fact]
     public void WhenUnicodeReadThenTrimsSpacePadding()
     {
-        var converter = new UnicodeConverter(20);
+        var converter = new FastUnicodeConverter(20);
         // 10文字 + 5文字分スペース（各2バイト）= 20バイト
         Span<byte> buffer = stackalloc byte[20];
         converter.Write(buffer, "こんにちは");
@@ -226,7 +226,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenUnicodeWriteNullThenFillsFiller()
     {
-        var converter = new UnicodeConverter(10);
+        var converter = new FastUnicodeConverter(10);
         Span<byte> buffer = stackalloc byte[10];
         converter.Write(buffer, null);
         // すべてスペース文字（0x0020 LE）
@@ -240,7 +240,7 @@ public class OptionsConverterTests
     [Fact]
     public void WhenUnicodeRoundTripThenValuePreserved()
     {
-        var converter = new UnicodeConverter(20);
+        var converter = new FastUnicodeConverter(20);
         Span<byte> buffer = stackalloc byte[20];
         converter.Write(buffer, "テスト");
         Assert.Equal("テスト", converter.Read(buffer));
