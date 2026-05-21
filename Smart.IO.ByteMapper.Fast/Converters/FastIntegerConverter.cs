@@ -1,5 +1,7 @@
 namespace Smart.IO.ByteMapper.Fast.Converters;
 
+using System.Runtime.CompilerServices;
+
 using Smart.IO.ByteMapper.Fast.Helpers;
 
 /// <summary>ASCII バイト表現の整数コンバーター。</summary>
@@ -29,7 +31,7 @@ public sealed class FastIntegerConverter<T>
         {
             if (FastNumberByteHelper.TryParseInt32(buffer, 0, Size, filler, out var result))
             {
-                return (T)(object)result;
+                return Unsafe.As<int, T>(ref result);
             }
 
             return null;
@@ -39,7 +41,8 @@ public sealed class FastIntegerConverter<T>
         {
             if (FastNumberByteHelper.TryParseInt32(buffer, 0, Size, filler, out var result))
             {
-                return (T)(object)(short)result;
+                var s = (short)result;
+                return Unsafe.As<short, T>(ref s);
             }
 
             return null;
@@ -49,7 +52,7 @@ public sealed class FastIntegerConverter<T>
         {
             if (FastNumberByteHelper.TryParseInt64(buffer, 0, Size, filler, out var result))
             {
-                return (T)(object)result;
+                return Unsafe.As<long, T>(ref result);
             }
 
             return null;
@@ -69,15 +72,18 @@ public sealed class FastIntegerConverter<T>
 
         if (typeof(T) == typeof(int))
         {
-            FastNumberByteHelper.FormatInt32(buffer, 0, Size, (int)(object)value, padding, zerofill, filler);
+            var v = value.Value;
+            FastNumberByteHelper.FormatInt32(buffer, 0, Size, Unsafe.As<T, int>(ref v), padding, zerofill, filler);
         }
         else if (typeof(T) == typeof(short))
         {
-            FastNumberByteHelper.FormatInt32(buffer, 0, Size, (short)(int)(object)value, padding, zerofill, filler);
+            var v = value.Value;
+            FastNumberByteHelper.FormatInt32(buffer, 0, Size, Unsafe.As<T, short>(ref v), padding, zerofill, filler);
         }
         else if (typeof(T) == typeof(long))
         {
-            FastNumberByteHelper.FormatInt64(buffer, 0, Size, (long)(object)value, padding, zerofill, filler);
+            var v = value.Value;
+            FastNumberByteHelper.FormatInt64(buffer, 0, Size, Unsafe.As<T, long>(ref v), padding, zerofill, filler);
         }
     }
 }
