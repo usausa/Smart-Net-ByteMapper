@@ -176,7 +176,7 @@ public sealed class DateTimeOffsetTextConverterTest
         var converter = CreateViaBuilder(20, monthNameFormat, typeof(DateTimeOffset));
         var buffer = new byte[20];
         converter.Write(buffer, Value);
-        Assert.Equal(Encoding.ASCII.GetBytes("2000-Dec-31 12:34:56"), buffer);
+        Assert.Equal("2000-Dec-31 12:34:56"u8.ToArray(), buffer);
         Assert.Equal(Value, converter.Read(buffer));
     }
 

@@ -352,7 +352,7 @@ internal sealed class TimeSpanTextConverter : IMapConverter
         {
             var destination = buffer[..length];
             Span<char> chars = stackalloc char[length + 16];
-            ((TimeSpan)value).TryFormat(chars, out var charWritten, format, null);
+            ((TimeSpan)value).TryFormat(chars, out var charWritten, format);
             var written = encoding.GetBytes(chars[..charWritten], destination);
             if (written < length)
             {
@@ -454,7 +454,7 @@ internal sealed class DateOnlyTextConverter : IMapConverter
         {
             var destination = buffer[..length];
             Span<char> chars = stackalloc char[length + 16];
-            ((DateOnly)value).TryFormat(chars, out var charWritten, format, null);
+            ((DateOnly)value).TryFormat(chars, out var charWritten, format);
             var written = encoding.GetBytes(chars[..charWritten], destination);
             if (written < length)
             {
@@ -514,7 +514,7 @@ internal sealed class TimeOnlyTextConverter : IMapConverter
         {
             var destination = buffer[..length];
             Span<char> chars = stackalloc char[length + 16];
-            ((TimeOnly)value).TryFormat(chars, out var charWritten, format, null);
+            ((TimeOnly)value).TryFormat(chars, out var charWritten, format);
             var written = encoding.GetBytes(chars[..charWritten], destination);
             if (written < length)
             {

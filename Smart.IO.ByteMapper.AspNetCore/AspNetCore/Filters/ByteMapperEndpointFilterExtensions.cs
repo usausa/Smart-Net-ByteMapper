@@ -2,7 +2,6 @@ namespace Smart.AspNetCore.Filters;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 
 using Smart.AspNetCore.Formatters;
 

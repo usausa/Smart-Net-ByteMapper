@@ -185,7 +185,7 @@ public sealed class DateTimeTextConverterTest
         var sample = new DateTime(2026, 5, 17);
         var buffer = new byte[11];
         converter.Write(buffer, sample);
-        Assert.Equal(Encoding.ASCII.GetBytes("2026-May-17"), buffer);
+        Assert.Equal("2026-May-17"u8.ToArray(), buffer);
         Assert.Equal(sample, converter.Read(buffer));
     }
 
