@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
+using Smart.IO.ByteMapper.Converters;
 using Smart.IO.ByteMapper.Fast.Converters;
 
 // ---- カスタムコンバーター定義（テスト内で定義） ----

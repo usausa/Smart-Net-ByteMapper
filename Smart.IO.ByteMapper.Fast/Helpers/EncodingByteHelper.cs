@@ -2,16 +2,9 @@ namespace Smart.IO.ByteMapper.Fast.Helpers;
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
 
 internal static class EncodingByteHelper
 {
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string GetAsciiString(ReadOnlySpan<byte> bytes, int index, int length)
-    {
-        return Encoding.ASCII.GetString(bytes.Slice(index, length));
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string GetUnicodeString(ReadOnlySpan<byte> buffer, int index, int length, bool trim, Padding padding, char filler)
     {

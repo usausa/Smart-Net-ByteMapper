@@ -1,4 +1,4 @@
-namespace Develop;
+namespace Example;
 
 using Smart.IO.ByteMapper;
 using Smart.IO.ByteMapper.Converters;

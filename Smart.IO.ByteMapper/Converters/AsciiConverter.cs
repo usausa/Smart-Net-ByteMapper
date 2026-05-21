@@ -1,8 +1,6 @@
-namespace Smart.IO.ByteMapper.Fast.Converters;
+namespace Smart.IO.ByteMapper.Converters;
 
 using System.Text;
-
-using Smart.IO.ByteMapper.Fast.Helpers;
 
 /// <summary>ASCII 固定長文字列コンバーター。</summary>
 public sealed class AsciiConverter
@@ -24,7 +22,7 @@ public sealed class AsciiConverter
     }
 
     /// <summary>バッファーから ASCII 文字列を読み取ります。</summary>
-    public string Read(ReadOnlySpan<byte> buffer)
+    public unsafe string Read(ReadOnlySpan<byte> buffer)
     {
         var start = 0;
         var count = Size;
@@ -33,7 +31,18 @@ public sealed class AsciiConverter
             ByteMapperHelpers.TrimRange(buffer, ref start, ref count, padding, filler);
         }
 
-        return count == 0 ? string.Empty : EncodingByteHelper.GetAsciiString(buffer, start, count);
+        if (count == 0)
+        {
+            return string.Empty;
+        }
+
+        var slice = buffer.Slice(start, count);
+        var result = new string('\0', count);
+        fixed (char* dest = result)
+        {
+            Ascii.ToUtf16(slice, new Span<char>(dest, count), out _);
+        }
+        return result;
     }
 
     /// <summary>バッファーへ ASCII 文字列を書き込みます。</summary>
