@@ -1,8 +1,8 @@
-namespace Smart.IO.ByteMapper.Options.Converters;
+namespace Smart.IO.ByteMapper.Fast.Converters;
 
 using System.Text;
 
-using Smart.IO.ByteMapper.Options.Helpers;
+using Smart.IO.ByteMapper.Fast.Helpers;
 
 /// <summary>ASCII 固定長文字列コンバーター。</summary>
 public sealed class AsciiConverter

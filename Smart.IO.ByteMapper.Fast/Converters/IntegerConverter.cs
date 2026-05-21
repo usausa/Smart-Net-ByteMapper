@@ -1,6 +1,6 @@
-namespace Smart.IO.ByteMapper.Options.Converters;
+namespace Smart.IO.ByteMapper.Fast.Converters;
 
-using Smart.IO.ByteMapper.Options.Helpers;
+using Smart.IO.ByteMapper.Fast.Helpers;
 
 /// <summary>ASCII バイト表現の整数コンバーター。</summary>
 public sealed class IntegerConverter<T>

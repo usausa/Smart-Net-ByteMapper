@@ -1,4 +1,4 @@
-﻿namespace Smart.IO.ByteMapper.Options.Helpers;
+namespace Smart.IO.ByteMapper.Fast.Helpers;
 
 using System.Runtime.CompilerServices;
 

@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 public sealed class DateTimeTextConverter<T>
+    where T : struct
 {
     private readonly Encoding encoding;
     private readonly string format;
@@ -43,7 +44,7 @@ public sealed class DateTimeTextConverter<T>
 
         if (size == 0)
         {
-            return default!;
+            return default;
         }
 
         var str = encoding.GetString(source[..size]);
@@ -53,11 +54,6 @@ public sealed class DateTimeTextConverter<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        if (value is null)
-        {
-            destination[..Size].Fill(filler);
-            return;
-        }
         var str = FormatValue(value);
         if (String.IsNullOrEmpty(str))
         {
@@ -76,25 +72,26 @@ public sealed class DateTimeTextConverter<T>
 
     private T ParseValue(string str)
     {
-        if (typeof(T) == typeof(DateTime) || typeof(T) == typeof(DateTime?))
+        if (typeof(T) == typeof(DateTime))
         {
-            return (T)(object)DateTime.ParseExact(str, format, provider, style);
+            return Unsafe.BitCast<DateTime, T>(DateTime.ParseExact(str, format, provider, style));
         }
 
-        if (typeof(T) == typeof(DateTimeOffset) || typeof(T) == typeof(DateTimeOffset?))
+        if (typeof(T) == typeof(DateTimeOffset))
         {
-            return (T)(object)DateTimeOffset.ParseExact(str, format, provider, style);
+            return Unsafe.BitCast<DateTimeOffset, T>(DateTimeOffset.ParseExact(str, format, provider, style));
         }
 
-        if (typeof(T) == typeof(DateOnly) || typeof(T) == typeof(DateOnly?))
+        if (typeof(T) == typeof(DateOnly))
         {
-            return (T)(object)DateOnly.ParseExact(str, format, provider);
+            return Unsafe.BitCast<DateOnly, T>(DateOnly.ParseExact(str, format, provider));
         }
 
-        if (typeof(T) == typeof(TimeOnly) || typeof(T) == typeof(TimeOnly?))
+        if (typeof(T) == typeof(TimeOnly))
         {
-            return (T)(object)TimeOnly.ParseExact(str, format, provider);
+            return Unsafe.BitCast<TimeOnly, T>(TimeOnly.ParseExact(str, format, provider));
         }
+
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
@@ -105,7 +102,7 @@ public sealed class DateTimeTextConverter<T>
             return f.ToString(format, provider);
         }
 
-        return value?.ToString() ?? string.Empty;
+        return value.ToString() ?? string.Empty;
     }
 
     private static Encoding ResolveEncoding(int codePage) => codePage switch

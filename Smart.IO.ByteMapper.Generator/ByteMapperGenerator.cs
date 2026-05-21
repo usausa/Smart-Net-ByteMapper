@@ -25,6 +25,33 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private const string MapConstantAttributeName = "Smart.IO.ByteMapper.MapConstantAttribute";
     private const string ByteMapperPropertyAttributeName = "Smart.IO.ByteMapper.ByteMapperPropertyAttribute";
     private const string ByteMapperConverterAttributeOpenName = "Smart.IO.ByteMapper.ByteMapperConverterAttribute`1";
+    private const string ConverterSupportedTypesAttributeName = "Smart.IO.ByteMapper.ConverterSupportedTypesAttribute";
+    // Sizes of well-known unmanaged primitive types (used to resolve BinaryConverter<T>.Size at code-gen time)
+    private static readonly Dictionary<string, int> KnownUnmanagedSizes = new(StringComparer.Ordinal)
+    {
+        ["byte"]    = 1,
+        ["sbyte"]   = 1,
+        ["short"]   = 2,
+        ["ushort"]  = 2,
+        ["int"]     = 4,
+        ["uint"]    = 4,
+        ["long"]    = 8,
+        ["ulong"]   = 8,
+        ["float"]   = 4,
+        ["double"]  = 8,
+        ["decimal"] = 16,
+        ["System.Byte"]    = 1,
+        ["System.SByte"]   = 1,
+        ["System.Int16"]   = 2,
+        ["System.UInt16"]  = 2,
+        ["System.Int32"]   = 4,
+        ["System.UInt32"]  = 4,
+        ["System.Int64"]   = 8,
+        ["System.UInt64"]  = 8,
+        ["System.Single"]  = 4,
+        ["System.Double"]  = 8,
+        ["System.Decimal"] = 16,
+    };
 
     // default CRLF
     private static readonly byte[] DefaultDelimiter = [0x0D, 0x0A];
@@ -349,6 +376,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 var converterType = converterBase.TypeArguments[0];
                 var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
+                // SBM0008: check [ConverterSupportedTypes] on the attribute class
+                if (!CheckSupportedTypes(attr.AttributeClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
+                {
+                    break;
+                }
+
                 // Build ctor arg expressions
                 var ctorArgs = BuildConverterCtorArgs(attr, converterType);
 
@@ -382,6 +415,44 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         return members;
+    }
+
+    /// <summary>
+    /// Checks [ConverterSupportedTypes] on the attribute class against the target property type.
+    /// Returns false (and adds SBM0008) when the type is not supported.
+    /// </summary>
+    private static bool CheckSupportedTypes(
+        INamedTypeSymbol attrClass,
+        ITypeSymbol propType,
+        MethodDeclarationSyntax syntax,
+        IMethodSymbol methodSymbol,
+        IPropertySymbol prop,
+        List<DiagnosticInfo> errors)
+    {
+        var supportedAttr = attrClass.GetAttributes()
+            .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ConverterSupportedTypesAttributeName);
+
+        if (supportedAttr == null)
+        {
+            // No restriction declared — always allowed
+            return true;
+        }
+
+        // Fixed type list: property type must be in Types[]
+        var propTypeFqn = propType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        foreach (var typeConst in supportedAttr.ConstructorArguments[0].Values)
+        {
+            if (typeConst.Value is ITypeSymbol allowedType)
+            {
+                if (allowedType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == propTypeFqn)
+                {
+                    return true;
+                }
+            }
+        }
+
+        errors.Add(new DiagnosticInfo(Diagnostics.UnsupportedBinaryType, syntax.GetLocation(), $"{methodSymbol.Name}, {prop.Name}"));
+        return false;
     }
 
     private static List<string> BuildConverterCtorArgs(
@@ -526,9 +597,21 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 }
 
                 // static readonly int Size = Unsafe.SizeOf<T>() - value not known at compile time
-                // treat as StaticMember so emitter uses ConverterTypeFqn.Size
+                // For generic converters (e.g. BinaryConverter<int>), resolve the type argument size if possible
                 if (field.IsStatic && field.IsReadOnly)
                 {
+                    if (namedConverter.IsGenericType && namedConverter.TypeArguments.Length == 1)
+                    {
+                        var typeArg = namedConverter.TypeArguments[0];
+                        var typeKey = typeArg.SpecialType != SpecialType.None
+                            ? typeArg.ToDisplayString()
+                            : typeArg.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", string.Empty);
+                        if (KnownUnmanagedSizes.TryGetValue(typeKey, out var knownSize))
+                        {
+                            return (SizeKind.Const, knownSize);
+                        }
+                    }
+
                     return (SizeKind.StaticMember, null);
                 }
             }

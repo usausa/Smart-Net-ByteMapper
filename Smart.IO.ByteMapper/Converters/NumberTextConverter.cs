@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 
 public sealed class NumberTextConverter<T>
+    where T : struct
 {
     private readonly Encoding encoding;
     private readonly string? format;
@@ -48,7 +49,7 @@ public sealed class NumberTextConverter<T>
         }
         if (size == 0)
         {
-            return default!;
+            return default;
         }
         var str = encoding.GetString(source.Slice(start, size));
         return ParseValue(str);
@@ -72,63 +73,34 @@ public sealed class NumberTextConverter<T>
     {
         if (typeof(T) == typeof(int))
         {
-            return (T)(object)Int32.Parse(str, style, provider);
-        }
-
-        if (typeof(T) == typeof(int?))
-        {
-            return (T)(object)(int?)Int32.Parse(str, style, provider);
+            return Unsafe.BitCast<int, T>(Int32.Parse(str, style, provider));
         }
 
         if (typeof(T) == typeof(long))
         {
-            return (T)(object)Int64.Parse(str, style, provider);
-        }
-
-        if (typeof(T) == typeof(long?))
-        {
-            return (T)(object)(long?)Int64.Parse(str, style, provider);
+            return Unsafe.BitCast<long, T>(Int64.Parse(str, style, provider));
         }
 
         if (typeof(T) == typeof(short))
         {
-            return (T)(object)Int16.Parse(str, style, provider);
-        }
-
-        if (typeof(T) == typeof(short?))
-        {
-            return (T)(object)(short?)Int16.Parse(str, style, provider);
+            return Unsafe.BitCast<short, T>(Int16.Parse(str, style, provider));
         }
 
         if (typeof(T) == typeof(float))
         {
-            return (T)(object)Single.Parse(str, style, provider);
-        }
-
-        if (typeof(T) == typeof(float?))
-        {
-            return (T)(object)(float?)Single.Parse(str, style, provider);
+            return Unsafe.BitCast<float, T>(Single.Parse(str, style, provider));
         }
 
         if (typeof(T) == typeof(double))
         {
-            return (T)(object)Double.Parse(str, style, provider);
-        }
-
-        if (typeof(T) == typeof(double?))
-        {
-            return (T)(object)(double?)Double.Parse(str, style, provider);
+            return Unsafe.BitCast<double, T>(Double.Parse(str, style, provider));
         }
 
         if (typeof(T) == typeof(decimal))
         {
-            return (T)(object)Decimal.Parse(str, style, provider);
+            return Unsafe.BitCast<decimal, T>(Decimal.Parse(str, style, provider));
         }
 
-        if (typeof(T) == typeof(decimal?))
-        {
-            return (T)(object)(decimal?)Decimal.Parse(str, style, provider);
-        }
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
@@ -139,7 +111,7 @@ public sealed class NumberTextConverter<T>
             return f.ToString(format, provider);
         }
 
-        return value?.ToString() ?? string.Empty;
+        return value.ToString() ?? string.Empty;
     }
 
     private static Encoding ResolveEncoding(int codePage) => codePage switch

@@ -24,69 +24,78 @@ public sealed class BinaryConverter<T>
     {
         if (typeof(T) == typeof(byte))
         {
-            return (T)(object)source[0];
+            return Unsafe.BitCast<byte, T>(source[0]);
         }
 
         if (typeof(T) == typeof(sbyte))
         {
-            return (T)(object)(sbyte)source[0];
+            return Unsafe.BitCast<sbyte, T>((sbyte)source[0]);
         }
 
         if (typeof(T) == typeof(short))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadInt16BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadInt16LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadInt16BigEndian(source)
+                : BinaryPrimitives.ReadInt16LittleEndian(source);
+            return Unsafe.BitCast<short, T>(v);
         }
 
         if (typeof(T) == typeof(ushort))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadUInt16BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadUInt16LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadUInt16BigEndian(source)
+                : BinaryPrimitives.ReadUInt16LittleEndian(source);
+            return Unsafe.BitCast<ushort, T>(v);
         }
 
         if (typeof(T) == typeof(int))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadInt32BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadInt32LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadInt32BigEndian(source)
+                : BinaryPrimitives.ReadInt32LittleEndian(source);
+            return Unsafe.BitCast<int, T>(v);
         }
 
         if (typeof(T) == typeof(uint))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadUInt32BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadUInt32LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadUInt32BigEndian(source)
+                : BinaryPrimitives.ReadUInt32LittleEndian(source);
+            return Unsafe.BitCast<uint, T>(v);
         }
 
         if (typeof(T) == typeof(long))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadInt64BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadInt64LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadInt64BigEndian(source)
+                : BinaryPrimitives.ReadInt64LittleEndian(source);
+            return Unsafe.BitCast<long, T>(v);
         }
 
         if (typeof(T) == typeof(ulong))
         {
-            return endian == Endian.Big
-                ? (T)(object)BinaryPrimitives.ReadUInt64BigEndian(source)
-                : (T)(object)BinaryPrimitives.ReadUInt64LittleEndian(source);
+            var v = endian == Endian.Big
+                ? BinaryPrimitives.ReadUInt64BigEndian(source)
+                : BinaryPrimitives.ReadUInt64LittleEndian(source);
+            return Unsafe.BitCast<ulong, T>(v);
         }
+
         if (typeof(T) == typeof(float))
         {
             var bits = endian == Endian.Big
                 ? BinaryPrimitives.ReadInt32BigEndian(source)
                 : BinaryPrimitives.ReadInt32LittleEndian(source);
-            return (T)(object)BitConverter.Int32BitsToSingle(bits);
+            return Unsafe.BitCast<float, T>(BitConverter.Int32BitsToSingle(bits));
         }
+
         if (typeof(T) == typeof(double))
         {
             var bits = endian == Endian.Big
                 ? BinaryPrimitives.ReadInt64BigEndian(source)
                 : BinaryPrimitives.ReadInt64LittleEndian(source);
-            return (T)(object)BitConverter.Int64BitsToDouble(bits);
+            return Unsafe.BitCast<double, T>(BitConverter.Int64BitsToDouble(bits));
         }
+
         if (typeof(T) == typeof(decimal))
         {
             Span<int> parts = stackalloc int[4];
@@ -96,8 +105,10 @@ public sealed class BinaryConverter<T>
                     ? BinaryPrimitives.ReadInt32BigEndian(source.Slice(i * 4, 4))
                     : BinaryPrimitives.ReadInt32LittleEndian(source.Slice(i * 4, 4));
             }
-            return (T)(object)new decimal(parts[0], parts[1], parts[2], (parts[3] & unchecked((int)0x80000000)) != 0, (byte)((parts[3] >> 16) & 0x7F));
+            var d = new decimal(parts[0], parts[1], parts[2], (parts[3] & unchecked((int)0x80000000)) != 0, (byte)((parts[3] >> 16) & 0x7F));
+            return Unsafe.BitCast<decimal, T>(d);
         }
+
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
@@ -106,96 +117,97 @@ public sealed class BinaryConverter<T>
     {
         if (typeof(T) == typeof(byte))
         {
-            destination[0] = (byte)(object)value;
+            destination[0] = Unsafe.BitCast<T, byte>(value);
             return;
         }
 
         if (typeof(T) == typeof(sbyte))
         {
-            destination[0] = (byte)(sbyte)(object)value;
+            destination[0] = (byte)Unsafe.BitCast<T, sbyte>(value);
             return;
         }
+
         if (typeof(T) == typeof(short))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteInt16BigEndian(destination, (short)(object)value);
+                BinaryPrimitives.WriteInt16BigEndian(destination, Unsafe.BitCast<T, short>(value));
             }
             else
             {
-                BinaryPrimitives.WriteInt16LittleEndian(destination, (short)(object)value);
+                BinaryPrimitives.WriteInt16LittleEndian(destination, Unsafe.BitCast<T, short>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(ushort))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteUInt16BigEndian(destination, (ushort)(object)value);
+                BinaryPrimitives.WriteUInt16BigEndian(destination, Unsafe.BitCast<T, ushort>(value));
             }
             else
             {
-                BinaryPrimitives.WriteUInt16LittleEndian(destination, (ushort)(object)value);
+                BinaryPrimitives.WriteUInt16LittleEndian(destination, Unsafe.BitCast<T, ushort>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(int))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteInt32BigEndian(destination, (int)(object)value);
+                BinaryPrimitives.WriteInt32BigEndian(destination, Unsafe.BitCast<T, int>(value));
             }
             else
             {
-                BinaryPrimitives.WriteInt32LittleEndian(destination, (int)(object)value);
+                BinaryPrimitives.WriteInt32LittleEndian(destination, Unsafe.BitCast<T, int>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(uint))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteUInt32BigEndian(destination, (uint)(object)value);
+                BinaryPrimitives.WriteUInt32BigEndian(destination, Unsafe.BitCast<T, uint>(value));
             }
             else
             {
-                BinaryPrimitives.WriteUInt32LittleEndian(destination, (uint)(object)value);
+                BinaryPrimitives.WriteUInt32LittleEndian(destination, Unsafe.BitCast<T, uint>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(long))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteInt64BigEndian(destination, (long)(object)value);
+                BinaryPrimitives.WriteInt64BigEndian(destination, Unsafe.BitCast<T, long>(value));
             }
             else
             {
-                BinaryPrimitives.WriteInt64LittleEndian(destination, (long)(object)value);
+                BinaryPrimitives.WriteInt64LittleEndian(destination, Unsafe.BitCast<T, long>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(ulong))
         {
             if (endian == Endian.Big)
             {
-                BinaryPrimitives.WriteUInt64BigEndian(destination, (ulong)(object)value);
+                BinaryPrimitives.WriteUInt64BigEndian(destination, Unsafe.BitCast<T, ulong>(value));
             }
             else
             {
-                BinaryPrimitives.WriteUInt64LittleEndian(destination, (ulong)(object)value);
+                BinaryPrimitives.WriteUInt64LittleEndian(destination, Unsafe.BitCast<T, ulong>(value));
             }
-
             return;
         }
+
         if (typeof(T) == typeof(float))
         {
-            var bits = BitConverter.SingleToInt32Bits((float)(object)value);
+            var bits = BitConverter.SingleToInt32Bits(Unsafe.BitCast<T, float>(value));
             if (endian == Endian.Big)
             {
                 BinaryPrimitives.WriteInt32BigEndian(destination, bits);
@@ -204,12 +216,12 @@ public sealed class BinaryConverter<T>
             {
                 BinaryPrimitives.WriteInt32LittleEndian(destination, bits);
             }
-
             return;
         }
+
         if (typeof(T) == typeof(double))
         {
-            var bits = BitConverter.DoubleToInt64Bits((double)(object)value);
+            var bits = BitConverter.DoubleToInt64Bits(Unsafe.BitCast<T, double>(value));
             if (endian == Endian.Big)
             {
                 BinaryPrimitives.WriteInt64BigEndian(destination, bits);
@@ -218,12 +230,12 @@ public sealed class BinaryConverter<T>
             {
                 BinaryPrimitives.WriteInt64LittleEndian(destination, bits);
             }
-
             return;
         }
+
         if (typeof(T) == typeof(decimal))
         {
-            var d = (decimal)(object)value;
+            var d = Unsafe.BitCast<T, decimal>(value);
             Span<int> parts = stackalloc int[4];
             decimal.GetBits(d, parts);
             for (var i = 0; i < 4; i++)
@@ -239,6 +251,7 @@ public sealed class BinaryConverter<T>
             }
             return;
         }
+
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 }

@@ -20,6 +20,6 @@
   </Project>
   <Project Path="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
   <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
-  <Project Path="Smart.IO.ByteMapper.Options/Smart.IO.ByteMapper.Options.csproj" />
+  <Project Path="Smart.IO.ByteMapper.Fast/Smart.IO.ByteMapper.Fast.csproj" />
   <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
 </Solution>

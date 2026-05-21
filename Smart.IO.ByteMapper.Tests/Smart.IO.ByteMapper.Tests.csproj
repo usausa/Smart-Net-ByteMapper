@@ -32,7 +32,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper.Generator\Smart.IO.ByteMapper.Generator.csproj" OutputItemType="analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
-    <ProjectReference Include="..\Smart.IO.ByteMapper.Options\Smart.IO.ByteMapper.Options.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Fast\Smart.IO.ByteMapper.Fast.csproj" />
   </ItemGroup>
 
 </Project>

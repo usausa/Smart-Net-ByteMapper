@@ -1,6 +1,6 @@
-namespace Smart.IO.ByteMapper.Options.Converters;
+namespace Smart.IO.ByteMapper.Fast.Converters;
 
-using Smart.IO.ByteMapper.Options.Helpers;
+using Smart.IO.ByteMapper.Fast.Helpers;
 
 /// <summary>UTF-16LE（.NET 内部表現）文字列コンバーター。</summary>
 public sealed class UnicodeConverter
