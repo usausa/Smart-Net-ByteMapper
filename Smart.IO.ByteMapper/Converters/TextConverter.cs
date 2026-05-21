@@ -15,7 +15,7 @@ public sealed class TextConverter
     public TextConverter(int length, int codePage = 20127, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
     {
         Size = length;
-        this.encoding = ResolveEncoding(codePage);
+        encoding = ResolveEncoding(codePage);
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;

@@ -26,9 +26,9 @@ public sealed class DateTimeTextConverter<T>
     {
         Size = length;
         this.format = format;
-        this.encoding = ResolveEncoding(codePage);
+        encoding = ResolveEncoding(codePage);
         this.style = style;
-        this.provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+        provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
         this.filler = filler;
     }
 

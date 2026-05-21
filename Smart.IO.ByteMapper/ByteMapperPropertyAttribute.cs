@@ -36,4 +36,3 @@ public sealed class ConverterSupportedTypesAttribute : Attribute
         Types = types;
     }
 }
-

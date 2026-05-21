@@ -30,12 +30,12 @@ public sealed class NumberTextConverter<T>
     {
         Size = length;
         this.format = format;
-        this.encoding = ResolveEncoding(codePage);
+        encoding = ResolveEncoding(codePage);
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;
         this.style = style;
-        this.provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+        provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
