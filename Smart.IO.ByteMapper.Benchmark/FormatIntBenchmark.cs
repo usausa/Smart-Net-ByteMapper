@@ -102,8 +102,8 @@ public class FormatIntBenchmark
     // --- Read: int via TryParseInt32 ---
 
     private readonly byte[] parseShortBuffer = "      1234"u8.ToArray();
-    private readonly byte[] parseIntBuffer   = "    123456"u8.ToArray();
-    private readonly byte[] parseLongBuffer  = "  12345678901234"u8.ToArray();
+    private readonly byte[] parseIntBuffer = "    123456"u8.ToArray();
+    private readonly byte[] parseLongBuffer = "  12345678901234"u8.ToArray();
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt32 (int=1234)")]
     public int TryParseInt32_Short()

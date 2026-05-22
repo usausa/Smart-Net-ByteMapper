@@ -40,11 +40,8 @@ internal sealed record ConverterCallModel(
 
 internal sealed record MemberMappingModel(
     string PropertyName,
-    string PropertyTypeFqn,
-    bool IsNullable,
     int Offset,
     int Size,
-    int PropertyIndex,
     ConverterCallModel Converter);
 
 internal sealed record TypeMappingModel(
@@ -55,13 +52,7 @@ internal sealed record TypeMappingModel(
     byte Filler);
 
 internal sealed record LayoutModel(
-    int Size,
-    byte Filler,
-    byte NullFiller,
-    bool UseDelimiter,
-    EquatableArray<byte> Delimiter,
-    bool AutoFiller,
-    bool Validation);
+    int Size);
 
 internal sealed record MapperMethodModel(
     string Namespace,
@@ -69,11 +60,8 @@ internal sealed record MapperMethodModel(
     bool IsValueType,
     Accessibility MethodAccessibility,
     string MethodName,
-    MapperKind Kind,
     MapperShape Shape,
     string TargetTypeFqn,
-    string? ProfileTypeFqn,
-    int MethodIndex,
     LayoutModel Layout,
     EquatableArray<MemberMappingModel> Members,
     EquatableArray<TypeMappingModel> TypeMappings,

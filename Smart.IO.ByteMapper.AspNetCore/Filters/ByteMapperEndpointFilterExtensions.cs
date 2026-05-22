@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
 // Strongly-typed extension methods for registering ByteMapper body binding on Minimal API route handlers.
@@ -174,13 +173,10 @@ public static class ByteMapperEndpointFilterExtensions
     {
         var elementSize = binding.ElementSize;
         var buffer = ArrayPool<byte>.Shared.Rent(elementSize);
-        var items = new System.Collections.Generic.List<T>();
+        var items = new List<T>();
         try
         {
-            int read;
-            while ((read = await httpContext.Request.Body
-                       .ReadAsync(buffer.AsMemory(0, elementSize), httpContext.RequestAborted)
-                       .ConfigureAwait(false)) == elementSize)
+            while ((await httpContext.Request.Body.ReadAsync(buffer.AsMemory(0, elementSize), httpContext.RequestAborted).ConfigureAwait(false)) == elementSize)
             {
                 var item = binding.Factory();
                 binding.ReadElement(buffer.AsSpan(0, elementSize), item);

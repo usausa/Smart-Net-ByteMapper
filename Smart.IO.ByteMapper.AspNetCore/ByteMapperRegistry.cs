@@ -30,7 +30,7 @@ public sealed class ByteMapperRegistry
         => singleBindings.TryGetValue((typeof(T), typeof(TProfile)), out var v) ? (ByteMapperBinding<T>)v : null;
 
     public ByteMapperBinding? GetBinding(Type type, Type? profileType = null)
-        => singleBindings.TryGetValue((type, profileType), out var v) ? v : null;
+        => singleBindings.GetValueOrDefault((type, profileType));
 
     // ---- array / enumerable ----
 
@@ -42,5 +42,5 @@ public sealed class ByteMapperRegistry
         => arrayBindings.TryGetValue((typeof(T), typeof(TProfile)), out var v) ? (ByteMapperArrayBinding<T>)v : null;
 
     public object? GetArrayBinding(Type elementType, Type? profileType = null)
-        => arrayBindings.TryGetValue((elementType, profileType), out var v) ? v : null;
+        => arrayBindings.GetValueOrDefault((elementType, profileType));
 }

@@ -121,7 +121,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
         // If a profile type is present and it has [Map(size)], use that size.
         // Otherwise fall back to the entity type's [Map(size)].
-        var sizeSourceType = (profileType is not null) ? profileType : entityType;
+        var sizeSourceType = profileType ?? entityType;
         var mapAttr = sizeSourceType.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
         if (mapAttr is null && profileType is not null)

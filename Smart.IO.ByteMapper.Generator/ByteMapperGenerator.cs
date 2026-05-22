@@ -215,7 +215,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         // Layout resolution
         var delimiterBytes = useDelimiter ? (delimiter ?? DefaultDelimiter) : [];
-        var fillerByte = (byte)0x20;
         ResolveLayout(
             members,
             typeMappings,
@@ -227,14 +226,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             diagErrors);
 
         // Determine method index placeholder (will be assigned by Execute)
-        var layoutModel = new LayoutModel(
-            mapSize,
-            fillerByte,
-            nullFiller ?? 0x20,
-            useDelimiter,
-            new EquatableArray<byte>(delimiterBytes),
-            autoFiller,
-            validateLayout);
+        var layoutModel = new LayoutModel(mapSize);
 
         var className = SourceGenerateHelper.SymbolExtensions.GetClassName(containingType);
         var model = new MapperMethodModel(
@@ -243,11 +235,8 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             containingType.IsValueType,
             symbol.DeclaredAccessibility,
             symbol.Name,
-            kind,
             shape,
             targetType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            0, // MethodIndex assigned in Execute
             layoutModel,
             new EquatableArray<MemberMappingModel>(members.ToArray()),
             new EquatableArray<TypeMappingModel>(typeMappings.ToArray()),
@@ -396,17 +385,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     sizeKind,
                     constSize);
 
-                var propTypeFqn = targetProp.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                var isNullable = targetProp.Type.IsNullableSymbol();
                 var size = constSize ?? 0; // will be fixed for instance size converters
 
                 members.Add(new MemberMappingModel(
                     targetProp.Name,
-                    propTypeFqn,
-                    isNullable,
                     offset,
                     size,
-                    propertyIndex,
                     converterCall));
 
                 propertyIndex++;
@@ -717,12 +701,10 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 var fixedMembers = m.Members.AsArray().Select((member, pi) =>
                     member with
                     {
-                        PropertyIndex = pi,
                         Converter = member.Converter with { FieldName = $"Converter{i}_{pi}" }
                     }).ToArray();
                 numberedMethods.Add(m with
                 {
-                    MethodIndex = i,
                     Members = new EquatableArray<MemberMappingModel>(fixedMembers)
                 });
             }

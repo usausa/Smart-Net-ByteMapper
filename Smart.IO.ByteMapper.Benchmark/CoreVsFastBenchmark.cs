@@ -74,16 +74,26 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public string? CoreAsciiRead()
     {
-        var c = coreAscii; var buf = asciiReadBuffer; string? r = null;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = coreAscii;
+        var buf = asciiReadBuffer;
+        string? r = null;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public string? FastAsciiRead()
     {
-        var c = fastAscii; var buf = asciiReadBuffer; string? r = null;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = fastAscii;
+        var buf = asciiReadBuffer;
+        string? r = null;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
@@ -92,15 +102,23 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public void CoreAsciiWrite()
     {
-        var c = coreAscii; var buf = asciiWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, AsciiValue); }
+        var c = coreAscii;
+        var buf = asciiWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, AsciiValue);
+        }
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public void FastAsciiWrite()
     {
-        var c = fastAscii; var buf = asciiWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, AsciiValue); }
+        var c = fastAscii;
+        var buf = asciiWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, AsciiValue);
+        }
     }
 
     // ===== Integer Read =====
@@ -108,16 +126,26 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public int CoreIntRead()
     {
-        var c = coreInt; var buf = intReadBuffer; int r = 0;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = coreInt;
+        var buf = intReadBuffer;
+        var r = 0;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public int? FastIntRead()
     {
-        var c = fastInt; var buf = intReadBuffer; int? r = null;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = fastInt;
+        var buf = intReadBuffer;
+        int? r = null;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
@@ -126,15 +154,23 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public void CoreIntWrite()
     {
-        var c = coreInt; var buf = intWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, IntValue); }
+        var c = coreInt;
+        var buf = intWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, IntValue);
+        }
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public void FastIntWrite()
     {
-        var c = fastInt; var buf = intWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, IntValue); }
+        var c = fastInt;
+        var buf = intWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, IntValue);
+        }
     }
 
     // ===== Decimal Read =====
@@ -142,16 +178,26 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public decimal CoreDecimalRead()
     {
-        var c = coreDec; var buf = decReadBuffer; decimal r = 0;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = coreDec;
+        var buf = decReadBuffer;
+        decimal r = 0;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public decimal? FastDecimalRead()
     {
-        var c = fastDec; var buf = decReadBuffer; decimal? r = null;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = fastDec;
+        var buf = decReadBuffer;
+        decimal? r = null;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
@@ -160,15 +206,23 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public void CoreDecimalWrite()
     {
-        var c = coreDec; var buf = decWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, DecValue); }
+        var c = coreDec;
+        var buf = decWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, DecValue);
+        }
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public void FastDecimalWrite()
     {
-        var c = fastDec; var buf = decWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, DecValue); }
+        var c = fastDec;
+        var buf = decWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, DecValue);
+        }
     }
 
     // ===== DateTime Read =====
@@ -176,16 +230,26 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public DateTime CoreDateTimeRead()
     {
-        var c = coreDt; var buf = dtReadBuffer; var r = default(DateTime);
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = coreDt;
+        var buf = dtReadBuffer;
+        var r = default(DateTime);
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public DateTime? FastDateTimeRead()
     {
-        var c = fastDt; var buf = dtReadBuffer; DateTime? r = null;
-        for (var i = 0; i < N; i++) { r = c.Read(buf); }
+        var c = fastDt;
+        var buf = dtReadBuffer;
+        DateTime? r = null;
+        for (var i = 0; i < N; i++)
+        {
+            r = c.Read(buf);
+        }
         return r;
     }
 
@@ -194,14 +258,22 @@ public class CoreVsFastBenchmark
     [Benchmark(OperationsPerInvoke = N)]
     public void CoreDateTimeWrite()
     {
-        var c = coreDt; var buf = dtWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, DtValue); }
+        var c = coreDt;
+        var buf = dtWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, DtValue);
+        }
     }
 
     [Benchmark(OperationsPerInvoke = N)]
     public void FastDateTimeWrite()
     {
-        var c = fastDt; var buf = dtWriteBuffer;
-        for (var i = 0; i < N; i++) { c.Write(buf, DtValue); }
+        var c = fastDt;
+        var buf = dtWriteBuffer;
+        for (var i = 0; i < N; i++)
+        {
+            c.Write(buf, DtValue);
+        }
     }
 }

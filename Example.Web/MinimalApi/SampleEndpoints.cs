@@ -8,7 +8,7 @@ public static class SampleEndpoints
 {
     private static SampleData[] CreateDummyData() =>
     [
-        new SampleData
+        new()
         {
             Code = "1111111111111",
             Name = "あああああ",
@@ -16,7 +16,7 @@ public static class SampleEndpoints
             Price = 100m,
             Date = DateTime.Today
         },
-        new SampleData
+        new()
         {
             Code = "2222222222222",
             Name = "いいいいいい",
@@ -24,7 +24,7 @@ public static class SampleEndpoints
             Price = 9999999.99m,
             Date = DateTime.Today.AddDays(-1)
         },
-        new SampleData
+        new()
         {
             Code = "XXXXXXXXXXXXX",
             Name = "Sample data",
@@ -39,7 +39,7 @@ public static class SampleEndpoints
         var group = app.MapGroup("/minimal/sample");
 
         // GET: return array of SampleData as binary
-        group.MapGet("/array", () => CreateDummyData())
+        group.MapGet("/array", CreateDummyData)
             .WithByteMapperArrayBody<SampleData>()
             .WithName("MinimalGetArray");
 
@@ -49,7 +49,7 @@ public static class SampleEndpoints
             .WithName("MinimalGetSingle");
 
         // GET: return empty array
-        group.MapGet("/empty", () => Array.Empty<SampleData>())
+        group.MapGet("/empty", Array.Empty<SampleData>)
             .WithByteMapperArrayBody<SampleData>()
             .WithName("MinimalGetEmpty");
 
@@ -78,7 +78,7 @@ public static class SampleEndpoints
         // ---- Profile: SampleDataCodeNameProfile (35 bytes per record, code + name fields only) ----
 
         // GET: return array of SampleData serialised using the "code-name" profile
-        group.MapGet("/profile/code-name", () => CreateDummyData())
+        group.MapGet("/profile/code-name", CreateDummyData)
             .WithByteMapperArrayBody<SampleData, SampleDataCodeNameProfile>()
             .WithName("MinimalGetProfileCodeName");
 

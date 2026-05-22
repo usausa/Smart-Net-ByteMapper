@@ -29,7 +29,7 @@ public sealed class MapController : Controller
 
     private static SampleData[] CreateDummyData() =>
     [
-        new SampleData
+        new()
         {
             Code = "1111111111111",
             Name = "あああああ",
@@ -37,7 +37,7 @@ public sealed class MapController : Controller
             Price = 100m,
             Date = DateTime.Today
         },
-        new SampleData
+        new()
         {
             Code = "2222222222222",
             Name = "いいいいいい",
@@ -45,7 +45,7 @@ public sealed class MapController : Controller
             Price = 9999999.99m,
             Date = DateTime.Today.AddDays(-1)
         },
-        new SampleData
+        new()
         {
             Code = "XXXXXXXXXXXXX",
             Name = "Sample data",
