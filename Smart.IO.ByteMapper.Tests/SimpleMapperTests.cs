@@ -14,7 +14,7 @@ internal sealed class SimpleRecord
     public int Id { get; set; }
 
     [MapText(4, 32)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = default!;
 }
 
 // ---- Mapper ----

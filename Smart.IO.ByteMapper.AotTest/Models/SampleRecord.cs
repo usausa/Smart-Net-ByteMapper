@@ -8,10 +8,10 @@ using Smart.IO.ByteMapper;
 public sealed class SampleRecord
 {
     [MapText(0, 8)]
-    public string Code { get; set; } = string.Empty;
+    public string Code { get; set; } = default!;
 
     [MapText(8, 20)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = default!;
 
     [MapNumberText<int>(28, 6)]
     public int Qty { get; set; }

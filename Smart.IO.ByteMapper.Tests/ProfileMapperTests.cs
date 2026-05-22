@@ -10,48 +10,46 @@ using System.Text;
 internal sealed class ProfileTarget
 {
     public int Id { get; set; }
-    public string Code { get; set; } = string.Empty;
-    public string Label { get; set; } = string.Empty;
+    public string Code { get; set; } = default!;
+    public string Label { get; set; } = default!;
     public bool? Active { get; set; }
 }
 
 // ---- Profile A: compact layout, 20 bytes total ----
 // Id(0,4) + Code(4,8) + Active(12,1) + Label(13,7)
 
+#pragma warning disable CA1812
 [Map(20, UseDelimiter = false)]
 internal sealed class ProfileA
 {
     [MapBinary<int>(0)]
     public int Id { get; set; }
-
     [MapText(4, 8)]
-    public string Code { get; set; } = string.Empty;
-
+    public string Code { get; set; } = default!;
     [MapBoolean(12)]
     public bool? Active { get; set; }
-
     [MapText(13, 7)]
-    public string Label { get; set; } = string.Empty;
+    public string Label { get; set; } = default!;
 }
+#pragma warning restore CA1812
 
 // ---- Profile B: wide layout, 40 bytes total ----
 // Id(0,4) + Code(4,16) + Active(20,1) + Label(21,19)
 
+#pragma warning disable CA1812
 [Map(40, UseDelimiter = false)]
 internal sealed class ProfileB
 {
     [MapBinary<int>(0)]
     public int Id { get; set; }
-
     [MapText(4, 16)]
-    public string Code { get; set; } = string.Empty;
-
+    public string Code { get; set; } = default!;
     [MapBoolean(20)]
     public bool? Active { get; set; }
-
     [MapText(21, 19)]
-    public string Label { get; set; } = string.Empty;
+    public string Label { get; set; } = default!;
 }
+#pragma warning restore CA1812
 
 // ---- Mappers using Profile ----
 

@@ -15,7 +15,7 @@ internal sealed class BinaryRecord
 internal sealed class TextRecord
 {
     [MapText(0, 20)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = default!;
 }
 
 [Map(1, UseDelimiter = false, AutoFiller = false)]

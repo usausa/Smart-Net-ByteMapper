@@ -12,7 +12,7 @@ internal sealed class BoolRecord
     public bool? Flag { get; set; }
 
     [MapText(1, 9)]
-    public string Note { get; set; } = string.Empty;
+    public string Note { get; set; } = default!;
 }
 
 // ---- Mapper ----

@@ -36,7 +36,7 @@ internal sealed class SampleRecord
     public int Id { get; set; }
 
     [MapText(4, 32)]
-    public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = default!;
 }
 
 internal static partial class SampleMappers
