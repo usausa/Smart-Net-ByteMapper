@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.AspNetCore.Formatters;
 
 using System;
 using System.Buffers;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -45,6 +46,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         return registry.GetBinding(type) is not null;
     }
 
+    [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
         // Type itself may be IEnumerable<T>
@@ -88,6 +90,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         }
 
         // IEnumerable<T> — read as array, return as array (assignable to IEnumerable<T>)
+        // Suppressed: modelType is a well-known registered type; GetInterfaces is safe here.
         var enumElemType = GetEnumerableElementType(modelType);
         if (enumElemType is not null)
         {
@@ -165,7 +168,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             ArrayPool<byte>.Shared.Return(buffer);
         }
 
-        var array = Array.CreateInstance(elementType, items.Count);
+        var array = CreateArrayInstance(elementType, items.Count);
         for (var i = 0; i < items.Count; i++)
         {
             array.SetValue(items[i], i);
@@ -173,4 +176,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
 
         return array;
     }
+
+    [UnconditionalSuppressMessage("AotAnalysis", "IL3050", Justification = "elementType is a registered ByteMapper entity type; array creation is safe at runtime.")]
+    private static Array CreateArrayInstance(Type elementType, int count) => Array.CreateInstance(elementType, count);
 }
