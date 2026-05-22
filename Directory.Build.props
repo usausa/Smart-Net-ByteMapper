@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-<Version>0.0.1</Version>
+    <Version>2.8.0</Version>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
@@ -29,7 +29,7 @@
     <Authors>machi_pon</Authors>
     <Copyright>Copyright (c) 2024 machi_pon</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl>https://github.com/usausa/template-library-with-generator</PackageProjectUrl>
+    <PackageProjectUrl>tps://github.com/usausa/Smart-Net-ByteMapper</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
