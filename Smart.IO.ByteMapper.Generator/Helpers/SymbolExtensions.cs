@@ -52,7 +52,7 @@ internal static class SymbolExtensions
     // Walks up the base class chain of attributeClass and returns the first constructed instance
     // of the open generic type ByteMapperConverterAttribute<>.
     // Returns null if the attribute does not derive from that open generic.
-    public static INamedTypeSymbol? FindConverterAttributeBase(
+    public static INamedTypeSymbol? FindConverterAttributeBase(this INamedTypeSymbol attributeClass, INamedTypeSymbol converterAttributeOpenGeneric)
     {
         var current = attributeClass.BaseType;
         while (current != null)

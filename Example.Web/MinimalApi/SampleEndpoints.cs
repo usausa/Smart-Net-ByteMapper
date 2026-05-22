@@ -41,28 +41,24 @@ public static class SampleEndpoints
         // GET: return array of SampleData as binary
         group.MapGet("/array", () => CreateDummyData())
             .WithByteMapperArrayBody<SampleData>()
-            .WithName("MinimalGetArray")
-            .WithOpenApi();
+            .WithName("MinimalGetArray");
 
         // GET: return single SampleData as binary
         group.MapGet("/single", () => CreateDummyData().First())
             .WithByteMapperBody<SampleData>()
-            .WithName("MinimalGetSingle")
-            .WithOpenApi();
+            .WithName("MinimalGetSingle");
 
         // GET: return empty array
         group.MapGet("/empty", () => Array.Empty<SampleData>())
             .WithByteMapperArrayBody<SampleData>()
-            .WithName("MinimalGetEmpty")
-            .WithOpenApi();
+            .WithName("MinimalGetEmpty");
 
         // GET: return short format (SampleDataShort, 35 bytes per record)
         group.MapGet("/short", () => CreateDummyData()
                 .Select(d => new SampleDataShort { Code = d.Code, Name = d.Name })
                 .ToArray())
             .WithByteMapperArrayBody<SampleDataShort>()
-            .WithName("MinimalGetShort")
-            .WithOpenApi();
+            .WithName("MinimalGetShort");
 
         // POST: receive array of SampleData from binary body (body is parsed by the ByteMapper filter)
         group.MapPost("/array", (HttpContext ctx)
@@ -84,8 +80,7 @@ public static class SampleEndpoints
         // GET: return array of SampleData serialised using the "code-name" profile
         group.MapGet("/profile/code-name", () => CreateDummyData())
             .WithByteMapperArrayBody<SampleData, SampleDataCodeNameProfile>()
-            .WithName("MinimalGetProfileCodeName")
-            .WithOpenApi();
+            .WithName("MinimalGetProfileCodeName");
 
         // POST: receive SampleData records using the "code-name" profile
         group.MapPost("/profile/code-name", (HttpContext ctx)

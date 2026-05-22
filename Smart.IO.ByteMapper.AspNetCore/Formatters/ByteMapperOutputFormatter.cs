@@ -28,7 +28,10 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
 
     protected override bool CanWriteType(Type? type)
     {
-        if (type is null) return false;
+        if (type is null)
+        {
+            return false;
+        }
 
         if (type.IsArray)
         {

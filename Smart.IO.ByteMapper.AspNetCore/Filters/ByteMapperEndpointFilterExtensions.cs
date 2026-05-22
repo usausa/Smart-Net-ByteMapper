@@ -18,12 +18,13 @@ public static class ByteMapperEndpointFilterExtensions
 {
     // Retrieves a body value parsed by WithByteMapperBody<T> from HttpContext.Items.
     // Returns null if the filter has not run or the body was too short.
-    public static T? GetByteMapperBody<T>(
+    public static T? GetByteMapperBody<T>(this HttpContext httpContext)
+        where T : class
         => httpContext.Items[typeof(T)] as T;
 
     // Retrieves an array body value parsed by WithByteMapperArrayBody<T> from HttpContext.Items.
     // Returns null if the filter has not run.
-    public static T[]? GetByteMapperArrayBody<T>(
+    public static T[]? GetByteMapperArrayBody<T>(this HttpContext httpContext)
         => httpContext.Items[typeof(T[])] as T[];
     // ----------------------------------------------------------------
     // Single entity
@@ -148,7 +149,10 @@ public static class ByteMapperEndpointFilterExtensions
                 .ReadAsync(buffer.AsMemory(0, size), httpContext.RequestAborted)
                 .ConfigureAwait(false);
 
-            if (read < size) return;
+            if (read < size)
+            {
+                return;
+            }
 
             var target = binding.Create();
             binding.Read(buffer.AsSpan(0, size), target);

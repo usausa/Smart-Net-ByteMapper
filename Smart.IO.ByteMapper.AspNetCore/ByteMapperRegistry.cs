@@ -13,11 +13,11 @@ public sealed class ByteMapperRegistry
     private readonly FrozenDictionary<(Type Type, Type? Profile), object> arrayBindings;
 
     public ByteMapperRegistry(
-        IReadOnlyDictionary<(Type, Type?), ByteMapperBinding> single,
-        IReadOnlyDictionary<(Type, Type?), object> array)
+        IReadOnlyDictionary<(Type Type, Type? Profile), ByteMapperBinding> singleDict,
+        IReadOnlyDictionary<(Type Type, Type? Profile), object> arrayDict)
     {
-        singleBindings = single.ToFrozenDictionary();
-        arrayBindings = array.ToFrozenDictionary();
+        singleBindings = singleDict.ToFrozenDictionary();
+        arrayBindings = arrayDict.ToFrozenDictionary();
     }
 
     // ---- single entity ----
@@ -25,7 +25,8 @@ public sealed class ByteMapperRegistry
     public ByteMapperBinding<T>? GetBinding<T>()
         => singleBindings.TryGetValue((typeof(T), null), out var v) ? (ByteMapperBinding<T>)v : null;
 
-    public ByteMapperBinding<T>? GetBinding<T, TProfile>() where TProfile : class
+    public ByteMapperBinding<T>? GetBinding<T, TProfile>()
+        where TProfile : class
         => singleBindings.TryGetValue((typeof(T), typeof(TProfile)), out var v) ? (ByteMapperBinding<T>)v : null;
 
     public ByteMapperBinding? GetBinding(Type type, Type? profileType = null)
@@ -36,7 +37,8 @@ public sealed class ByteMapperRegistry
     public ByteMapperArrayBinding<T>? GetArrayBinding<T>()
         => arrayBindings.TryGetValue((typeof(T), null), out var v) ? (ByteMapperArrayBinding<T>)v : null;
 
-    public ByteMapperArrayBinding<T>? GetArrayBinding<T, TProfile>() where TProfile : class
+    public ByteMapperArrayBinding<T>? GetArrayBinding<T, TProfile>()
+        where TProfile : class
         => arrayBindings.TryGetValue((typeof(T), typeof(TProfile)), out var v) ? (ByteMapperArrayBinding<T>)v : null;
 
     public object? GetArrayBinding(Type elementType, Type? profileType = null)

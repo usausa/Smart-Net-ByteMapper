@@ -104,6 +104,7 @@ public sealed class NumberTextConverter<T>
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
+#pragma warning disable CA1508
     private string FormatValue(T value)
     {
         if (value is IFormattable f)
@@ -113,6 +114,7 @@ public sealed class NumberTextConverter<T>
 
         return value.ToString() ?? string.Empty;
     }
+#pragma warning restore CA1508
 
     private static Encoding ResolveEncoding(int codePage) => codePage switch
     {

@@ -21,9 +21,13 @@ public abstract class ByteMapperBinding
 // Strongly-typed binding produced by the source generator for entity type
 public sealed class ByteMapperBinding<T> : ByteMapperBinding
 {
+#pragma warning disable CA1711
     public delegate void ReadDelegate(ReadOnlySpan<byte> source, T target);
+
     public delegate void WriteDelegate(T source, Span<byte> destination);
+
     public delegate T FactoryDelegate();
+#pragma warning restore CA1711
 
     private readonly ReadDelegate readDelegate;
     private readonly WriteDelegate writeDelegate;

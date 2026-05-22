@@ -1,8 +1,7 @@
 namespace Smart.IO.ByteMapper.AotTest.Mappers;
 
-using Smart.IO.ByteMapper.AotTest.Models;
-
 using Smart.IO.ByteMapper;
+using Smart.IO.ByteMapper.AotTest.Models;
 
 internal static partial class SampleRecordMappers
 {

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public sealed class ByteMapperFormatterOptions
 {
     // Media types handled by the ByteMapper formatters. Defaults to application/octet-stream.
-    public IList<string> SupportedMediaTypes { get; }
+    public IList<string> SupportedMediaTypes { get; } = ["application/octet-stream"];
 
     // Internal read buffer size (bytes). Actual buffer will be Max(BufferSize, elementSize).
     public int BufferSize { get; set; } = 8192;
