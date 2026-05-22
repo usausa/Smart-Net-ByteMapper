@@ -12,7 +12,7 @@ public class ConverterBenchmark
 
     // --- Binary (int, big-endian) ---
 
-    private readonly BinaryConverter<int> binaryConverter = new(Endian.Big);
+    private readonly BinaryConverter<int> binaryConverter = new();
 
     private readonly byte[] binaryReadBuffer = [0x00, 0x00, 0x04, 0xD2]; // 1234
 
@@ -30,7 +30,7 @@ public class ConverterBenchmark
 
     // --- Boolean ---
 
-    private readonly BooleanConverter boolConverter = new(0x31, 0x30, 0x20);
+    private readonly BooleanConverter boolConverter = new();
 
     private readonly byte[] boolReadTrueBuffer = [0x31];
 
@@ -39,7 +39,7 @@ public class ConverterBenchmark
     [GlobalSetup]
     public void Setup()
     {
-        System.Text.Encoding.ASCII.GetBytes("Hello World         ").CopyTo(textReadBuffer, 0);
+        "Hello World         "u8.ToArray().CopyTo(textReadBuffer, 0);
     }
 
     //--------------------------------------------------------------------------------
@@ -95,7 +95,7 @@ public class ConverterBenchmark
         var buffer = binaryWriteBuffer;
         for (var i = 0; i < N; i++)
         {
-            BenchmarkMappers.WriteBinary(record, buffer);
+            BenchmarkMappers.WriteBinary(buffer, record);
         }
     }
 
@@ -152,7 +152,7 @@ public class ConverterBenchmark
         var buffer = textWriteBuffer;
         for (var i = 0; i < N; i++)
         {
-            BenchmarkMappers.WriteText(record, buffer);
+            BenchmarkMappers.WriteText(buffer, record);
         }
     }
 
@@ -209,7 +209,7 @@ public class ConverterBenchmark
         var buffer = boolWriteBuffer;
         for (var i = 0; i < N; i++)
         {
-            BenchmarkMappers.WriteBool(record, buffer);
+            BenchmarkMappers.WriteBool(buffer, record);
         }
     }
 }

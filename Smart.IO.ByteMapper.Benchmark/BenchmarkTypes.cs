@@ -68,28 +68,28 @@ internal static partial class BenchmarkMappers
     public static partial void ReadBinary(ReadOnlySpan<byte> buffer, BinaryRecord target);
 
     [ByteWriter]
-    public static partial void WriteBinary(BinaryRecord source, Span<byte> buffer);
+    public static partial void WriteBinary(Span<byte> buffer, BinaryRecord source);
 
     // TextRecord
     [ByteReader]
     public static partial void ReadText(ReadOnlySpan<byte> buffer, TextRecord target);
 
     [ByteWriter]
-    public static partial void WriteText(TextRecord source, Span<byte> buffer);
+    public static partial void WriteText(Span<byte> buffer, TextRecord source);
 
     // BoolRecord
     [ByteReader]
     public static partial void ReadBool(ReadOnlySpan<byte> buffer, BoolRecord target);
 
     [ByteWriter]
-    public static partial void WriteBool(BoolRecord source, Span<byte> buffer);
+    public static partial void WriteBool(Span<byte> buffer, BoolRecord source);
 
     // BinaryRecord10
     [ByteReader]
     public static partial void ReadBinary10(ReadOnlySpan<byte> buffer, BinaryRecord10 target);
 
     [ByteWriter]
-    public static partial void WriteBinary10(BinaryRecord10 source, Span<byte> buffer);
+    public static partial void WriteBinary10(Span<byte> buffer, BinaryRecord10 source);
 }
 
 internal static partial class BenchmarkMappersAlloc

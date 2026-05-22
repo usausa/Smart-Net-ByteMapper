@@ -60,7 +60,7 @@ internal static partial class ProfileMappers
     public static partial void ReadA(ReadOnlySpan<byte> buffer, ProfileTarget target);
 
     [ByteWriter(Profile = typeof(ProfileA))]
-    public static partial void WriteA(ProfileTarget source, Span<byte> buffer);
+    public static partial void WriteA(Span<byte> buffer, ProfileTarget source);
 
     [ByteReader(Profile = typeof(ProfileA))]
     public static partial ProfileTarget ReadANew(ReadOnlySpan<byte> buffer);
@@ -73,7 +73,7 @@ internal static partial class ProfileMappers
     public static partial void ReadB(ReadOnlySpan<byte> buffer, ProfileTarget target);
 
     [ByteWriter(Profile = typeof(ProfileB))]
-    public static partial void WriteB(ProfileTarget source, Span<byte> buffer);
+    public static partial void WriteB(Span<byte> buffer, ProfileTarget source);
 
     [ByteReader(Profile = typeof(ProfileB))]
     public static partial ProfileTarget ReadBNew(ReadOnlySpan<byte> buffer);
@@ -91,7 +91,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 100, Code = "ITEM", Active = true, Label = "Hello" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x64 }, buffer[..4]);
     }
@@ -101,7 +101,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 1, Code = "ITEM", Active = true, Label = "X" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal("ITEM", Encoding.ASCII.GetString(buffer[4..8]));
     }
@@ -111,7 +111,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 1, Code = "X", Active = true, Label = "Y" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal(0x31, buffer[12]);
     }
@@ -121,7 +121,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 1, Code = "X", Active = false, Label = "Y" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal(0x30, buffer[12]);
     }
@@ -131,7 +131,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 1, Code = "X", Active = null, Label = "Y" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal(0x20, buffer[12]);
     }
@@ -141,7 +141,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 1, Code = "X", Active = true, Label = "TAG" };
         var buffer = new byte[20];
-        ProfileMappers.WriteA(target, buffer);
+        ProfileMappers.WriteA(buffer, target);
 
         Assert.Equal("TAG", Encoding.ASCII.GetString(buffer[13..16]));
     }
@@ -160,7 +160,7 @@ public class ProfileAMapperWriteTests
     {
         var target = new ProfileTarget { Id = 42, Code = "CODE", Active = false, Label = "LBL" };
         var spanBuffer = new byte[20];
-        ProfileMappers.WriteA(target, spanBuffer);
+        ProfileMappers.WriteA(spanBuffer, target);
 
         var allocBuffer = ProfileMappers.WriteAAlloc(target);
 

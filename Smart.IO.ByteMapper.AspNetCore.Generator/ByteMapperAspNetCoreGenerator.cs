@@ -229,7 +229,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         builder.Indent().Append("    => new(").NewLine();
         builder.Indent().Append("        size: ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
         builder.Indent().Append("        read:    static (s, t) => ").Append(ep.ReaderMethodName).Append("(s, t),").NewLine();
-        builder.Indent().Append("        write:   static (s, d) => ").Append(ep.WriterMethodName).Append("(s, d),").NewLine();
+        builder.Indent().Append("        write:   static (s, d) => ").Append(ep.WriterMethodName).Append("(d, s),").NewLine();
         builder.Indent().Append("        factory: static () => new ").Append(ep.EntityTypeFqn).Append("());").NewLine();
 
         if (ep.GenerateArrayBinding)
@@ -243,7 +243,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             builder.Indent().Append("    => new(").NewLine();
             builder.Indent().Append("        elementSize:  ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
             builder.Indent().Append("        readElement:  static (s, t) => ").Append(ep.ReaderMethodName).Append("(s, t),").NewLine();
-            builder.Indent().Append("        writeElement: static (s, d) => ").Append(ep.WriterMethodName).Append("(s, d),").NewLine();
+            builder.Indent().Append("        writeElement: static (s, d) => ").Append(ep.WriterMethodName).Append("(d, s),").NewLine();
             builder.Indent().Append("        factory:      static () => new ").Append(ep.EntityTypeFqn).Append("());").NewLine();
         }
 

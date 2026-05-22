@@ -17,7 +17,7 @@ public class ByteMapperBenchmark
 
     private readonly BinaryConverter<int>[] binaryConverters =
     [
-        new(), new(), new(), new(), new(), new(), new(), new(), new(), new(),
+        new(), new(), new(), new(), new(), new(), new(), new(), new(), new()
     ];
 
     private readonly byte[] binaryBuffer = new byte[BinarySize];
@@ -31,7 +31,7 @@ public class ByteMapperBenchmark
     public void Setup()
     {
         // Setup: write initial values so read buffer is valid
-        BenchmarkMappers.WriteBinary10(binaryRecord, binaryBuffer);
+        BenchmarkMappers.WriteBinary10(binaryBuffer, binaryRecord);
     }
 
     //--------------------------------------------------------------------------------
@@ -102,7 +102,7 @@ public class ByteMapperBenchmark
         var buf = binaryBuffer;
         for (var i = 0; i < N; i++)
         {
-            BenchmarkMappers.WriteBinary10(rec, buf);
+            BenchmarkMappers.WriteBinary10(buf, rec);
         }
     }
 

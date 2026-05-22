@@ -12,7 +12,7 @@ public static partial class SampleDataMappers
     public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
 
     [ByteWriter]
-    public static partial void Write(SampleData source, Span<byte> destination);
+    public static partial void Write(Span<byte> destination, SampleData source);
 }
 
 [ByteMapperEndpoint]
@@ -22,5 +22,5 @@ public static partial class SampleDataShortMappers
     public static partial void Read(ReadOnlySpan<byte> source, SampleDataShort target);
 
     [ByteWriter]
-    public static partial void Write(SampleDataShort source, Span<byte> destination);
+    public static partial void Write(Span<byte> destination, SampleDataShort source);
 }

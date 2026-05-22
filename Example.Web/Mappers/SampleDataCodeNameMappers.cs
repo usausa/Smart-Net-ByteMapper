@@ -13,5 +13,5 @@ public static partial class SampleDataCodeNameMappers
     public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
 
     [ByteWriter(Profile = typeof(SampleDataCodeNameProfile))]
-    public static partial void Write(SampleData source, Span<byte> destination);
+    public static partial void Write(Span<byte> destination, SampleData source);
 }

@@ -51,9 +51,6 @@ internal sealed record TypeMappingModel(
     EquatableArray<byte> Constant,
     byte Filler);
 
-internal sealed record LayoutModel(
-    int Size);
-
 internal sealed record MapperMethodModel(
     string Namespace,
     string ClassName,
@@ -62,7 +59,9 @@ internal sealed record MapperMethodModel(
     string MethodName,
     MapperShape Shape,
     string TargetTypeFqn,
-    LayoutModel Layout,
+    int Size,
+    string BufferParamName,
+    string TargetParamName,
     EquatableArray<MemberMappingModel> Members,
     EquatableArray<TypeMappingModel> TypeMappings,
     EquatableArray<DiagnosticInfo> Errors);

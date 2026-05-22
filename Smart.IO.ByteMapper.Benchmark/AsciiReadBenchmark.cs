@@ -21,7 +21,7 @@ public class AsciiReadBenchmark
     {
         buffer = new byte[FieldLen];
         // "Hello World         " (右パディング)
-        var src = Encoding.ASCII.GetBytes("Hello World");
+        var src = "Hello World"u8.ToArray();
         src.CopyTo(buffer, 0);
         buffer.AsSpan(src.Length).Fill(0x20);
     }

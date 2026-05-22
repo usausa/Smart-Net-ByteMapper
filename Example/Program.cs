@@ -45,5 +45,5 @@ internal static partial class SampleMappers
     public static partial void Read(ReadOnlySpan<byte> buffer, SampleRecord target);
 
     [ByteWriter]
-    public static partial void Write(SampleRecord source, Span<byte> buffer);
+    public static partial void Write(Span<byte> buffer, SampleRecord source);
 }

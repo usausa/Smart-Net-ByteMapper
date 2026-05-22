@@ -36,7 +36,7 @@ public class CoreVsFastBenchmark
     private const int IntValue = 123456;
 
     // ---- decimal テキスト ----
-    private readonly NumberTextConverter<decimal> coreDec = new(20, style: System.Globalization.NumberStyles.Number);
+    private readonly NumberTextConverter<decimal> coreDec = new(20, style: NumberStyles.Number);
     private readonly FastDecimalConverter fastDec = new(20);
 
     private readonly byte[] decReadBuffer = new byte[20];

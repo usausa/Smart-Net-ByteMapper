@@ -23,7 +23,7 @@ internal static partial class BoolMappers
     public static partial void Read(ReadOnlySpan<byte> buffer, BoolRecord target);
 
     [ByteWriter]
-    public static partial void Write(BoolRecord source, Span<byte> buffer);
+    public static partial void Write(Span<byte> buffer, BoolRecord source);
 
     [ByteReader]
     public static partial BoolRecord ReadNew(ReadOnlySpan<byte> buffer);
@@ -41,7 +41,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = true, Note = "X" };
         var buffer = new byte[10];
-        BoolMappers.Write(record, buffer);
+        BoolMappers.Write(buffer, record);
 
         Assert.Equal(0x31, buffer[0]);
     }
@@ -51,7 +51,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = false, Note = "X" };
         var buffer = new byte[10];
-        BoolMappers.Write(record, buffer);
+        BoolMappers.Write(buffer, record);
 
         Assert.Equal(0x30, buffer[0]);
     }
@@ -61,7 +61,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = null, Note = "X" };
         var buffer = new byte[10];
-        BoolMappers.Write(record, buffer);
+        BoolMappers.Write(buffer, record);
 
         Assert.Equal(0x20, buffer[0]);
     }
@@ -71,7 +71,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = true, Note = "ABC" };
         var buffer = new byte[10];
-        BoolMappers.Write(record, buffer);
+        BoolMappers.Write(buffer, record);
 
         Assert.Equal("ABC", Encoding.ASCII.GetString(buffer[1..4]));
     }
@@ -81,7 +81,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = true, Note = "A" };
         var buffer = new byte[10];
-        BoolMappers.Write(record, buffer);
+        BoolMappers.Write(buffer, record);
 
         Assert.Equal(0x20, buffer[2]);
     }
@@ -100,7 +100,7 @@ public class BoolMapperWriteTests
     {
         var record = new BoolRecord { Flag = false, Note = "NOTE" };
         var spanBuffer = new byte[10];
-        BoolMappers.Write(record, spanBuffer);
+        BoolMappers.Write(spanBuffer, record);
 
         var allocBuffer = BoolMappers.WriteAlloc(record);
 

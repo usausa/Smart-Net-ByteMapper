@@ -9,7 +9,7 @@ internal static partial class SampleRecordMappers
     public static partial void Read(ReadOnlySpan<byte> source, SampleRecord target);
 
     [ByteWriter]
-    public static partial void Write(SampleRecord source, Span<byte> destination);
+    public static partial void Write(Span<byte> destination, SampleRecord source);
 
     [ByteReader]
     public static partial SampleRecord ReadNew(ReadOnlySpan<byte> source);

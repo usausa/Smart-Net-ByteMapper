@@ -23,7 +23,7 @@ internal static partial class SimpleMappers
     public static partial void Read(ReadOnlySpan<byte> buffer, SimpleRecord target);
 
     [ByteWriter]
-    public static partial void Write(SimpleRecord source, Span<byte> buffer);
+    public static partial void Write(Span<byte> buffer, SimpleRecord source);
 
     [ByteReader]
     public static partial SimpleRecord ReadNew(ReadOnlySpan<byte> buffer);
@@ -41,7 +41,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = 1, Name = "TEST" };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x01 }, buffer[..4]);
     }
@@ -51,7 +51,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = 1, Name = "TEST" };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal("TEST", Encoding.ASCII.GetString(buffer[4..8]));
     }
@@ -61,7 +61,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = 1, Name = "TEST" };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal(0x20, buffer[8]);
     }
@@ -71,7 +71,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = 0, Name = string.Empty };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x00 }, buffer[..4]);
     }
@@ -81,7 +81,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = -1, Name = string.Empty };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal(new byte[] { 0xFF, 0xFF, 0xFF, 0xFF }, buffer[..4]);
     }
@@ -91,7 +91,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = int.MaxValue, Name = string.Empty };
         var buffer = new byte[36];
-        SimpleMappers.Write(record, buffer);
+        SimpleMappers.Write(buffer, record);
 
         Assert.Equal(new byte[] { 0x7F, 0xFF, 0xFF, 0xFF }, buffer[..4]);
     }
@@ -101,7 +101,7 @@ public class SimpleMapperWriteTests
     {
         var record = new SimpleRecord { Id = 123, Name = "AllocTest" };
         var spanBuffer = new byte[36];
-        SimpleMappers.Write(record, spanBuffer);
+        SimpleMappers.Write(spanBuffer, record);
 
         var allocBuffer = SimpleMappers.WriteAlloc(record);
 
@@ -208,7 +208,7 @@ public class SimpleMapperRoundTripTests
     {
         var original = new SimpleRecord { Id = 99999, Name = "RoundTrip" };
         var buffer = new byte[36];
-        SimpleMappers.Write(original, buffer);
+        SimpleMappers.Write(buffer, original);
         var read = new SimpleRecord();
         SimpleMappers.Read(buffer, read);
 
@@ -220,7 +220,7 @@ public class SimpleMapperRoundTripTests
     {
         var original = new SimpleRecord { Id = 99999, Name = "RoundTrip" };
         var buffer = new byte[36];
-        SimpleMappers.Write(original, buffer);
+        SimpleMappers.Write(buffer, original);
         var read = new SimpleRecord();
         SimpleMappers.Read(buffer, read);
 

@@ -53,9 +53,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         ["System.Decimal"] = 16
     };
 
-    // default CRLF
-    private static readonly byte[] DefaultDelimiter = "\r\n"u8.ToArray();
-
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
         var readers = context.SyntaxProvider
@@ -98,7 +95,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         // Determine shape and target type
-        var (shape, targetType, errors) = DetermineShape(symbol, kind);
+        var (shape, targetType, bufferParamName, targetParamName, errors) = DetermineShape(symbol, kind);
         if (errors.Count > 0)
         {
             return Results.Error<MapperMethodModel>(errors[0]);
@@ -157,32 +154,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         var mapSize = (int)(mapAttr.ConstructorArguments[0].Value ?? 0);
-        var autoFiller = true;
-        var useDelimiter = true;
-        byte? nullFiller = null;
-        byte[]? delimiter = null;
-        foreach (var na in mapAttr.NamedArguments)
-        {
-            if (na.Key == "AutoFiller" && na.Value.Value is bool af)
-            {
-                autoFiller = af;
-            }
-
-            if (na.Key == "UseDelimiter" && na.Value.Value is bool ud)
-            {
-                useDelimiter = ud;
-            }
-
-            if (na.Key == "NullFiller" && na.Value.Value is byte nf)
-            {
-                nullFiller = nf;
-            }
-
-            if (na.Key == "Delimiter" && na.Value.Kind == TypedConstantKind.Array)
-            {
-                delimiter = na.Value.Values.Select(v => (byte)(v.Value ?? 0)).ToArray();
-            }
-        }
 
         var containingType = symbol.ContainingType;
         var ns = String.IsNullOrEmpty(containingType.ContainingNamespace.Name)
@@ -214,19 +185,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             diagErrors);
 
         // Layout resolution
-        var delimiterBytes = useDelimiter ? (delimiter ?? DefaultDelimiter) : [];
         ResolveLayout(
             members,
             typeMappings,
-            mapSize,
-            delimiterBytes,
             validateLayout,
             attrSourceType.Name,
             syntax,
             diagErrors);
-
-        // Determine method index placeholder (will be assigned by Execute)
-        var layoutModel = new LayoutModel(mapSize);
 
         var className = SourceGenerateHelper.SymbolExtensions.GetClassName(containingType);
         var model = new MapperMethodModel(
@@ -237,7 +202,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             symbol.Name,
             shape,
             targetType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            layoutModel,
+            mapSize,
+            bufferParamName,
+            targetParamName,
             new EquatableArray<MemberMappingModel>(members.ToArray()),
             new EquatableArray<TypeMappingModel>(typeMappings.ToArray()),
             new EquatableArray<DiagnosticInfo>(diagErrors.ToArray()));
@@ -245,7 +212,23 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return Results.Success(model);
     }
 
-    private static (MapperShape Shape, ITypeSymbol? TargetType, List<DiagnosticInfo> Errors) DetermineShape(
+    private static bool IsReadOnlySpanOfByte(ITypeSymbol type)
+    {
+        return type is INamedTypeSymbol { Name: "ReadOnlySpan", IsGenericType: true } named
+            && named.ContainingNamespace.ToDisplayString() == "System"
+            && named.TypeArguments.Length == 1
+            && named.TypeArguments[0].SpecialType == SpecialType.System_Byte;
+    }
+
+    private static bool IsSpanOfByte(ITypeSymbol type)
+    {
+        return type is INamedTypeSymbol { Name: "Span", IsGenericType: true } named
+            && named.ContainingNamespace.ToDisplayString() == "System"
+            && named.TypeArguments.Length == 1
+            && named.TypeArguments[0].SpecialType == SpecialType.System_Byte;
+    }
+
+    private static (MapperShape Shape, ITypeSymbol? TargetType, string BufferParamName, string TargetParamName, List<DiagnosticInfo> Errors) DetermineShape(
         IMethodSymbol symbol, MapperKind kind)
     {
         var errors = new List<DiagnosticInfo>();
@@ -253,33 +236,43 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         if (kind == MapperKind.Reader)
         {
-            if (symbol.ReturnsVoid && symbol.Parameters.Length == 2)
+            // void Read(ReadOnlySpan<byte> source, T target)
+            if (symbol.ReturnsVoid
+                && symbol.Parameters.Length == 2
+                && IsReadOnlySpanOfByte(symbol.Parameters[0].Type))
             {
-                // void Read(ReadOnlySpan<byte> buffer, T target)
-                return (MapperShape.InPlace, symbol.Parameters[1].Type, errors);
+                return (MapperShape.InPlace, symbol.Parameters[1].Type, symbol.Parameters[0].Name, symbol.Parameters[1].Name, errors);
             }
-            if (!symbol.ReturnsVoid && symbol.Parameters.Length == 1)
+
+            // T Read(ReadOnlySpan<byte> source)
+            if (!symbol.ReturnsVoid
+                && symbol.Parameters.Length == 1
+                && IsReadOnlySpanOfByte(symbol.Parameters[0].Type))
             {
-                // T Read(ReadOnlySpan<byte> buffer)
-                return (MapperShape.NewInstance, symbol.ReturnType, errors);
+                return (MapperShape.NewInstance, symbol.ReturnType, symbol.Parameters[0].Name, "target", errors);
             }
         }
         else
         {
-            if (symbol.ReturnsVoid && symbol.Parameters.Length == 2)
+            // void Write(Span<byte> destination, T source)
+            if (symbol.ReturnsVoid
+                && symbol.Parameters.Length == 2
+                && IsSpanOfByte(symbol.Parameters[0].Type))
             {
-                // void Write(T source, Span<byte> buffer)
-                return (MapperShape.WriteSpan, symbol.Parameters[0].Type, errors);
+                return (MapperShape.WriteSpan, symbol.Parameters[1].Type, symbol.Parameters[0].Name, symbol.Parameters[1].Name, errors);
             }
-            if (!symbol.ReturnsVoid && symbol.Parameters.Length == 1)
+
+            // byte[] Write(T source)
+            if (!symbol.ReturnsVoid
+                && symbol.Parameters.Length == 1
+                && symbol.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte })
             {
-                // byte[] Write(T source)
-                return (MapperShape.WriteAlloc, symbol.Parameters[0].Type, errors);
+                return (MapperShape.WriteAlloc, symbol.Parameters[0].Type, "buffer", symbol.Parameters[0].Name, errors);
             }
         }
 
         errors.Add(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.GetLocation(), symbol.Name));
-        return (MapperShape.InPlace, null, errors);
+        return (MapperShape.InPlace, null, "buffer", "target", errors);
     }
 
     private static List<TypeMappingModel> CollectTypeMappings(ITypeSymbol type)
@@ -620,25 +613,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static void ResolveLayout(
         List<MemberMappingModel> members,
         List<TypeMappingModel> typeMappings,
-        int mapSize,
-        byte[] delimiter,
         bool validateLayout,
         string typeName,
         MethodDeclarationSyntax syntax,
         List<DiagnosticInfo> errors)
     {
-        // Add delimiter as constant at end
-        if (delimiter.Length > 0)
-        {
-            var delimOffset = mapSize - delimiter.Length;
-            typeMappings.Add(new TypeMappingModel(
-                delimOffset,
-                delimiter.Length,
-                TypeMappingKind.Constant,
-                new EquatableArray<byte>(delimiter),
-                0));
-        }
-
         // Sort members by offset
         members.Sort((a, b) => a.Offset.CompareTo(b.Offset));
         typeMappings.Sort((a, b) => a.Offset.CompareTo(b.Offset));
@@ -792,13 +771,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append(accessibility).Append(" static partial void ")
                     .Append(method.MethodName)
-                    .Append("(global::System.ReadOnlySpan<byte> buffer, ")
-                    .Append(method.TargetTypeFqn).Append(" target)")
+                    .Append("(global::System.ReadOnlySpan<byte> ").Append(method.BufferParamName).Append(", ")
+                    .Append(method.TargetTypeFqn).Append(" ").Append(method.TargetParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
                 foreach (var member in method.Members.AsArray())
                 {
-                    EmitReadMember(builder, member);
+                    EmitReadMember(builder, member, method.BufferParamName, method.TargetParamName);
                 }
                 builder.EndScope();
                 break;
@@ -808,17 +787,17 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(accessibility).Append(" static partial ")
                     .Append(method.TargetTypeFqn).Append(" ")
                     .Append(method.MethodName)
-                    .Append("(global::System.ReadOnlySpan<byte> buffer)")
+                    .Append("(global::System.ReadOnlySpan<byte> ").Append(method.BufferParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
                 builder.Indent()
-                    .Append("var target = new ").Append(method.TargetTypeFqn).Append("();")
+                    .Append("var ").Append(method.TargetParamName).Append(" = new ").Append(method.TargetTypeFqn).Append("();")
                     .NewLine();
                 foreach (var member in method.Members.AsArray())
                 {
-                    EmitReadMember(builder, member);
+                    EmitReadMember(builder, member, method.BufferParamName, method.TargetParamName);
                 }
-                builder.Indent().Append("return target;").NewLine();
+                builder.Indent().Append("return ").Append(method.TargetParamName).Append(";").NewLine();
                 builder.EndScope();
                 break;
 
@@ -826,10 +805,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append(accessibility).Append(" static partial void ")
                     .Append(method.MethodName)
-                    .Append("(").Append(method.TargetTypeFqn).Append(" source, global::System.Span<byte> buffer)")
+                    .Append("(global::System.Span<byte> ").Append(method.BufferParamName)
+                    .Append(", ").Append(method.TargetTypeFqn).Append(" ").Append(method.TargetParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
-                EmitWriteBody(builder, method);
+                EmitWriteBody(builder, method, method.BufferParamName);
                 builder.EndScope();
                 break;
 
@@ -837,23 +817,23 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append(accessibility).Append(" static partial byte[] ")
                     .Append(method.MethodName)
-                    .Append("(").Append(method.TargetTypeFqn).Append(" source)")
+                    .Append("(").Append(method.TargetTypeFqn).Append(" ").Append(method.TargetParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
                 builder.Indent()
-                    .Append($"var buffer = new byte[{method.Layout.Size}];")
+                    .Append($"var {method.BufferParamName} = new byte[{method.Size}];")
                     .NewLine();
                 builder.Indent()
-                    .Append("var span = (global::System.Span<byte>)buffer;")
+                    .Append($"var span = (global::System.Span<byte>){method.BufferParamName};")
                     .NewLine();
-                EmitWriteBody(builder, method, spanVarName: "span");
-                builder.Indent().Append("return buffer;").NewLine();
+                EmitWriteBody(builder, method, "span");
+                builder.Indent().Append("return ").Append(method.BufferParamName).Append(";").NewLine();
                 builder.EndScope();
                 break;
         }
     }
 
-    private static void EmitReadMember(SourceBuilder builder, MemberMappingModel member)
+    private static void EmitReadMember(SourceBuilder builder, MemberMappingModel member, string bufferParam, string targetParam)
     {
         string size;
         if (member.Converter.SizeKind == SizeKind.Const)
@@ -874,11 +854,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         builder.Indent()
-            .Append("target.")
+            .Append(targetParam).Append(".")
             .Append(member.PropertyName)
             .Append(" = ")
             .Append(member.Converter.FieldName)
-            .Append(".Read(buffer.Slice(")
+            .Append(".Read(").Append(bufferParam).Append(".Slice(")
             .Append($"{member.Offset}")
             .Append(", ")
             .Append(size)
@@ -932,7 +912,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 .Append($"{member.Offset}")
                 .Append(", ")
                 .Append(size)
-                .Append("), source.")
+                .Append("), ").Append(method.TargetParamName).Append(".")
                 .Append(member.PropertyName)
                 .Append(");")
                 .NewLine();

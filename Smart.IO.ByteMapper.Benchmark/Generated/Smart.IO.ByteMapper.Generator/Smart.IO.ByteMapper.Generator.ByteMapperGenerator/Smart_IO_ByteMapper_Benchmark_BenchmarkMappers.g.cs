@@ -96,28 +96,28 @@ partial class BenchmarkMappers
 
 
     [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static partial void WriteBinary(global::Smart.IO.ByteMapper.Benchmark.BinaryRecord source, global::System.Span<byte> buffer)
+    public static partial void WriteBinary(global::System.Span<byte> buffer, global::Smart.IO.ByteMapper.Benchmark.BinaryRecord source)
     {
         Converter4_0.Write(buffer.Slice(0, 4), source.Value);
     }
 
 
     [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static partial void WriteText(global::Smart.IO.ByteMapper.Benchmark.TextRecord source, global::System.Span<byte> buffer)
+    public static partial void WriteText(global::System.Span<byte> buffer, global::Smart.IO.ByteMapper.Benchmark.TextRecord source)
     {
         Converter5_0.Write(buffer.Slice(0, 20), source.Name);
     }
 
 
     [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static partial void WriteBool(global::Smart.IO.ByteMapper.Benchmark.BoolRecord source, global::System.Span<byte> buffer)
+    public static partial void WriteBool(global::System.Span<byte> buffer, global::Smart.IO.ByteMapper.Benchmark.BoolRecord source)
     {
         Converter6_0.Write(buffer.Slice(0, 1), source.Flag);
     }
 
 
     [global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
-    public static partial void WriteBinary10(global::Smart.IO.ByteMapper.Benchmark.BinaryRecord10 source, global::System.Span<byte> buffer)
+    public static partial void WriteBinary10(global::System.Span<byte> buffer, global::Smart.IO.ByteMapper.Benchmark.BinaryRecord10 source)
     {
         Converter7_0.Write(buffer.Slice(0, 4), source.V0);
         Converter7_1.Write(buffer.Slice(4, 4), source.V1);
