@@ -2,20 +2,12 @@ namespace Smart.IO.ByteMapper.AspNetCore;
 
 using System.Collections.Generic;
 
-/// <summary>
-/// Configuration options for ByteMapper MVC formatters and Minimal API filters.
-/// </summary>
+// Configuration options for ByteMapper MVC formatters and Minimal API filters.
 public sealed class ByteMapperFormatterOptions
 {
-    /// <summary>
-    /// Media types handled by the ByteMapper formatters.
-    /// Defaults to <c>application/octet-stream</c>.
-    /// </summary>
-    public IList<string> SupportedMediaTypes { get; } = ["application/octet-stream"];
+    // Media types handled by the ByteMapper formatters. Defaults to application/octet-stream.
+    public IList<string> SupportedMediaTypes { get; }
 
-    /// <summary>
-    /// Internal read buffer size (bytes).  Actual buffer will be
-    /// <c>Max(BufferSize, elementSize)</c>.
-    /// </summary>
+    // Internal read buffer size (bytes). Actual buffer will be Max(BufferSize, elementSize).
     public int BufferSize { get; set; } = 8192;
 }

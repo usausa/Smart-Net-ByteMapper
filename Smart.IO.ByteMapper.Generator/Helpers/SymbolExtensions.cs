@@ -34,9 +34,7 @@ internal static class SymbolExtensions
         return false;
     }
 
-    /// <summary>
-    /// Gets the non-nullable underlying type of Nullable&lt;T&gt; or nullable reference type.
-    /// </summary>
+    // Gets the non-nullable underlying type of Nullable<T> or nullable reference type.
     public static ITypeSymbol GetNonNullableType(this ITypeSymbol type)
     {
         if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
@@ -51,12 +49,10 @@ internal static class SymbolExtensions
         return type;
     }
 
-    /// <summary>
-    /// Walks up the base class chain of <paramref name="attributeClass"/> and returns the first
-    /// constructed instance of the open generic type <c>ByteMapperConverterAttribute&lt;&gt;</c>.
-    /// Returns null if the attribute does not derive from that open generic.
-    /// </summary>
-    public static INamedTypeSymbol? FindConverterAttributeBase(this INamedTypeSymbol attributeClass, INamedTypeSymbol converterAttributeOpenGeneric)
+    // Walks up the base class chain of attributeClass and returns the first constructed instance
+    // of the open generic type ByteMapperConverterAttribute<>.
+    // Returns null if the attribute does not derive from that open generic.
+    public static INamedTypeSymbol? FindConverterAttributeBase(
     {
         var current = attributeClass.BaseType;
         while (current != null)
@@ -70,9 +66,7 @@ internal static class SymbolExtensions
         return null;
     }
 
-    /// <summary>
-    /// Returns true when <paramref name="type"/> inherits from <paramref name="baseType"/>.
-    /// </summary>
+    // Returns true when type inherits from baseType.
     public static bool InheritsFrom(this ITypeSymbol type, INamedTypeSymbol baseType)
     {
         var current = type.BaseType;
@@ -87,9 +81,7 @@ internal static class SymbolExtensions
         return false;
     }
 
-    /// <summary>
-    /// Converts a TypedConstant to a C# source-code literal expression.
-    /// </summary>
+    // Converts a TypedConstant to a C# source-code literal expression.
     public static string ToLiteralExpression(this TypedConstant constant)
     {
         if (constant.Kind == TypedConstantKind.Primitive)

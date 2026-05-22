@@ -9,44 +9,28 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 
-/// <summary>
-/// Strongly-typed extension methods for registering ByteMapper body binding on
-/// Minimal API route handlers.  No reflection is used: <c>typeof(T)</c> resolves
-/// the binding at compile time.
-/// </summary>
-/// <remarks>
-/// For POST/PUT endpoints the parsed value is stored in <see cref="HttpContext.Items"/>
-/// under the key <c>typeof(T)</c> so that handlers can retrieve it without
-/// triggering ASP.NET Core's JSON body binder (which would 415 on custom
-/// content-types).  Use <see cref="ByteMapperEndpointFilterExtensions.GetByteMapperBody{T}"/>
-/// to retrieve the value inside a handler.
-/// </remarks>
+// Strongly-typed extension methods for registering ByteMapper body binding on Minimal API route handlers.
+// No reflection is used: typeof(T) resolves the binding at compile time.
+// For POST/PUT endpoints the parsed value is stored in HttpContext.Items under the key typeof(T)
+// so that handlers can retrieve it without triggering ASP.NET Core's JSON body binder.
+// Use GetByteMapperBody<T> to retrieve the value inside a handler.
 public static class ByteMapperEndpointFilterExtensions
 {
-    /// <summary>
-    /// Retrieves a body value parsed by <see cref="WithByteMapperBody{T}"/> or
-    /// <see cref="WithByteMapperBody{TEntity,TProfile}"/> from <see cref="HttpContext.Items"/>.
-    /// Returns <c>null</c> if the filter has not run or the body was too short.
-    /// </summary>
-    public static T? GetByteMapperBody<T>(this HttpContext httpContext) where T : class
+    // Retrieves a body value parsed by WithByteMapperBody<T> from HttpContext.Items.
+    // Returns null if the filter has not run or the body was too short.
+    public static T? GetByteMapperBody<T>(
         => httpContext.Items[typeof(T)] as T;
 
-    /// <summary>
-    /// Retrieves an array body value parsed by <see cref="WithByteMapperArrayBody{T}"/> or
-    /// <see cref="WithByteMapperArrayBody{TEntity,TProfile}"/> from <see cref="HttpContext.Items"/>.
-    /// Returns <c>null</c> if the filter has not run.
-    /// </summary>
-    public static T[]? GetByteMapperArrayBody<T>(this HttpContext httpContext)
+    // Retrieves an array body value parsed by WithByteMapperArrayBody<T> from HttpContext.Items.
+    // Returns null if the filter has not run.
+    public static T[]? GetByteMapperArrayBody<T>(
         => httpContext.Items[typeof(T[])] as T[];
     // ----------------------------------------------------------------
     // Single entity
     // ----------------------------------------------------------------
 
-    /// <summary>
-    /// Reads the HTTP request body as <typeparamref name="T"/> using the
-    /// registered <see cref="ByteMapperBinding{T}"/>, and writes the return
-    /// value back as binary when the handler returns a <typeparamref name="T"/>.
-    /// </summary>
+    // Reads the HTTP request body as T using the registered ByteMapperBinding<T>,
+    // and writes the return value back as binary when the handler returns a T.
     public static RouteHandlerBuilder WithByteMapperBody<T>(
         this RouteHandlerBuilder builder)
         => builder.AddEndpointFilterFactory((_, next) =>
@@ -69,11 +53,8 @@ public static class ByteMapperEndpointFilterExtensions
                 return result;
             });
 
-    /// <summary>
-    /// Reads the HTTP request body as <typeparamref name="TEntity"/> using the
-    /// registered <see cref="ByteMapperBinding{T}"/> for the specified profile,
-    /// and writes the return value back as binary when the handler returns a <typeparamref name="TEntity"/>.
-    /// </summary>
+    // Reads the HTTP request body as TEntity using the registered ByteMapperBinding<T> for the specified
+    // profile, and writes the return value back as binary when the handler returns a TEntity.
     public static RouteHandlerBuilder WithByteMapperBody<TEntity, TProfile>(
         this RouteHandlerBuilder builder)
         where TProfile : class
@@ -101,10 +82,7 @@ public static class ByteMapperEndpointFilterExtensions
     // Array
     // ----------------------------------------------------------------
 
-    /// <summary>
-    /// Reads the HTTP request body as <typeparamref name="T"/>[] using the
-    /// registered <see cref="ByteMapperArrayBinding{T}"/>.
-    /// </summary>
+    // Reads the HTTP request body as T[] using the registered ByteMapperArrayBinding<T>.
     public static RouteHandlerBuilder WithByteMapperArrayBody<T>(
         this RouteHandlerBuilder builder)
         => builder.AddEndpointFilterFactory((_, next) =>
@@ -128,10 +106,7 @@ public static class ByteMapperEndpointFilterExtensions
                 return result;
             });
 
-    /// <summary>
-    /// Reads the HTTP request body as <typeparamref name="TEntity"/>[] using the
-    /// registered <see cref="ByteMapperArrayBinding{T}"/> for the specified profile.
-    /// </summary>
+    // Reads the HTTP request body as TEntity[] using the registered ByteMapperArrayBinding<T> for the specified profile.
     public static RouteHandlerBuilder WithByteMapperArrayBody<TEntity, TProfile>(
         this RouteHandlerBuilder builder)
         where TProfile : class

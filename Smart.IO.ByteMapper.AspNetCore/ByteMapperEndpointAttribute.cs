@@ -2,19 +2,13 @@ namespace Smart.IO.ByteMapper.AspNetCore;
 
 using System;
 
-/// <summary>
-/// Marks a <c>static partial class</c> as an entry point for the
-/// ByteMapper AspNetCore source generator.  The generator emits
-/// <see cref="ByteMapperBinding{T}"/> / <see cref="ByteMapperArrayBinding{T}"/>
-/// factory methods on the partial class, as well as an assembly-level
-/// bootstrap helper and the <c>AddByteMapperFormatters</c> extension method.
-/// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+// Marks a static partial class as an entry point for the ByteMapper AspNetCore source generator.
+// The generator emits ByteMapperBinding<T> / ByteMapperArrayBinding<T> factory methods on the
+// partial class, as well as an assembly-level bootstrap helper and the AddByteMapperFormatters
+// extension method.
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ByteMapperEndpointAttribute : Attribute
 {
-    /// <summary>
-    /// Whether to generate a <see cref="ByteMapperArrayBinding{T}"/> in
-    /// addition to the single-entity binding.  Defaults to <c>true</c>.
-    /// </summary>
+    // Whether to generate a ByteMapperArrayBinding<T> in addition to the single-entity binding. Defaults to true.
     public bool GenerateArrayBinding { get; init; } = true;
 }

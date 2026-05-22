@@ -1,32 +1,24 @@
 namespace Smart.IO.ByteMapper.AspNetCore;
 
-/// <summary>
-/// Non-generic base for <see cref="ByteMapperBinding{T}"/>.
-/// Provides object-level Read/Write/Factory that allow the MVC formatters to
-/// dispatch without knowing T at compile time.  Boxing is limited to one cast
-/// per single-entity call; it is negligible for reference types and tolerable
-/// for fixed-length value-type records.
-/// </summary>
+// Non-generic base for ByteMapperBinding<T>.
+// Provides object-level Read/Write/Factory that allow the MVC formatters to
+// dispatch without knowing T at compile time.
 public abstract class ByteMapperBinding
 {
-    /// <summary>Byte size of a single serialized entity.</summary>
+    // Byte size of a single serialized entity.
     public abstract int Size { get; }
 
-    /// <summary>Creates a new, default-initialized entity instance.</summary>
+    // Creates a new, default-initialized entity instance.
     public abstract object Factory();
 
-    /// <summary>Reads bytes into an existing entity instance.</summary>
+    // Reads bytes into an existing entity instance.
     public abstract void Read(ReadOnlySpan<byte> source, object target);
 
-    /// <summary>Writes an entity instance to bytes.</summary>
+    // Writes an entity instance to bytes.
     public abstract void Write(object source, Span<byte> destination);
 }
 
-/// <summary>
-/// Strongly-typed binding produced by the source generator for entity type
-/// <typeparamref name="T"/>.
-/// </summary>
-/// <typeparam name="T">Entity type.</typeparam>
+// Strongly-typed binding produced by the source generator for entity type
 public sealed class ByteMapperBinding<T> : ByteMapperBinding
 {
     public delegate void ReadDelegate(ReadOnlySpan<byte> source, T target);
@@ -47,10 +39,10 @@ public sealed class ByteMapperBinding<T> : ByteMapperBinding
         factoryDelegate = factory;
     }
 
-    /// <summary>Strongly-typed read.</summary>
+    // Strongly-typed read.
     public void Read(ReadOnlySpan<byte> source, T target) => readDelegate(source, target);
 
-    /// <summary>Strongly-typed write.</summary>
+    // Strongly-typed write.
     public void Write(T source, Span<byte> destination) => writeDelegate(source, destination);
 
     /// <summary>Strongly-typed factory.</summary>

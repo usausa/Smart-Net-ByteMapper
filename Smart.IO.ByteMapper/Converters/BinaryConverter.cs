@@ -4,9 +4,7 @@ using System;
 using System.Buffers.Binary;
 using System.Runtime.CompilerServices;
 
-/// <summary>
-/// Binary converter for unmanaged types using BinaryPrimitives.
-/// </summary>
+// Binary converter for unmanaged types using BinaryPrimitives.
 public sealed class BinaryConverter<T>
     where T : unmanaged
 {

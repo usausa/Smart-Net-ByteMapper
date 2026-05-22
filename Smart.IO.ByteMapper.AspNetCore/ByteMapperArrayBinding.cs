@@ -1,10 +1,6 @@
 namespace Smart.IO.ByteMapper.AspNetCore;
 
-/// <summary>
-/// Binding for array / enumerable serialisation of entity type
-/// <typeparamref name="T"/>.
-/// </summary>
-/// <typeparam name="T">Element entity type.</typeparam>
+// Binding for array / enumerable serialisation of entity type T.
 public sealed class ByteMapperArrayBinding<T>
 {
     public int ElementSize { get; }

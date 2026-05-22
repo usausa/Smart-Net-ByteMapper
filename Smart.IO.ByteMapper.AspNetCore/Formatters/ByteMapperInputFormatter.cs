@@ -7,11 +7,8 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-/// <summary>
-/// MVC <see cref="InputFormatter"/> that deserialises binary bodies using
-/// ByteMapper source-generated mappers.  AOT/Trim safe: no reflection after
-/// startup.
-/// </summary>
+// MVC InputFormatter that deserialises binary bodies using ByteMapper source-generated mappers.
+// AOT/Trim safe: no reflection after startup.
 public sealed class ByteMapperInputFormatter : InputFormatter
 {
     private readonly ByteMapperRegistry registry;
@@ -51,7 +48,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
     {
         // Type itself may be IEnumerable<T>
         if (type.IsGenericType &&
-            type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+            type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
         {
             return type.GetGenericArguments()[0];
         }
@@ -59,7 +56,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         foreach (var iface in type.GetInterfaces())
         {
             if (iface.IsGenericType &&
-                iface.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+                iface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 return iface.GetGenericArguments()[0];
             }
@@ -120,8 +117,8 @@ public sealed class ByteMapperInputFormatter : InputFormatter
 
     private static async ValueTask<object?> ReadSingleAsync(
         ByteMapperBinding binding,
-        System.IO.Stream body,
-        System.Threading.CancellationToken cancellationToken)
+        Stream body,
+        CancellationToken cancellationToken)
     {
         var size = binding.Size;
         var buffer = ArrayPool<byte>.Shared.Rent(size);
@@ -146,17 +143,16 @@ public sealed class ByteMapperInputFormatter : InputFormatter
     private async ValueTask<Array> ReadArrayAsync(
         ByteMapperBinding elementBinding,
         Type elementType,
-        System.IO.Stream body,
-        System.Threading.CancellationToken cancellationToken)
+        Stream body,
+        CancellationToken cancellationToken)
     {
         var elementSize = elementBinding.Size;
         var bufferSize = Math.Max(options.BufferSize, elementSize);
         var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
-        var items = new System.Collections.Generic.List<object>();
+        var items = new List<object>();
         try
         {
-            int read;
-            while ((read = await body.ReadAsync(buffer.AsMemory(0, elementSize), cancellationToken).ConfigureAwait(false)) == elementSize)
+            while ((await body.ReadAsync(buffer.AsMemory(0, elementSize), cancellationToken).ConfigureAwait(false)) == elementSize)
             {
                 var target = elementBinding.Factory();
                 elementBinding.Read(buffer.AsSpan(0, elementSize), target);

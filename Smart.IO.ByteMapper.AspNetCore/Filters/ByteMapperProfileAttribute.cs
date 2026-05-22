@@ -4,12 +4,9 @@ using System;
 
 using Microsoft.AspNetCore.Mvc.Filters;
 
-/// <summary>
-/// Sets the ByteMapper profile for the current request by writing the profile
-/// <see cref="Type"/> to <see cref="Microsoft.AspNetCore.Http.HttpContext.Items"/>.
-/// Can be applied to controllers or individual actions.
-/// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+// Sets the ByteMapper profile for the current request by writing the profile Type to HttpContext.Items.
+// Can be applied to controllers or individual actions.
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class ByteMapperProfileAttribute : Attribute, IResourceFilter
 {
     public Type ProfileType { get; }
@@ -28,10 +25,8 @@ public class ByteMapperProfileAttribute : Attribute, IResourceFilter
     public void OnResourceExecuted(ResourceExecutedContext context) { }
 }
 
-/// <summary>
-/// Generic form of <see cref="ByteMapperProfileAttribute"/> (C# 11+ generic attribute).
-/// </summary>
-[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+// Generic form of <see cref="ByteMapperProfileAttribute"/> (C# 11+ generic attribute).
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public sealed class ByteMapperProfileAttribute<TProfile> : ByteMapperProfileAttribute
     where TProfile : class
 {

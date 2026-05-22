@@ -8,24 +8,24 @@ internal static class Program
     public static void Main()
     {
         // Basic smoke test: BinaryConverter<int>
-        var conv = new BinaryConverter<int>(Endian.Big);
+        var conv = new BinaryConverter<int>();
         var buf = new byte[4];
         conv.Write(buf, 12345);
         var result = conv.Read(buf);
-        System.Console.WriteLine($"BinaryConverter<int> round-trip: {result == 12345}");
+        Console.WriteLine($"BinaryConverter<int> round-trip: {result == 12345}");
 
         // TextConverter
-        var tc = new TextConverter(8, 20127, true, Padding.Right, 0x20);
+        var tc = new TextConverter(8);
         var tbuf = new byte[8];
         tc.Write(tbuf, "Hello");
         var ts = tc.Read(tbuf);
-        System.Console.WriteLine($"TextConverter round-trip: {ts == "Hello"}");
+        Console.WriteLine($"TextConverter round-trip: {ts == "Hello"}");
 
         // Generator usage
         var record = new SampleRecord();
         var bytes = new byte[36];
         SampleMappers.Read(bytes, record);
-        System.Console.WriteLine($"Generator Read: Id={record.Id}, Name='{record.Name}'");
+        Console.WriteLine($"Generator Read: Id={record.Id}, Name='{record.Name}'");
     }
 }
 
@@ -42,8 +42,8 @@ internal sealed class SampleRecord
 internal static partial class SampleMappers
 {
     [ByteReader]
-    public static partial void Read(System.ReadOnlySpan<byte> buffer, SampleRecord target);
+    public static partial void Read(ReadOnlySpan<byte> buffer, SampleRecord target);
 
     [ByteWriter]
-    public static partial void Write(SampleRecord source, System.Span<byte> buffer);
+    public static partial void Write(SampleRecord source, Span<byte> buffer);
 }

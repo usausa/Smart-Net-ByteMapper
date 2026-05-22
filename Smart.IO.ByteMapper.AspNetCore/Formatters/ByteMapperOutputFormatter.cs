@@ -8,11 +8,8 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-/// <summary>
-/// MVC <see cref="OutputFormatter"/> that serialises objects to binary using
-/// ByteMapper source-generated mappers.  AOT/Trim safe: no reflection after
-/// startup.
-/// </summary>
+// MVC OutputFormatter that serialises objects to binary using ByteMapper source-generated mappers.
+// AOT/Trim safe: no reflection after startup.
 public sealed class ByteMapperOutputFormatter : OutputFormatter
 {
     private readonly ByteMapperRegistry registry;

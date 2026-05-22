@@ -19,16 +19,14 @@ public class ByteMapperBenchmark
 
     private readonly BinaryConverter<int>[] binaryConverters =
     [
-        new(Endian.Big), new(Endian.Big), new(Endian.Big), new(Endian.Big), new(Endian.Big),
-        new(Endian.Big), new(Endian.Big), new(Endian.Big), new(Endian.Big), new(Endian.Big),
+        new(), new(), new(), new(), new(), new(), new(), new(), new(), new(),
     ];
 
     private readonly byte[] binaryBuffer = new byte[BinarySize];
 
     private readonly BinaryRecord10 binaryRecord = new()
     {
-        V0 = 0, V1 = 1, V2 = 2, V3 = 3, V4 = 4,
-        V5 = 5, V6 = 6, V7 = 7, V8 = 8, V9 = 9,
+        V0 = 0, V1 = 1, V2 = 2, V3 = 3, V4 = 4, V5 = 5, V6 = 6, V7 = 7, V8 = 8, V9 = 9
     };
 
     [GlobalSetup]

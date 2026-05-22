@@ -4,12 +4,9 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 
-/// <summary>
-/// Immutable registry of <see cref="ByteMapperBinding"/> and
-/// <see cref="ByteMapperArrayBinding{T}"/> instances, keyed by
-/// <c>(Type entity, Type? profile)</c>.  Populated once at startup by the source-generator
-/// produced bootstrap helper; no reflection is involved after construction.
-/// </summary>
+// Immutable registry of ByteMapperBinding and ByteMapperArrayBinding<T> instances,
+// keyed by (Type entity, Type? profile). Populated once at startup by the source-generator
+// produced bootstrap helper; no reflection is involved after construction.
 public sealed class ByteMapperRegistry
 {
     private readonly FrozenDictionary<(Type Type, Type? Profile), ByteMapperBinding> singleBindings;

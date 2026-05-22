@@ -6,10 +6,8 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Fast.Helpers;
 
-/// <summary>
-/// (T)(object)value のボックス化コスト vs Unsafe.As&lt;TFrom,TTo&gt; を比較します。
-/// ジェネリックメソッド越しに計測することで実際のコンバーター動作を忠実に再現します。
-/// </summary>
+// (T)(object)value のボックス化コスト vs Unsafe.As&lt;TFrom,TTo&gt; を比較します。
+// ジェネリックメソッド越しに計測することで実際のコンバーター動作を忠実に再現します。
 [Config(typeof(BenchmarkConfig))]
 public class UnsafeAsBenchmark
 {
@@ -26,25 +24,25 @@ public class UnsafeAsBenchmark
     [Benchmark(OperationsPerInvoke = N, Description = "Write int – (T)(object)")]
     public void WriteInt_Boxed()
     {
-        for (var i = 0; i < N; i++) WriteIntBoxed<int>(writeBuffer, 123456);
+        for (var i = 0; i < N; i++) WriteIntBoxed(writeBuffer, 123456);
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write int – Unsafe.As")]
     public void WriteInt_Unsafe()
     {
-        for (var i = 0; i < N; i++) WriteIntUnsafe<int>(writeBuffer, 123456);
+        for (var i = 0; i < N; i++) WriteIntUnsafe(writeBuffer, 123456);
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write long – (T)(object)")]
     public void WriteLong_Boxed()
     {
-        for (var i = 0; i < N; i++) WriteLongBoxed<long>(writeBuffer, 123456L);
+        for (var i = 0; i < N; i++) WriteLongBoxed(writeBuffer, 123456L);
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write long – Unsafe.As")]
     public void WriteLong_Unsafe()
     {
-        for (var i = 0; i < N; i++) WriteLongUnsafe<long>(writeBuffer, 123456L);
+        for (var i = 0; i < N; i++) WriteLongUnsafe(writeBuffer, 123456L);
     }
 
     // -----------------------------------------------------------------------
