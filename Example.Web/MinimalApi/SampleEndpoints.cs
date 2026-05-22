@@ -102,6 +102,37 @@ public static class SampleEndpoints
                 }
             })
             .WithName("MinimalPostSingle");
+
+        // ---- Profile: "code-name" (35 bytes per record, code + name fields only) ----
+
+        // GET: return array of SampleData serialised using the "code-name" profile
+        group.MapGet("/profile/code-name", () =>
+            {
+                var binding = registry.GetArrayBinding<SampleData>("code-name")
+                    ?? throw new InvalidOperationException("Binding 'code-name' not registered.");
+
+                var data = CreateDummyData();
+                var buffer = new byte[binding.ElementSize * data.Length];
+                for (var i = 0; i < data.Length; i++)
+                {
+                    binding.WriteElement(data[i], buffer.AsSpan(i * binding.ElementSize, binding.ElementSize));
+                }
+
+                return Results.Bytes(buffer, "application/octet-stream");
+            })
+            .WithName("MinimalGetProfileCodeName")
+            .WithOpenApi();
+
+        // POST: receive SampleData records using the "code-name" profile
+        group.MapPost("/profile/code-name", async (HttpContext ctx) =>
+            {
+                var binding = registry.GetBinding<SampleData>("code-name")
+                    ?? throw new InvalidOperationException("Binding 'code-name' not registered.");
+
+                var items = await ReadArrayAsync(ctx.Request.Body, binding, ctx.RequestAborted);
+                return Results.Ok(new { count = items.Length });
+            })
+            .WithName("MinimalPostProfileCodeName");
     }
 
     private static async Task<SampleData[]> ReadArrayAsync(
