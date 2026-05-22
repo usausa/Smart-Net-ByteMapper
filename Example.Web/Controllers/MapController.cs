@@ -110,17 +110,13 @@ public sealed class MapController : Controller
 
     // ---- Profile: SampleDataCodeNameProfile (35 bytes per record, code + name fields only) ----
 
-    /// <summary>
-    /// Returns SampleData serialised using the "code-name" profile (code and name only).
-    /// </summary>
+    // "code-name" プロファイル（code と name のみ）でシリアライズした SampleData を返します。
     [Produces("text/x-fixedrecord")]
     [HttpGet]
     [ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
     public SampleData[] GetProfileCodeName() => CreateDummyData();
 
-    /// <summary>
-    /// Receives SampleData records serialised using the "code-name" profile (code and name only).
-    /// </summary>
+    // "code-name" プロファイル（code と name のみ）でシリアライズされた SampleData レコードを受け取ります。
     [HttpPost]
     [ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
     public IActionResult PostProfileCodeName([FromBody] SampleData[] values)

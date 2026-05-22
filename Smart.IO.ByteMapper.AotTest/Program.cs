@@ -20,11 +20,11 @@ Console.WriteLine($"Written {buffer.Length} bytes");
 var readBack = SampleRecordMappers.ReadNew(buffer);
 Console.WriteLine($"Code={readBack.Code}, Name={readBack.Name}, Qty={readBack.Qty}, Flag={readBack.Flag}, Value={readBack.Value}");
 
-if (readBack.Code != record.Code) throw new Exception($"Code mismatch: {readBack.Code}");
-if (readBack.Name.Trim() != record.Name.Trim()) throw new Exception($"Name mismatch: {readBack.Name}");
-if (readBack.Qty != record.Qty) throw new Exception($"Qty mismatch: {readBack.Qty}");
-if (readBack.Flag != record.Flag) throw new Exception($"Flag mismatch: {readBack.Flag}");
-if (readBack.Value != record.Value) throw new Exception($"Value mismatch: {readBack.Value}");
+if (readBack.Code != record.Code) { throw new Exception($"Code mismatch: {readBack.Code}"); }
+if (readBack.Name.Trim() != record.Name.Trim()) { throw new Exception($"Name mismatch: {readBack.Name}"); }
+if (readBack.Qty != record.Qty) { throw new Exception($"Qty mismatch: {readBack.Qty}"); }
+if (readBack.Flag != record.Flag) { throw new Exception($"Flag mismatch: {readBack.Flag}"); }
+if (readBack.Value != record.Value) { throw new Exception($"Value mismatch: {readBack.Value}"); }
 
 // --- Fast converters ---
 // FastIntegerConverter<int>
@@ -34,7 +34,7 @@ intBuf.Fill(0x20);
 intConverter.Write(intBuf, 42);
 var intResult = intConverter.Read(intBuf);
 Console.WriteLine($"FastIntegerConverter: {intResult}");
-if (intResult != 42) throw new Exception($"FastIntegerConverter mismatch: {intResult}");
+if (intResult != 42) { throw new Exception($"FastIntegerConverter mismatch: {intResult}"); }
 
 // FastDecimalConverter
 var decConverter = new FastDecimalConverter(12, scale: 2);
@@ -43,7 +43,7 @@ decBuf.Fill(0x20);
 decConverter.Write(decBuf, 123.45m);
 var decResult = decConverter.Read(decBuf);
 Console.WriteLine($"FastDecimalConverter: {decResult}");
-if (decResult != 123.45m) throw new Exception($"FastDecimalConverter mismatch: {decResult}");
+if (decResult != 123.45m) { throw new Exception($"FastDecimalConverter mismatch: {decResult}"); }
 
 // FastDateTimeConverter
 var dtConverter = new FastDateTimeConverter("yyyyMMddHHmmss");
@@ -52,7 +52,7 @@ var dt = new DateTime(2025, 1, 15, 10, 30, 0);
 dtConverter.Write(dtBuf, dt);
 var dtResult = dtConverter.Read(dtBuf);
 Console.WriteLine($"FastDateTimeConverter: {dtResult}");
-if (dtResult != dt) throw new Exception($"FastDateTimeConverter mismatch: {dtResult}");
+if (dtResult != dt) { throw new Exception($"FastDateTimeConverter mismatch: {dtResult}"); }
 
 // FastUnicodeConverter
 var unicodeConverter = new FastUnicodeConverter(20);
@@ -61,6 +61,6 @@ unicodeBuf.Fill(0x20);
 unicodeConverter.Write(unicodeBuf, "Hello");
 var unicodeResult = unicodeConverter.Read(unicodeBuf);
 Console.WriteLine($"FastUnicodeConverter: {unicodeResult}");
-if (unicodeResult != "Hello") throw new Exception($"FastUnicodeConverter mismatch: {unicodeResult}");
+if (unicodeResult != "Hello") { throw new Exception($"FastUnicodeConverter mismatch: {unicodeResult}"); }
 
 Console.WriteLine("=== All tests passed ===");

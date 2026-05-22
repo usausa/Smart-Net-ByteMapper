@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Fast.Converters;
 
 using Smart.IO.ByteMapper.Fast.Helpers;
 
-/// <summary>ASCII バイト表現の DateTime/DateTimeOffset コンバーター。</summary>
+// ASCII バイト表現の DateTime/DateTimeOffset コンバーター。
 public sealed class FastDateTimeConverter
 {
     private readonly bool hasDatePart;
@@ -10,10 +10,10 @@ public sealed class FastDateTimeConverter
     private readonly DateTimeKind kind;
     private readonly byte filler;
 
-    /// <summary>フィールドのバイト長を取得します。</summary>
+    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    /// <summary><see cref="FastDateTimeConverter"/> の新しいインスタンスを初期化します。</summary>
+    // FastDateTimeConverter の新しいインスタンスを初期化します。
     public FastDateTimeConverter(string format, DateTimeKind kind = DateTimeKind.Unspecified, byte filler = 0x20)
     {
         Size = format.Length;
@@ -22,13 +22,13 @@ public sealed class FastDateTimeConverter
         this.filler = filler;
     }
 
-    /// <summary>バッファーから DateTime を読み取ります。</summary>
+    // バッファーから DateTime を読み取ります。
     public DateTime? Read(ReadOnlySpan<byte> buffer)
     {
         return FastDateTimeByteHelper.TryParseDateTime(buffer, 0, entries, kind, out var result) ? result : null;
     }
 
-    /// <summary>バッファーへ DateTime を書き込みます。</summary>
+    // バッファーへ DateTime を書き込みます。
     public void Write(Span<byte> buffer, DateTime? value)
     {
         if (value is null)
@@ -42,7 +42,7 @@ public sealed class FastDateTimeConverter
     }
 }
 
-/// <summary>ASCII バイト表現の DateTimeOffset コンバーター。</summary>
+// ASCII バイト表現の DateTimeOffset コンバーター。
 public sealed class FastDateTimeOffsetConverter
 {
     private readonly bool hasDatePart;
@@ -50,10 +50,10 @@ public sealed class FastDateTimeOffsetConverter
     private readonly DateTimeKind kind;
     private readonly byte filler;
 
-    /// <summary>フィールドのバイト長を取得します。</summary>
+    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    /// <summary><see cref="FastDateTimeOffsetConverter"/> の新しいインスタンスを初期化します。</summary>
+    // FastDateTimeOffsetConverter の新しいインスタンスを初期化します。
     public FastDateTimeOffsetConverter(string format, DateTimeKind kind = DateTimeKind.Unspecified, byte filler = 0x20)
     {
         Size = format.Length;
@@ -62,7 +62,7 @@ public sealed class FastDateTimeOffsetConverter
         this.filler = filler;
     }
 
-    /// <summary>バッファーから DateTimeOffset を読み取ります。</summary>
+    // バッファーから DateTimeOffset を読み取ります。
     public DateTimeOffset? Read(ReadOnlySpan<byte> buffer)
     {
         if (!FastDateTimeByteHelper.TryParseDateTime(buffer, 0, entries, kind, out var result))
@@ -90,7 +90,7 @@ public sealed class FastDateTimeOffsetConverter
         return new DateTimeOffset(result, offset);
     }
 
-    /// <summary>バッファーへ DateTimeOffset を書き込みます。</summary>
+    // バッファーへ DateTimeOffset を書き込みます。
     public void Write(Span<byte> buffer, DateTimeOffset? value)
     {
         if (value is null)

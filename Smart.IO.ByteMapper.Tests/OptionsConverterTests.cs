@@ -5,9 +5,7 @@ using Smart.IO.ByteMapper.Fast.Converters;
 
 // ---- カスタムコンバーター定義（テスト内で定義） ----
 
-/// <summary>
-/// テスト用のカスタムコンバーター：固定長バイト配列を16進数文字列として読み書きします。
-/// </summary>
+// テスト用のカスタムコンバーター：固定長バイト配列を16進数文字列として読み書きします。
 internal sealed class HexStringConverter
 {
     public int Size { get; }

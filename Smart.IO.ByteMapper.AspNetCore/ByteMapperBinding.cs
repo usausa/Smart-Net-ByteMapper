@@ -49,7 +49,7 @@ public sealed class ByteMapperBinding<T> : ByteMapperBinding
     // Strongly-typed write.
     public void Write(T source, Span<byte> destination) => writeDelegate(source, destination);
 
-    /// <summary>Strongly-typed factory.</summary>
+    // Strongly-typed factory.
     public T Create() => factoryDelegate();
 
     // ---- non-generic overrides ----

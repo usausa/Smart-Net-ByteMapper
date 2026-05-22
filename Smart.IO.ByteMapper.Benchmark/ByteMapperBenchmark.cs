@@ -6,9 +6,7 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Converters;
 
-/// <summary>
-/// 複合レコード（int 10フィールド）の直接処理 vs 生成コード比較。
-/// </summary>
+// 複合レコード（int 10フィールド）の直接処理 vs 生成コード比較。
 [Config(typeof(BenchmarkConfig))]
 public class ByteMapperBenchmark
 {

@@ -417,10 +417,8 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return members;
     }
 
-    /// <summary>
-    /// Checks [ConverterSupportedTypes] on the attribute class against the target property type.
-    /// Returns false (and adds SBM0008) when the type is not supported.
-    /// </summary>
+    // Checks [ConverterSupportedTypes] on the attribute class against the target property type.
+    // Returns false (and adds SBM0008) when the type is not supported.
     private static bool CheckSupportedTypes(
         INamedTypeSymbol attrClass,
         ITypeSymbol propType,
@@ -511,10 +509,8 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         return args;
     }
 
-    /// <summary>
-    /// Reads the default values from attribute class property initializers (e.g. Endian Endian { get; init; } = Endian.Big).
-    /// Returns pascal-cased property name → C# literal expression.
-    /// </summary>
+    // Reads the default values from attribute class property initializers.
+    // Returns pascal-cased property name → C# literal expression.
     private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();

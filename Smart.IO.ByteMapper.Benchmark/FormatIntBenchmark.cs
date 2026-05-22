@@ -4,9 +4,7 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Fast.Helpers;
 
-/// <summary>
-/// FormatInt32 vs FormatInt64 / TryParseInt32 vs TryParseInt64 の性能差を検証します。
-/// </summary>
+// FormatInt32 vs FormatInt64 / TryParseInt32 vs TryParseInt64 の性能差を検証します。
 [Config(typeof(BenchmarkConfig))]
 public class FormatIntBenchmark
 {

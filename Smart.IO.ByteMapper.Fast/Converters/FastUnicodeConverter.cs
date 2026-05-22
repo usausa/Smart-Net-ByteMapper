@@ -2,17 +2,17 @@ namespace Smart.IO.ByteMapper.Fast.Converters;
 
 using System.Runtime.InteropServices;
 
-/// <summary>UTF-16LE（.NET 内部表現）文字列コンバーター。</summary>
+// UTF-16LE（.NET 内部表現）文字列コンバーター。
 public sealed class FastUnicodeConverter
 {
     private readonly bool trim;
     private readonly Padding padding;
     private readonly char filler;
 
-    /// <summary>フィールドのバイト長を取得します。</summary>
+    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    /// <summary><see cref="FastUnicodeConverter"/> の新しいインスタンスを初期化します。</summary>
+    // FastUnicodeConverter の新しいインスタンスを初期化します。
     public FastUnicodeConverter(int length, bool trim = true, Padding padding = Padding.Right, char filler = ' ')
     {
         Size = length;
@@ -21,7 +21,7 @@ public sealed class FastUnicodeConverter
         this.filler = filler;
     }
 
-    /// <summary>バッファーから Unicode 文字列を読み取ります。</summary>
+    // バッファーから Unicode 文字列を読み取ります。
     public string Read(ReadOnlySpan<byte> buffer)
     {
         var chars = MemoryMarshal.Cast<byte, char>(buffer[..Size]);
@@ -52,7 +52,7 @@ public sealed class FastUnicodeConverter
         return chars.Length == 0 ? string.Empty : new string(chars);
     }
 
-    /// <summary>バッファーへ Unicode 文字列を書き込みます。</summary>
+    // バッファーへ Unicode 文字列を書き込みます。
     public void Write(Span<byte> buffer, string? value)
     {
         var destination = buffer[..Size];

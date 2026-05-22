@@ -4,9 +4,7 @@ using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Converters;
 
-/// <summary>
-/// 個別コンバーターを直接呼ぶ場合と生成コード経由の場合を比較します。
-/// </summary>
+// 個別コンバーターを直接呼ぶ場合と生成コード経由の場合を比較します。
 [Config(typeof(BenchmarkConfig))]
 public class ConverterBenchmark
 {

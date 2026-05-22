@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 using Smart.IO.ByteMapper.Fast.Helpers;
 
-/// <summary>ASCII バイト表現の整数コンバーター。</summary>
+// ASCII バイト表現の整数コンバーター。
 public sealed class FastIntegerConverter<T>
     where T : struct
 {
@@ -12,10 +12,10 @@ public sealed class FastIntegerConverter<T>
     private readonly bool zerofill;
     private readonly byte filler;
 
-    /// <summary>フィールドのバイト長を取得します。</summary>
+    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    /// <summary><see cref="FastIntegerConverter{T}"/> の新しいインスタンスを初期化します。</summary>
+    // FastIntegerConverter<T> の新しいインスタンスを初期化します。
     public FastIntegerConverter(int length, Padding padding = Padding.Left, bool zerofill = false, byte filler = 0x20)
     {
         Size = length;
@@ -24,7 +24,7 @@ public sealed class FastIntegerConverter<T>
         this.filler = filler;
     }
 
-    /// <summary>バッファーから整数値を読み取ります。</summary>
+    // バッファーから整数値を読み取ります。
     public T? Read(ReadOnlySpan<byte> buffer)
     {
         if (typeof(T) == typeof(int))
@@ -61,7 +61,7 @@ public sealed class FastIntegerConverter<T>
         return null;
     }
 
-    /// <summary>バッファーへ整数値を書き込みます。</summary>
+    // バッファーへ整数値を書き込みます。
     public void Write(Span<byte> buffer, T? value)
     {
         if (value is null)

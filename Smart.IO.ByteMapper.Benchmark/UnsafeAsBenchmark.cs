@@ -24,25 +24,25 @@ public class UnsafeAsBenchmark
     [Benchmark(OperationsPerInvoke = N, Description = "Write int – (T)(object)")]
     public void WriteInt_Boxed()
     {
-        for (var i = 0; i < N; i++) WriteIntBoxed(writeBuffer, 123456);
+        for (var i = 0; i < N; i++) { WriteIntBoxed(writeBuffer, 123456); }
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write int – Unsafe.As")]
     public void WriteInt_Unsafe()
     {
-        for (var i = 0; i < N; i++) WriteIntUnsafe(writeBuffer, 123456);
+        for (var i = 0; i < N; i++) { WriteIntUnsafe(writeBuffer, 123456); }
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write long – (T)(object)")]
     public void WriteLong_Boxed()
     {
-        for (var i = 0; i < N; i++) WriteLongBoxed(writeBuffer, 123456L);
+        for (var i = 0; i < N; i++) { WriteLongBoxed(writeBuffer, 123456L); }
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "Write long – Unsafe.As")]
     public void WriteLong_Unsafe()
     {
-        for (var i = 0; i < N; i++) WriteLongUnsafe(writeBuffer, 123456L);
+        for (var i = 0; i < N; i++) { WriteLongUnsafe(writeBuffer, 123456L); }
     }
 
     // -----------------------------------------------------------------------
@@ -53,7 +53,7 @@ public class UnsafeAsBenchmark
     public int ReadInt_Boxed()
     {
         var sum = 0;
-        for (var i = 0; i < N; i++) sum += ReadIntBoxed<int>(readBuffer);
+        for (var i = 0; i < N; i++) { sum += ReadIntBoxed<int>(readBuffer); }
         return sum;
     }
 
@@ -61,7 +61,7 @@ public class UnsafeAsBenchmark
     public int ReadInt_Unsafe()
     {
         var sum = 0;
-        for (var i = 0; i < N; i++) sum += ReadIntUnsafe<int>(readBuffer);
+        for (var i = 0; i < N; i++) { sum += ReadIntUnsafe<int>(readBuffer); }
         return sum;
     }
 
@@ -69,7 +69,7 @@ public class UnsafeAsBenchmark
     public long ReadLong_Boxed()
     {
         var sum = 0L;
-        for (var i = 0; i < N; i++) sum += ReadLongBoxed<long>(readBuffer);
+        for (var i = 0; i < N; i++) { sum += ReadLongBoxed<long>(readBuffer); }
         return sum;
     }
 
@@ -77,7 +77,7 @@ public class UnsafeAsBenchmark
     public long ReadLong_Unsafe()
     {
         var sum = 0L;
-        for (var i = 0; i < N; i++) sum += ReadLongUnsafe<long>(readBuffer);
+        for (var i = 0; i < N; i++) { sum += ReadLongUnsafe<long>(readBuffer); }
         return sum;
     }
 

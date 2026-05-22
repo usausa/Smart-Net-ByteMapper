@@ -5,11 +5,9 @@ using System.Text;
 
 using BenchmarkDotNet.Attributes;
 
-/// <summary>
-/// ASCII 読み取り実装の比較:
-///   Legacy  : Encoding.ASCII.GetString (改善前)
-///   Current : System.Text.Ascii.ToUtf16 + unsafe fixed (現行実装)
-/// </summary>
+// ASCII 読み取り実装の比較:
+//   Legacy  : Encoding.ASCII.GetString (改善前)
+//   Current : System.Text.Ascii.ToUtf16 + unsafe fixed (現行実装)
 [Config(typeof(BenchmarkConfig))]
 public class AsciiReadBenchmark
 {
