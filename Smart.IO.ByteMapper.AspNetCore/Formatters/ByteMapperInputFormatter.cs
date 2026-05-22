@@ -73,7 +73,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         var modelType = context.ModelType;
         var httpContext = context.HttpContext;
         var cancellationToken = httpContext.RequestAborted;
-        var profile = httpContext.Items[ByteMapperConst.ProfileKey] as string;
+        var profile = httpContext.Items[ByteMapperConst.ProfileKey] as Type;
 
         if (modelType.IsArray)
         {

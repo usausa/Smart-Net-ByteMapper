@@ -1,17 +1,14 @@
 namespace Example.Web.Controllers;
 
-using System.Buffers;
-
 using Example.Web.Models;
 
 using Microsoft.AspNetCore.Mvc;
 
-using Smart.IO.ByteMapper.AspNetCore;
 using Smart.IO.ByteMapper.AspNetCore.Filters;
 
 // ReSharper disable StringLiteralTypo
 [Route("api/[controller]/[action]")]
-public sealed class MapController(ByteMapperRegistry registry) : Controller
+public sealed class MapController : Controller
 {
     private static readonly SampleData[] LargeValues = new SampleData[1000];
 
@@ -111,60 +108,21 @@ public sealed class MapController(ByteMapperRegistry registry) : Controller
         return Ok(new { code = value.Code, name = value.Name });
     }
 
-    // ---- Profile: "code-name" (35 bytes per record, code + name fields only) ----
+    // ---- Profile: SampleDataCodeNameProfile (35 bytes per record, code + name fields only) ----
 
     /// <summary>
     /// Returns SampleData serialised using the "code-name" profile (code and name only).
     /// </summary>
+    [Produces("text/x-fixedrecord")]
     [HttpGet]
-    public IActionResult GetProfileCodeName()
-    {
-        var binding = registry.GetArrayBinding<SampleData>("code-name");
-        if (binding is null)
-        {
-            return StatusCode(500, "Binding 'code-name' not registered.");
-        }
-
-        var data = CreateDummyData();
-        var buffer = new byte[binding.ElementSize * data.Length];
-        for (var i = 0; i < data.Length; i++)
-        {
-            binding.WriteElement(data[i], buffer.AsSpan(i * binding.ElementSize, binding.ElementSize));
-        }
-
-        return File(buffer, "application/octet-stream");
-    }
+    [ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
+    public SampleData[] GetProfileCodeName() => CreateDummyData();
 
     /// <summary>
     /// Receives SampleData records serialised using the "code-name" profile (code and name only).
     /// </summary>
     [HttpPost]
-    public async Task<IActionResult> PostProfileCodeName()
-    {
-        var binding = registry.GetBinding<SampleData>("code-name");
-        if (binding is null)
-        {
-            return StatusCode(500, "Binding 'code-name' not registered.");
-        }
-
-        var size = binding.Size;
-        var buffer = ArrayPool<byte>.Shared.Rent(size);
-        var items = new List<SampleData>();
-        try
-        {
-            int read;
-            while ((read = await Request.Body.ReadAsync(buffer.AsMemory(0, size), HttpContext.RequestAborted)) == size)
-            {
-                var item = binding.Create();
-                binding.Read(buffer.AsSpan(0, size), item);
-                items.Add(item);
-            }
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
-
-        return Ok(new { count = items.Count });
-    }
+    [ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
+    public IActionResult PostProfileCodeName([FromBody] SampleData[] values)
+        => Ok(new { count = values.Length });
 }

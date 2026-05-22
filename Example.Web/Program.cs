@@ -3,29 +3,29 @@ using System.Text;
 using Example;
 using Example.Web.MinimalApi;
 
-using Smart.IO.ByteMapper.AspNetCore;
-using Smart.IO.ByteMapper.AspNetCore.Formatters;
-
 #pragma warning disable CA1852
 
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Build the registry using the source-generated bootstrap
-var registry = __ByteMapperAspNetCoreBootstrap.Build();
-var formatterOptions = new ByteMapperFormatterOptions();
-formatterOptions.SupportedMediaTypes.Add("text/x-fixedrecord");
-
-builder.Services.AddSingleton(registry);
-builder.Services.AddSingleton(formatterOptions);
-
-builder.Services.AddControllers(options =>
+builder.Services.AddByteMapperFormatters(o =>
 {
-    options.OutputFormatters.Add(new ByteMapperOutputFormatter(registry, formatterOptions));
-    options.InputFormatters.Add(new ByteMapperInputFormatter(registry, formatterOptions));
-    options.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
+    o.SupportedMediaTypes.Add("text/x-fixedrecord");
 });
+
+builder.Services.AddControllers();
+
+// Insert ByteMapper formatters into MVC options via DI
+builder.Services.AddOptions<Microsoft.AspNetCore.Mvc.MvcOptions>()
+    .Configure<Smart.IO.ByteMapper.AspNetCore.Formatters.ByteMapperOutputFormatter,
+               Smart.IO.ByteMapper.AspNetCore.Formatters.ByteMapperInputFormatter>(
+        (mvc, output, input) =>
+        {
+            mvc.OutputFormatters.Insert(0, output);
+            mvc.InputFormatters.Insert(0, input);
+            mvc.FormatterMappings.SetMediaTypeMappingForFormat("dat", "text/x-fixedrecord");
+        });
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,6 +44,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapSampleEndpoints(registry);
+app.MapSampleEndpoints();
 
 app.Run();

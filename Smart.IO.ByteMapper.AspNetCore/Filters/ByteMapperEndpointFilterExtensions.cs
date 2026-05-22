@@ -14,8 +14,30 @@ using Microsoft.Extensions.DependencyInjection;
 /// Minimal API route handlers.  No reflection is used: <c>typeof(T)</c> resolves
 /// the binding at compile time.
 /// </summary>
+/// <remarks>
+/// For POST/PUT endpoints the parsed value is stored in <see cref="HttpContext.Items"/>
+/// under the key <c>typeof(T)</c> so that handlers can retrieve it without
+/// triggering ASP.NET Core's JSON body binder (which would 415 on custom
+/// content-types).  Use <see cref="ByteMapperEndpointFilterExtensions.GetByteMapperBody{T}"/>
+/// to retrieve the value inside a handler.
+/// </remarks>
 public static class ByteMapperEndpointFilterExtensions
 {
+    /// <summary>
+    /// Retrieves a body value parsed by <see cref="WithByteMapperBody{T}"/> or
+    /// <see cref="WithByteMapperBody{TEntity,TProfile}"/> from <see cref="HttpContext.Items"/>.
+    /// Returns <c>null</c> if the filter has not run or the body was too short.
+    /// </summary>
+    public static T? GetByteMapperBody<T>(this HttpContext httpContext) where T : class
+        => httpContext.Items[typeof(T)] as T;
+
+    /// <summary>
+    /// Retrieves an array body value parsed by <see cref="WithByteMapperArrayBody{T}"/> or
+    /// <see cref="WithByteMapperArrayBody{TEntity,TProfile}"/> from <see cref="HttpContext.Items"/>.
+    /// Returns <c>null</c> if the filter has not run.
+    /// </summary>
+    public static T[]? GetByteMapperArrayBody<T>(this HttpContext httpContext)
+        => httpContext.Items[typeof(T[])] as T[];
     // ----------------------------------------------------------------
     // Single entity
     // ----------------------------------------------------------------
@@ -26,16 +48,15 @@ public static class ByteMapperEndpointFilterExtensions
     /// value back as binary when the handler returns a <typeparamref name="T"/>.
     /// </summary>
     public static RouteHandlerBuilder WithByteMapperBody<T>(
-        this RouteHandlerBuilder builder,
-        string? profile = null)
+        this RouteHandlerBuilder builder)
         => builder.AddEndpointFilterFactory((_, next) =>
             async invocationContext =>
             {
                 var registry = invocationContext.HttpContext.RequestServices
                     .GetRequiredService<ByteMapperRegistry>();
-                var binding = registry.GetBinding<T>(profile)
+                var binding = registry.GetBinding<T>()
                     ?? throw new InvalidOperationException(
-                        $"No ByteMapperBinding registered for {typeof(T).FullName} (profile={profile ?? "default"}).");
+                        $"No ByteMapperBinding registered for {typeof(T).FullName} (profile=default).");
 
                 await ReadIntoArgumentAsync(invocationContext, binding).ConfigureAwait(false);
 
@@ -43,6 +64,34 @@ public static class ByteMapperEndpointFilterExtensions
                 if (result is T typed)
                 {
                     return new ByteMapperResult<T>(typed, binding);
+                }
+
+                return result;
+            });
+
+    /// <summary>
+    /// Reads the HTTP request body as <typeparamref name="TEntity"/> using the
+    /// registered <see cref="ByteMapperBinding{T}"/> for the specified profile,
+    /// and writes the return value back as binary when the handler returns a <typeparamref name="TEntity"/>.
+    /// </summary>
+    public static RouteHandlerBuilder WithByteMapperBody<TEntity, TProfile>(
+        this RouteHandlerBuilder builder)
+        where TProfile : class
+        => builder.AddEndpointFilterFactory((_, next) =>
+            async invocationContext =>
+            {
+                var registry = invocationContext.HttpContext.RequestServices
+                    .GetRequiredService<ByteMapperRegistry>();
+                var binding = registry.GetBinding<TEntity, TProfile>()
+                    ?? throw new InvalidOperationException(
+                        $"No ByteMapperBinding registered for {typeof(TEntity).FullName} (profile={typeof(TProfile).FullName}).");
+
+                await ReadIntoArgumentAsync(invocationContext, binding).ConfigureAwait(false);
+
+                var result = await next(invocationContext).ConfigureAwait(false);
+                if (result is TEntity typed)
+                {
+                    return new ByteMapperResult<TEntity>(typed, binding);
                 }
 
                 return result;
@@ -57,16 +106,15 @@ public static class ByteMapperEndpointFilterExtensions
     /// registered <see cref="ByteMapperArrayBinding{T}"/>.
     /// </summary>
     public static RouteHandlerBuilder WithByteMapperArrayBody<T>(
-        this RouteHandlerBuilder builder,
-        string? profile = null)
+        this RouteHandlerBuilder builder)
         => builder.AddEndpointFilterFactory((_, next) =>
             async invocationContext =>
             {
                 var registry = invocationContext.HttpContext.RequestServices
                     .GetRequiredService<ByteMapperRegistry>();
-                var binding = registry.GetArrayBinding<T>(profile)
+                var binding = registry.GetArrayBinding<T>()
                     ?? throw new InvalidOperationException(
-                        $"No ByteMapperArrayBinding registered for {typeof(T).FullName} (profile={profile ?? "default"}).");
+                        $"No ByteMapperArrayBinding registered for {typeof(T).FullName} (profile=default).");
 
                 var items = await ReadArrayAsync(invocationContext.HttpContext, binding).ConfigureAwait(false);
                 ReplaceArgument(invocationContext, items);
@@ -75,6 +123,34 @@ public static class ByteMapperEndpointFilterExtensions
                 if (result is T[] typedArray)
                 {
                     return new ByteMapperArrayResult<T>(typedArray, binding);
+                }
+
+                return result;
+            });
+
+    /// <summary>
+    /// Reads the HTTP request body as <typeparamref name="TEntity"/>[] using the
+    /// registered <see cref="ByteMapperArrayBinding{T}"/> for the specified profile.
+    /// </summary>
+    public static RouteHandlerBuilder WithByteMapperArrayBody<TEntity, TProfile>(
+        this RouteHandlerBuilder builder)
+        where TProfile : class
+        => builder.AddEndpointFilterFactory((_, next) =>
+            async invocationContext =>
+            {
+                var registry = invocationContext.HttpContext.RequestServices
+                    .GetRequiredService<ByteMapperRegistry>();
+                var binding = registry.GetArrayBinding<TEntity, TProfile>()
+                    ?? throw new InvalidOperationException(
+                        $"No ByteMapperArrayBinding registered for {typeof(TEntity).FullName} (profile={typeof(TProfile).FullName}).");
+
+                var items = await ReadArrayAsync(invocationContext.HttpContext, binding).ConfigureAwait(false);
+                ReplaceArgument(invocationContext, items);
+
+                var result = await next(invocationContext).ConfigureAwait(false);
+                if (result is TEntity[] typedArray)
+                {
+                    return new ByteMapperArrayResult<TEntity>(typedArray, binding);
                 }
 
                 return result;
@@ -101,6 +177,10 @@ public static class ByteMapperEndpointFilterExtensions
 
             var target = binding.Create();
             binding.Read(buffer.AsSpan(0, size), target);
+
+            // Store in HttpContext.Items so handlers that take HttpContext can retrieve it.
+            httpContext.Items[typeof(T)] = target;
+            // Also replace the matching argument slot if one exists (e.g. nullable T? param).
             ReplaceArgument(context, target);
         }
         finally
@@ -133,7 +213,10 @@ public static class ByteMapperEndpointFilterExtensions
             ArrayPool<byte>.Shared.Return(buffer);
         }
 
-        return items.ToArray();
+        var result = items.ToArray();
+        // Store in HttpContext.Items so handlers that take HttpContext can retrieve it.
+        httpContext.Items[typeof(T[])] = result;
+        return result;
     }
 
     private static void ReplaceArgument<T>(EndpointFilterInvocationContext context, T value)

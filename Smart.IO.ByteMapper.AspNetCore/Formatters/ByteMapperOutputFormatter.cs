@@ -76,7 +76,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         var objectType = context.ObjectType;
         var httpContext = context.HttpContext;
         var cancellationToken = httpContext.RequestAborted;
-        var profile = httpContext.Items[ByteMapperConst.ProfileKey] as string;
+        var profile = httpContext.Items[ByteMapperConst.ProfileKey] as Type;
 
         if (objectType is not null && objectType.IsArray)
         {

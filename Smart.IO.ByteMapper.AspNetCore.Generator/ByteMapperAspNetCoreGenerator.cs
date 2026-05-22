@@ -52,17 +52,16 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteMapperEndpointAttributeName);
         if (endpointAttr is null) return null;
 
-        string? profileKey = null;
         var generateArray = true;
         foreach (var na in endpointAttr.NamedArguments)
         {
-            if (na.Key == "Key" && na.Value.Value is string k) profileKey = k;
             if (na.Key == "GenerateArrayBinding" && na.Value.Value is bool b) generateArray = b;
         }
 
         string? readerMethodName = null;
         string? writerMethodName = null;
         ITypeSymbol? entityType = null;
+        ITypeSymbol? profileType = null;
 
         foreach (var member in classSymbol.GetMembers())
         {
@@ -83,6 +82,19 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 {
                     entityType = method.Parameters[1].Type;
                 }
+
+                // Extract Profile type from [ByteReader(Profile = typeof(...))]
+                var readerAttr = attrs.FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteReaderAttributeName);
+                if (readerAttr is not null)
+                {
+                    foreach (var na in readerAttr.NamedArguments)
+                    {
+                        if (na.Key == "Profile" && na.Value.Value is ITypeSymbol t)
+                        {
+                            profileType ??= t;
+                        }
+                    }
+                }
             }
 
             if (isWriter && writerMethodName is null)
@@ -100,8 +112,17 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             return null;
         }
 
-        var mapAttr = entityType.GetAttributes()
+        // If a profile type is present and it has [Map(size)], use that size.
+        // Otherwise fall back to the entity type's [Map(size)].
+        var sizeSourceType = (profileType is not null) ? profileType : entityType;
+        var mapAttr = sizeSourceType.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
+        if (mapAttr is null && profileType is not null)
+        {
+            // Profile type has no [Map]; try entity type as fallback
+            mapAttr = entityType.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
+        }
         var size = mapAttr is not null && mapAttr.ConstructorArguments.Length > 0
             ? (int)(mapAttr.ConstructorArguments[0].Value ?? 0)
             : -1;
@@ -113,6 +134,8 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
         var rootNs = DetermineRootNamespace(classSymbol);
 
+        var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
         return new EndpointModel(
             ns,
             classSymbol.Name,
@@ -120,7 +143,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             readerMethodName,
             writerMethodName,
             size,
-            profileKey,
+            profileFqn,
             generateArray,
             rootNs);
     }
@@ -240,20 +263,20 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         builder.Indent().Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry Build()").NewLine();
         builder.BeginScope();
 
-        builder.Indent().Append("var single = new Dictionary<(global::System.Type, string?), global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding>").NewLine();
+        builder.Indent().Append("var single = new Dictionary<(global::System.Type, global::System.Type?), global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding>").NewLine();
         builder.Indent().Append("{").NewLine();
         foreach (var ep in endpoints)
         {
             var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
-            var profileLiteral = ep.ProfileKey is null ? "null" : $"\"{ep.ProfileKey}\"";
+            var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
             builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperBinding() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
         builder.NewLine();
 
-        builder.Indent().Append("var array = new Dictionary<(global::System.Type, string?), object>").NewLine();
+        builder.Indent().Append("var array = new Dictionary<(global::System.Type, global::System.Type?), object>").NewLine();
         builder.Indent().Append("{").NewLine();
         foreach (var ep in endpoints)
         {
@@ -261,7 +284,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
-            var profileLiteral = ep.ProfileKey is null ? "null" : $"\"{ep.ProfileKey}\"";
+            var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
             builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperArrayBinding() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
@@ -315,7 +338,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         string ReaderMethodName,
         string WriterMethodName,
         int Size,
-        string? ProfileKey,
+        string? ProfileTypeFqn,
         bool GenerateArrayBinding,
         string RootNamespace);
 }
