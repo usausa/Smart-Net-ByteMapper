@@ -1,7 +1,5 @@
+// ReSharper disable RedundantArgumentDefaultValue
 namespace Smart.IO.ByteMapper.Converters;
-
-using System;
-using System.Text;
 
 using Xunit;
 
@@ -50,7 +48,7 @@ public class TextConverterTests
     public void WhenReadWithTrimThenStripped()
     {
         var converter = new TextConverter(8, 20127, true, Padding.Right, 0x20);
-        var buffer = Encoding.ASCII.GetBytes("Hello   ");
+        var buffer = "Hello   "u8.ToArray();
         Assert.Equal("Hello", converter.Read(buffer));
     }
 
@@ -58,7 +56,7 @@ public class TextConverterTests
     public void WhenReadWithoutTrimThenNotStripped()
     {
         var converter = new TextConverter(8, 20127, false, Padding.Right, 0x20);
-        var buffer = Encoding.ASCII.GetBytes("Hello   ");
+        var buffer = "Hello   "u8.ToArray();
         Assert.Equal("Hello   ", converter.Read(buffer));
     }
 

@@ -1,9 +1,6 @@
 namespace Smart.IO.ByteMapper.Fast.Converters;
 
-using System;
 using System.Text;
-
-using Xunit;
 
 public class FastDecimalConverterAdditionalTests
 {

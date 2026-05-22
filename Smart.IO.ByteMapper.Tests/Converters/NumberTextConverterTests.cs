@@ -1,10 +1,7 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
 using System.Globalization;
 using System.Text;
-
-using Xunit;
 
 public class NumberTextConverterTests
 {
@@ -14,7 +11,7 @@ public class NumberTextConverterTests
     public void WhenIntReadValidValueThenReturnsInt()
     {
         var converter = new NumberTextConverter<int>(8);
-        var buffer = Encoding.ASCII.GetBytes("    1234");
+        var buffer = "    1234"u8.ToArray();
         Assert.Equal(1234, converter.Read(buffer));
     }
 
@@ -22,7 +19,7 @@ public class NumberTextConverterTests
     public void WhenIntReadAllFillerThenReturnsDefault()
     {
         var converter = new NumberTextConverter<int>(4);
-        var buffer = new byte[] { 0x20, 0x20, 0x20, 0x20 };
+        var buffer = "    "u8.ToArray();
         Assert.Equal(0, converter.Read(buffer));
     }
 
@@ -50,7 +47,7 @@ public class NumberTextConverterTests
     public void WhenLongReadValidValueThenReturnsLong()
     {
         var converter = new NumberTextConverter<long>(21);
-        var buffer = Encoding.ASCII.GetBytes("  1234567890123456789");
+        var buffer = "  1234567890123456789"u8.ToArray();
         Assert.Equal(1234567890123456789L, converter.Read(buffer));
     }
 
@@ -80,7 +77,7 @@ public class NumberTextConverterTests
     public void WhenDecimalReadValidValueThenReturnsDecimal()
     {
         var converter = new NumberTextConverter<decimal>(12, style: NumberStyles.Number);
-        var buffer = Encoding.ASCII.GetBytes("    1234.56 ");
+        var buffer = "    1234.56 "u8.ToArray();
         Assert.Equal(1234.56m, converter.Read(buffer));
     }
 

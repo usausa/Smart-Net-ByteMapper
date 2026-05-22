@@ -1,9 +1,6 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
 using System.Text;
-
-using Xunit;
 
 public class DateTimeTextConverterTests
 {
@@ -13,7 +10,7 @@ public class DateTimeTextConverterTests
     public void WhenDateTimeReadValidDateThenReturnsDateTime()
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
-        var buffer = Encoding.ASCII.GetBytes("20240315");
+        var buffer = "20240315"u8.ToArray();
         Assert.Equal(new DateTime(2024, 3, 15), converter.Read(buffer));
     }
 
@@ -21,8 +18,8 @@ public class DateTimeTextConverterTests
     public void WhenDateTimeReadAllFillerThenReturnsDefault()
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
-        var buffer = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        Assert.Equal(default(DateTime), converter.Read(buffer));
+        var buffer = "        "u8.ToArray();
+        Assert.Equal(default, converter.Read(buffer));
     }
 
     [Fact]
@@ -30,7 +27,7 @@ public class DateTimeTextConverterTests
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
         var buffer = new byte[8];
-        converter.Write(buffer, default(DateTime));
+        converter.Write(buffer, default);
         // default DateTime は "00010101" に書き込まれる（fillerではなく値として）
         Assert.Equal("00010101", Encoding.ASCII.GetString(buffer));
     }
@@ -75,8 +72,8 @@ public class DateTimeTextConverterTests
     public void WhenDateTimeOffsetReadAllFillerThenReturnsDefault()
     {
         var converter = new DateTimeTextConverter<DateTimeOffset>(8, "yyyyMMdd");
-        var buffer = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-        Assert.Equal(default(DateTimeOffset), converter.Read(buffer));
+        var buffer = "        "u8.ToArray();
+        Assert.Equal(default, converter.Read(buffer));
     }
 
     // ---- custom filler ----
@@ -86,8 +83,8 @@ public class DateTimeTextConverterTests
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd", filler: 0x30);
         // フィラーで全体が埋まった場合はdefaultを返す
-        var buffer = new byte[] { 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30 };
-        Assert.Equal(default(DateTime), converter.Read(buffer));
+        var buffer = "00000000"u8.ToArray();
+        Assert.Equal(default, converter.Read(buffer));
     }
 
     // ---- Size ----

@@ -1,9 +1,6 @@
 namespace Smart.IO.ByteMapper.Fast.Converters;
 
-using System;
 using System.Text;
-
-using Xunit;
 
 public class FastDateTimeOffsetConverterTests
 {
@@ -53,7 +50,7 @@ public class FastDateTimeOffsetConverterTests
         var buffer = "20240601120000"u8.ToArray().AsSpan();
         var result = converter.Read(buffer);
         Assert.NotNull(result);
-        Assert.Equal(TimeSpan.Zero, result!.Value.Offset);
+        Assert.Equal(TimeSpan.Zero, result.Value.Offset);
     }
 
     [Fact]

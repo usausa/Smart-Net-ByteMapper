@@ -2,15 +2,13 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using System.Text;
 
-using Xunit;
-
 public class AsciiConverterAdditionalTests
 {
     [Fact]
     public void WhenReadWithTrimFalseThenNotStripped()
     {
         var converter = new AsciiConverter(8, trim: false);
-        var buffer = Encoding.ASCII.GetBytes("Hi      ");
+        var buffer = "Hi      "u8.ToArray();
         Assert.Equal("Hi      ", converter.Read(buffer));
     }
 
@@ -18,7 +16,7 @@ public class AsciiConverterAdditionalTests
     public void WhenReadLeftPaddingWithTrimThenStripped()
     {
         var converter = new AsciiConverter(8, trim: true, padding: Padding.Left);
-        var buffer = Encoding.ASCII.GetBytes("      Hi");
+        var buffer = "      Hi"u8.ToArray();
         Assert.Equal("Hi", converter.Read(buffer));
     }
 
@@ -26,7 +24,7 @@ public class AsciiConverterAdditionalTests
     public void WhenReadAllFillerWithTrimThenEmptyString()
     {
         var converter = new AsciiConverter(4, trim: true);
-        var buffer = new byte[] { 0x20, 0x20, 0x20, 0x20 };
+        var buffer = "    "u8.ToArray();
         Assert.Equal(string.Empty, converter.Read(buffer));
     }
 

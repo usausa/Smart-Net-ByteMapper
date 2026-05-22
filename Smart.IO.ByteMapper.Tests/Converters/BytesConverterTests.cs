@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using Xunit;
-
 public class BytesConverterTests
 {
     [Fact]

@@ -1,8 +1,6 @@
+// ReSharper disable RedundantArgumentDefaultValue
+#pragma warning disable IDE0230
 namespace Smart.IO.ByteMapper.Converters;
-
-using System;
-
-using Xunit;
 
 public class BinaryConverterTests
 {

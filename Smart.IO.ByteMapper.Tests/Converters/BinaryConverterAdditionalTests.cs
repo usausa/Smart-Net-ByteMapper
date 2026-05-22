@@ -1,9 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System;
-
-using Xunit;
-
 public class BinaryConverterAdditionalTests
 {
     // ---- byte / sbyte ----
@@ -36,7 +32,7 @@ public class BinaryConverterAdditionalTests
     {
         var converter = new BinaryConverter<sbyte>();
         var buffer = new byte[1];
-        converter.Write(buffer, (sbyte)-1);
+        converter.Write(buffer, -1);
         Assert.Equal(0xFF, buffer[0]);
     }
 

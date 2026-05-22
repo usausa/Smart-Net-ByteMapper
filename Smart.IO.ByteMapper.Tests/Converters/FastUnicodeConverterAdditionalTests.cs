@@ -1,9 +1,5 @@
 namespace Smart.IO.ByteMapper.Fast.Converters;
 
-using System;
-
-using Xunit;
-
 public class FastUnicodeConverterAdditionalTests
 {
     // ---- trim=false ----
