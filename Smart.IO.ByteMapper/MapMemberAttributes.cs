@@ -134,7 +134,7 @@ public sealed class MapDateTimeTextAttribute<T> : ByteMapperConverterAttribute<D
 }
 
 // MapArray<TElementAttribute>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public sealed class MapArrayAttribute<TElementAttribute> : ByteMapperPropertyAttribute
     where TElementAttribute : ByteMapperPropertyAttribute, new()
 {

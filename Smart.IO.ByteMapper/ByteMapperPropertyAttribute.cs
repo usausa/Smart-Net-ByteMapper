@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using System;
 
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public abstract class ByteMapperPropertyAttribute : Attribute
 {
     public int Offset { get; }
@@ -13,7 +13,8 @@ public abstract class ByteMapperPropertyAttribute : Attribute
     }
 }
 
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+// ReSharper disable once UnusedTypeParameter
+[AttributeUsage(AttributeTargets.Property)]
 public abstract class ByteMapperConverterAttribute<TConverter> : ByteMapperPropertyAttribute
 {
     protected ByteMapperConverterAttribute(int offset)
@@ -24,7 +25,7 @@ public abstract class ByteMapperConverterAttribute<TConverter> : ByteMapperPrope
 
 // Specifies the property types that a converter attribute supports.
 // The source generator emits SBM0008 when the mapped property type is not in the list.
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+[AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ConverterSupportedTypesAttribute : Attribute
 {
     public Type[] Types { get; }

@@ -1,4 +1,20 @@
 <Solution>
+  <Folder Name="/Benchmark/">
+    <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
+  </Folder>
+  <Folder Name="/Example/">
+    <Project Path="Example.Web/Example.Web.csproj" />
+    <Project Path="Example/Example.csproj" />
+  </Folder>
+  <Folder Name="/Library/">
+    <Project Path="Smart.IO.ByteMapper.AspNetCore.Generator/Smart.IO.ByteMapper.AspNetCore.Generator.csproj" />
+    <Project Path="Smart.IO.ByteMapper.AspNetCore/Smart.IO.ByteMapper.AspNetCore.csproj" />
+    <Project Path="Smart.IO.ByteMapper.Fast/Smart.IO.ByteMapper.Fast.csproj" />
+    <Project Path="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
+    <Project Path="Smart.IO.ByteMapper/Smart.IO.ByteMapper.csproj">
+      <BuildDependency Project="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
+    </Project>
+  </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
     <File Path=".gitattributes" />
@@ -14,16 +30,7 @@
     <File Path="Smart.IO.ByteMapper.props" />
     <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
   </Folder>
-  <Project Path="Smart.IO.ByteMapper/Smart.IO.ByteMapper.csproj">
-    <BuildDependency Project="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
-  </Project>
-  <Project Path="Smart.IO.ByteMapper.Generator/Smart.IO.ByteMapper.Generator.csproj" />
-  <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
-  <Project Path="Smart.IO.ByteMapper.Fast/Smart.IO.ByteMapper.Fast.csproj" />
-  <Project Path="Example.Web/Example.Web.csproj" />
+  <Folder Name="/Tes/" />
   <Project Path="Smart.IO.ByteMapper.AotTest/Smart.IO.ByteMapper.AotTest.csproj" />
-  <Project Path="Smart.IO.ByteMapper.AspNetCore.Generator/Smart.IO.ByteMapper.AspNetCore.Generator.csproj" />
-  <Project Path="Smart.IO.ByteMapper.AspNetCore/Smart.IO.ByteMapper.AspNetCore.csproj" />
-  <Project Path="Example/Example.csproj" DefaultStartup="true" />
-  <Project Path="Smart.IO.ByteMapper.Benchmark/Smart.IO.ByteMapper.Benchmark.csproj" />
+  <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
 </Solution>

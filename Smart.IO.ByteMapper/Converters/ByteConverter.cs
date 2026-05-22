@@ -8,10 +8,6 @@ public sealed class ByteConverter
 
     public const int Size = 1;
 
-    public ByteConverter()
-    {
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte Read(ReadOnlySpan<byte> source) => source[0];
 
