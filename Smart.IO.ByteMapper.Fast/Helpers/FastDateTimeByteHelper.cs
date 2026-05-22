@@ -38,7 +38,7 @@ internal static partial class FastDateTimeByteHelper
     //--------------------------------------------------------------------------------
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void GetDatePart(long ticks, out int year, out int month, out int day)
+    private static void GetDatePart(long ticks, out int year, out int month, out int day)
     {
         var n = (int)(ticks / TicksPerDay);
         var y400 = n / DaysPer400Years;
@@ -168,6 +168,7 @@ internal static partial class FastDateTimeByteHelper
             var millisecond = 0;
 
             var offset = 0;
+            // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < entries.Length; i++)
             {
                 var entry = entries[i];
@@ -367,6 +368,7 @@ internal static partial class FastDateTimeByteHelper
         {
             var pBytes = pPinned + index;
             var offset = 0;
+            // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < entries.Length; i++)
             {
                 var entry = entries[i];

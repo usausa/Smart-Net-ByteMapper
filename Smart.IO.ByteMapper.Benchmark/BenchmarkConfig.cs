@@ -7,6 +7,7 @@ using BenchmarkDotNet.Environments;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Toolchains.InProcess.Emit;
 
+#pragma warning disable CA1812
 internal sealed class BenchmarkConfig : ManualConfig
 {
     public BenchmarkConfig()
@@ -21,3 +22,4 @@ internal sealed class BenchmarkConfig : ManualConfig
             .WithToolchain(InProcessEmitToolchain.Instance));
     }
 }
+#pragma warning restore CA1812

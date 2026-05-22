@@ -132,19 +132,3 @@ public sealed class MapDateTimeTextAttribute<T> : ByteMapperConverterAttribute<D
         Format = format;
     }
 }
-
-// MapArray<TElementAttribute>
-[AttributeUsage(AttributeTargets.Property)]
-public sealed class MapArrayAttribute<TElementAttribute> : ByteMapperPropertyAttribute
-    where TElementAttribute : ByteMapperPropertyAttribute, new()
-{
-    public int Count { get; }
-
-    public byte Filler { get; init; }
-
-    public MapArrayAttribute(int offset, int count)
-        : base(offset)
-    {
-        Count = count;
-    }
-}

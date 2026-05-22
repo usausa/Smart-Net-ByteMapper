@@ -53,10 +53,10 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             return type.GetGenericArguments()[0];
         }
 
+        // ReSharper disable once LoopCanBeConvertedToQuery
         foreach (var iface in type.GetInterfaces())
         {
-            if (iface.IsGenericType &&
-                iface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+            if (iface.IsGenericType && iface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 return iface.GetGenericArguments()[0];
             }

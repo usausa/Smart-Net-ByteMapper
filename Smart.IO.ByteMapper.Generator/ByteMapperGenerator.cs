@@ -352,7 +352,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 var converterBase = attr.AttributeClass.FindConverterAttributeBase(converterAttrBase);
                 if (converterBase == null)
                 {
-                    continue; // MapArray or unrecognized - skip for now
+                    continue; // unrecognized converter attribute - skip
                 }
 
                 var converterType = converterBase.TypeArguments[0];

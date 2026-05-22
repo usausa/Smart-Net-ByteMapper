@@ -18,7 +18,7 @@ public sealed class BytesConverter
     public byte[] Read(ReadOnlySpan<byte> source) => source[..Size].ToArray();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(Span<byte> destination, byte[] value)
+    public void Write(Span<byte> destination, byte[]? value)
     {
         if (value is null || value.Length == 0)
         {

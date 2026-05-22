@@ -24,7 +24,7 @@ public class BytesConverterTests
     {
         var converter = new BytesConverter(4, 0xFF);
         var buffer = new byte[4];
-        converter.Write(buffer, null!);
+        converter.Write(buffer, null);
         Assert.All(buffer, b => Assert.Equal(0xFF, b));
     }
 

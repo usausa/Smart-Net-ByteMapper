@@ -37,6 +37,7 @@ internal static partial class BoolMappers
 public class BoolMapperWriteTests
 {
     [Fact]
+    // ReSharper disable once InconsistentNaming
     public void WhenWriteTrueFlagThenFirstByteIs0x31()
     {
         var record = new BoolRecord { Flag = true, Note = "X" };
@@ -47,6 +48,7 @@ public class BoolMapperWriteTests
     }
 
     [Fact]
+    // ReSharper disable once InconsistentNaming
     public void WhenWriteFalseFlagThenFirstByteIs0x30()
     {
         var record = new BoolRecord { Flag = false, Note = "X" };
@@ -111,6 +113,7 @@ public class BoolMapperWriteTests
 public class BoolMapperReadTests
 {
     [Fact]
+    // ReSharper disable once InconsistentNaming
     public void WhenRead0x31ThenFlagIsTrue()
     {
         var buffer = BuildBuffer(0x31, "NOTE     ");
@@ -121,6 +124,7 @@ public class BoolMapperReadTests
     }
 
     [Fact]
+    // ReSharper disable once InconsistentNaming
     public void WhenRead0x30ThenFlagIsFalse()
     {
         var buffer = BuildBuffer(0x30, "NOTE     ");

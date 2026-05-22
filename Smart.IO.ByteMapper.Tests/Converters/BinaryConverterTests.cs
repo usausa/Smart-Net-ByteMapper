@@ -1,4 +1,5 @@
 // ReSharper disable RedundantArgumentDefaultValue
+// ReSharper disable UseUtf8StringLiteral
 #pragma warning disable IDE0230
 namespace Smart.IO.ByteMapper.Converters;
 

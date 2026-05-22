@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper;
 
 using System;
 
-[AttributeUsage(AttributeTargets.Assembly, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Assembly)]
 public sealed class ByteMapperDefaultsAttribute : Attribute
 {
     public string EncodingName { get; set; } = "us-ascii";

@@ -1,3 +1,5 @@
+// ReSharper disable UseUtf8StringLiteral
+#pragma warning disable IDE0230
 namespace Smart.IO.ByteMapper;
 
 using System;
@@ -73,9 +75,7 @@ public class SimpleMapperWriteTests
         var buffer = new byte[36];
         SimpleMappers.Write(buffer, record);
 
-#pragma warning disable IDE0230
         Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x00 }, buffer[..4]);
-#pragma warning restore IDE0230
     }
 
     [Fact]

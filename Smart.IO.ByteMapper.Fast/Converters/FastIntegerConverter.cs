@@ -26,7 +26,7 @@ public sealed class FastIntegerConverter<T>
     }
 
     // バッファーから整数値を読み取ります。
-    [SuppressMessage("ReSharper", "DuplicatedStatements")]
+    // ReSharper disable DuplicatedStatements
     public T? Read(ReadOnlySpan<byte> buffer)
     {
         if (typeof(T) == typeof(int))
@@ -62,6 +62,7 @@ public sealed class FastIntegerConverter<T>
 
         return null;
     }
+    // ReSharper restore DuplicatedStatements
 
     // バッファーへ整数値を書き込みます。
     public void Write(Span<byte> buffer, T? value)
