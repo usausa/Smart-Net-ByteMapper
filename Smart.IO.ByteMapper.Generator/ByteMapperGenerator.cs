@@ -193,7 +193,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             syntax,
             diagErrors);
 
-        var className = SourceGenerateHelper.SymbolExtensions.GetClassName(containingType);
+        var className = containingType.GetClassName();
         var model = new MapperMethodModel(
             ns,
             className,

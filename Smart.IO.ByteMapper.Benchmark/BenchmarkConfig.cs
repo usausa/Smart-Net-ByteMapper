@@ -16,10 +16,7 @@ internal sealed class BenchmarkConfig : ManualConfig
         // AddValidator(JitOptimizationsValidator.FailOnError);
         AddDiagnoser(MemoryDiagnoser.Default);
         AddColumn(StatisticColumn.OperationsPerSecond);
-        AddJob(Job.MediumRun
-            .WithJit(Jit.RyuJit)
-            .WithPlatform(Platform.X64)
-            .WithToolchain(InProcessEmitToolchain.Instance));
+        AddJob(Job.MediumRun.WithJit(Jit.RyuJit).WithPlatform(Platform.X64).WithToolchain(InProcessEmitToolchain.Instance));
     }
 }
 #pragma warning restore CA1812

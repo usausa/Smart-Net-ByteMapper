@@ -1,6 +1,5 @@
 namespace Smart.IO.ByteMapper.Converters;
 
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 using Smart.IO.ByteMapper.Helpers;
