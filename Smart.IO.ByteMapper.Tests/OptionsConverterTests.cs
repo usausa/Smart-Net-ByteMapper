@@ -35,6 +35,7 @@ internal sealed class HexStringConverter
 
 // ---- テスト用レコード ----
 
+// ReSharper disable NotAccessedPositionalProperty.Global
 public sealed record AsciiRecord(string Code, string Name);
 
 public sealed record IntegerRecord(int? Count, long? Amount);
@@ -46,6 +47,7 @@ public sealed record DateTimeRecord(DateTime? EventAt);
 public sealed record UnicodeRecord(string Title);
 
 public sealed record CustomConverterRecord(string HexCode, string Label);
+// ReSharper restore NotAccessedPositionalProperty.Global
 
 // ---- オプションコンバーターのテスト ----
 

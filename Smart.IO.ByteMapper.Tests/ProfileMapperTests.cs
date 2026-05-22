@@ -93,7 +93,9 @@ public class ProfileAMapperWriteTests
         var buffer = new byte[20];
         ProfileMappers.WriteA(buffer, target);
 
+#pragma warning disable IDE0230
         Assert.Equal(new byte[] { 0x00, 0x00, 0x00, 0x64 }, buffer[..4]);
+#pragma warning restore IDE0230
     }
 
     [Fact]

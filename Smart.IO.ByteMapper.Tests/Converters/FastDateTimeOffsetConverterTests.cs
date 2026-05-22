@@ -11,7 +11,7 @@ public class FastDateTimeOffsetConverterTests
         var buffer = "20240315"u8.ToArray().AsSpan();
         var result = converter.Read(buffer);
         Assert.NotNull(result);
-        Assert.Equal(2024, result!.Value.Year);
+        Assert.Equal(2024, result.Value.Year);
         Assert.Equal(3, result.Value.Month);
         Assert.Equal(15, result.Value.Day);
     }

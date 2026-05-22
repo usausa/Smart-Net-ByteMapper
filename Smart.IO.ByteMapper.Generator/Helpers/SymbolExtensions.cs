@@ -1,54 +1,11 @@
 namespace Smart.IO.ByteMapper.Generator.Helpers;
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.CodeAnalysis;
 
-using SourceGenerateHelper;
-
 internal static class SymbolExtensions
 {
-    public static string GetClassName(this INamedTypeSymbol type)
-    {
-        var name = type.Name;
-        if (type.TypeParameters.Length > 0)
-        {
-            name += $"<{string.Join(", ", type.TypeParameters.Select(p => p.Name))}>";
-        }
-        return name;
-    }
-
-    public static bool IsNullableSymbol(this ITypeSymbol type)
-    {
-        if (type.NullableAnnotation == NullableAnnotation.Annotated)
-        {
-            return true;
-        }
-
-        if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    // Gets the non-nullable underlying type of Nullable<T> or nullable reference type.
-    public static ITypeSymbol GetNonNullableType(this ITypeSymbol type)
-    {
-        if (type.OriginalDefinition.SpecialType == SpecialType.System_Nullable_T)
-        {
-            return ((INamedTypeSymbol)type).TypeArguments[0];
-        }
-
-        if (type.NullableAnnotation == NullableAnnotation.Annotated)
-        {
-            return type.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
-        }
-        return type;
-    }
-
     // Walks up the base class chain of attributeClass and returns the first constructed instance
     // of the open generic type ByteMapperConverterAttribute<>.
     // Returns null if the attribute does not derive from that open generic.

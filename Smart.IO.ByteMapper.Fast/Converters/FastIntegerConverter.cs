@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Converters;
 
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 using Smart.IO.ByteMapper.Helpers;
@@ -25,6 +26,7 @@ public sealed class FastIntegerConverter<T>
     }
 
     // バッファーから整数値を読み取ります。
+    [SuppressMessage("ReSharper", "DuplicatedStatements")]
     public T? Read(ReadOnlySpan<byte> buffer)
     {
         if (typeof(T) == typeof(int))
