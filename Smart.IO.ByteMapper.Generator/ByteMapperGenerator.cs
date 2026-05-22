@@ -1,7 +1,6 @@
 namespace Smart.IO.ByteMapper.Generator;
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
@@ -26,32 +25,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private const string ByteMapperPropertyAttributeName = "Smart.IO.ByteMapper.ByteMapperPropertyAttribute";
     private const string ByteMapperConverterAttributeOpenName = "Smart.IO.ByteMapper.ByteMapperConverterAttribute`1";
     private const string ConverterSupportedTypesAttributeName = "Smart.IO.ByteMapper.ConverterSupportedTypesAttribute";
-    // Sizes of well-known unmanaged primitive types (used to resolve BinaryConverter<T>.Size at code-gen time)
-    private static readonly Dictionary<string, int> KnownUnmanagedSizes = new(StringComparer.Ordinal)
-    {
-        ["byte"] = 1,
-        ["sbyte"] = 1,
-        ["short"] = 2,
-        ["ushort"] = 2,
-        ["int"] = 4,
-        ["uint"] = 4,
-        ["long"] = 8,
-        ["ulong"] = 8,
-        ["float"] = 4,
-        ["double"] = 8,
-        ["decimal"] = 16,
-        ["System.Byte"] = 1,
-        ["System.SByte"] = 1,
-        ["System.Int16"] = 2,
-        ["System.UInt16"] = 2,
-        ["System.Int32"] = 4,
-        ["System.UInt32"] = 4,
-        ["System.Int64"] = 8,
-        ["System.UInt64"] = 8,
-        ["System.Single"] = 4,
-        ["System.Double"] = 8,
-        ["System.Decimal"] = 16
-    };
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
@@ -78,7 +51,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     }
 
     // -------------------------------------------------------
-    // Parser
+    // Parser / 解析処理
     // -------------------------------------------------------
 
     private static Result<MapperMethodModel> ParseMethod(GeneratorAttributeSyntaxContext context, MapperKind kind)
@@ -94,7 +67,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodDefinition, syntax.GetLocation(), symbol.Name));
         }
 
-        // Determine shape and target type
+        // Determine shape and target type / メソッドシグネチャからマッパーの形状とターゲット型を決定する
         var (shape, targetType, bufferParamName, targetParamName, errors) = DetermineShape(symbol, kind);
         if (errors.Count > 0)
         {
@@ -107,6 +80,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         // Check for SBM0014: return-value reader requires parameterless constructor
+        // SBM0014 チェック: 戻り値型リーダーはデフォルトコンストラクターが必要
         if (shape == MapperShape.NewInstance)
         {
             if (targetType is INamedTypeSymbol namedTarget)
@@ -120,7 +94,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
-        // Get ByteReader/Writer attribute
+        // Get ByteReader/Writer attribute / ByteReader/Writer 属性を取得する
         var methodAttr = symbol.GetAttributes().FirstOrDefault(a =>
             a.AttributeClass?.ToDisplayString() == (kind == MapperKind.Reader ? ByteReaderAttributeName : ByteWriterAttributeName));
 
@@ -142,10 +116,10 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
-        // Determine attribute source type (Profile or Target)
+        // Determine attribute source type (Profile or Target) / 属性ソース型を決定する（Profile 指定があれば Profile 型、なければターゲット型）
         var attrSourceType = profileType ?? targetType;
 
-        // Get [Map] attribute from attribute source
+        // Get [Map] attribute from attribute source / 属性ソース型から [Map] 属性を取得する
         var mapAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
         if (mapAttr == null)
         {
@@ -160,10 +134,10 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             ? string.Empty
             : containingType.ContainingNamespace.ToDisplayString();
 
-        // Collect fillers and constants from type attributes
+        // Collect fillers and constants from type attributes / 型属性からフィラーと定数マッピングを収集する
         var typeMappings = CollectTypeMappings(attrSourceType);
 
-        // Collect member mappings
+        // Collect member mappings / メンバーマッピングを収集する
         var compilation = context.SemanticModel.Compilation;
         var propertyAttrBase = compilation.GetTypeByMetadataName(ByteMapperPropertyAttributeName);
         var converterAttrBase = compilation.GetTypeByMetadataName(ByteMapperConverterAttributeOpenName);
@@ -184,7 +158,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             syntax,
             diagErrors);
 
-        // Layout resolution
+        // Layout resolution / レイアウトの解決（オフセット順ソート＆重複チェック）
         ResolveLayout(
             members,
             typeMappings,
@@ -318,7 +292,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var members = new List<MemberMappingModel>();
         var propertyIndex = 0;
 
-        // Walk properties in attribute source type
+        // Walk properties in attribute source type / 属性ソース型のプロパティを順に走査する
         foreach (var member in attrSourceType.GetMembers().OfType<IPropertySymbol>())
         {
             foreach (var attr in member.GetAttributes())
@@ -335,7 +309,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
                 var offset = (int)(attr.ConstructorArguments[0].Value ?? 0);
 
-                // Determine actual property symbol on target
+                // Determine actual property symbol on target / ターゲット型上の実プロパティシンボルを特定する
                 var targetProp = member;
                 if (profileType != null)
                 {
@@ -349,6 +323,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 }
 
                 // Try to get Converter type from ByteMapperConverterAttribute<TConverter>
+                // ByteMapperConverterAttribute<TConverter> からコンバーター型を取得する
                 var converterBase = attr.AttributeClass.FindConverterAttributeBase(converterAttrBase);
                 if (converterBase == null)
                 {
@@ -359,18 +334,19 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
                 // SBM0008: check [ConverterSupportedTypes] on the attribute class
+                // SBM0008 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
                 if (!CheckSupportedTypes(attr.AttributeClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
                 {
                     break;
                 }
 
-                // Build ctor arg expressions
+                // Build ctor arg expressions / コンストラクター引数式を構築する
                 var ctorArgs = BuildConverterCtorArgs(attr, converterType);
 
-                // Determine size
+                // Determine size / コンバーターのサイズ種別と定数サイズを決定する
                 var (sizeKind, constSize) = DetermineConverterSize(converterType, ctorArgs);
 
-                var fieldName = $"Converter0_{propertyIndex}"; // MethodIndex will be fixed in Execute
+                var fieldName = $"Converter0_{propertyIndex}"; // MethodIndex will be fixed in Execute / メソッドインデックスは Execute で確定される
                 var converterCall = new ConverterCallModel(
                     converterFqn,
                     fieldName,
@@ -387,7 +363,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     converterCall));
 
                 propertyIndex++;
-                break; // Only first attribute per property
+                break; // Only first attribute per property / プロパティごとに最初の属性のみ処理する
             }
         }
 
@@ -396,6 +372,8 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
     // Checks [ConverterSupportedTypes] on the attribute class against the target property type.
     // Returns false (and adds SBM0008) when the type is not supported.
+    // 属性クラスの [ConverterSupportedTypes] をターゲットプロパティ型と照合する。
+    // 型が非対応の場合は false を返し SBM0008 を追加する。
     private static bool CheckSupportedTypes(
         INamedTypeSymbol attrClass,
         ITypeSymbol propType,
@@ -409,11 +387,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         if (supportedAttr == null)
         {
-            // No restriction declared — always allowed
+            // No restriction declared — always allowed / 制限なし — 常に許可
             return true;
         }
 
-        // Fixed type list: property type must be in Types[]
+        // Fixed type list: property type must be in Types[] / 固定型リスト: プロパティ型が Types[] に含まれている必要がある
         var propTypeFqn = propType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         foreach (var typeConst in supportedAttr.ConstructorArguments[0].Values)
         {
@@ -434,17 +412,18 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         AttributeData attr,
         ITypeSymbol converterType)
     {
-        // Collect ctor args from attribute: skip first arg (offset)
+        // Collect ctor args from attribute: skip first arg (offset) / 属性からコンストラクター引数を収集する（先頭のオフセット引数はスキップ）
         var args = new List<string>();
         for (var i = 1; i < attr.ConstructorArguments.Length; i++)
         {
             args.Add(attr.ConstructorArguments[i].ToLiteralExpression());
         }
 
-        // Build lookup of named arguments (user-specified)
+        // Build lookup of named arguments (user-specified) / ユーザー指定の名前付き引数のルックアップを構築する
         var namedArgs = attr.NamedArguments.ToDictionary(na => na.Key, na => na.Value.ToLiteralExpression());
 
         // Build lookup of attribute property defaults from attribute class property initializers
+        // 属性クラスのプロパティイニシャライザーからデフォルト値のルックアップを構築する
         var attrPropDefaults = GetAttributePropertyDefaults(attr.AttributeClass);
 
         if (converterType is INamedTypeSymbol namedConverter)
@@ -453,9 +432,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             if (ctor != null)
             {
                 // Map converter ctor params (skip already-covered positional params)
+                // コンバーターのコンストラクターパラメーターをマップする（位置引数で既に埋まっているものはスキップ）
                 // attr.ConstructorArguments includes offset at [0]; we skip that and add [1..] to args above.
+                // attr.ConstructorArguments の [0] はオフセット。スキップして [1..] を args に追加済み。
                 // So Converter ctor params [0 .. (attr.ConstructorArguments.Length-2)] are already covered.
-                var coveredCount = attr.ConstructorArguments.Length - 1; // number of converter ctor params already filled
+                // コンバーターのコンストラクターパラメーター [0 .. (attr.ConstructorArguments.Length-2)] は既に埋め済み。
+                var coveredCount = attr.ConstructorArguments.Length - 1; // number of converter ctor params already filled / 埋め済みのコンバーターコンストラクターパラメーター数
                 for (var i = coveredCount; i < ctor.Parameters.Length; i++)
                 {
                     var param = ctor.Parameters[i];
@@ -463,21 +445,21 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                         ? param.Name.Substring(0, 1).ToUpperInvariant() + param.Name.Substring(1)
                         : param.Name;
 
-                    // 1) User-specified named argument (pascal or camel)
+                    // 1) User-specified named argument (pascal or camel) / ユーザー指定の名前付き引数（パスカルケースまたはキャメルケース）
                     if (namedArgs.TryGetValue(pascalName, out var val) || namedArgs.TryGetValue(param.Name, out val))
                     {
                         args.Add(val);
                         continue;
                     }
 
-                    // 2) Attribute property default value
+                    // 2) Attribute property default value / 属性プロパティのデフォルト値
                     if (attrPropDefaults.TryGetValue(pascalName, out val))
                     {
                         args.Add(val);
                         continue;
                     }
 
-                    // 3) Converter ctor parameter explicit default
+                    // 3) Converter ctor parameter explicit default / コンバーターコンストラクターパラメーターの明示的デフォルト値
                     args.Add(GetDefaultLiteral(param));
                 }
             }
@@ -488,6 +470,8 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
     // Reads the default values from attribute class property initializers.
     // Returns pascal-cased property name → C# literal expression.
+    // 属性クラスのプロパティイニシャライザーからデフォルト値を読み取る。
+    // パスカルケースのプロパティ名 → C# リテラル式 の辞書を返す。
     private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();
@@ -560,6 +544,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         }
 
         // Check for const Size field or static readonly Size field
+        // const の Size フィールドまたは static readonly の Size フィールドを確認する
         foreach (var member in namedConverter.GetMembers("Size"))
         {
             if (member is IFieldSymbol field)
@@ -570,16 +555,15 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 }
 
                 // static readonly int Size = Unsafe.SizeOf<T>() - value not known at compile time
+                // static readonly int Size = Unsafe.SizeOf<T>() — コンパイル時には値が不明
                 // For generic converters (e.g. BinaryConverter<int>), resolve the type argument size if possible
+                // ジェネリックコンバーター（例: BinaryConverter<int>）の場合、型引数のサイズをヘルパーで解決する
                 if (field.IsStatic && field.IsReadOnly)
                 {
                     if (namedConverter.IsGenericType && namedConverter.TypeArguments.Length == 1)
                     {
                         var typeArg = namedConverter.TypeArguments[0];
-                        var typeKey = typeArg.SpecialType != SpecialType.None
-                            ? typeArg.ToDisplayString()
-                            : typeArg.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat).Replace("global::", string.Empty);
-                        if (KnownUnmanagedSizes.TryGetValue(typeKey, out var knownSize))
+                        if (typeArg.TryGetUnmanagedSize(out var knownSize))
                         {
                             return (SizeKind.Const, knownSize);
                         }
@@ -592,6 +576,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             if (member is IPropertySymbol { IsStatic: false })
             {
                 // Instance Size property - try to determine from ctor args (first arg is length)
+                // インスタンス Size プロパティ — コンストラクター引数の先頭（長さ）から値を推定する
                 if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var len))
                 {
                     return (SizeKind.Instance, len);
@@ -601,7 +586,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
-        // Fallback: use first ctor arg as size
+        // Fallback: use first ctor arg as size / フォールバック: コンストラクター引数の先頭をサイズとして使用する
         if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var fallback))
         {
             return (SizeKind.Instance, fallback);
@@ -618,11 +603,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         MethodDeclarationSyntax syntax,
         List<DiagnosticInfo> errors)
     {
-        // Sort members by offset
+        // Sort members by offset / メンバーをオフセット順にソートする
         members.Sort((a, b) => a.Offset.CompareTo(b.Offset));
         typeMappings.Sort((a, b) => a.Offset.CompareTo(b.Offset));
 
-        // Validate overlap
+        // Validate overlap / 範囲の重複を検証する
         if (validateLayout)
         {
             var allRanges = members.Select(m => (m.Offset, m.Size))
@@ -642,7 +627,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     }
 
     // -------------------------------------------------------
-    // Generator
+    // Generator / ソース生成処理
     // -------------------------------------------------------
 
     private static void Execute(SourceProductionContext context, ImmutableArray<Result<MapperMethodModel>> results)
@@ -661,7 +646,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
-            // Report per-method diagnostics
+            // Report per-method diagnostics / メソッドごとの診断情報を報告する
             foreach (var m in group)
             {
                 foreach (var err in m.Errors.AsArray())
@@ -670,13 +655,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 }
             }
 
-            // Assign method indices within the group
+            // Assign method indices within the group / グループ内でメソッドインデックスを割り当てる
             var methods = group.ToList();
             var numberedMethods = new List<MapperMethodModel>();
             for (var i = 0; i < methods.Count; i++)
             {
                 var m = methods[i];
-                // Reassign field names with correct method index
+                // Reassign field names with correct method index / 正しいメソッドインデックスでフィールド名を再割り当てする
                 var fixedMembers = m.Members.AsArray().Select((member, pi) =>
                     member with
                     {
@@ -717,7 +702,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             .NewLine();
         builder.BeginScope();
 
-        // Emit all converter fields first
+        // Emit all converter fields first / 最初にすべてのコンバーターフィールドを出力する
         foreach (var method in methods)
         {
             foreach (var member in method.Members.AsArray())
@@ -740,7 +725,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
-        // Emit methods
+        // Emit methods / メソッド本体を出力する
         var methodFirst = true;
         foreach (var method in methods)
         {
@@ -868,7 +853,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
     private static void EmitWriteBody(SourceBuilder builder, MapperMethodModel method, string spanVarName = "buffer")
     {
-        // Write constants/fillers
+        // Write constants/fillers / 定数・フィラーを書き込む
         foreach (var tm in method.TypeMappings.AsArray())
         {
             if (tm.Kind == TypeMappingKind.Filler)
@@ -920,7 +905,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     }
 
     // -------------------------------------------------------
-    // Helper
+    // Helper / ユーティリティ処理
     // -------------------------------------------------------
 
     private static string MakeFilename(string ns, string className)
