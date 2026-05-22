@@ -518,7 +518,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             foreach (var syntaxRef in prop.DeclaringSyntaxReferences)
             {
                 var node = syntaxRef.GetSyntax();
-                if (node is Microsoft.CodeAnalysis.CSharp.Syntax.PropertyDeclarationSyntax propSyntax
+                if (node is PropertyDeclarationSyntax propSyntax
                     && propSyntax.Initializer?.Value != null)
                 {
                     result[prop.Name] = propSyntax.Initializer.Value.ToString();

@@ -54,7 +54,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
     {
         // Type itself may be IEnumerable<T>
         if (type.IsGenericType &&
-            type.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+            type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
         {
             return type.GetGenericArguments()[0];
         }
@@ -62,7 +62,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         foreach (var iface in type.GetInterfaces())
         {
             if (iface.IsGenericType &&
-                iface.GetGenericTypeDefinition() == typeof(System.Collections.Generic.IEnumerable<>))
+                iface.GetGenericTypeDefinition() == typeof(IEnumerable<>))
             {
                 return iface.GetGenericArguments()[0];
             }
@@ -122,8 +122,8 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
     private static async ValueTask WriteSingleAsync(
         ByteMapperBinding binding,
         object value,
-        System.IO.Stream body,
-        System.Threading.CancellationToken cancellationToken)
+        Stream body,
+        CancellationToken cancellationToken)
     {
         var size = binding.Size;
         var buffer = ArrayPool<byte>.Shared.Rent(size);
@@ -141,8 +141,8 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
     private async ValueTask WriteEnumerableAsync(
         ByteMapperBinding elementBinding,
         IEnumerable enumerable,
-        System.IO.Stream body,
-        System.Threading.CancellationToken cancellationToken)
+        Stream body,
+        CancellationToken cancellationToken)
     {
         var elementSize = elementBinding.Size;
         var bufferSize = Math.Max(options.BufferSize, elementSize);

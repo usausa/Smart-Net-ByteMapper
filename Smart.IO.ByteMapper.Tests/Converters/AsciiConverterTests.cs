@@ -51,7 +51,7 @@ public class AsciiConverterAdditionalTests
     {
         var converter = new AsciiConverter(4, filler: 0x20);
         Span<byte> buffer = stackalloc byte[4];
-        converter.Write(buffer, "");
+        converter.Write(buffer, string.Empty);
         Assert.All(buffer.ToArray(), b => Assert.Equal(0x20, b));
     }
 

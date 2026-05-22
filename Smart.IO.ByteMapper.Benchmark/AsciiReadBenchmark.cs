@@ -21,7 +21,7 @@ public class AsciiReadBenchmark
     {
         buffer = new byte[FieldLen];
         // "Hello World         " (右パディング)
-        var src = System.Text.Encoding.ASCII.GetBytes("Hello World");
+        var src = Encoding.ASCII.GetBytes("Hello World");
         src.CopyTo(buffer, 0);
         buffer.AsSpan(src.Length).Fill(0x20);
     }
@@ -63,7 +63,7 @@ public class AsciiReadBenchmark
         var result = new string('\0', length);
         fixed (char* dest = result)
         {
-            System.Text.Ascii.ToUtf16(slice, new Span<char>(dest, length), out _);
+            Ascii.ToUtf16(slice, new Span<char>(dest, length), out _);
         }
         return result;
     }

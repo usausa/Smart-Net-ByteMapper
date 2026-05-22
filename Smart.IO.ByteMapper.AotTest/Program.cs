@@ -1,6 +1,6 @@
 using Smart.IO.ByteMapper.AotTest.Mappers;
 using Smart.IO.ByteMapper.AotTest.Models;
-using Smart.IO.ByteMapper.Fast.Converters;
+using Smart.IO.ByteMapper.Converters;
 
 Console.WriteLine("=== Smart.IO.ByteMapper AOT Test ===");
 

@@ -1,4 +1,4 @@
-namespace Smart.IO.ByteMapper.Fast.Converters;
+namespace Smart.IO.ByteMapper.Converters;
 
 using System.Runtime.InteropServices;
 

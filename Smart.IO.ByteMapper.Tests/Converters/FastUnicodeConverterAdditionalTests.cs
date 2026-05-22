@@ -1,4 +1,4 @@
-namespace Smart.IO.ByteMapper.Fast.Converters;
+namespace Smart.IO.ByteMapper.Converters;
 
 public class FastUnicodeConverterAdditionalTests
 {
@@ -12,7 +12,7 @@ public class FastUnicodeConverterAdditionalTests
         converter.Write(buffer, "Hi");
         // trim=falseなので右のスペースも含まれる
         var result = converter.Read(buffer);
-        Assert.StartsWith("Hi", result);
+        Assert.StartsWith("Hi", result, StringComparison.Ordinal);
         Assert.Equal(10, result.Length); // 20バイト / 2 = 10文字
     }
 

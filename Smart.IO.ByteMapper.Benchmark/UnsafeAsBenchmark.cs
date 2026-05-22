@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 using BenchmarkDotNet.Attributes;
 
-using Smart.IO.ByteMapper.Fast.Helpers;
+using Smart.IO.ByteMapper.Helpers;
 
 // (T)(object)value のボックス化コスト vs Unsafe.As&lt;TFrom,TTo&gt; を比較します。
 // ジェネリックメソッド越しに計測することで実際のコンバーター動作を忠実に再現します。

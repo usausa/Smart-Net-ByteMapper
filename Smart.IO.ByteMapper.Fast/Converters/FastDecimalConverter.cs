@@ -1,6 +1,6 @@
-namespace Smart.IO.ByteMapper.Fast.Converters;
+namespace Smart.IO.ByteMapper.Converters;
 
-using Smart.IO.ByteMapper.Fast.Helpers;
+using Smart.IO.ByteMapper.Helpers;
 
 // ASCII バイト表現の decimal コンバーター。
 public sealed class FastDecimalConverter

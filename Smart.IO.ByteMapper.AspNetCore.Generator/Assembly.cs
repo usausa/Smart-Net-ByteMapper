@@ -1,4 +1,4 @@
-[assembly: System.CLSCompliant(false)]
+[assembly: CLSCompliant(false)]
 
 // ReSharper disable ArrangeNamespaceBody
 // ReSharper disable CheckNamespace

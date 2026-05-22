@@ -1,7 +1,6 @@
 namespace Smart.IO.ByteMapper;
 
 using Smart.IO.ByteMapper.Converters;
-using Smart.IO.ByteMapper.Fast.Converters;
 
 // ---- カスタムコンバーター定義（テスト内で定義） ----
 
@@ -253,7 +252,7 @@ public class OptionsConverterTests
     {
         // 4バイトのバイナリデータ → "48454C4C" ("HELL" のASCIIコード)
         var converter = new HexStringConverter(4);
-        var buffer = new byte[] { 0x48, 0x45, 0x4C, 0x4C };
+        var buffer = "HELL"u8.ToArray();
         Assert.Equal("48454C4C", converter.Read(buffer));
     }
 

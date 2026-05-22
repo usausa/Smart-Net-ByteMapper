@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Benchmark;
 
 using BenchmarkDotNet.Attributes;
 
-using Smart.IO.ByteMapper.Fast.Helpers;
+using Smart.IO.ByteMapper.Helpers;
 
 // FormatInt32 vs FormatInt64 / TryParseInt32 vs TryParseInt64 の性能差を検証します。
 [Config(typeof(BenchmarkConfig))]
@@ -42,7 +42,7 @@ public class FormatIntBenchmark
     {
         for (var i = 0; i < N; i++)
         {
-            FastNumberByteHelper.FormatInt32(buffer, 0, 10, (short)1234, Pad, false, 0x20);
+            FastNumberByteHelper.FormatInt32(buffer, 0, 10, 1234, Pad, false, 0x20);
         }
     }
 
@@ -53,7 +53,7 @@ public class FormatIntBenchmark
     {
         for (var i = 0; i < N; i++)
         {
-            FastNumberByteHelper.FormatInt64(buffer, 0, 10, (short)1234, Pad, false, 0x20);
+            FastNumberByteHelper.FormatInt64(buffer, 0, 10, 1234, Pad, false, 0x20);
         }
     }
 

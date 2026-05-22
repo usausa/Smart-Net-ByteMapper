@@ -1,9 +1,10 @@
 namespace Smart.IO.ByteMapper.Benchmark;
 
+using System.Globalization;
+
 using BenchmarkDotNet.Attributes;
 
 using Smart.IO.ByteMapper.Converters;
-using Smart.IO.ByteMapper.Fast.Converters;
 
 // Smart.IO.ByteMapper (Core) と Smart.IO.ByteMapper.Fast の重複機能を直接比較します。
 //
@@ -58,15 +59,15 @@ public class CoreVsFastBenchmark
         System.Text.Encoding.ASCII.GetBytes("Hello World         ".AsSpan(0, FieldLen), asciiReadBuffer);
 
         // 整数読み取りバッファ準備（右詰め、スペース埋め）
-        var intStr = IntValue.ToString().PadLeft(10);
+        var intStr = IntValue.ToString(CultureInfo.InvariantCulture).PadLeft(10);
         System.Text.Encoding.ASCII.GetBytes(intStr, intReadBuffer);
 
         // decimal 読み取りバッファ準備
-        var decStr = DecValue.ToString("0.00").PadLeft(20);
+        var decStr = DecValue.ToString("0.00", CultureInfo.InvariantCulture).PadLeft(20);
         System.Text.Encoding.ASCII.GetBytes(decStr, decReadBuffer);
 
         // DateTime 読み取りバッファ準備
-        System.Text.Encoding.ASCII.GetBytes(DtValue.ToString(DateFormat), dtReadBuffer);
+        System.Text.Encoding.ASCII.GetBytes(DtValue.ToString(DateFormat, CultureInfo.InvariantCulture), dtReadBuffer);
     }
 
     // ===== ASCII Read =====

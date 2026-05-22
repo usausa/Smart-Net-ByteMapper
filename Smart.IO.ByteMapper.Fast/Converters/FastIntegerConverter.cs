@@ -1,8 +1,8 @@
-namespace Smart.IO.ByteMapper.Fast.Converters;
+namespace Smart.IO.ByteMapper.Converters;
 
 using System.Runtime.CompilerServices;
 
-using Smart.IO.ByteMapper.Fast.Helpers;
+using Smart.IO.ByteMapper.Helpers;
 
 // ASCII バイト表現の整数コンバーター。
 public sealed class FastIntegerConverter<T>
