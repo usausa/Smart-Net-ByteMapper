@@ -43,7 +43,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         return registry.GetBinding(type) is not null;
     }
 
-    [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
         // Type itself may be IEnumerable<T>
@@ -173,6 +173,6 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         return array;
     }
 
-    [UnconditionalSuppressMessage("AotAnalysis", "IL3050", Justification = "elementType is a registered ByteMapper entity type; array creation is safe at runtime.")]
+    [UnconditionalSuppressMessage("AOT", "IL3050", Justification = "elementType is a registered ByteMapper entity type; array creation is safe at runtime.")]
     private static Array CreateArrayInstance(Type elementType, int count) => Array.CreateInstance(elementType, count);
 }

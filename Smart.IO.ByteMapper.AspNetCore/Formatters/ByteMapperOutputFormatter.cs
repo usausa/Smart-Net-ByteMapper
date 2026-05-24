@@ -49,7 +49,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         return registry.GetBinding(type) is not null;
     }
 
-    [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
+    [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
         // Type itself may be IEnumerable<T>
