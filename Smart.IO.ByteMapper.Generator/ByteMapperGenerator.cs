@@ -737,6 +737,30 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
+        // Emit static readonly fields for MapConstant byte arrays to avoid per-call heap allocation.
+        // Key: hex-literal CSV of bytes; Value: generated field name / MapConstant バイト配列を静的フィールドとして出力し、Write のたびのヒープ割り当てを回避する
+        var constantFieldMap = new Dictionary<string, string>(StringComparer.Ordinal);
+        var constantCounter = 0;
+        foreach (var method in methods)
+        {
+            foreach (var tm in method.TypeMappings.AsArray())
+            {
+                if (tm.Kind != TypeMappingKind.Constant)
+                {
+                    continue;
+                }
+                var key = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
+                if (!constantFieldMap.ContainsKey(key))
+                {
+                    var fieldName = $"ConstantBytes{constantCounter++}";
+                    constantFieldMap[key] = fieldName;
+                    builder.Indent()
+                        .Append($"private static readonly byte[] {fieldName} = [{key}];")
+                        .NewLine();
+                }
+            }
+        }
+
         // Emit methods / メソッド本体を出力する
         var methodFirst = true;
         foreach (var method in methods)
@@ -748,13 +772,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             methodFirst = false;
 
             builder.NewLine();
-            EmitMethod(builder, method);
+            EmitMethod(builder, method, constantFieldMap);
         }
 
         builder.EndScope();
     }
 
-    private static void EmitMethod(SourceBuilder builder, MapperMethodModel method)
+    private static void EmitMethod(SourceBuilder builder, MapperMethodModel method, IReadOnlyDictionary<string, string> constantFieldMap)
     {
         builder.Indent()
             .Append("[global::System.Runtime.CompilerServices.MethodImpl(global::System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]")
@@ -806,7 +830,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(", ").Append(method.TargetTypeFqn).Append(" ").Append(method.TargetParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
-                EmitWriteBody(builder, method, method.BufferParamName);
+                EmitWriteBody(builder, method, method.BufferParamName, constantFieldMap);
                 builder.EndScope();
                 break;
 
@@ -823,7 +847,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append($"var span = (global::System.Span<byte>){method.BufferParamName};")
                     .NewLine();
-                EmitWriteBody(builder, method, "span");
+                EmitWriteBody(builder, method, "span", constantFieldMap);
                 builder.Indent().Append("return ").Append(method.BufferParamName).Append(";").NewLine();
                 builder.EndScope();
                 break;
@@ -863,7 +887,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             .NewLine();
     }
 
-    private static void EmitWriteBody(SourceBuilder builder, MapperMethodModel method, string spanVarName = "buffer")
+    private static void EmitWriteBody(SourceBuilder builder, MapperMethodModel method, string spanVarName, IReadOnlyDictionary<string, string> constantFieldMap)
     {
         // Write constants/fillers / 定数・フィラーを書き込む
         foreach (var tm in method.TypeMappings.AsArray())
@@ -876,9 +900,11 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
             else if (tm.Kind == TypeMappingKind.Constant)
             {
-                var bytes = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
+                // Use the pre-declared static field to avoid per-call heap allocation.
+                var key = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
+                var fieldName = constantFieldMap[key];
                 builder.Indent()
-                    .Append($"{{ var c = new byte[] {{ {bytes} }}; c.CopyTo({spanVarName}.Slice({tm.Offset}, {tm.Size})); }}")
+                    .Append($"new global::System.ReadOnlySpan<byte>({fieldName}).CopyTo({spanVarName}.Slice({tm.Offset}, {tm.Size}));")
                     .NewLine();
             }
         }

@@ -22,6 +22,7 @@ public sealed class AsciiConverter
     }
 
     // バッファーから ASCII 文字列を読み取ります。
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public unsafe string Read(ReadOnlySpan<byte> buffer)
     {
         var start = 0;
@@ -46,6 +47,7 @@ public sealed class AsciiConverter
     }
 
     // バッファーへ ASCII 文字列を書き込みます。
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> buffer, string? value)
     {
         if (String.IsNullOrEmpty(value))

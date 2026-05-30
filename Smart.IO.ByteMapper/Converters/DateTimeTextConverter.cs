@@ -13,6 +13,10 @@ public sealed class DateTimeTextConverter<T>
     private readonly DateTimeStyles style;
     private readonly IFormatProvider provider;
     private readonly byte filler;
+    // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
+    private readonly int readCharCount;
+    private readonly int writeCharCount;
+    private readonly int writeByteCount;
 
     public int Size { get; }
 
@@ -30,6 +34,9 @@ public sealed class DateTimeTextConverter<T>
         this.style = style;
         provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
         this.filler = filler;
+        readCharCount = encoding.GetMaxCharCount(Size);
+        writeCharCount = Math.Max(Size, 64);
+        writeByteCount = encoding.GetMaxByteCount(writeCharCount);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -47,7 +54,7 @@ public sealed class DateTimeTextConverter<T>
             return default;
         }
 
-        Span<char> chars = stackalloc char[encoding.GetMaxCharCount(size)];
+        Span<char> chars = stackalloc char[readCharCount];
         var charCount = encoding.GetChars(source[..size], chars);
         return ParseValue(chars[..charCount]);
     }
@@ -55,13 +62,13 @@ public sealed class DateTimeTextConverter<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        Span<char> chars = stackalloc char[Math.Max(Size, 64)];
+        Span<char> chars = stackalloc char[writeCharCount];
         if (!TryFormatValue(value, chars, out var charsWritten))
         {
             destination[..Size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(charsWritten)];
+        Span<byte> encoded = stackalloc byte[writeByteCount];
         var count = encoding.GetBytes(chars[..charsWritten], encoded);
         var written = Math.Min(count, Size);
         encoded[..written].CopyTo(destination[..written]);
@@ -71,6 +78,7 @@ public sealed class DateTimeTextConverter<T>
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private T ParseValue(ReadOnlySpan<char> str)
     {
         if (typeof(T) == typeof(DateTime))
@@ -96,6 +104,7 @@ public sealed class DateTimeTextConverter<T>
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool TryFormatValue(T value, Span<char> buffer, out int charsWritten)
     {
         if (typeof(T) == typeof(DateTime))

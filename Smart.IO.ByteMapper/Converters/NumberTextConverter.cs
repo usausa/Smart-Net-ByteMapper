@@ -15,6 +15,10 @@ public sealed class NumberTextConverter<T>
     private readonly byte filler;
     private readonly NumberStyles style;
     private readonly IFormatProvider provider;
+    // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
+    private readonly int readCharCount;
+    private readonly int writeCharCount;
+    private readonly int writeByteCount;
 
     public int Size { get; }
 
@@ -36,6 +40,9 @@ public sealed class NumberTextConverter<T>
         this.filler = filler;
         this.style = style;
         provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+        readCharCount = encoding.GetMaxCharCount(Size);
+        writeCharCount = Math.Max(Size, 48);
+        writeByteCount = encoding.GetMaxByteCount(writeCharCount);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -51,7 +58,7 @@ public sealed class NumberTextConverter<T>
         {
             return default;
         }
-        Span<char> chars = stackalloc char[encoding.GetMaxCharCount(size)];
+        Span<char> chars = stackalloc char[readCharCount];
         var charCount = encoding.GetChars(source.Slice(start, size), chars);
         return ParseValue(chars[..charCount]);
     }
@@ -59,17 +66,18 @@ public sealed class NumberTextConverter<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        Span<char> chars = stackalloc char[Math.Max(Size, 48)];
+        Span<char> chars = stackalloc char[writeCharCount];
         if (!TryFormatValue(value, chars, out var charsWritten))
         {
             destination[..Size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(charsWritten)];
+        Span<byte> encoded = stackalloc byte[writeByteCount];
         var count = encoding.GetBytes(chars[..charsWritten], encoded);
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, Size, padding, filler);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private T ParseValue(ReadOnlySpan<char> str)
     {
         if (typeof(T) == typeof(int))
@@ -105,6 +113,7 @@ public sealed class NumberTextConverter<T>
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private bool TryFormatValue(T value, Span<char> buffer, out int charsWritten)
     {
         if (typeof(T) == typeof(int))
