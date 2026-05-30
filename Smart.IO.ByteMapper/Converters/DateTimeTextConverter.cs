@@ -47,21 +47,22 @@ public sealed class DateTimeTextConverter<T>
             return default;
         }
 
-        var str = encoding.GetString(source[..size]);
-        return ParseValue(str);
+        Span<char> chars = stackalloc char[encoding.GetMaxCharCount(size)];
+        var charCount = encoding.GetChars(source[..size], chars);
+        return ParseValue(chars[..charCount]);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        var str = FormatValue(value);
-        if (String.IsNullOrEmpty(str))
+        Span<char> chars = stackalloc char[Math.Max(Size, 64)];
+        if (!TryFormatValue(value, chars, out var charsWritten))
         {
             destination[..Size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(str.Length)];
-        var count = encoding.GetBytes(str, encoded);
+        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(charsWritten)];
+        var count = encoding.GetBytes(chars[..charsWritten], encoded);
         var written = Math.Min(count, Size);
         encoded[..written].CopyTo(destination[..written]);
         if (written < Size)
@@ -70,7 +71,7 @@ public sealed class DateTimeTextConverter<T>
         }
     }
 
-    private T ParseValue(string str)
+    private T ParseValue(ReadOnlySpan<char> str)
     {
         if (typeof(T) == typeof(DateTime))
         {
@@ -95,17 +96,30 @@ public sealed class DateTimeTextConverter<T>
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
-#pragma warning disable CA1508
-    private string FormatValue(T value)
+    private bool TryFormatValue(T value, Span<char> buffer, out int charsWritten)
     {
-        if (value is IFormattable f)
+        if (typeof(T) == typeof(DateTime))
         {
-            return f.ToString(format, provider);
+            return Unsafe.BitCast<T, DateTime>(value).TryFormat(buffer, out charsWritten, format, provider);
         }
 
-        return value.ToString() ?? string.Empty;
+        if (typeof(T) == typeof(DateTimeOffset))
+        {
+            return Unsafe.BitCast<T, DateTimeOffset>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(DateOnly))
+        {
+            return Unsafe.BitCast<T, DateOnly>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(TimeOnly))
+        {
+            return Unsafe.BitCast<T, TimeOnly>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
-#pragma warning restore CA1508
 
     private static Encoding ResolveEncoding(int codePage) => codePage switch
     {

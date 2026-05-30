@@ -51,25 +51,26 @@ public sealed class NumberTextConverter<T>
         {
             return default;
         }
-        var str = encoding.GetString(source.Slice(start, size));
-        return ParseValue(str);
+        Span<char> chars = stackalloc char[encoding.GetMaxCharCount(size)];
+        var charCount = encoding.GetChars(source.Slice(start, size), chars);
+        return ParseValue(chars[..charCount]);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        var str = FormatValue(value);
-        if (String.IsNullOrEmpty(str))
+        Span<char> chars = stackalloc char[Math.Max(Size, 48)];
+        if (!TryFormatValue(value, chars, out var charsWritten))
         {
             destination[..Size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(str.Length)];
-        var count = encoding.GetBytes(str, encoded);
+        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(charsWritten)];
+        var count = encoding.GetBytes(chars[..charsWritten], encoded);
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, Size, padding, filler);
     }
 
-    private T ParseValue(string str)
+    private T ParseValue(ReadOnlySpan<char> str)
     {
         if (typeof(T) == typeof(int))
         {
@@ -104,17 +105,40 @@ public sealed class NumberTextConverter<T>
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
 
-#pragma warning disable CA1508
-    private string FormatValue(T value)
+    private bool TryFormatValue(T value, Span<char> buffer, out int charsWritten)
     {
-        if (value is IFormattable f)
+        if (typeof(T) == typeof(int))
         {
-            return f.ToString(format, provider);
+            return Unsafe.BitCast<T, int>(value).TryFormat(buffer, out charsWritten, format, provider);
         }
 
-        return value.ToString() ?? string.Empty;
+        if (typeof(T) == typeof(long))
+        {
+            return Unsafe.BitCast<T, long>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(short))
+        {
+            return Unsafe.BitCast<T, short>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(float))
+        {
+            return Unsafe.BitCast<T, float>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(double))
+        {
+            return Unsafe.BitCast<T, double>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        if (typeof(T) == typeof(decimal))
+        {
+            return Unsafe.BitCast<T, decimal>(value).TryFormat(buffer, out charsWritten, format, provider);
+        }
+
+        throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
-#pragma warning restore CA1508
 
     private static Encoding ResolveEncoding(int codePage) => codePage switch
     {

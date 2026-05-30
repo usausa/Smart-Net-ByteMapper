@@ -655,18 +655,25 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 }
             }
 
-            // Assign method indices within the group / グループ内でメソッドインデックスを割り当てる
+            // Assign deduplicated converter field names within the group / グループ内でコンバーターフィールド名を重複排除しながら割り当てる
+            // Methods targeting the same type with identical converter configs share one static field instance.
             var methods = group.ToList();
+            var converterFieldMap = new Dictionary<string, string>(StringComparer.Ordinal);
+            var fieldCounter = 0;
             var numberedMethods = new List<MapperMethodModel>();
-            for (var i = 0; i < methods.Count; i++)
+            foreach (var m in methods)
             {
-                var m = methods[i];
-                // Reassign field names with correct method index / 正しいメソッドインデックスでフィールド名を再割り当てする
+                // Assign a shared field name per unique (targetType, memberIndex, converterType, ctorArgs) key
                 var fixedMembers = m.Members.AsArray().Select((member, pi) =>
-                    member with
+                {
+                    var key = $"{m.TargetTypeFqn}|{pi}|{member.Converter.ConverterTypeFqn}|{String.Join(",", member.Converter.CtorArgExpressions.AsArray())}";
+                    if (!converterFieldMap.TryGetValue(key, out var fieldName))
                     {
-                        Converter = member.Converter with { FieldName = $"Converter{i}_{pi}" }
-                    }).ToArray();
+                        fieldName = $"Converter{fieldCounter++}";
+                        converterFieldMap[key] = fieldName;
+                    }
+                    return member with { Converter = member.Converter with { FieldName = fieldName } };
+                }).ToArray();
                 numberedMethods.Add(m with
                 {
                     Members = new EquatableArray<MemberMappingModel>(fixedMembers)
@@ -702,11 +709,16 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             .NewLine();
         builder.BeginScope();
 
-        // Emit all converter fields first / 最初にすべてのコンバーターフィールドを出力する
+        // Emit all converter fields first, skipping already-emitted deduplicated fields / 最初にすべてのコンバーターフィールドを出力する（重複排除済みフィールドはスキップ）
+        var emittedFields = new HashSet<string>(StringComparer.Ordinal);
         foreach (var method in methods)
         {
             foreach (var member in method.Members.AsArray())
             {
+                if (!emittedFields.Add(member.Converter.FieldName))
+                {
+                    continue;
+                }
                 builder.Indent()
                     .Append("// [")
                     .Append(member.PropertyName)
