@@ -1,1 +1,214 @@
-# template-library-with-generator
+# Smart.IO.ByteMapper .NET - Fixed-length byte array mapper
+
+| Package | Info |
+|:-|:-|
+| Smart.IO.ByteMapper | [![NuGet](https://img.shields.io/nuget/v/Smart.IO.ByteMapper.svg)](https://www.nuget.org/packages/Smart.IO.ByteMapper) |
+| Smart.IO.ByteMapper.AspNetCore | [![NuGet](https://img.shields.io/nuget/v/Smart.IO.ByteMapper.AspNetCore.svg)](https://www.nuget.org/packages/Smart.IO.ByteMapper.AspNetCore) |
+
+Fixed-length binary/text byte array mapping library for .NET with source generator support.
+
+## Features
+
+* Attribute-based mapping between C# objects and fixed-length byte arrays
+* Source generator produces zero-overhead reader/writer code at compile time
+* NativeAOT / trimming compatible
+* ASP.NET Core MVC input/output formatter integration
+
+## Getting Started
+
+### 1. Define the model
+
+Annotate a class with `[Map(size)]` to declare the total byte size, then use converter attributes on each property to define its offset and format.
+
+```csharp
+using Smart.IO.ByteMapper;
+
+// Total: 59 bytes (57 data + 2-byte CRLF delimiter)
+[Map(59)]
+public sealed class SampleData
+{
+    [MapText(0, 13)]
+    public string Code { get; set; } = default!;
+
+    // CodePage 932 = Shift-JIS
+    [MapText(13, 20, CodePage = 932)]
+    public string Name { get; set; } = default!;
+
+    [MapNumberText<int>(33, 6)]
+    public int Qty { get; set; }
+
+    [MapNumberText<decimal>(39, 10, Style = NumberStyles.Number)]
+    public decimal Price { get; set; }
+
+    [MapDateTimeText<DateTime>(49, 8, "yyyyMMdd")]
+    public DateTime Date { get; set; }
+}
+```
+
+### 2. Declare the mapper class
+
+Create a `static partial` class and mark methods with `[ByteReader]` and `[ByteWriter]`. The source generator emits the implementation at compile time.
+
+```csharp
+using Smart.IO.ByteMapper;
+
+internal static partial class SampleDataMappers
+{
+    [ByteReader]
+    public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+
+    [ByteWriter]
+    public static partial void Write(Span<byte> destination, SampleData source);
+}
+```
+
+### 3. Read and write
+
+```csharp
+var record = new SampleData
+{
+    Code = "ABC0001",
+    Name = "Sample",
+    Qty = 100,
+    Price = 1234.56m,
+    Date = new DateTime(2025, 1, 15)
+};
+
+// Write object to byte array
+var buffer = new byte[59];
+SampleDataMappers.Write(buffer, record);
+
+// Read byte array back into object
+var readBack = new SampleData();
+SampleDataMappers.Read(buffer, readBack);
+```
+
+## Converters
+
+| Attribute | Target types | Description |
+|---|---|---|
+| `[MapBinary<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal`, ... | Binary numeric value; `Endian` = `Big` (default) or `Little` |
+| `[MapByte]` | `byte` | Single raw byte |
+| `[MapBytes]` | `byte[]` | Raw byte array with optional filler |
+| `[MapText]` | `string` | Text with encoding (`CodePage`), `Trim`, and `Padding` |
+| `[MapBoolean]` | `bool`, `bool?` | Single byte; configurable `TrueValue` / `FalseValue` / `NullValue` |
+| `[MapNumberText<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal` | Number as text with `Format`, `Padding`, `Style`, `Culture` |
+| `[MapDateTimeText<T>]` | `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly` (and nullable variants) | Date/time as text with `Format` and `Style` |
+
+## Global Defaults
+
+Use the assembly-level `[ByteMapperDefaults]` attribute to configure defaults for all maps in the assembly.
+
+```csharp
+[assembly: ByteMapperDefaults(
+    EncodingName = "shift_jis",
+    Endian = Endian.Little,
+    Delimiter = new byte[] { 0x0D, 0x0A })]
+```
+
+| Property | Default | Description |
+|---|---|---|
+| `EncodingName` | `"us-ascii"` | Default text encoding |
+| `Filler` | `0x20` | Default fill byte |
+| `Endian` | `Big` | Default endianness for binary converters |
+| `TrueValue` / `FalseValue` | `0x31` / `0x30` | Default boolean byte values |
+| `Delimiter` | `null` | Appended after each record (e.g., `\r\n`) |
+| `Trim` | `true` | Strip filler bytes on text read |
+
+## Map Type Attributes
+
+In addition to property-level converters, type-level attributes allow defining fixed fillers and constants within the byte layout.
+
+```csharp
+[Map(20)]
+[MapFiller(10, 5)]                              // fill bytes 10–14 with 0x20
+[MapConstant(15, new byte[] { 0x01, 0x00 })]   // embed constant bytes at offset 15
+public sealed class MyRecord { ... }
+```
+
+## ASP.NET Core Integration
+
+`Smart.IO.ByteMapper.AspNetCore` adds MVC input/output formatters so controllers can directly consume and produce fixed-length binary streams.
+
+### Setup
+
+```csharp
+using Smart.IO.ByteMapper.AspNetCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddByteMapperFormatters(o =>
+{
+    o.SupportedMediaTypes.Add("text/x-fixedrecord");
+});
+
+builder.Services.AddControllers();
+builder.Services.AddOptions<MvcOptions>()
+    .Configure<ByteMapperOutputFormatter, ByteMapperInputFormatter>(
+        (mvc, output, input) =>
+        {
+            mvc.OutputFormatters.Insert(0, output);
+            mvc.InputFormatters.Insert(0, input);
+        });
+```
+
+### Mapper class for ASP.NET Core
+
+Add `[ByteMapperEndpoint]` to the mapper class to register it with the formatter's `ByteMapperRegistry`.
+
+```csharp
+using Smart.IO.ByteMapper;
+using Smart.IO.ByteMapper.AspNetCore;
+
+[ByteMapperEndpoint]
+public static partial class SampleDataMappers
+{
+    [ByteReader]
+    public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+
+    [ByteWriter]
+    public static partial void Write(Span<byte> destination, SampleData source);
+}
+```
+
+### Controller
+
+```csharp
+[Route("api/[controller]/[action]")]
+public sealed class RecordController : Controller
+{
+    [Produces("text/x-fixedrecord")]
+    [HttpGet]
+    public SampleData[] GetAll() => repository.GetAll();
+
+    [HttpPost]
+    public IActionResult Post([FromBody] SampleData[] values)
+    {
+        // values are deserialized from the fixed-length binary request body
+        return Ok(new { count = values.Length });
+    }
+}
+```
+
+### Profile-based layout switching
+
+When the same entity needs to be serialized with a different subset of fields, define a **profile** class and annotate the controller action with `[ByteMapperProfile]`.
+
+```csharp
+// Profile: only Code + Name (35 bytes)
+[Map(35)]
+public sealed class SampleDataCodeNameProfile
+{
+    [MapText(0, 13)]
+    public string Code { get; set; } = default!;
+
+    [MapText(13, 20, CodePage = 932)]
+    public string Name { get; set; } = default!;
+}
+
+// Controller action using the profile
+[Produces("text/x-fixedrecord")]
+[HttpGet]
+[ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
+public SampleData[] GetCodeName() => repository.GetAll();
+```
