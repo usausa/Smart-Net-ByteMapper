@@ -9,10 +9,8 @@ public sealed class FastUnicodeConverter
     private readonly Padding padding;
     private readonly char filler;
 
-    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    // FastUnicodeConverter の新しいインスタンスを初期化します。
     public FastUnicodeConverter(int length, bool trim = true, Padding padding = Padding.Right, char filler = ' ')
     {
         Size = length;
@@ -21,7 +19,6 @@ public sealed class FastUnicodeConverter
         this.filler = filler;
     }
 
-    // バッファーから Unicode 文字列を読み取ります。
     public string Read(ReadOnlySpan<byte> buffer)
     {
         var chars = MemoryMarshal.Cast<byte, char>(buffer[..Size]);
@@ -52,7 +49,6 @@ public sealed class FastUnicodeConverter
         return chars.Length == 0 ? string.Empty : new string(chars);
     }
 
-    // バッファーへ Unicode 文字列を書き込みます。
     public void Write(Span<byte> buffer, string? value)
     {
         var destination = buffer[..Size];

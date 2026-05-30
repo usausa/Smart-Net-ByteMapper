@@ -2,17 +2,14 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using System.Text;
 
-// ASCII 固定長文字列コンバーター。
 public sealed class AsciiConverter
 {
     private readonly bool trim;
     private readonly Padding padding;
     private readonly byte filler;
 
-    // フィールドのバイト長を取得します。
     public int Size { get; }
 
-    // AsciiConverter の新しいインスタンスを初期化します。
     public AsciiConverter(int length, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
     {
         Size = length;
@@ -21,7 +18,6 @@ public sealed class AsciiConverter
         this.filler = filler;
     }
 
-    // バッファーから ASCII 文字列を読み取ります。
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public unsafe string Read(ReadOnlySpan<byte> buffer)
     {
@@ -46,7 +42,6 @@ public sealed class AsciiConverter
         return result;
     }
 
-    // バッファーへ ASCII 文字列を書き込みます。
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> buffer, string? value)
     {
