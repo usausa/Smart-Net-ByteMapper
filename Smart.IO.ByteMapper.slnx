@@ -30,7 +30,8 @@
     <File Path="Smart.IO.ByteMapper.props" />
     <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
   </Folder>
-  <Folder Name="/Tes/" />
-  <Project Path="Smart.IO.ByteMapper.AotTest/Smart.IO.ByteMapper.AotTest.csproj" />
-  <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="Smart.IO.ByteMapper.AotTest/Smart.IO.ByteMapper.AotTest.csproj" />
+    <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
+  </Folder>
 </Solution>
