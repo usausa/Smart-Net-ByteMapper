@@ -5,37 +5,39 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+#pragma warning disable IDE0032
 public sealed class DateTimeTextConverter<T>
     where T : struct
 {
+    private readonly int size;
+    private readonly byte filler;
     private readonly Encoding encoding;
     private readonly string format;
     private readonly DateTimeStyles style;
     private readonly IFormatProvider provider;
-    private readonly byte filler;
     // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
     private readonly int readCharCount;
     private readonly int writeCharCount;
     private readonly int writeByteCount;
 
-    public int Size { get; }
+    public int Size => size;
 
     public DateTimeTextConverter(
         int length,
         string format,
+        byte filler = 0x20,
         int codePage = CodePages.Ascii,
         DateTimeStyles style = DateTimeStyles.None,
-        Culture culture = Culture.Invariant,
-        byte filler = 0x20)
+        Culture culture = Culture.Invariant)
     {
-        Size = length;
+        size = length;
         this.format = format;
-        encoding = ResolveEncoding(codePage);
+        encoding = ByteMapperHelpers.ResolveEncoding(codePage);
         this.style = style;
         provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
         this.filler = filler;
-        readCharCount = encoding.GetMaxCharCount(Size);
-        writeCharCount = Math.Max(Size, 64);
+        readCharCount = encoding.GetMaxCharCount(size);
+        writeCharCount = Math.Max(size, 64);
         writeByteCount = encoding.GetMaxByteCount(writeCharCount);
     }
 
@@ -43,19 +45,19 @@ public sealed class DateTimeTextConverter<T>
     public T Read(ReadOnlySpan<byte> source)
     {
         // trim filler from right
-        var size = Size;
-        while ((size > 0) && (source[size - 1] == filler))
+        var count = size;
+        while ((count > 0) && (source[count - 1] == filler))
         {
-            size--;
+            count--;
         }
 
-        if (size == 0)
+        if (count == 0)
         {
             return default;
         }
 
         Span<char> chars = stackalloc char[readCharCount];
-        var charCount = encoding.GetChars(source[..size], chars);
+        var charCount = encoding.GetChars(source[..count], chars);
         return ParseValue(chars[..charCount]);
     }
 
@@ -65,16 +67,16 @@ public sealed class DateTimeTextConverter<T>
         Span<char> chars = stackalloc char[writeCharCount];
         if (!TryFormatValue(value, chars, out var charsWritten))
         {
-            destination[..Size].Fill(filler);
+            destination[..size].Fill(filler);
             return;
         }
         Span<byte> encoded = stackalloc byte[writeByteCount];
         var count = encoding.GetBytes(chars[..charsWritten], encoded);
-        var written = Math.Min(count, Size);
+        var written = Math.Min(count, size);
         encoded[..written].CopyTo(destination[..written]);
-        if (written < Size)
+        if (written < size)
         {
-            destination[written..Size].Fill(filler);
+            destination[written..size].Fill(filler);
         }
     }
 
@@ -129,11 +131,5 @@ public sealed class DateTimeTextConverter<T>
 
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
-
-    private static Encoding ResolveEncoding(int codePage) => codePage switch
-    {
-        20127 => Encoding.ASCII,
-        65001 => Encoding.UTF8,
-        _ => Encoding.GetEncoding(codePage)
-    };
 }
+#pragma warning restore IDE0032

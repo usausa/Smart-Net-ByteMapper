@@ -8,7 +8,7 @@ public class TextConverterTests
     [Fact]
     public void WhenWriteAndReadThenSameString()
     {
-        var converter = new TextConverter(8, 20127, true, Padding.Right, 0x20);
+        var converter = new TextConverter(8, true, Padding.Right, 0x20, 20127);
         var buffer = new byte[8];
         converter.Write(buffer, "Hello");
         Assert.Equal("Hello", converter.Read(buffer));
@@ -17,7 +17,7 @@ public class TextConverterTests
     [Fact]
     public void WhenWriteShortStringThenPaddedRight()
     {
-        var converter = new TextConverter(8, 20127, false, Padding.Right, 0x20);
+        var converter = new TextConverter(8, false, Padding.Right, 0x20, 20127);
         var buffer = new byte[8];
         converter.Write(buffer, "AB");
         // "AB      " (6 spaces)
@@ -32,7 +32,7 @@ public class TextConverterTests
     [Fact]
     public void WhenWriteShortStringThenPaddedLeft()
     {
-        var converter = new TextConverter(8, 20127, false, Padding.Left, 0x20);
+        var converter = new TextConverter(8, false, Padding.Left, 0x20, 20127);
         var buffer = new byte[8];
         converter.Write(buffer, "AB");
         // "      AB"
@@ -47,7 +47,7 @@ public class TextConverterTests
     [Fact]
     public void WhenReadWithTrimThenStripped()
     {
-        var converter = new TextConverter(8, 20127, true, Padding.Right, 0x20);
+        var converter = new TextConverter(8, true, Padding.Right, 0x20, 20127);
         var buffer = "Hello   "u8.ToArray();
         Assert.Equal("Hello", converter.Read(buffer));
     }
@@ -55,7 +55,7 @@ public class TextConverterTests
     [Fact]
     public void WhenReadWithoutTrimThenNotStripped()
     {
-        var converter = new TextConverter(8, 20127, false, Padding.Right, 0x20);
+        var converter = new TextConverter(8, false, Padding.Right, 0x20, 20127);
         var buffer = "Hello   "u8.ToArray();
         Assert.Equal("Hello   ", converter.Read(buffer));
     }
@@ -63,7 +63,7 @@ public class TextConverterTests
     [Fact]
     public void WhenWriteNullThenFillerFilled()
     {
-        var converter = new TextConverter(4, 20127, true, Padding.Right, 0x20);
+        var converter = new TextConverter(4, true, Padding.Right, 0x20, 20127);
         var buffer = new byte[4];
         converter.Write(buffer, null!);
         Assert.All(buffer, b => Assert.Equal(0x20, b));
@@ -72,7 +72,7 @@ public class TextConverterTests
     [Fact]
     public void WhenSizeMatchesLength()
     {
-        var converter = new TextConverter(16, 20127, true, Padding.Right, 0x20);
+        var converter = new TextConverter(16, true, Padding.Right, 0x20, 20127);
         Assert.Equal(16, converter.Size);
     }
 }

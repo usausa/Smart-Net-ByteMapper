@@ -3,18 +3,20 @@ namespace Smart.IO.ByteMapper.Converters;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+#pragma warning disable IDE0032
 public sealed class TextConverter
 {
-    private readonly Encoding encoding;
+    private readonly int size;
     private readonly bool trim;
     private readonly Padding padding;
     private readonly byte filler;
+    private readonly Encoding encoding;
 
-    public int Size { get; }
+    public int Size => size;
 
-    public TextConverter(int length, int codePage = CodePages.Ascii, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
+    public TextConverter(int length, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20, int codePage = CodePages.Ascii)
     {
-        Size = length;
+        size = length;
         encoding = ByteMapperHelpers.ResolveEncoding(codePage);
         this.trim = trim;
         this.padding = padding;
@@ -25,17 +27,17 @@ public sealed class TextConverter
     public string Read(ReadOnlySpan<byte> source)
     {
         var start = 0;
-        var size = Size;
+        var count = size;
         if (trim)
         {
-            ByteMapperHelpers.TrimRange(source, ref start, ref size, padding, filler);
+            ByteMapperHelpers.TrimRange(source, ref start, ref count, padding, filler);
         }
-        if (size == 0)
+        if (count == 0)
         {
             return string.Empty;
         }
 
-        return encoding.GetString(source.Slice(start, size));
+        return encoding.GetString(source.Slice(start, count));
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -43,11 +45,12 @@ public sealed class TextConverter
     {
         if (String.IsNullOrEmpty(value))
         {
-            destination[..Size].Fill(filler);
+            destination[..size].Fill(filler);
             return;
         }
         Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(value.Length)];
         var count = encoding.GetBytes(value, encoded);
-        ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, Size, padding, filler);
+        ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, size, padding, filler);
     }
 }
+#pragma warning restore IDE0032

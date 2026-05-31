@@ -2,17 +2,19 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using System.Text;
 
+#pragma warning disable IDE0032
 public sealed class AsciiConverter
 {
+    private readonly int size;
     private readonly bool trim;
     private readonly Padding padding;
     private readonly byte filler;
 
-    public int Size { get; }
+    public int Size => size;
 
     public AsciiConverter(int length, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
     {
-        Size = length;
+        size = length;
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;
@@ -22,7 +24,7 @@ public sealed class AsciiConverter
     public unsafe string Read(ReadOnlySpan<byte> buffer)
     {
         var start = 0;
-        var count = Size;
+        var count = size;
         if (trim)
         {
             ByteMapperHelpers.TrimRange(buffer, ref start, ref count, padding, filler);
@@ -47,12 +49,12 @@ public sealed class AsciiConverter
     {
         if (String.IsNullOrEmpty(value))
         {
-            buffer[..Size].Fill(filler);
+            buffer[..size].Fill(filler);
             return;
         }
 
-        var destination = buffer[..Size];
-        if (value.Length >= Size)
+        var destination = buffer[..size];
+        if (value.Length >= size)
         {
             Ascii.FromUtf16(value.AsSpan(0, Size), destination, out _);
         }
@@ -63,9 +65,10 @@ public sealed class AsciiConverter
         }
         else
         {
-            var pad = Size - value.Length;
+            var pad = size - value.Length;
             destination[..pad].Fill(filler);
             Ascii.FromUtf16(value, destination[pad..], out _);
         }
     }
 }
+#pragma warning restore IDE0032

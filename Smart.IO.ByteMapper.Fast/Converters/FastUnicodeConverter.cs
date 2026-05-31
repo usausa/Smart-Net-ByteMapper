@@ -3,17 +3,19 @@ namespace Smart.IO.ByteMapper.Converters;
 using System.Runtime.InteropServices;
 
 // UTF-16LE（.NET 内部表現）文字列コンバーター。
+#pragma warning disable IDE0032
 public sealed class FastUnicodeConverter
 {
+    private readonly int size;
     private readonly bool trim;
     private readonly Padding padding;
     private readonly char filler;
 
-    public int Size { get; }
+    public int Size => size;
 
     public FastUnicodeConverter(int length, bool trim = true, Padding padding = Padding.Right, char filler = ' ')
     {
-        Size = length;
+        size = length;
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;
@@ -21,7 +23,7 @@ public sealed class FastUnicodeConverter
 
     public string Read(ReadOnlySpan<byte> buffer)
     {
-        var chars = MemoryMarshal.Cast<byte, char>(buffer[..Size]);
+        var chars = MemoryMarshal.Cast<byte, char>(buffer[..size]);
         if (trim)
         {
             if (padding == Padding.Left)
@@ -51,28 +53,29 @@ public sealed class FastUnicodeConverter
 
     public void Write(Span<byte> buffer, string? value)
     {
-        var destination = buffer[..Size];
+        var destination = buffer[..size];
         if (String.IsNullOrEmpty(value))
         {
             MemoryMarshal.Cast<byte, char>(destination).Fill(filler);
             return;
         }
 
-        var size = value.Length * 2;
-        if (size >= Size)
+        var byteLen = value.Length * 2;
+        if (byteLen >= size)
         {
-            MemoryMarshal.Cast<char, byte>(value.AsSpan(0, Size / 2)).CopyTo(destination);
+            MemoryMarshal.Cast<char, byte>(value.AsSpan(0, size / 2)).CopyTo(destination);
         }
         else if (padding == Padding.Right)
         {
-            MemoryMarshal.Cast<char, byte>(value.AsSpan()).CopyTo(destination[..size]);
-            MemoryMarshal.Cast<byte, char>(destination[size..]).Fill(filler);
+            MemoryMarshal.Cast<char, byte>(value.AsSpan()).CopyTo(destination[..byteLen]);
+            MemoryMarshal.Cast<byte, char>(destination[byteLen..]).Fill(filler);
         }
         else
         {
-            var pad = Size - size;
+            var pad = size - byteLen;
             MemoryMarshal.Cast<byte, char>(destination[..pad]).Fill(filler);
             MemoryMarshal.Cast<char, byte>(value.AsSpan()).CopyTo(destination[pad..]);
         }
     }
 }
+#pragma warning restore IDE0032

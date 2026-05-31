@@ -5,14 +5,16 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+#pragma warning disable IDE0032
 public sealed class NumberTextConverter<T>
     where T : struct
 {
-    private readonly Encoding encoding;
-    private readonly string? format;
+    private readonly int size;
     private readonly bool trim;
     private readonly Padding padding;
     private readonly byte filler;
+    private readonly Encoding encoding;
+    private readonly string? format;
     private readonly NumberStyles style;
     private readonly IFormatProvider provider;
     // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
@@ -20,28 +22,28 @@ public sealed class NumberTextConverter<T>
     private readonly int writeCharCount;
     private readonly int writeByteCount;
 
-    public int Size { get; }
+    public int Size => size;
 
     public NumberTextConverter(
         int length,
-        string? format = null,
-        int codePage = CodePages.Ascii,
         bool trim = true,
         Padding padding = Padding.Left,
         byte filler = 0x20,
+        int codePage = CodePages.Ascii,
+        string? format = null,
         NumberStyles style = NumberStyles.Integer,
         Culture culture = Culture.Invariant)
     {
-        Size = length;
+        size = length;
         this.format = format;
-        encoding = ResolveEncoding(codePage);
+        encoding = ByteMapperHelpers.ResolveEncoding(codePage);
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;
         this.style = style;
         provider = culture == Culture.Invariant ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
-        readCharCount = encoding.GetMaxCharCount(Size);
-        writeCharCount = Math.Max(Size, 48);
+        readCharCount = encoding.GetMaxCharCount(size);
+        writeCharCount = Math.Max(size, 48);
         writeByteCount = encoding.GetMaxByteCount(writeCharCount);
     }
 
@@ -49,17 +51,17 @@ public sealed class NumberTextConverter<T>
     public T Read(ReadOnlySpan<byte> source)
     {
         var start = 0;
-        var size = Size;
+        var count = size;
         if (trim)
         {
-            ByteMapperHelpers.TrimRange(source, ref start, ref size, padding, filler);
+            ByteMapperHelpers.TrimRange(source, ref start, ref count, padding, filler);
         }
-        if (size == 0)
+        if (count == 0)
         {
             return default;
         }
         Span<char> chars = stackalloc char[readCharCount];
-        var charCount = encoding.GetChars(source.Slice(start, size), chars);
+        var charCount = encoding.GetChars(source.Slice(start, count), chars);
         return ParseValue(chars[..charCount]);
     }
 
@@ -69,7 +71,7 @@ public sealed class NumberTextConverter<T>
         Span<char> chars = stackalloc char[writeCharCount];
         if (!TryFormatValue(value, chars, out var charsWritten))
         {
-            destination[..Size].Fill(filler);
+            destination[..size].Fill(filler);
             return;
         }
         Span<byte> encoded = stackalloc byte[writeByteCount];
@@ -148,11 +150,5 @@ public sealed class NumberTextConverter<T>
 
         throw new NotSupportedException($"Unsupported type: {typeof(T)}");
     }
-
-    private static Encoding ResolveEncoding(int codePage) => codePage switch
-    {
-        20127 => Encoding.ASCII,
-        65001 => Encoding.UTF8,
-        _ => Encoding.GetEncoding(codePage)
-    };
 }
+#pragma warning restore IDE0032

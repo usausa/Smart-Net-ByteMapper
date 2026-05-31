@@ -2,18 +2,20 @@ namespace Smart.IO.ByteMapper.Converters;
 
 using Smart.IO.ByteMapper.Helpers;
 
+#pragma warning disable IDE0032
 public sealed class FastDateTimeConverter
 {
+    private readonly int size;
     private readonly bool hasDatePart;
     private readonly FastDateTimeFormatEntry[] entries;
     private readonly DateTimeKind kind;
     private readonly byte filler;
 
-    public int Size { get; }
+    public int Size => size;
 
     public FastDateTimeConverter(string format, DateTimeKind kind = DateTimeKind.Unspecified, byte filler = 0x20)
     {
-        Size = format.Length;
+        size = format.Length;
         entries = FastDateTimeByteHelper.ParseDateTimeFormat(format, out hasDatePart);
         this.kind = kind;
         this.filler = filler;
@@ -28,7 +30,7 @@ public sealed class FastDateTimeConverter
     {
         if (value is null)
         {
-            buffer[..Size].Fill(filler);
+            buffer[..size].Fill(filler);
         }
         else
         {
@@ -39,16 +41,17 @@ public sealed class FastDateTimeConverter
 
 public sealed class FastDateTimeOffsetConverter
 {
+    private readonly int size;
     private readonly bool hasDatePart;
     private readonly FastDateTimeFormatEntry[] entries;
     private readonly DateTimeKind kind;
     private readonly byte filler;
 
-    public int Size { get; }
+    public int Size => size;
 
     public FastDateTimeOffsetConverter(string format, DateTimeKind kind = DateTimeKind.Unspecified, byte filler = 0x20)
     {
-        Size = format.Length;
+        size = format.Length;
         entries = FastDateTimeByteHelper.ParseDateTimeFormat(format, out hasDatePart);
         this.kind = kind;
         this.filler = filler;
@@ -73,7 +76,7 @@ public sealed class FastDateTimeOffsetConverter
 
         var offset = TimeZoneInfo.Local.GetUtcOffset(result);
         var utcTick = result.Ticks - offset.Ticks;
-        if (utcTick < DateTime.MinValue.Ticks || utcTick > DateTime.MaxValue.Ticks)
+        if ((utcTick < DateTime.MinValue.Ticks) || (utcTick > DateTime.MaxValue.Ticks))
         {
             return null;
         }
@@ -85,7 +88,7 @@ public sealed class FastDateTimeOffsetConverter
     {
         if (value is null)
         {
-            buffer[..Size].Fill(filler);
+            buffer[..size].Fill(filler);
         }
         else
         {
@@ -93,3 +96,4 @@ public sealed class FastDateTimeOffsetConverter
         }
     }
 }
+#pragma warning restore IDE0032

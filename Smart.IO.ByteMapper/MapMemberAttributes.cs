@@ -49,13 +49,13 @@ public sealed class MapTextAttribute : ByteMapperPropertyAttribute<TextConverter
 {
     public int Length { get; }
 
-    public int CodePage { get; init; } = CodePages.Ascii;
-
     public bool Trim { get; init; } = true;
 
     public Padding Padding { get; init; } = Padding.Right;
 
     public byte Filler { get; init; } = 0x20;
+
+    public int CodePage { get; init; } = CodePages.Ascii;
 
     public MapTextAttribute(int offset, int length)
         : base(offset)
@@ -87,15 +87,15 @@ public sealed class MapNumberTextAttribute<T> : ByteMapperPropertyAttribute<Numb
 {
     public int Length { get; }
 
-    public string? Format { get; init; }
-
-    public int CodePage { get; init; } = CodePages.Ascii;
-
     public bool Trim { get; init; } = true;
 
     public Padding Padding { get; init; } = Padding.Left;
 
     public byte Filler { get; init; } = 0x20;
+
+    public int CodePage { get; init; } = CodePages.Ascii;
+
+    public string? Format { get; init; }
 
     public NumberStyles Style { get; init; } = NumberStyles.Integer;
 
@@ -117,9 +117,9 @@ public sealed class MapDateTimeTextAttribute<T> : ByteMapperPropertyAttribute<Da
 
     public string Format { get; }
 
-    public int CodePage { get; init; } = CodePages.Ascii;
-
     public byte Filler { get; init; } = 0x20;
+
+    public int CodePage { get; init; } = CodePages.Ascii;
 
     public DateTimeStyles Style { get; init; } = DateTimeStyles.None;
 
