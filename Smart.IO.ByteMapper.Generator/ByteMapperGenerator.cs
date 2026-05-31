@@ -22,8 +22,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private const string MapAttributeName = "Smart.IO.ByteMapper.MapAttribute";
     private const string MapFillerAttributeName = "Smart.IO.ByteMapper.MapFillerAttribute";
     private const string MapConstantAttributeName = "Smart.IO.ByteMapper.MapConstantAttribute";
-    private const string ByteMapperPropertyAttributeName = "Smart.IO.ByteMapper.ByteMapperPropertyAttribute";
-    private const string ByteMapperConverterAttributeOpenName = "Smart.IO.ByteMapper.ByteMapperConverterAttribute`1";
+    private const string ByteMapperPropertyAttributeOpenName = "Smart.IO.ByteMapper.ByteMapperPropertyAttribute`1";
     private const string ConverterSupportedTypesAttributeName = "Smart.IO.ByteMapper.ConverterSupportedTypesAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -139,10 +138,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         // Collect member mappings / メンバーマッピングを収集する
         var compilation = context.SemanticModel.Compilation;
-        var propertyAttrBase = compilation.GetTypeByMetadataName(ByteMapperPropertyAttributeName);
-        var converterAttrBase = compilation.GetTypeByMetadataName(ByteMapperConverterAttributeOpenName);
+        var propertyAttrBase = compilation.GetTypeByMetadataName(ByteMapperPropertyAttributeOpenName);
 
-        if (propertyAttrBase == null || converterAttrBase == null)
+        if (propertyAttrBase == null)
         {
             return Results.Error<MapperMethodModel>(null);
         }
@@ -154,7 +152,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             targetType,
             profileType,
             propertyAttrBase,
-            converterAttrBase,
             syntax,
             diagErrors);
 
@@ -285,7 +282,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         ITypeSymbol targetType,
         ITypeSymbol? profileType,
         INamedTypeSymbol propertyAttrBase,
-        INamedTypeSymbol converterAttrBase,
         MethodDeclarationSyntax syntax,
         List<DiagnosticInfo> errors)
     {
@@ -302,9 +298,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                if (!attr.AttributeClass.InheritsFrom(propertyAttrBase))
+                // Try to get Converter type from ByteMapperPropertyAttribute<TConverter>
+                // ByteMapperPropertyAttribute<TConverter> からコンバーター型を取得する
+                var converterBase = attr.AttributeClass.FindConverterAttributeBase(propertyAttrBase);
+                if (converterBase == null)
                 {
-                    continue;
+                    continue; // unrecognized converter attribute - skip
                 }
 
                 var offset = (int)(attr.ConstructorArguments[0].Value ?? 0);
@@ -320,14 +319,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                         continue;
                     }
                     targetProp = found;
-                }
-
-                // Try to get Converter type from ByteMapperConverterAttribute<TConverter>
-                // ByteMapperConverterAttribute<TConverter> からコンバーター型を取得する
-                var converterBase = attr.AttributeClass.FindConverterAttributeBase(converterAttrBase);
-                if (converterBase == null)
-                {
-                    continue; // unrecognized converter attribute - skip
                 }
 
                 var converterType = converterBase.TypeArguments[0];

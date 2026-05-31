@@ -23,7 +23,7 @@ public sealed class DateTimeTextConverter<T>
     public DateTimeTextConverter(
         int length,
         string format,
-        int codePage = 20127,
+        int codePage = CodePages.Ascii,
         DateTimeStyles style = DateTimeStyles.None,
         Culture culture = Culture.Invariant,
         byte filler = 0x20)

@@ -2,9 +2,18 @@ namespace Smart.IO.ByteMapper;
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 public static class ByteMapperHelpers
 {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static Encoding ResolveEncoding(int codePage) => codePage switch
+    {
+        CodePages.Ascii => Encoding.ASCII,
+        CodePages.Utf8 => Encoding.UTF8,
+        _ => Encoding.GetEncoding(codePage)
+    };
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Fill(Span<byte> destination, byte value) =>
         destination.Fill(value);

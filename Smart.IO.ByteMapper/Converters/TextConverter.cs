@@ -12,10 +12,10 @@ public sealed class TextConverter
 
     public int Size { get; }
 
-    public TextConverter(int length, int codePage = 20127, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
+    public TextConverter(int length, int codePage = CodePages.Ascii, bool trim = true, Padding padding = Padding.Right, byte filler = 0x20)
     {
         Size = length;
-        encoding = ResolveEncoding(codePage);
+        encoding = ByteMapperHelpers.ResolveEncoding(codePage);
         this.trim = trim;
         this.padding = padding;
         this.filler = filler;
@@ -50,11 +50,4 @@ public sealed class TextConverter
         var count = encoding.GetBytes(value, encoded);
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, Size, padding, filler);
     }
-
-    private static Encoding ResolveEncoding(int codePage) => codePage switch
-    {
-        20127 => Encoding.ASCII,
-        65001 => Encoding.UTF8,
-        _ => Encoding.GetEncoding(codePage)
-    };
 }

@@ -46,9 +46,9 @@ internal static class SymbolExtensions
     }
 
     // Walks up the base class chain of attributeClass and returns the first constructed instance
-    // of the open generic type ByteMapperConverterAttribute<>.
+    // of the open generic type ByteMapperPropertyAttribute<>.
     // Returns null if the attribute does not derive from that open generic.
-    // attributeClass の基底クラスチェーンを辿り、オープンジェネリック型 ByteMapperConverterAttribute<> の
+    // attributeClass の基底クラスチェーンを辿り、オープンジェネリック型 ByteMapperPropertyAttribute<> の
     // 最初の構築済みインスタンスを返す。派生していない場合は null を返す。
     public static INamedTypeSymbol? FindConverterAttributeBase(this INamedTypeSymbol attributeClass, INamedTypeSymbol converterAttributeOpenGeneric)
     {

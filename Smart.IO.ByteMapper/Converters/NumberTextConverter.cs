@@ -25,7 +25,7 @@ public sealed class NumberTextConverter<T>
     public NumberTextConverter(
         int length,
         string? format = null,
-        int codePage = 20127,
+        int codePage = CodePages.Ascii,
         bool trim = true,
         Padding padding = Padding.Left,
         byte filler = 0x20,

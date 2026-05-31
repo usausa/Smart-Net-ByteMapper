@@ -2,24 +2,15 @@ namespace Smart.IO.ByteMapper;
 
 using System;
 
+// ReSharper disable once UnusedTypeParameter
 [AttributeUsage(AttributeTargets.Property)]
-public abstract class ByteMapperPropertyAttribute : Attribute
+public abstract class ByteMapperPropertyAttribute<TConverter> : Attribute
 {
     public int Offset { get; }
 
     protected ByteMapperPropertyAttribute(int offset)
     {
         Offset = offset;
-    }
-}
-
-// ReSharper disable once UnusedTypeParameter
-[AttributeUsage(AttributeTargets.Property)]
-public abstract class ByteMapperConverterAttribute<TConverter> : ByteMapperPropertyAttribute
-{
-    protected ByteMapperConverterAttribute(int offset)
-        : base(offset)
-    {
     }
 }
 

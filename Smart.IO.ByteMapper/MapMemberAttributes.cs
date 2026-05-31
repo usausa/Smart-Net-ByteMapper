@@ -7,7 +7,7 @@ using Smart.IO.ByteMapper.Converters;
 
 // MapBinary<T>
 [ConverterSupportedTypes(typeof(short), typeof(ushort), typeof(int), typeof(uint), typeof(long), typeof(ulong), typeof(float), typeof(double), typeof(decimal))]
-public sealed class MapBinaryAttribute<T> : ByteMapperConverterAttribute<BinaryConverter<T>>
+public sealed class MapBinaryAttribute<T> : ByteMapperPropertyAttribute<BinaryConverter<T>>
     where T : unmanaged
 {
     public Endian Endian { get; init; } = Endian.Big;
@@ -20,7 +20,7 @@ public sealed class MapBinaryAttribute<T> : ByteMapperConverterAttribute<BinaryC
 
 // MapByte
 [ConverterSupportedTypes(typeof(byte))]
-public sealed class MapByteAttribute : ByteMapperConverterAttribute<ByteConverter>
+public sealed class MapByteAttribute : ByteMapperPropertyAttribute<ByteConverter>
 {
     public MapByteAttribute(int offset)
         : base(offset)
@@ -30,7 +30,7 @@ public sealed class MapByteAttribute : ByteMapperConverterAttribute<ByteConverte
 
 // MapBytes
 [ConverterSupportedTypes(typeof(byte[]))]
-public sealed class MapBytesAttribute : ByteMapperConverterAttribute<BytesConverter>
+public sealed class MapBytesAttribute : ByteMapperPropertyAttribute<BytesConverter>
 {
     public int Length { get; }
 
@@ -45,11 +45,11 @@ public sealed class MapBytesAttribute : ByteMapperConverterAttribute<BytesConver
 
 // MapText
 [ConverterSupportedTypes(typeof(string))]
-public sealed class MapTextAttribute : ByteMapperConverterAttribute<TextConverter>
+public sealed class MapTextAttribute : ByteMapperPropertyAttribute<TextConverter>
 {
     public int Length { get; }
 
-    public int CodePage { get; init; } = 20127;
+    public int CodePage { get; init; } = CodePages.Ascii;
 
     public bool Trim { get; init; } = true;
 
@@ -66,7 +66,7 @@ public sealed class MapTextAttribute : ByteMapperConverterAttribute<TextConverte
 
 // MapBoolean
 [ConverterSupportedTypes(typeof(bool), typeof(bool?))]
-public sealed class MapBooleanAttribute : ByteMapperConverterAttribute<BooleanConverter>
+public sealed class MapBooleanAttribute : ByteMapperPropertyAttribute<BooleanConverter>
 {
     public byte TrueValue { get; init; } = 0x31;
 
@@ -82,14 +82,14 @@ public sealed class MapBooleanAttribute : ByteMapperConverterAttribute<BooleanCo
 
 // MapNumberText<T>
 [ConverterSupportedTypes(typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal))]
-public sealed class MapNumberTextAttribute<T> : ByteMapperConverterAttribute<NumberTextConverter<T>>
+public sealed class MapNumberTextAttribute<T> : ByteMapperPropertyAttribute<NumberTextConverter<T>>
     where T : struct
 {
     public int Length { get; }
 
     public string? Format { get; init; }
 
-    public int CodePage { get; init; } = 20127;
+    public int CodePage { get; init; } = CodePages.Ascii;
 
     public bool Trim { get; init; } = true;
 
@@ -110,14 +110,14 @@ public sealed class MapNumberTextAttribute<T> : ByteMapperConverterAttribute<Num
 
 // MapDateTimeText<T>
 [ConverterSupportedTypes(typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?), typeof(DateOnly), typeof(DateOnly?), typeof(TimeOnly), typeof(TimeOnly?))]
-public sealed class MapDateTimeTextAttribute<T> : ByteMapperConverterAttribute<DateTimeTextConverter<T>>
+public sealed class MapDateTimeTextAttribute<T> : ByteMapperPropertyAttribute<DateTimeTextConverter<T>>
     where T : struct
 {
     public int Length { get; }
 
     public string Format { get; }
 
-    public int CodePage { get; init; } = 20127;
+    public int CodePage { get; init; } = CodePages.Ascii;
 
     public byte Filler { get; init; } = 0x20;
 
