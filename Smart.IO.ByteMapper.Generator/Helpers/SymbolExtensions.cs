@@ -104,7 +104,7 @@ internal static class SymbolExtensions
         }
         if (constant.Kind == TypedConstantKind.Array && constant.Values != null)
         {
-            var elements = string.Join(", ", constant.Values.Select(v => v.ToLiteralExpression()));
+            var elements = String.Join(", ", constant.Values.Select(v => v.ToLiteralExpression()));
             return $"new byte[] {{ {elements} }}";
         }
         return constant.Value?.ToString() ?? "null";

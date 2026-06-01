@@ -213,7 +213,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         builder.EnableNullable();
         builder.NewLine();
 
-        if (!string.IsNullOrEmpty(ep.Namespace))
+        if (!String.IsNullOrEmpty(ep.Namespace))
         {
             builder.Namespace(ep.Namespace);
             builder.NewLine();
@@ -255,13 +255,13 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         var rootNs = string.Empty;
         foreach (var e in endpoints)
         {
-            if (!string.IsNullOrEmpty(e.RootNamespace))
+            if (!String.IsNullOrEmpty(e.RootNamespace))
             {
                 rootNs = e.RootNamespace;
                 break;
             }
         }
-        if (string.IsNullOrEmpty(rootNs))
+        if (String.IsNullOrEmpty(rootNs))
         {
             rootNs = "ByteMapperGenerated";
         }
@@ -286,7 +286,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         builder.Indent().Append("{").NewLine();
         foreach (var ep in endpoints)
         {
-            var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
+            var qualifiedClass = String.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
@@ -304,7 +304,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 continue;
             }
 
-            var qualifiedClass = string.IsNullOrEmpty(ep.Namespace)
+            var qualifiedClass = String.IsNullOrEmpty(ep.Namespace)
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
@@ -339,7 +339,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
     private static string MakeFilename(string ns, string className)
     {
         var buffer = new StringBuilder();
-        if (!string.IsNullOrEmpty(ns))
+        if (!String.IsNullOrEmpty(ns))
         {
             buffer.Append(ns.Replace('.', '_'));
             buffer.Append('_');
