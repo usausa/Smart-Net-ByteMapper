@@ -58,7 +58,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var syntax = (MethodDeclarationSyntax)context.TargetNode;
         if (context.SemanticModel.GetDeclaredSymbol(syntax) is not IMethodSymbol symbol)
         {
-            return Results.Error<MapperMethodModel>(null);
+            return Results.Errors<MapperMethodModel>();
         }
 
         if (!symbol.IsStatic || !symbol.IsPartialDefinition)
@@ -142,7 +142,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         if (propertyAttrBase == null)
         {
-            return Results.Error<MapperMethodModel>(null);
+            return Results.Errors<MapperMethodModel>();
         }
 
         var diagErrors = new List<DiagnosticInfo>();
@@ -640,7 +640,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             // Report per-method diagnostics / メソッドごとの診断情報を報告する
             foreach (var m in group)
             {
-                foreach (var err in m.Errors.AsArray())
+                foreach (var err in m.Errors)
                 {
                     context.ReportDiagnostic(err);
                 }
@@ -655,9 +655,9 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             foreach (var m in methods)
             {
                 // Assign a shared field name per unique (targetType, memberIndex, converterType, ctorArgs) key
-                var fixedMembers = m.Members.AsArray().Select((member, pi) =>
+                var fixedMembers = m.Members.Select((member, pi) =>
                 {
-                    var key = $"{m.TargetTypeFqn}|{pi}|{member.Converter.ConverterTypeFqn}|{String.Join(",", member.Converter.CtorArgExpressions.AsArray())}";
+                    var key = $"{m.TargetTypeFqn}|{pi}|{member.Converter.ConverterTypeFqn}|{String.Join(",", member.Converter.CtorArgExpressions)}";
                     if (!converterFieldMap.TryGetValue(key, out var fieldName))
                     {
                         fieldName = $"Converter{fieldCounter++}";
@@ -704,7 +704,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var emittedFields = new HashSet<string>(StringComparer.Ordinal);
         foreach (var method in methods)
         {
-            foreach (var member in method.Members.AsArray())
+            foreach (var member in method.Members)
             {
                 if (!emittedFields.Add(member.Converter.FieldName))
                 {
@@ -722,7 +722,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(" ")
                     .Append(member.Converter.FieldName)
                     .Append(" = new(")
-                    .Append(String.Join(", ", member.Converter.CtorArgExpressions.AsArray()))
+                    .Append(String.Join(", ", member.Converter.CtorArgExpressions))
                     .Append(");")
                     .NewLine();
             }
@@ -734,13 +734,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var constantCounter = 0;
         foreach (var method in methods)
         {
-            foreach (var tm in method.TypeMappings.AsArray())
+            foreach (var tm in method.TypeMappings)
             {
                 if (tm.Kind != TypeMappingKind.Constant)
                 {
                     continue;
                 }
-                var key = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
+                var key = String.Join(", ", tm.Constant.Select(b => $"0x{b:X2}"));
                 if (!constantFieldMap.ContainsKey(key))
                 {
                     var fieldName = $"ConstantBytes{constantCounter++}";
@@ -787,7 +787,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     .Append(method.TargetTypeFqn).Append(" ").Append(method.TargetParamName).Append(")")
                     .NewLine();
                 builder.BeginScope();
-                foreach (var member in method.Members.AsArray())
+                foreach (var member in method.Members)
                 {
                     EmitReadMember(builder, member, method.BufferParamName, method.TargetParamName);
                 }
@@ -805,7 +805,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 builder.Indent()
                     .Append("var ").Append(method.TargetParamName).Append(" = new ").Append(method.TargetTypeFqn).Append("();")
                     .NewLine();
-                foreach (var member in method.Members.AsArray())
+                foreach (var member in method.Members)
                 {
                     EmitReadMember(builder, member, method.BufferParamName, method.TargetParamName);
                 }
@@ -881,7 +881,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
     private static void EmitWriteBody(SourceBuilder builder, MapperMethodModel method, string spanVarName, IReadOnlyDictionary<string, string> constantFieldMap)
     {
         // Write constants/fillers / 定数・フィラーを書き込む
-        foreach (var tm in method.TypeMappings.AsArray())
+        foreach (var tm in method.TypeMappings)
         {
             if (tm.Kind == TypeMappingKind.Filler)
             {
@@ -892,7 +892,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             else if (tm.Kind == TypeMappingKind.Constant)
             {
                 // Use the pre-declared static field to avoid per-call heap allocation.
-                var key = String.Join(", ", tm.Constant.AsArray().Select(b => $"0x{b:X2}"));
+                var key = String.Join(", ", tm.Constant.Select(b => $"0x{b:X2}"));
                 var fieldName = constantFieldMap[key];
                 builder.Indent()
                     .Append($"new global::System.ReadOnlySpan<byte>({fieldName}).CopyTo({spanVarName}.Slice({tm.Offset}, {tm.Size}));")
@@ -900,7 +900,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             }
         }
 
-        foreach (var member in method.Members.AsArray())
+        foreach (var member in method.Members)
         {
             string size;
             if (member.Converter.SizeKind == SizeKind.Const)
