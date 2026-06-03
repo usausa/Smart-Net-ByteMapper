@@ -74,7 +74,7 @@ public class HasAnyBindingTests
             { (typeof(DefaultOnlyEntity), null), TestRegistryBuilder.MakeBinding<DefaultOnlyEntity>() },
             { (typeof(ProfileOnlyEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<ProfileOnlyEntity>() },
             { (typeof(BothEntity), null), TestRegistryBuilder.MakeBinding<BothEntity>() },
-            { (typeof(BothEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<BothEntity>() },
+            { (typeof(BothEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<BothEntity>() }
         });
 
     [Fact]
@@ -102,7 +102,7 @@ public class InputFormatterCanReadTypeTests
         TestRegistryBuilder.Build(new Dictionary<(Type Type, Type? Profile), ByteMapperBinding>
         {
             { (typeof(DefaultOnlyEntity), null), TestRegistryBuilder.MakeBinding<DefaultOnlyEntity>() },
-            { (typeof(ProfileOnlyEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<ProfileOnlyEntity>() },
+            { (typeof(ProfileOnlyEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<ProfileOnlyEntity>() }
         }),
         new ByteMapperFormatterOptions());
 
@@ -139,7 +139,7 @@ public class OutputFormatterCanWriteTypeTests
         TestRegistryBuilder.Build(new Dictionary<(Type Type, Type? Profile), ByteMapperBinding>
         {
             { (typeof(DefaultOnlyEntity), null), TestRegistryBuilder.MakeBinding<DefaultOnlyEntity>() },
-            { (typeof(ProfileOnlyEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<ProfileOnlyEntity>() },
+            { (typeof(ProfileOnlyEntity), typeof(ProfileMarker)), TestRegistryBuilder.MakeBinding<ProfileOnlyEntity>() }
         }),
         new ByteMapperFormatterOptions());
 
