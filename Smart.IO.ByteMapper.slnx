@@ -32,6 +32,7 @@
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Smart.IO.ByteMapper.AotTest/Smart.IO.ByteMapper.AotTest.csproj" />
+    <Project Path="Smart.IO.ByteMapper.AspNetCore.Generator.Tests/Smart.IO.ByteMapper.AspNetCore.Generator.Tests.csproj" />
     <Project Path="Smart.IO.ByteMapper.Generator.Tests/Smart.IO.ByteMapper.Generator.Tests.csproj" />
     <Project Path="Smart.IO.ByteMapper.Tests/Smart.IO.ByteMapper.Tests.csproj" />
   </Folder>

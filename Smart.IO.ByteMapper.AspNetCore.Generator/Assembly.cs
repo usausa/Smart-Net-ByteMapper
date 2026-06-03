@@ -1,5 +1,7 @@
 [assembly: CLSCompliant(false)]
 
+[assembly: System.Runtime.CompilerServices.InternalsVisibleTo("Smart.IO.ByteMapper.AspNetCore.Generator.Tests")]
+
 // ReSharper disable ArrangeNamespaceBody
 // ReSharper disable CheckNamespace
 #pragma warning disable IDE0130

@@ -24,7 +24,7 @@ Annotate a class with `[Map(size)]` to declare the total byte size, then use con
 using Smart.IO.ByteMapper;
 
 // Total: 59 bytes (57 data + 2-byte CRLF delimiter)
-[Map(59)]
+[Map(59, Delimiter = new byte[] { 0x0D, 0x0A })]
 public sealed class SampleData
 {
     [MapText(0, 13)]
@@ -95,25 +95,22 @@ SampleDataMappers.Read(buffer, readBack);
 | `[MapNumberText<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal` | Number as text with `Format`, `Padding`, `Style`, `Culture` |
 | `[MapDateTimeText<T>]` | `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly` (and nullable variants) | Date/time as text with `Format` and `Style` |
 
-## Global Defaults
+## Map Options
 
-Use the assembly-level `[ByteMapperDefaults]` attribute to configure defaults for all maps in the assembly.
+`[Map]` accepts named options in addition to the total size.
 
 ```csharp
-[assembly: ByteMapperDefaults(
-    EncodingName = "shift_jis",
-    Endian = Endian.Little,
-    Delimiter = new byte[] { 0x0D, 0x0A })]
+// 57 data bytes + 2-byte CRLF delimiter = 59 total
+[Map(59, Delimiter = new byte[] { 0x0D, 0x0A })]
+public sealed class SampleData { /* ... */ }
 ```
 
-| Property | Default | Description |
+| Option | Default | Description |
 |---|---|---|
-| `EncodingName` | `"us-ascii"` | Default text encoding |
-| `Filler` | `0x20` | Default fill byte |
-| `Endian` | `Big` | Default endianness for binary converters |
-| `TrueValue` / `FalseValue` | `0x31` / `0x30` | Default boolean byte values |
-| `Delimiter` | `null` | Appended after each record (e.g., `\r\n`) |
-| `Trim` | `true` | Strip filler bytes on text read |
+| `Delimiter` | `null` | Delimiter bytes written at the tail of each record; occupies the last `Delimiter.Length` bytes within `Size` |
+| `UseDelimiter` | `true` | When `false`, the `Delimiter` is not written even if set |
+
+Encoding, padding, filler, endianness, and boolean byte values are configured per property on the converter attributes (see the [Converters](#converters) table).
 
 ## Map Type Attributes
 

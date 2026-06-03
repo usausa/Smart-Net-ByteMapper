@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 [assembly: CLSCompliant(false)]
 
 [assembly: InternalsVisibleTo("Smart.IO.ByteMapper.Tests")]
+[assembly: InternalsVisibleTo("Smart.IO.ByteMapper.Generator.Tests")]
 
 // ReSharper disable ArrangeNamespaceBody
 // ReSharper disable CheckNamespace
