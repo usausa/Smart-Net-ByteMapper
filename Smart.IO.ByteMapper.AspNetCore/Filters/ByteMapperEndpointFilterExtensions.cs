@@ -144,11 +144,9 @@ public static class ByteMapperEndpointFilterExtensions
         var buffer = ArrayPool<byte>.Shared.Rent(size);
         try
         {
-            var read = await httpContext.Request.Body
-                .ReadAsync(buffer.AsMemory(0, size), httpContext.RequestAborted)
-                .ConfigureAwait(false);
-
-            if (read < size)
+            if (!await httpContext.Request.Body
+                .ReadExactAsync(buffer, size, httpContext.RequestAborted)
+                .ConfigureAwait(false))
             {
                 return;
             }
@@ -176,7 +174,9 @@ public static class ByteMapperEndpointFilterExtensions
         var items = new List<T>();
         try
         {
-            while ((await httpContext.Request.Body.ReadAsync(buffer.AsMemory(0, elementSize), httpContext.RequestAborted).ConfigureAwait(false)) == elementSize)
+            while (await httpContext.Request.Body
+                .ReadExactAsync(buffer, elementSize, httpContext.RequestAborted)
+                .ConfigureAwait(false))
             {
                 var item = binding.Factory();
                 binding.ReadElement(buffer.AsSpan(0, elementSize), item);

@@ -32,6 +32,24 @@ public sealed class ByteMapperRegistry
     public ByteMapperBinding? GetBinding(Type type, Type? profileType = null)
         => singleBindings.GetValueOrDefault((type, profileType));
 
+    // Returns true when the type has at least one binding registered, regardless of profile.
+    // Used by formatters to decide whether they can handle the type before the request profile is known.
+    public bool HasAnyBinding(Type type)
+    {
+        if (singleBindings.ContainsKey((type, null)))
+        {
+            return true;
+        }
+        foreach (var key in singleBindings.Keys)
+        {
+            if (key.Type == type)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     // ---- array / enumerable ----
 
     public ByteMapperArrayBinding<T>? GetArrayBinding<T>()

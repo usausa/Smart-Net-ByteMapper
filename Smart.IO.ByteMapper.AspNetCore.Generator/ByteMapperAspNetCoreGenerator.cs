@@ -26,31 +26,32 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             .ForAttributeWithMetadataName(
                 ByteMapperEndpointAttributeName,
                 static (s, _) => s is ClassDeclarationSyntax,
-                static (ctx, _) => ParseEndpoint(ctx))
-            .Where(static e => e is not null)
+                static (ctx, _) => ParseEndpoints(ctx))
+            .Where(static arr => arr.Count > 0)
+            .SelectMany(static (arr, _) => arr)
             .Collect();
 
         context.RegisterImplementationSourceOutput(
             endpoints,
-            static (spc, items) => Execute(spc, items!));
+            static (spc, items) => Execute(spc, items));
     }
 
     // -------------------------------------------------------
     // Parse
     // -------------------------------------------------------
 
-    private static EndpointModel? ParseEndpoint(GeneratorAttributeSyntaxContext context)
+    private static EquatableArray<EndpointModel> ParseEndpoints(GeneratorAttributeSyntaxContext context)
     {
         if (context.TargetSymbol is not INamedTypeSymbol classSymbol)
         {
-            return null;
+            return EquatableArray<EndpointModel>.Empty;
         }
 
         var endpointAttr = classSymbol.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteMapperEndpointAttributeName);
         if (endpointAttr is null)
         {
-            return null;
+            return EquatableArray<EndpointModel>.Empty;
         }
 
         var generateArray = true;
@@ -62,10 +63,10 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             }
         }
 
-        string? readerMethodName = null;
-        string? writerMethodName = null;
-        ITypeSymbol? entityType = null;
-        ITypeSymbol? profileType = null;
+        // Collect all [ByteReader] and [ByteWriter] methods, keyed by profile FQN (or "default").
+        // The key ties a reader to its matching writer.
+        var readers = new Dictionary<string, (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
+        var writers = new Dictionary<string, (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
 
         foreach (var member in classSymbol.GetMembers())
         {
@@ -75,12 +76,20 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             }
 
             var attrs = method.GetAttributes();
-            var isReader = attrs.Any(a => a.AttributeClass?.ToDisplayString() == ByteReaderAttributeName);
-            var isWriter = attrs.Any(a => a.AttributeClass?.ToDisplayString() == ByteWriterAttributeName);
 
-            if (isReader && readerMethodName is null)
+            var readerAttr = attrs.FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteReaderAttributeName);
+            if (readerAttr is not null)
             {
-                readerMethodName = method.Name;
+                ITypeSymbol? profileType = null;
+                foreach (var na in readerAttr.NamedArguments)
+                {
+                    if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                    {
+                        profileType = pt;
+                    }
+                }
+
+                ITypeSymbol? entityType = null;
                 if (!method.ReturnsVoid && method.Parameters.Length == 1)
                 {
                     entityType = method.ReturnType;
@@ -90,72 +99,109 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                     entityType = method.Parameters[1].Type;
                 }
 
-                // Extract Profile type from [ByteReader(Profile = typeof(...))]
-                var readerAttr = attrs.FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteReaderAttributeName);
-                if (readerAttr is not null)
+                if (entityType is not null)
                 {
-                    foreach (var na in readerAttr.NamedArguments)
+                    var key = profileType?.ToDisplayString() ?? "default";
+                    if (!readers.ContainsKey(key))
                     {
-                        if (na.Key == "Profile" && na.Value.Value is ITypeSymbol t)
-                        {
-                            profileType ??= t;
-                        }
+                        readers[key] = (method.Name, entityType, profileType);
                     }
                 }
             }
 
-            if (isWriter && writerMethodName is null)
+            var writerAttr = attrs.FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteWriterAttributeName);
+            if (writerAttr is not null)
             {
-                writerMethodName = method.Name;
-                if (method.ReturnsVoid && method.Parameters.Length == 2 && entityType is null)
+                ITypeSymbol? profileType = null;
+                foreach (var na in writerAttr.NamedArguments)
+                {
+                    if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                    {
+                        profileType = pt;
+                    }
+                }
+
+                ITypeSymbol? entityType = null;
+                if (method.ReturnsVoid && method.Parameters.Length == 2)
                 {
                     entityType = method.Parameters[0].Type;
                 }
+                else if (!method.ReturnsVoid
+                    && method.Parameters.Length == 1
+                    && method.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte })
+                {
+                    entityType = method.Parameters[0].Type;
+                }
+
+                if (entityType is not null)
+                {
+                    var key = profileType?.ToDisplayString() ?? "default";
+                    if (!writers.ContainsKey(key))
+                    {
+                        writers[key] = (method.Name, entityType, profileType);
+                    }
+                }
             }
-        }
-
-        if (entityType is null || readerMethodName is null || writerMethodName is null)
-        {
-            return null;
-        }
-
-        // If a profile type is present and it has [Map(size)], use that size.
-        // Otherwise fall back to the entity type's [Map(size)].
-        var sizeSourceType = profileType ?? entityType;
-        var mapAttr = sizeSourceType.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
-        if (mapAttr is null && profileType is not null)
-        {
-            // Profile type has no [Map]; try entity type as fallback
-            mapAttr = entityType.GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
-        }
-        var size = mapAttr is not null && mapAttr.ConstructorArguments.Length > 0
-            ? (int)(mapAttr.ConstructorArguments[0].Value ?? 0)
-            : -1;
-        if (size <= 0)
-        {
-            return null;
         }
 
         var ns = classSymbol.ContainingNamespace.IsGlobalNamespace
             ? string.Empty
             : classSymbol.ContainingNamespace.ToDisplayString();
-
         var rootNs = DetermineRootNamespace(classSymbol);
 
-        var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+        var results = new List<EndpointModel>();
 
-        return new EndpointModel(
-            ns,
-            classSymbol.Name,
-            entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            readerMethodName,
-            writerMethodName,
-            size,
-            profileFqn,
-            generateArray,
-            rootNs);
+        foreach (var readerKvp in readers)
+        {
+            if (!writers.TryGetValue(readerKvp.Key, out var writer))
+            {
+                continue;
+            }
+
+            var (readerMethodName, entityType, profileType) = readerKvp.Value;
+
+            var sizeSourceType = profileType ?? entityType;
+            var mapAttr = sizeSourceType.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
+            if (mapAttr is null && profileType is not null)
+            {
+                mapAttr = entityType.GetAttributes()
+                    .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
+            }
+            var size = mapAttr is not null && mapAttr.ConstructorArguments.Length > 0
+                ? (int)(mapAttr.ConstructorArguments[0].Value ?? 0)
+                : -1;
+            if (size <= 0)
+            {
+                continue;
+            }
+
+            var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var profileSuffix = profileType?.Name ?? String.Empty;
+            var factoryName = String.IsNullOrEmpty(profileSuffix)
+                ? "CreateByteMapperBinding"
+                : $"CreateByteMapperBinding_{profileSuffix}";
+            var arrayFactoryName = String.IsNullOrEmpty(profileSuffix)
+                ? "CreateByteMapperArrayBinding"
+                : $"CreateByteMapperArrayBinding_{profileSuffix}";
+
+            results.Add(new EndpointModel(
+                ns,
+                classSymbol.Name,
+                entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+                readerMethodName,
+                writer.Name,
+                size,
+                profileFqn,
+                generateArray,
+                rootNs,
+                factoryName,
+                arrayFactoryName));
+        }
+
+        return results.Count == 0
+            ? EquatableArray<EndpointModel>.Empty
+            : new EquatableArray<EndpointModel>([.. results]);
     }
 
     private static string DetermineRootNamespace(INamedTypeSymbol symbol)
@@ -194,7 +240,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         {
             builder.Clear();
             BuildBindingSource(builder, ep);
-            var filename = MakeFilename(ep.Namespace, ep.ClassName) + ".AspNetCore.g.cs";
+            var filename = MakeFilename(ep.Namespace, ep.ClassName, ep.ProfileTypeFqn) + ".AspNetCore.g.cs";
             spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
         }
 
@@ -224,7 +270,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
         // Single binding factory
         builder.Indent()
-            .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<").Append(ep.EntityTypeFqn).Append("> CreateByteMapperBinding()")
+            .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(ep.FactoryMethodName).Append("()")
             .NewLine();
         builder.Indent().Append("    => new(").NewLine();
         builder.Indent().Append("        size: ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
@@ -238,7 +284,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
             // Array binding factory
             builder.Indent()
-                .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<").Append(ep.EntityTypeFqn).Append("> CreateByteMapperArrayBinding()")
+                .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(ep.ArrayFactoryMethodName).Append("()")
                 .NewLine();
             builder.Indent().Append("    => new(").NewLine();
             builder.Indent().Append("        elementSize:  ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
@@ -290,7 +336,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
-            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperBinding() },").NewLine();
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(ep.FactoryMethodName).Append("() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
         builder.NewLine();
@@ -308,7 +354,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
-            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".CreateByteMapperArrayBinding() },").NewLine();
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(ep.ArrayFactoryMethodName).Append("() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
         builder.NewLine();
@@ -336,7 +382,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         builder.EndScope();
     }
 
-    private static string MakeFilename(string ns, string className)
+    private static string MakeFilename(string ns, string className, string? profileFqn)
     {
         var buffer = new StringBuilder();
         if (!String.IsNullOrEmpty(ns))
@@ -345,6 +391,12 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             buffer.Append('_');
         }
         buffer.Append(className.Replace('<', '[').Replace('>', ']'));
+        if (!String.IsNullOrEmpty(profileFqn))
+        {
+            var lastDot = profileFqn!.LastIndexOf('.');
+            var shortName = lastDot >= 0 ? profileFqn.Substring(lastDot + 1) : profileFqn;
+            buffer.Append('_').Append(shortName);
+        }
         return buffer.ToString();
     }
 
@@ -352,6 +404,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
     // Model
     // -------------------------------------------------------
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1812:Avoid uninstantiated internal classes", Justification = "Instantiated via ImmutableArray.CreateBuilder<EndpointModel>.Add.")]
     private sealed record EndpointModel(
         string Namespace,
         string ClassName,
@@ -361,5 +414,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         int Size,
         string? ProfileTypeFqn,
         bool GenerateArrayBinding,
-        string RootNamespace);
+        string RootNamespace,
+        string FactoryMethodName,
+        string ArrayFactoryMethodName);
 }

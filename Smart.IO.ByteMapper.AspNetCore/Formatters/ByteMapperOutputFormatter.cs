@@ -35,18 +35,17 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
 
         if (type.IsArray)
         {
-            var elem = type.GetElementType()!;
-            return registry.GetBinding(elem) is not null;
+            return registry.HasAnyBinding(type.GetElementType()!);
         }
 
         // IEnumerable<T>
         var enumElem = GetEnumerableElementType(type);
         if (enumElem is not null)
         {
-            return registry.GetBinding(enumElem) is not null;
+            return registry.HasAnyBinding(enumElem);
         }
 
-        return registry.GetBinding(type) is not null;
+        return registry.HasAnyBinding(type);
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]

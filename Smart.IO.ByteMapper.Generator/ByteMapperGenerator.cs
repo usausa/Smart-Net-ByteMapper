@@ -191,12 +191,13 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             syntax,
             diagErrors);
 
-        // Layout resolution / レイアウトの解決（オフセット順ソート＆重複チェック）
+        // Layout resolution / レイアウトの解決（オフセット順ソート＆重複チェック＆サイズ超過チェック）
         ResolveLayout(
             members,
             typeMappings,
             validateLayout,
             attrSourceType.Name,
+            mapSize,
             syntax,
             diagErrors);
 
@@ -641,6 +642,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         List<TypeMappingModel> typeMappings,
         bool validateLayout,
         string typeName,
+        int mapSize,
         MethodDeclarationSyntax syntax,
         List<DiagnosticInfo> errors)
     {
@@ -648,14 +650,14 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         members.Sort((a, b) => a.Offset.CompareTo(b.Offset));
         typeMappings.Sort((a, b) => a.Offset.CompareTo(b.Offset));
 
-        // Validate overlap / 範囲の重複を検証する
+        var allRanges = members.Select(m => (m.Offset, m.Size))
+            .Concat(typeMappings.Select(t => (t.Offset, t.Size)))
+            .OrderBy(r => r.Offset)
+            .ToList();
+
+        // SBM0006: Validate overlap / 範囲の重複を検証する
         if (validateLayout)
         {
-            var allRanges = members.Select(m => (m.Offset, m.Size))
-                .Concat(typeMappings.Select(t => (t.Offset, t.Size)))
-                .OrderBy(r => r.Offset)
-                .ToList();
-
             for (var i = 0; i < allRanges.Count - 1; i++)
             {
                 var end = allRanges[i].Offset + allRanges[i].Size;
@@ -663,6 +665,16 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 {
                     errors.Add(new DiagnosticInfo(Diagnostics.RangeOverlap, syntax.GetLocation(), typeName));
                 }
+            }
+        }
+
+        // SBM0007: Validate that no mapping exceeds Map(size) / Map(size) を超えるマッピングがないか検証する
+        if (allRanges.Count > 0)
+        {
+            var maxEnd = allRanges.Max(static r => r.Offset + r.Size);
+            if (maxEnd > mapSize)
+            {
+                errors.Add(new DiagnosticInfo(Diagnostics.LayoutExceedsSize, syntax.GetLocation(), typeName));
             }
         }
     }

@@ -29,18 +29,17 @@ public sealed class ByteMapperInputFormatter : InputFormatter
     {
         if (type.IsArray)
         {
-            var elem = type.GetElementType()!;
-            return registry.GetBinding(elem) is not null;
+            return registry.HasAnyBinding(type.GetElementType()!);
         }
 
         // IEnumerable<T>
         var enumElem = GetEnumerableElementType(type);
         if (enumElem is not null)
         {
-            return registry.GetBinding(enumElem) is not null;
+            return registry.HasAnyBinding(enumElem);
         }
 
-        return registry.GetBinding(type) is not null;
+        return registry.HasAnyBinding(type);
     }
 
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
@@ -124,8 +123,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         var buffer = ArrayPool<byte>.Shared.Rent(size);
         try
         {
-            var read = await body.ReadAsync(buffer.AsMemory(0, size), cancellationToken).ConfigureAwait(false);
-            if (read < size)
+            if (!await body.ReadExactAsync(buffer, size, cancellationToken).ConfigureAwait(false))
             {
                 return null;
             }
@@ -152,7 +150,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         var items = new List<object>();
         try
         {
-            while ((await body.ReadAsync(buffer.AsMemory(0, elementSize), cancellationToken).ConfigureAwait(false)) == elementSize)
+            while (await body.ReadExactAsync(buffer, elementSize, cancellationToken).ConfigureAwait(false))
             {
                 var target = elementBinding.Factory();
                 elementBinding.Read(buffer.AsSpan(0, elementSize), target);

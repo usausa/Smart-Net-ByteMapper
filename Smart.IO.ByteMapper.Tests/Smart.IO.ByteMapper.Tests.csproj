@@ -30,9 +30,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper.Generator\Smart.IO.ByteMapper.Generator.csproj" OutputItemType="analyzer" ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
     <ProjectReference Include="..\Smart.IO.ByteMapper.Fast\Smart.IO.ByteMapper.Fast.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.AspNetCore\Smart.IO.ByteMapper.AspNetCore.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.AspNetCore.Generator\Smart.IO.ByteMapper.AspNetCore.Generator.csproj" OutputItemType="analyzer" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
 </Project>
