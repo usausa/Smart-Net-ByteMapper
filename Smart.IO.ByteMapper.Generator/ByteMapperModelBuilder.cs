@@ -141,6 +141,11 @@ internal static class ByteMapperModelBuilder
         // Delimiter: written as constant at end of record / 区切り文字をレコード末尾の定数マッピングとして追加する
         if (useDelimiter && delimiter is { Length: > 0 })
         {
+            // SBM0004: a delimiter longer than the record yields a negative offset / 区切り文字がレコード長を超えると負のオフセットになる
+            if (delimiter.Length > mapSize)
+            {
+                return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidOffset, syntax.GetLocation(), $"{symbol.Name}, Delimiter"));
+            }
             typeMappings.Add(new TypeMappingModel(mapSize - delimiter.Length, delimiter.Length, TypeMappingKind.Constant, new EquatableArray<byte>(delimiter), 0));
         }
 
@@ -169,6 +174,7 @@ internal static class ByteMapperModelBuilder
             typeMappings,
             validateLayout,
             attrSourceType.Name,
+            symbol.Name,
             mapSize,
             syntax,
             diagErrors);
@@ -347,8 +353,12 @@ internal static class ByteMapperModelBuilder
                 }
 
                 // SBM0010: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
-                var readMethod = (converterType as INamedTypeSymbol)?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
-                if (readMethod?.IsStatic == true)
+                // The source builder always emits instance calls (field.Read / field.Write), so a static
+                // Read or Write would break with a plain compile error rather than a diagnostic.
+                var namedConverterType = converterType as INamedTypeSymbol;
+                var readMethod = namedConverterType?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
+                var writeMethod = namedConverterType?.GetMembers("Write").OfType<IMethodSymbol>().FirstOrDefault();
+                if (readMethod?.IsStatic == true || writeMethod?.IsStatic == true)
                 {
                     errors.Add(new DiagnosticInfo(Diagnostics.ConverterContractMismatch, syntax.GetLocation(), $"{methodSymbol.Name}, {member.Name}"));
                     break;
@@ -614,6 +624,7 @@ internal static class ByteMapperModelBuilder
         List<TypeMappingModel> typeMappings,
         bool validateLayout,
         string typeName,
+        string methodName,
         int mapSize,
         MethodDeclarationSyntax syntax,
         List<DiagnosticInfo> errors)
@@ -626,6 +637,16 @@ internal static class ByteMapperModelBuilder
             .Concat(typeMappings.Select(t => (t.Offset, t.Size)))
             .OrderBy(r => r.Offset)
             .ToList();
+
+        // SBM0004: Validate no negative offset or length / 負のオフセット・長さを検証する
+        foreach (var (offset, size) in allRanges)
+        {
+            if (offset < 0 || size < 0)
+            {
+                errors.Add(new DiagnosticInfo(Diagnostics.InvalidOffset, syntax.GetLocation(), $"{methodName}, {typeName}"));
+                break;
+            }
+        }
 
         // SBM0006: Validate overlap / 範囲の重複を検証する
         if (validateLayout)

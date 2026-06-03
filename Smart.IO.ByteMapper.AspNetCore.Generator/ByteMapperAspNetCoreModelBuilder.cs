@@ -38,10 +38,11 @@ internal static class ByteMapperAspNetCoreModelBuilder
             }
         }
 
-        // Collect all [ByteReader] and [ByteWriter] methods, keyed by profile FQN (or "default").
-        // The key ties a reader to its matching writer.
-        var readers = new Dictionary<string, (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
-        var writers = new Dictionary<string, (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
+        // Collect all [ByteReader] and [ByteWriter] methods, keyed by (entity FQN, profile FQN or "default").
+        // The key ties a reader to its matching writer of the same entity and profile, so multiple
+        // entities can coexist in one [ByteMapperEndpoint] class without cross-pairing.
+        var readers = new Dictionary<(string Entity, string Profile), (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
+        var writers = new Dictionary<(string Entity, string Profile), (string Name, ITypeSymbol Entity, ITypeSymbol? Profile)>();
 
         foreach (var member in classSymbol.GetMembers())
         {
@@ -76,7 +77,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
 
                 if (entityType is not null)
                 {
-                    var key = profileType?.ToDisplayString() ?? "default";
+                    var key = (entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), profileType?.ToDisplayString() ?? "default");
                     if (!readers.ContainsKey(key))
                     {
                         readers[key] = (method.Name, entityType, profileType);
@@ -99,18 +100,20 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 ITypeSymbol? entityType = null;
                 if (method.ReturnsVoid && method.Parameters.Length == 2)
                 {
-                    entityType = method.Parameters[0].Type;
+                    // void Write(Span<byte> destination, T source) — entity is the second parameter.
+                    entityType = method.Parameters[1].Type;
                 }
                 else if (!method.ReturnsVoid
                     && method.Parameters.Length == 1
                     && method.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte })
                 {
+                    // byte[] Write(T source) — entity is the only parameter.
                     entityType = method.Parameters[0].Type;
                 }
 
                 if (entityType is not null)
                 {
-                    var key = profileType?.ToDisplayString() ?? "default";
+                    var key = (entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat), profileType?.ToDisplayString() ?? "default");
                     if (!writers.ContainsKey(key))
                     {
                         writers[key] = (method.Name, entityType, profileType);
@@ -124,8 +127,8 @@ internal static class ByteMapperAspNetCoreModelBuilder
             : classSymbol.ContainingNamespace.ToDisplayString();
         var rootNs = DetermineRootNamespace(classSymbol);
 
-        var results = new List<EndpointModel>();
-
+        // Pair readers with the writer of the same (entity, profile) key. / 同一 (entity, profile) キーの reader/writer をペアリングする
+        var pairs = new List<(string ReaderName, string WriterName, ITypeSymbol Entity, ITypeSymbol? Profile, int Size)>();
         foreach (var readerKvp in readers)
         {
             if (!writers.TryGetValue(readerKvp.Key, out var writer))
@@ -151,27 +154,36 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 continue;
             }
 
+            pairs.Add((readerMethodName, writer.Name, entityType, profileType, size));
+        }
+
+        // When the class declares mappers for more than one entity, disambiguate factory names with the
+        // entity short name so they do not collide. Single-entity classes keep the plain names.
+        // クラスが複数エンティティの mapper を持つ場合のみ、衝突回避のためファクトリ名にエンティティ名を付与する。
+        var multipleEntities = pairs
+            .Select(p => p.Entity.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat))
+            .Distinct()
+            .Count() > 1;
+
+        var results = new List<EndpointModel>();
+        foreach (var (readerName, writerName, entityType, profileType, size) in pairs)
+        {
             var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var profileSuffix = profileType?.Name ?? String.Empty;
-            var factoryName = String.IsNullOrEmpty(profileSuffix)
-                ? "CreateByteMapperBinding"
-                : $"CreateByteMapperBinding_{profileSuffix}";
-            var arrayFactoryName = String.IsNullOrEmpty(profileSuffix)
-                ? "CreateByteMapperArrayBinding"
-                : $"CreateByteMapperArrayBinding_{profileSuffix}";
+            var entitySuffix = multipleEntities ? $"_{entityType.Name}" : String.Empty;
+            var profileSuffix = profileType is not null ? $"_{profileType.Name}" : String.Empty;
+            var nameSuffix = $"{entitySuffix}{profileSuffix}";
 
             results.Add(new EndpointModel(
                 ns,
                 classSymbol.Name,
                 entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-                readerMethodName,
-                writer.Name,
+                readerName,
+                writerName,
                 size,
                 profileFqn,
                 generateArray,
                 rootNs,
-                factoryName,
-                arrayFactoryName));
+                nameSuffix));
         }
 
         return results.Count == 0

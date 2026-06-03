@@ -11,6 +11,11 @@ using SourceGenerateHelper;
 // dependency, so it can be unit-tested by constructing models directly.
 internal static class ByteMapperAspNetCoreSourceBuilder
 {
+    // Factory method names derived from the disambiguating suffix. / 識別子サフィックスからファクトリ名を導出する。
+    private static string SingleFactoryName(EndpointModel ep) => "CreateByteMapperBinding" + ep.NameSuffix;
+
+    private static string ArrayFactoryName(EndpointModel ep) => "CreateByteMapperArrayBinding" + ep.NameSuffix;
+
     // Builds the per-class binding factory method(s) for a single endpoint binding.
     public static void BuildBinding(SourceBuilder builder, EndpointModel ep)
     {
@@ -29,7 +34,7 @@ internal static class ByteMapperAspNetCoreSourceBuilder
 
         // Single binding factory
         builder.Indent()
-            .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(ep.FactoryMethodName).Append("()")
+            .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(SingleFactoryName(ep)).Append("()")
             .NewLine();
         builder.Indent().Append("    => new(").NewLine();
         builder.Indent().Append("        size: ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
@@ -43,7 +48,7 @@ internal static class ByteMapperAspNetCoreSourceBuilder
 
             // Array binding factory
             builder.Indent()
-                .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(ep.ArrayFactoryMethodName).Append("()")
+                .Append("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperArrayBinding<").Append(ep.EntityTypeFqn).Append("> ").Append(ArrayFactoryName(ep)).Append("()")
                 .NewLine();
             builder.Indent().Append("    => new(").NewLine();
             builder.Indent().Append("        elementSize:  ").Append(ep.Size.ToString(System.Globalization.CultureInfo.InvariantCulture)).Append(",").NewLine();
@@ -96,7 +101,7 @@ internal static class ByteMapperAspNetCoreSourceBuilder
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
-            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(ep.FactoryMethodName).Append("() },").NewLine();
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(SingleFactoryName(ep)).Append("() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
         builder.NewLine();
@@ -114,7 +119,7 @@ internal static class ByteMapperAspNetCoreSourceBuilder
                 ? $"global::{ep.ClassName}"
                 : $"global::{ep.Namespace}.{ep.ClassName}";
             var profileLiteral = ep.ProfileTypeFqn is null ? "null" : $"typeof({ep.ProfileTypeFqn})";
-            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(ep.ArrayFactoryMethodName).Append("() },").NewLine();
+            builder.Indent().Append("    { (typeof(").Append(ep.EntityTypeFqn).Append("), ").Append(profileLiteral).Append("), ").Append(qualifiedClass).Append(".").Append(ArrayFactoryName(ep)).Append("() },").NewLine();
         }
         builder.Indent().Append("};").NewLine();
         builder.NewLine();
@@ -142,9 +147,9 @@ internal static class ByteMapperAspNetCoreSourceBuilder
         builder.EndScope();
     }
 
-    // Source file name (without extension) for an endpoint binding; profile name disambiguates
-    // multiple bindings declared on the same class.
-    public static string MakeFilename(string ns, string className, string? profileFqn)
+    // Source file name (without extension) for an endpoint binding. The NameSuffix (entity/profile
+    // disambiguator) keeps the hint unique when a class declares multiple bindings.
+    public static string MakeFilename(string ns, string className, string nameSuffix)
     {
         var buffer = new StringBuilder();
         if (!String.IsNullOrEmpty(ns))
@@ -153,12 +158,7 @@ internal static class ByteMapperAspNetCoreSourceBuilder
             buffer.Append('_');
         }
         buffer.Append(className.Replace('<', '[').Replace('>', ']'));
-        if (!String.IsNullOrEmpty(profileFqn))
-        {
-            var lastDot = profileFqn!.LastIndexOf('.');
-            var shortName = lastDot >= 0 ? profileFqn.Substring(lastDot + 1) : profileFqn;
-            buffer.Append('_').Append(shortName);
-        }
+        buffer.Append(nameSuffix);
         return buffer.ToString();
     }
 }

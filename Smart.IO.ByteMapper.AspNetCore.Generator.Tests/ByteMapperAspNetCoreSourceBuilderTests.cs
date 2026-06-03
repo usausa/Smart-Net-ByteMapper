@@ -16,8 +16,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
         string className = "SampleMappers",
         string entityFqn = "global::Test.Sample",
         int size = 8,
-        string factory = "CreateByteMapperBinding",
-        string arrayFactory = "CreateByteMapperArrayBinding")
+        string nameSuffix = "")
         => new(
             ns,
             className,
@@ -28,8 +27,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
             profileFqn,
             generateArray,
             "Test",
-            factory,
-            arrayFactory);
+            nameSuffix);
 
     private static string BuildBinding(EndpointModel ep)
     {
@@ -87,15 +85,20 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     }
 
     [Fact]
-    public void WhenProfileFactoryNameThenEmitsProfileSuffixedFactory()
+    public void WhenProfileSuffixThenEmitsSuffixedFactory()
     {
-        var src = BuildBinding(Endpoint(
-            profileFqn: "global::Test.MyProfile",
-            factory: "CreateByteMapperBinding_MyProfile",
-            arrayFactory: "CreateByteMapperArrayBinding_MyProfile"));
+        var src = BuildBinding(Endpoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
 
         Assert.Contains("CreateByteMapperBinding_MyProfile()", src, StringComparison.Ordinal);
         Assert.Contains("CreateByteMapperArrayBinding_MyProfile()", src, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void WhenEntitySuffixThenEmitsEntitySuffixedFactory()
+    {
+        var src = BuildBinding(Endpoint(nameSuffix: "_Sample"));
+
+        Assert.Contains("CreateByteMapperBinding_Sample()", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -131,10 +134,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenProfileBindingThenProfileLiteralIsTypeof()
     {
-        var src = BuildBootstrap(Endpoint(
-            profileFqn: "global::Test.MyProfile",
-            factory: "CreateByteMapperBinding_MyProfile",
-            arrayFactory: "CreateByteMapperArrayBinding_MyProfile"));
+        var src = BuildBootstrap(Endpoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
 
         Assert.Contains("{ (typeof(global::Test.Sample), typeof(global::Test.MyProfile)), global::Test.SampleMappers.CreateByteMapperBinding_MyProfile() },", src, StringComparison.Ordinal);
     }
@@ -150,16 +150,13 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenMultipleEndpointsThenBothRegistered()
     {
-        var def = Endpoint();
-        var prof = Endpoint(
-            profileFqn: "global::Test.MyProfile",
-            factory: "CreateByteMapperBinding_MyProfile",
-            arrayFactory: "CreateByteMapperArrayBinding_MyProfile");
+        var a = Endpoint(entityFqn: "global::Test.A", nameSuffix: "_A");
+        var b = Endpoint(entityFqn: "global::Test.B", nameSuffix: "_B");
 
-        var src = BuildBootstrap(def, prof);
+        var src = BuildBootstrap(a, b);
 
-        Assert.Contains("global::Test.SampleMappers.CreateByteMapperBinding() },", src, StringComparison.Ordinal);
-        Assert.Contains("global::Test.SampleMappers.CreateByteMapperBinding_MyProfile() },", src, StringComparison.Ordinal);
+        Assert.Contains("global::Test.SampleMappers.CreateByteMapperBinding_A() },", src, StringComparison.Ordinal);
+        Assert.Contains("global::Test.SampleMappers.CreateByteMapperBinding_B() },", src, StringComparison.Ordinal);
     }
 
     // -------------------------------------------------------
@@ -167,18 +164,26 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     // -------------------------------------------------------
 
     [Fact]
-    public void WhenNoProfileThenFilenameIsNamespacedClass()
+    public void WhenNoSuffixThenFilenameIsNamespacedClass()
     {
-        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", null);
+        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", string.Empty);
 
         Assert.Equal("Test_Ns_SampleMappers", name);
     }
 
     [Fact]
-    public void WhenProfileThenFilenameHasProfileSuffix()
+    public void WhenSuffixThenFilenameIncludesSuffix()
     {
-        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", "global::Test.Ns.MyProfile");
+        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", "_MyProfile");
 
         Assert.Equal("Test_Ns_SampleMappers_MyProfile", name);
+    }
+
+    [Fact]
+    public void WhenEntityAndProfileSuffixThenFilenameIncludesBoth()
+    {
+        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", "_EntityA_MyProfile");
+
+        Assert.Equal("Test_Ns_SampleMappers_EntityA_MyProfile", name);
     }
 }

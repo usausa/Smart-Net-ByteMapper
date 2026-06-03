@@ -47,7 +47,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         {
             builder.Clear();
             ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
-            var filename = ByteMapperAspNetCoreSourceBuilder.MakeFilename(ep.Namespace, ep.ClassName, ep.ProfileTypeFqn) + ".AspNetCore.g.cs";
+            var filename = ByteMapperAspNetCoreSourceBuilder.MakeFilename(ep.Namespace, ep.ClassName, ep.NameSuffix) + ".AspNetCore.g.cs";
             spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
         }
 

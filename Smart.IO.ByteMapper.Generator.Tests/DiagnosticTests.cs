@@ -271,4 +271,130 @@ public class DiagnosticTests
 
         Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0007");
     }
+
+    // -----------------------------------------------------------------------
+    // SBM0004 — Delimiter がレコード長を超える（負のオフセット）
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0004_DelimiterLongerThanMapSize_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(2, Delimiter = new byte[] { 0x0D, 0x0A, 0x00, 0x00 })]
+            public sealed class DelimiterOverflowRecord
+            {
+                [MapBinary<short>(0)]
+                public short Id { get; set; }
+            }
+
+            public static partial class MappersSBM0004
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, DelimiterOverflowRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0004");
+    }
+
+    [Fact]
+    public void SBM0004_DelimiterEqualToMapSize_DoesNotEmitDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(2, Delimiter = new byte[] { 0x0D, 0x0A })]
+            public sealed class DelimiterExactRecord
+            {
+            }
+
+            public static partial class MappersSBM0004b
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, DelimiterExactRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0004");
+    }
+
+    [Fact]
+    public void SBM0004_NegativeMemberOffset_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(8, UseDelimiter = false)]
+            public sealed class NegativeOffsetRecord
+            {
+                [MapBinary<int>(-4)]
+                public int Id { get; set; }
+            }
+
+            public static partial class MappersSBM0004c
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, NegativeOffsetRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0004");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0010 — converter の Read / Write が static（インスタンスメソッドでない）
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0010_ConverterWithStaticWrite_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            namespace Custom
+            {
+                // Read is an instance method, but Write is static — must be rejected.
+                public sealed class StaticWriteConverter
+                {
+                    public const int Size = 4;
+                    public int Read(ReadOnlySpan<byte> source) => 0;
+                    public static void Write(Span<byte> destination, int value) { }
+                }
+
+                public sealed class StaticWriteConverterAttribute : ByteMapperPropertyAttribute<StaticWriteConverter>
+                {
+                    public StaticWriteConverterAttribute(int offset) : base(offset) { }
+                }
+
+                [Map(4, UseDelimiter = false)]
+                public sealed class StaticWriteRecord
+                {
+                    [StaticWriteConverter(0)]
+                    public int Id { get; set; }
+                }
+
+                public static partial class MappersSBM0010
+                {
+                    [ByteWriter]
+                    public static partial void Write(Span<byte> buffer, StaticWriteRecord source);
+                }
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0010");
+    }
 }
