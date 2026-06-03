@@ -169,24 +169,19 @@ public static class ByteMapperEndpointFilterExtensions
         HttpContext httpContext,
         ByteMapperArrayBinding<T> binding)
     {
-        var elementSize = binding.ElementSize;
-        var buffer = ArrayPool<byte>.Shared.Rent(elementSize);
+        var bufferSize = httpContext.RequestServices.GetService<ByteMapperFormatterOptions>()?.BufferSize ?? ByteMapperFormatterOptions.DefaultBufferSize;
         var items = new List<T>();
-        try
-        {
-            while (await httpContext.Request.Body
-                .ReadExactAsync(buffer, elementSize, httpContext.RequestAborted)
-                .ConfigureAwait(false))
+        await httpContext.Request.Body.ReadRecordsAsync(
+            binding.ElementSize,
+            bufferSize,
+            (items, binding),
+            static (s, mem) =>
             {
-                var item = binding.Factory();
-                binding.ReadElement(buffer.AsSpan(0, elementSize), item);
-                items.Add(item);
-            }
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
+                var item = s.binding.Factory();
+                s.binding.ReadElement(mem.Span, item);
+                s.items.Add(item);
+            },
+            httpContext.RequestAborted).ConfigureAwait(false);
 
         var result = items.ToArray();
         // Store in HttpContext.Items so handlers that take HttpContext can retrieve it.

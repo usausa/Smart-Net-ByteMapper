@@ -144,23 +144,18 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         Stream body,
         CancellationToken cancellationToken)
     {
-        var elementSize = elementBinding.Size;
-        var bufferSize = Math.Max(options.BufferSize, elementSize);
-        var buffer = ArrayPool<byte>.Shared.Rent(bufferSize);
         var items = new List<object>();
-        try
-        {
-            while (await body.ReadExactAsync(buffer, elementSize, cancellationToken).ConfigureAwait(false))
+        await body.ReadRecordsAsync(
+            elementBinding.Size,
+            options.BufferSize,
+            (items, binding: elementBinding),
+            static (s, mem) =>
             {
-                var target = elementBinding.Factory();
-                elementBinding.Read(buffer.AsSpan(0, elementSize), target);
-                items.Add(target);
-            }
-        }
-        finally
-        {
-            ArrayPool<byte>.Shared.Return(buffer);
-        }
+                var target = s.binding.Factory();
+                s.binding.Read(mem.Span, target);
+                s.items.Add(target);
+            },
+            cancellationToken).ConfigureAwait(false);
 
         var array = CreateArrayInstance(elementType, items.Count);
         for (var i = 0; i < items.Count; i++)

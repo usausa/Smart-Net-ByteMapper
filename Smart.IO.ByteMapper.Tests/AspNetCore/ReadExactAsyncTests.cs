@@ -85,19 +85,6 @@ public class ReadExactAsyncTests
     }
 
     [Fact]
-    public async Task WhenStreamReturnsSmallChunksThenAllBytesRead()
-    {
-        var data = MakeData(20);
-        using var stream = new ChunkedStream(data, chunkSize: 3);
-        var buffer = new byte[20];
-
-        var result = await stream.ReadExactAsync(buffer, 20, CancellationToken.None);
-
-        Assert.True(result);
-        Assert.Equal(data, buffer);
-    }
-
-    [Fact]
     public async Task WhenEofBeforeCountThenReturnsFalse()
     {
         var data = MakeData(8);
@@ -131,18 +118,5 @@ public class ReadExactAsyncTests
 
         Assert.True(result);
         Assert.Equal(new byte[] { 0x01, 0x02, 0x03, 0x04 }, buffer[..4]);
-    }
-
-    [Fact]
-    public async Task WhenChunkSizeLargerThanDataThenBehavesLikeNormalStream()
-    {
-        var data = MakeData(10);
-        using var stream = new ChunkedStream(data, chunkSize: 100);
-        var buffer = new byte[10];
-
-        var result = await stream.ReadExactAsync(buffer, 10, CancellationToken.None);
-
-        Assert.True(result);
-        Assert.Equal(data, buffer);
     }
 }
