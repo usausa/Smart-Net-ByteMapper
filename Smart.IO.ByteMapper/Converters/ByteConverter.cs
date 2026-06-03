@@ -4,8 +4,6 @@ using System.Runtime.CompilerServices;
 
 public sealed class ByteConverter
 {
-    public static readonly ByteConverter Instance = new();
-
     public const int Size = 1;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

@@ -128,6 +128,36 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         var mapSize = (int)(mapAttr.ConstructorArguments[0].Value ?? 0);
 
+        // Parse optional Map settings / Map 属性のオプション設定を解析する
+        var autoFiller = true;
+        byte? nullFiller = null;
+        var useDelimiter = true;
+        byte[]? delimiter = null;
+        foreach (var na in mapAttr.NamedArguments)
+        {
+            switch (na.Key)
+            {
+                case "AutoFiller" when na.Value.Value is bool af:
+                    autoFiller = af;
+                    break;
+                case "UseDelimiter" when na.Value.Value is bool ud:
+                    useDelimiter = ud;
+                    break;
+                case "NullFiller" when na.Value.Value is byte nf:
+                    nullFiller = nf;
+                    break;
+                case "Delimiter" when na.Value.Kind == TypedConstantKind.Array:
+                    var delimBytes = na.Value.Values
+                        .Select(static v => v.Value is byte b ? b : (byte)0)
+                        .ToArray();
+                    if (delimBytes.Length > 0)
+                    {
+                        delimiter = delimBytes;
+                    }
+                    break;
+            }
+        }
+
         var containingType = symbol.ContainingType;
         var ns = String.IsNullOrEmpty(containingType.ContainingNamespace.Name)
             ? string.Empty
@@ -135,6 +165,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
 
         // Collect fillers and constants from type attributes / 型属性からフィラーと定数マッピングを収集する
         var typeMappings = CollectTypeMappings(attrSourceType);
+
+        // Delimiter: written as constant at end of record / 区切り文字をレコード末尾の定数マッピングとして追加する
+        if (useDelimiter && delimiter is { Length: > 0 })
+        {
+            typeMappings.Add(new TypeMappingModel(mapSize - delimiter.Length, delimiter.Length, TypeMappingKind.Constant, new EquatableArray<byte>(delimiter), 0));
+        }
 
         // Collect member mappings / メンバーマッピングを収集する
         var compilation = context.SemanticModel.Compilation;
@@ -163,6 +199,12 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             attrSourceType.Name,
             syntax,
             diagErrors);
+
+        // Auto-fill uncovered gaps in the write path / NullFiller が設定されている場合のみギャップを自動フィルする
+        if (autoFiller && nullFiller.HasValue)
+        {
+            ApplyAutoFill(members, typeMappings, mapSize, nullFiller.Value);
+        }
 
         var className = containingType.GetClassName();
         var model = new MapperMethodModel(
@@ -328,6 +370,14 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                 // SBM0008 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
                 if (!CheckSupportedTypes(attr.AttributeClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
                 {
+                    break;
+                }
+
+                // SBM0010: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
+                var readMethod = (converterType as INamedTypeSymbol)?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
+                if (readMethod?.IsStatic == true)
+                {
+                    errors.Add(new DiagnosticInfo(Diagnostics.ConverterContractMismatch, syntax.GetLocation(), $"{methodSymbol.Name}, {member.Name}"));
                     break;
                 }
 
@@ -614,6 +664,42 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
                     errors.Add(new DiagnosticInfo(Diagnostics.RangeOverlap, syntax.GetLocation(), typeName));
                 }
             }
+        }
+    }
+
+    private static void ApplyAutoFill(
+        List<MemberMappingModel> members,
+        List<TypeMappingModel> typeMappings,
+        int mapSize,
+        byte fillerByte)
+    {
+        var covered = members.Select(m => (Start: m.Offset, End: m.Offset + m.Size))
+            .Concat(typeMappings.Select(t => (Start: t.Offset, End: t.Offset + t.Size)))
+            .OrderBy(static r => r.Start)
+            .ToList();
+
+        var fills = new List<TypeMappingModel>();
+        var pos = 0;
+        foreach (var (start, end) in covered)
+        {
+            if (pos < start)
+            {
+                fills.Add(new TypeMappingModel(pos, start - pos, TypeMappingKind.Filler, new EquatableArray<byte>([]), fillerByte));
+            }
+            if (end > pos)
+            {
+                pos = end;
+            }
+        }
+        if (pos < mapSize)
+        {
+            fills.Add(new TypeMappingModel(pos, mapSize - pos, TypeMappingKind.Filler, new EquatableArray<byte>([]), fillerByte));
+        }
+
+        if (fills.Count > 0)
+        {
+            typeMappings.AddRange(fills);
+            typeMappings.Sort(static (a, b) => a.Offset.CompareTo(b.Offset));
         }
     }
 
