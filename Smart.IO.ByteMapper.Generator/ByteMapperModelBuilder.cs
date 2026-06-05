@@ -45,7 +45,7 @@ internal static class ByteMapperModelBuilder
             return Results.Error<MapperMethodModel>(errors[0]);
         }
 
-        if (targetType == null)
+        if (targetType is null)
         {
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.GetLocation(), symbol.Name));
         }
@@ -71,7 +71,7 @@ internal static class ByteMapperModelBuilder
 
         ITypeSymbol? profileType = null;
         var validateLayout = true;
-        if (methodAttr != null)
+        if (methodAttr is not null)
         {
             foreach (var na in methodAttr.NamedArguments)
             {
@@ -92,9 +92,9 @@ internal static class ByteMapperModelBuilder
 
         // Get [Map] attribute from attribute source / 属性ソース型から [Map] 属性を取得する
         var mapAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
-        if (mapAttr == null)
+        if (mapAttr is null)
         {
-            var diagId = profileType != null ? Diagnostics.ProfileMissingMapAttribute : Diagnostics.MissingMapAttribute;
+            var diagId = profileType is not null ? Diagnostics.ProfileMissingMapAttribute : Diagnostics.MissingMapAttribute;
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(diagId, syntax.GetLocation(), symbol.Name));
         }
 
@@ -153,7 +153,7 @@ internal static class ByteMapperModelBuilder
         var compilation = context.SemanticModel.Compilation;
         var propertyAttrBase = compilation.GetTypeByMetadataName(ByteMapperPropertyAttributeOpenName);
 
-        if (propertyAttrBase == null)
+        if (propertyAttrBase is null)
         {
             return Results.Errors<MapperMethodModel>();
         }
@@ -314,7 +314,7 @@ internal static class ByteMapperModelBuilder
         {
             foreach (var attr in member.GetAttributes())
             {
-                if (attr.AttributeClass == null)
+                if (attr.AttributeClass is null)
                 {
                     continue;
                 }
@@ -322,7 +322,7 @@ internal static class ByteMapperModelBuilder
                 // Try to get Converter type from ByteMapperPropertyAttribute<TConverter>
                 // ByteMapperPropertyAttribute<TConverter> からコンバーター型を取得する
                 var converterBase = attr.AttributeClass.FindConverterAttributeBase(propertyAttrBase);
-                if (converterBase == null)
+                if (converterBase is null)
                 {
                     continue; // unrecognized converter attribute - skip
                 }
@@ -331,10 +331,10 @@ internal static class ByteMapperModelBuilder
 
                 // Determine actual property symbol on target / ターゲット型上の実プロパティシンボルを特定する
                 var targetProp = member;
-                if (profileType != null)
+                if (profileType is not null)
                 {
                     var found = targetType.GetMembers(member.Name).OfType<IPropertySymbol>().FirstOrDefault();
-                    if (found == null)
+                    if (found is null)
                     {
                         errors.Add(new DiagnosticInfo(Diagnostics.ProfilePropertyNotFound, syntax.GetLocation(), $"{methodSymbol.Name}, {member.Name}"));
                         continue;
@@ -409,7 +409,7 @@ internal static class ByteMapperModelBuilder
         var supportedAttr = attrClass.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ConverterSupportedTypesAttributeName);
 
-        if (supportedAttr == null)
+        if (supportedAttr is null)
         {
             // No restriction declared — always allowed / 制限なし — 常に許可
             return true;
@@ -453,7 +453,7 @@ internal static class ByteMapperModelBuilder
         if (converterType is INamedTypeSymbol namedConverter)
         {
             var ctor = namedConverter.InstanceConstructors.FirstOrDefault(c => c.DeclaredAccessibility == Accessibility.Public);
-            if (ctor != null)
+            if (ctor is not null)
             {
                 // Map converter ctor params (skip already-covered positional params)
                 // コンバーターのコンストラクターパラメーターをマップする（位置引数で既に埋まっているものはスキップ）
@@ -499,7 +499,7 @@ internal static class ByteMapperModelBuilder
     private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();
-        if (attrClass == null)
+        if (attrClass is null)
         {
             return result;
         }
@@ -520,7 +520,7 @@ internal static class ByteMapperModelBuilder
             {
                 var node = syntaxRef.GetSyntax();
                 if (node is PropertyDeclarationSyntax propSyntax
-                    && propSyntax.Initializer?.Value != null)
+                    && propSyntax.Initializer?.Value is not null)
                 {
                     result[prop.Name] = propSyntax.Initializer.Value.ToString();
                     break;
@@ -535,7 +535,7 @@ internal static class ByteMapperModelBuilder
     {
         if (param.HasExplicitDefaultValue)
         {
-            if (param.Type.TypeKind == TypeKind.Enum && param.ExplicitDefaultValue != null)
+            if (param.Type.TypeKind == TypeKind.Enum && param.ExplicitDefaultValue is not null)
             {
                 var fqn = param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 // Find enum member name

@@ -53,7 +53,7 @@ internal static class SymbolExtensions
     public static INamedTypeSymbol? FindConverterAttributeBase(this INamedTypeSymbol attributeClass, INamedTypeSymbol converterAttributeOpenGeneric)
     {
         var current = attributeClass.BaseType;
-        while (current != null)
+        while (current is not null)
         {
             if (SymbolEqualityComparer.Default.Equals(current.OriginalDefinition, converterAttributeOpenGeneric))
             {
@@ -69,7 +69,7 @@ internal static class SymbolExtensions
     public static bool InheritsFrom(this ITypeSymbol type, INamedTypeSymbol baseType)
     {
         var current = type.BaseType;
-        while (current != null)
+        while (current is not null)
         {
             if (SymbolEqualityComparer.Default.Equals(current.OriginalDefinition, baseType.OriginalDefinition))
             {
@@ -97,7 +97,7 @@ internal static class SymbolExtensions
                 _ => constant.Value!.ToString() ?? "null"
             };
         }
-        if (constant.Kind == TypedConstantKind.Enum && constant.Type != null)
+        if (constant.Kind == TypedConstantKind.Enum && constant.Type is not null)
         {
             var fqn = constant.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             return $"{fqn}.{GetEnumMemberName(constant)}";
@@ -112,7 +112,7 @@ internal static class SymbolExtensions
 
     private static string GetEnumMemberName(TypedConstant constant)
     {
-        if ((constant.Type == null) || (constant.Value == null))
+        if ((constant.Type is null) || (constant.Value is null))
         {
             return constant.Value?.ToString() ?? "0";
         }
