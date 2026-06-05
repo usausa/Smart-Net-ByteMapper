@@ -314,6 +314,7 @@ internal static class ByteMapperModelBuilder
         {
             foreach (var attr in member.GetAttributes())
             {
+                // ReSharper disable UseNullPropagation
                 if (attr.AttributeClass is null)
                 {
                     continue;
