@@ -67,7 +67,7 @@ public class ReadRecordsAsyncTests
     public async Task WhenStreamReturnsOneBytePerReadThenAllParsed()
     {
         var data = MakeRecords(7);
-        using var stream = new ChunkedStream(data, chunkSize: 1);
+        await using var stream = new ChunkedStream(data, chunkSize: 1);
 
         var items = await ReadAllAsync(stream, bufferSize: 64);
 
@@ -80,7 +80,7 @@ public class ReadRecordsAsyncTests
     {
         var data = MakeRecords(8);
         // chunkSize 3 never aligns with elementSize 4, so every element straddles reads.
-        using var stream = new ChunkedStream(data, chunkSize: 3);
+        await using var stream = new ChunkedStream(data, chunkSize: 3);
 
         var items = await ReadAllAsync(stream, bufferSize: 16);
 

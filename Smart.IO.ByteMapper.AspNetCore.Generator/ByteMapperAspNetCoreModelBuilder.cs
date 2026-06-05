@@ -46,7 +46,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
 
         foreach (var member in classSymbol.GetMembers())
         {
-            if (member is not IMethodSymbol method || !method.IsStatic)
+            if (member is not IMethodSymbol { IsStatic: true } method)
             {
                 continue;
             }

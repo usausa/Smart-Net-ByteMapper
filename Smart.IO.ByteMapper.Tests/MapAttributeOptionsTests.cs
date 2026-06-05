@@ -8,7 +8,7 @@ using System;
 // Layout: [Id(0,4)] [Name(4,6)] [CRLF(10,2)] = 12 bytes
 // UseDelimiter=true (default) + Delimiter writes 0x0D 0x0A at bytes 10-11
 
-[Map(12, Delimiter = new byte[] { 0x0D, 0x0A })]
+[Map(12, Delimiter = [0x0D, 0x0A])]
 internal sealed class CrlfRecord
 {
     [MapBinary<int>(0)]

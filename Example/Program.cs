@@ -16,9 +16,9 @@ internal static class Program
 
         // TextConverter
         var tc = new TextConverter(8);
-        var tbuf = new byte[8];
-        tc.Write(tbuf, "Hello");
-        var ts = tc.Read(tbuf);
+        var buffer = new byte[8];
+        tc.Write(buffer, "Hello");
+        var ts = tc.Read(buffer);
         Console.WriteLine($"TextConverter round-trip: {ts == "Hello"}");
 
         // Generator usage

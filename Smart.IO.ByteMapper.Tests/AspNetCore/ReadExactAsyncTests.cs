@@ -75,7 +75,7 @@ public class ReadExactAsyncTests
     public async Task WhenStreamReturnsSingleByteThenAllBytesRead()
     {
         var data = MakeData(16);
-        using var stream = new ChunkedStream(data, chunkSize: 1);
+        await using var stream = new ChunkedStream(data, chunkSize: 1);
         var buffer = new byte[16];
 
         var result = await stream.ReadExactAsync(buffer, 16, CancellationToken.None);
@@ -111,7 +111,7 @@ public class ReadExactAsyncTests
     public async Task WhenReadingSubsetOfBufferThenCorrectBytesRead()
     {
         var data = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
-        using var stream = new ChunkedStream(data, chunkSize: 1);
+        await using var stream = new ChunkedStream(data, chunkSize: 1);
         var buffer = new byte[8];
 
         var result = await stream.ReadExactAsync(buffer, 4, CancellationToken.None);

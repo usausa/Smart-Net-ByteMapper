@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Smart.IO.ByteMapper.Generator.Helpers;
 using Smart.IO.ByteMapper.Generator.Models;
 
 using SourceGenerateHelper;
@@ -109,6 +108,7 @@ internal static class ByteMapperSourceBuilder
 
     // Assigns deduplicated converter field names within the class / クラス内でコンバーターフィールド名を重複排除しながら割り当てる
     // Methods targeting the same type with identical converter configs share one static field instance.
+    // ReSharper disable once ParameterTypeCanBeEnumerable.Local
     private static List<MapperMethodModel> AssignConverterFieldNames(IReadOnlyList<MapperMethodModel> methods)
     {
         var converterFieldMap = new Dictionary<string, string>(StringComparer.Ordinal);

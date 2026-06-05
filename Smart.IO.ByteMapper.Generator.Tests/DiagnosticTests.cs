@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Generator.Tests;
 
-using Microsoft.CodeAnalysis;
-
 // Source Generator が正しい診断（SBM0001〜SBM0007）を発行することを検証するテスト。
 public class DiagnosticTests
 {

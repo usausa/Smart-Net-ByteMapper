@@ -158,7 +158,7 @@ internal static class ByteMapperModelBuilder
             return Results.Errors<MapperMethodModel>();
         }
 
-        var diagErrors = new List<DiagnosticInfo>();
+        var diagnostics = new List<DiagnosticInfo>();
         var members = CollectMembers(
             symbol,
             attrSourceType,
@@ -166,7 +166,7 @@ internal static class ByteMapperModelBuilder
             profileType,
             propertyAttrBase,
             syntax,
-            diagErrors);
+            diagnostics);
 
         // Layout resolution / レイアウトの解決（オフセット順ソート＆重複チェック＆サイズ超過チェック）
         ResolveLayout(
@@ -177,7 +177,7 @@ internal static class ByteMapperModelBuilder
             symbol.Name,
             mapSize,
             syntax,
-            diagErrors);
+            diagnostics);
 
         // Auto-fill uncovered gaps in the write path / NullFiller が設定されている場合のみギャップを自動フィルする
         if (autoFiller && nullFiller.HasValue)
@@ -199,7 +199,7 @@ internal static class ByteMapperModelBuilder
             targetParamName,
             new EquatableArray<MemberMappingModel>(members.ToArray()),
             new EquatableArray<TypeMappingModel>(typeMappings.ToArray()),
-            new EquatableArray<DiagnosticInfo>(diagErrors.ToArray()));
+            new EquatableArray<DiagnosticInfo>(diagnostics.ToArray()));
 
         return Results.Success(model);
     }
@@ -672,6 +672,7 @@ internal static class ByteMapperModelBuilder
         }
     }
 
+    // ReSharper disable once ParameterTypeCanBeEnumerable.Local
     private static void ApplyAutoFill(
         List<MemberMappingModel> members,
         List<TypeMappingModel> typeMappings,
