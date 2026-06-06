@@ -395,4 +395,180 @@ public class DiagnosticTests
 
         Assert.Contains(diagnostics, static d => d.Id == "SBM0010");
     }
+
+    // -----------------------------------------------------------------------
+    // SBM0015 — [Map] 下でクラスレベルの [Map...Member] 属性が使われている（警告）
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0015_MemberAttributeUnderMap_EmitsWarning()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(4, UseDelimiter = false)]
+            [MapBinaryMember<int>(nameof(MemberUnderMapRecord.Id), 0)]
+            public sealed class MemberUnderMapRecord
+            {
+                public int Id { get; set; }
+            }
+
+            public static partial class MappersSBM0015
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, MemberUnderMapRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0015");
+    }
+
+    [Fact]
+    public void SBM0015_PropertyMappingUnderMap_DoesNotEmitWarning()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(4, UseDelimiter = false)]
+            public sealed class PlainMapRecord
+            {
+                [MapBinary<int>(0)]
+                public int Id { get; set; }
+            }
+
+            public static partial class MappersSBM0015b
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, PlainMapRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0015");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0016 — [MapProfile] 下でプロパティに マッピング属性がある（警告）
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0016_PropertyMappingUnderProfile_EmitsWarning()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            public sealed class TargetSBM0016 { public string Code { get; set; } = default!; }
+
+            [MapProfile(8, UseDelimiter = false)]
+            [MapTextMember(nameof(TargetSBM0016.Code), 0, 8)]
+            public sealed class ProfileSBM0016
+            {
+                [MapText(0, 8)]
+                public string Code { get; set; } = default!;
+            }
+
+            public static partial class MappersSBM0016
+            {
+                [ByteWriter(Profile = typeof(ProfileSBM0016))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0016 source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0016");
+    }
+
+    [Fact]
+    public void SBM0016_MemberOnlyProfile_DoesNotEmitWarning()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            public sealed class TargetSBM0016b { public string Code { get; set; } = default!; }
+
+            [MapProfile(8, UseDelimiter = false)]
+            [MapTextMember(nameof(TargetSBM0016b.Code), 0, 8)]
+            public sealed class ProfileSBM0016b
+            {
+            }
+
+            public static partial class MappersSBM0016b
+            {
+                [ByteWriter(Profile = typeof(ProfileSBM0016b))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0016b source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0016");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0017 — [Map] と [MapProfile] の併用（エラー）
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0017_BothMapAndMapProfile_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(4, UseDelimiter = false)]
+            [MapProfile(4, UseDelimiter = false)]
+            public sealed class BothMapRecord
+            {
+            }
+
+            public static partial class MappersSBM0017
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, BothMapRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0017");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0011 — [MapProfile] のメンバー名がターゲットに無い
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0011_MemberNameNotFoundInTarget_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            public sealed class TargetSBM0011 { public string Code { get; set; } = default!; }
+
+            [MapProfile(8, UseDelimiter = false)]
+            [MapTextMember("Missing", 0, 8)]
+            public sealed class ProfileSBM0011
+            {
+            }
+
+            public static partial class MappersSBM0011
+            {
+                [ByteWriter(Profile = typeof(ProfileSBM0011))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0011 source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0011");
+    }
 }

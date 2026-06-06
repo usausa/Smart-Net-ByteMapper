@@ -95,6 +95,8 @@ SampleDataMappers.Read(buffer, readBack);
 | `[MapNumberText<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal` | Number as text with `Format`, `Padding`, `Style`, `Culture` |
 | `[MapDateTimeText<T>]` | `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly` (and nullable variants) | Date/time as text with `Format` and `Style` |
 
+Each converter also has a `[Map...Member]` form (e.g. `[MapTextMember]`) for describing a profile layout without re-declaring members — see [Profile-based layout switching](#profile-based-layout-switching).
+
 ## Map Options
 
 `[Map]` accepts named options in addition to the total size.
@@ -189,18 +191,15 @@ public sealed class RecordController : Controller
 
 ### Profile-based layout switching
 
-When the same entity needs to be serialized with a different subset of fields, define a **profile** class and annotate the controller action with `[ByteMapperProfile]`.
+When the same entity needs to be serialized with a different byte layout, define a **profile** class with `[MapProfile]` and describe each field with class-level `[Map...Member]` attributes that reference the target members by name. The profile has no members of its own, so the target entity is never duplicated.
 
 ```csharp
-// Profile: only Code + Name (35 bytes)
-[Map(35)]
+// Profile: only Code + Name (35 bytes), targeting the existing SampleData entity
+[MapProfile(35)]
+[MapTextMember(nameof(SampleData.Code), 0, 13)]
+[MapTextMember(nameof(SampleData.Name), 13, 20, CodePage = 932)]
 public sealed class SampleDataCodeNameProfile
 {
-    [MapText(0, 13)]
-    public string Code { get; set; } = default!;
-
-    [MapText(13, 20, CodePage = 932)]
-    public string Name { get; set; } = default!;
 }
 
 // Controller action using the profile
@@ -209,3 +208,13 @@ public sealed class SampleDataCodeNameProfile
 [ByteMapperProfile(typeof(SampleDataCodeNameProfile))]
 public SampleData[] GetCodeName() => repository.GetAll();
 ```
+
+Every converter has a matching `[Map...Member]` form (`[MapTextMember]`, `[MapBinaryMember<T>]`, `[MapBooleanMember]`, …) that takes the target member name as its first argument, followed by the same parameters as the property-level attribute.
+
+`[Map]` describes an entity's own layout (converter attributes on its properties); `[MapProfile]` describes a profile layout (`[Map...Member]` attributes on the class). Keeping them separate avoids confusing the two, and mismatched combinations are reported:
+
+| Situation | Diagnostic |
+|---|---|
+| `[Map...Member]` used under `[Map]` | **SBM0015** (warning, ignored) |
+| property-level converter attributes under `[MapProfile]` | **SBM0016** (warning, ignored) |
+| both `[Map]` and `[MapProfile]` on one type | **SBM0017** (error) |

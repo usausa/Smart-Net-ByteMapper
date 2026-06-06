@@ -20,6 +20,7 @@ internal static class ByteMapperModelBuilder
     internal const string ByteReaderAttributeName = "Smart.IO.ByteMapper.ByteReaderAttribute";
     internal const string ByteWriterAttributeName = "Smart.IO.ByteMapper.ByteWriterAttribute";
     private const string MapAttributeName = "Smart.IO.ByteMapper.MapAttribute";
+    private const string MapProfileAttributeName = "Smart.IO.ByteMapper.MapProfileAttribute";
     private const string MapFillerAttributeName = "Smart.IO.ByteMapper.MapFillerAttribute";
     private const string MapConstantAttributeName = "Smart.IO.ByteMapper.MapConstantAttribute";
     private const string ByteMapperPropertyAttributeOpenName = "Smart.IO.ByteMapper.ByteMapperPropertyAttribute`1";
@@ -90,22 +91,40 @@ internal static class ByteMapperModelBuilder
         // Determine attribute source type (Profile or Target) / 属性ソース型を決定する（Profile 指定があれば Profile 型、なければターゲット型）
         var attrSourceType = profileType ?? targetType;
 
-        // Get [Map] attribute from attribute source / 属性ソース型から [Map] 属性を取得する
+        // Get [Map] / [MapProfile] from attribute source / 属性ソース型から [Map] / [MapProfile] を取得する
+        // [Map] = object self-layout described by property attributes.
+        // [MapProfile] = profile layout described by class-level [Map...Member] attributes.
+        // [Map] = プロパティ属性で記述するオブジェクト自身のレイアウト。
+        // [MapProfile] = クラスレベルの [Map...Member] 属性で記述するプロファイルのレイアウト。
         var mapAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
-        if (mapAttr is null)
+        var mapProfileAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapProfileAttributeName);
+
+        // SBM0017: [Map] and [MapProfile] are mutually exclusive / [Map] と [MapProfile] は併用不可
+        if (mapAttr is not null && mapProfileAttr is not null)
+        {
+            return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.ConflictingMapAttributes, syntax.GetLocation(), attrSourceType.Name));
+        }
+
+        var effectiveMapAttr = mapProfileAttr ?? mapAttr;
+        if (effectiveMapAttr is null)
         {
             var diagId = profileType is not null ? Diagnostics.ProfileMissingMapAttribute : Diagnostics.MissingMapAttribute;
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(diagId, syntax.GetLocation(), symbol.Name));
         }
 
-        var mapSize = (int)(mapAttr.ConstructorArguments[0].Value ?? 0);
+        // Profile mode collects member mappings from class-level [Map...Member] attributes;
+        // object mode collects them from property attributes (the original behavior).
+        // プロファイルモードはクラスレベルの [Map...Member] 属性から、オブジェクトモードはプロパティ属性から
+        // メンバーマッピングを収集する（後者が従来の挙動）。
+        var isProfileMode = mapProfileAttr is not null;
+        var mapSize = (int)(effectiveMapAttr.ConstructorArguments[0].Value ?? 0);
 
         // Parse optional Map settings / Map 属性のオプション設定を解析する
         var autoFiller = true;
         byte? nullFiller = null;
         var useDelimiter = true;
         byte[]? delimiter = null;
-        foreach (var na in mapAttr.NamedArguments)
+        foreach (var na in effectiveMapAttr.NamedArguments)
         {
             switch (na.Key)
             {
@@ -159,14 +178,27 @@ internal static class ByteMapperModelBuilder
         }
 
         var diagnostics = new List<DiagnosticInfo>();
-        var members = CollectMembers(
-            symbol,
-            attrSourceType,
-            targetType,
-            profileType,
-            propertyAttrBase,
-            syntax,
-            diagnostics);
+        List<MemberMappingModel> members;
+        if (isProfileMode)
+        {
+            members = CollectMemberMappings(symbol, attrSourceType, targetType, propertyAttrBase, syntax, diagnostics);
+
+            // SBM0016: property-level mapping attributes are ignored under [MapProfile] / [MapProfile] 下ではプロパティのマッピング属性は無視される
+            if (HasPropertyMappingAttribute(attrSourceType, propertyAttrBase))
+            {
+                diagnostics.Add(new DiagnosticInfo(Diagnostics.PropertyMappingIgnoredUnderProfile, syntax.GetLocation(), attrSourceType.Name));
+            }
+        }
+        else
+        {
+            members = CollectMembers(symbol, attrSourceType, targetType, profileType, propertyAttrBase, syntax, diagnostics);
+
+            // SBM0015: class-level [Map...Member] attributes are ignored under [Map] / [Map] 下ではクラスレベルの [Map...Member] 属性は無視される
+            if (HasMemberMappingAttribute(attrSourceType, propertyAttrBase))
+            {
+                diagnostics.Add(new DiagnosticInfo(Diagnostics.MemberAttributeRequiresProfile, syntax.GetLocation(), attrSourceType.Name));
+            }
+        }
 
         // Layout resolution / レイアウトの解決（オフセット順ソート＆重複チェック＆サイズ超過チェック）
         ResolveLayout(
@@ -297,6 +329,9 @@ internal static class ByteMapperModelBuilder
         return result;
     }
 
+    // Object mode: walk the properties of the attribute source type and read the converter
+    // attribute hung on each property (the original behavior).
+    // オブジェクトモード: 属性ソース型のプロパティを走査し、各プロパティに付いたコンバーター属性を読む（従来の挙動）。
     private static List<MemberMappingModel> CollectMembers(
         IMethodSymbol methodSymbol,
         ITypeSymbol attrSourceType,
@@ -314,7 +349,6 @@ internal static class ByteMapperModelBuilder
         {
             foreach (var attr in member.GetAttributes())
             {
-                // ReSharper disable UseNullPropagation
                 if (attr.AttributeClass is null)
                 {
                     continue;
@@ -343,57 +377,151 @@ internal static class ByteMapperModelBuilder
                     targetProp = found;
                 }
 
-                var converterType = converterBase.TypeArguments[0];
-                var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-
-                // SBM0008: check [ConverterSupportedTypes] on the attribute class
-                // SBM0008 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
-                if (!CheckSupportedTypes(attr.AttributeClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
+                // Property attribute layout: ctorArgs[0] is offset / プロパティ属性のレイアウト: ctorArgs[0] はオフセット
+                var mapping = BuildMemberMapping(methodSymbol, attr, attr.AttributeClass, converterBase, targetProp, offset, leadingCtorArgs: 1, propertyIndex, syntax, errors);
+                if (mapping is not null)
                 {
-                    break;
+                    members.Add(mapping);
+                    propertyIndex++;
                 }
 
-                // SBM0010: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
-                // The source builder always emits instance calls (field.Read / field.Write), so a static
-                // Read or Write would break with a plain compile error rather than a diagnostic.
-                var namedConverterType = converterType as INamedTypeSymbol;
-                var readMethod = namedConverterType?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
-                var writeMethod = namedConverterType?.GetMembers("Write").OfType<IMethodSymbol>().FirstOrDefault();
-                if (readMethod?.IsStatic == true || writeMethod?.IsStatic == true)
-                {
-                    errors.Add(new DiagnosticInfo(Diagnostics.ConverterContractMismatch, syntax.GetLocation(), $"{methodSymbol.Name}, {member.Name}"));
-                    break;
-                }
-
-                // Build ctor arg expressions / コンストラクター引数式を構築する
-                var ctorArgs = BuildConverterCtorArgs(attr, converterType);
-
-                // Determine size / コンバーターのサイズ種別と定数サイズを決定する
-                var (sizeKind, constSize) = DetermineConverterSize(converterType, ctorArgs);
-
-                var fieldName = $"Converter0_{propertyIndex}"; // MethodIndex will be fixed in MapperSourceBuilder / メソッドインデックスはソースビルダーで確定される
-                var converterCall = new ConverterCallModel(
-                    converterFqn,
-                    fieldName,
-                    new EquatableArray<string>(ctorArgs.ToArray()),
-                    sizeKind,
-                    constSize);
-
-                var size = constSize ?? 0; // will be fixed for instance size converters
-
-                members.Add(new MemberMappingModel(
-                    targetProp.Name,
-                    offset,
-                    size,
-                    converterCall));
-
-                propertyIndex++;
                 break; // Only first attribute per property / プロパティごとに最初の属性のみ処理する
             }
         }
 
         return members;
     }
+
+    // Profile mode: walk the class-level [Map...Member] attributes on the profile and resolve each
+    // target property by the member name carried in the attribute (ctorArgs[0]).
+    // プロファイルモード: プロファイルのクラスレベル [Map...Member] 属性を走査し、属性が持つメンバー名
+    // (ctorArgs[0]) で対象プロパティを引き当てる。
+    private static List<MemberMappingModel> CollectMemberMappings(
+        IMethodSymbol methodSymbol,
+        ITypeSymbol attrSourceType,
+        ITypeSymbol targetType,
+        INamedTypeSymbol propertyAttrBase,
+        MethodDeclarationSyntax syntax,
+        List<DiagnosticInfo> errors)
+    {
+        var members = new List<MemberMappingModel>();
+        var propertyIndex = 0;
+
+        foreach (var attr in attrSourceType.GetAttributes())
+        {
+            if (attr.AttributeClass is not { } attrClass)
+            {
+                continue;
+            }
+
+            // Only attributes deriving from ByteMapperPropertyAttribute<TConverter> are member mappings.
+            // ByteMapperPropertyAttribute<TConverter> 派生の属性のみがメンバーマッピング。
+            var converterBase = attrClass.FindConverterAttributeBase(propertyAttrBase);
+            if (converterBase is null)
+            {
+                continue; // [MapProfile] / [MapFiller] / [MapConstant] etc. - skip
+            }
+
+            // Member attribute layout: ctorArgs[0] is member name, ctorArgs[1] is offset
+            // メンバー属性のレイアウト: ctorArgs[0] はメンバー名、ctorArgs[1] はオフセット
+            if (attr.ConstructorArguments.Length < 2)
+            {
+                continue;
+            }
+
+            var memberName = attr.ConstructorArguments[0].Value as string;
+            if (String.IsNullOrEmpty(memberName))
+            {
+                continue;
+            }
+
+            var offset = (int)(attr.ConstructorArguments[1].Value ?? 0);
+
+            var targetProp = targetType.GetMembers(memberName!).OfType<IPropertySymbol>().FirstOrDefault();
+            if (targetProp is null)
+            {
+                errors.Add(new DiagnosticInfo(Diagnostics.ProfilePropertyNotFound, syntax.GetLocation(), $"{methodSymbol.Name}, {memberName}"));
+                continue;
+            }
+
+            var mapping = BuildMemberMapping(methodSymbol, attr, attrClass, converterBase, targetProp, offset, leadingCtorArgs: 2, propertyIndex, syntax, errors);
+            if (mapping is not null)
+            {
+                members.Add(mapping);
+                propertyIndex++;
+            }
+        }
+
+        return members;
+    }
+
+    // Builds a single member mapping shared by both modes. Returns null (after adding a diagnostic)
+    // when the converter does not satisfy the type/contract checks.
+    // 両モードで共有する単一メンバーマッピングの組み立て。型/契約チェックを満たさない場合は
+    // 診断を追加して null を返す。
+    private static MemberMappingModel? BuildMemberMapping(
+        IMethodSymbol methodSymbol,
+        AttributeData attr,
+        INamedTypeSymbol attrClass,
+        INamedTypeSymbol converterBase,
+        IPropertySymbol targetProp,
+        int offset,
+        int leadingCtorArgs,
+        int propertyIndex,
+        MethodDeclarationSyntax syntax,
+        List<DiagnosticInfo> errors)
+    {
+        var converterType = converterBase.TypeArguments[0];
+        var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
+        // SBM0008: check [ConverterSupportedTypes] on the attribute class
+        // SBM0008 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
+        if (!CheckSupportedTypes(attrClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
+        {
+            return null;
+        }
+
+        // SBM0010: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
+        // The source builder always emits instance calls (field.Read / field.Write), so a static
+        // Read or Write would break with a plain compile error rather than a diagnostic.
+        var namedConverterType = converterType as INamedTypeSymbol;
+        var readMethod = namedConverterType?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
+        var writeMethod = namedConverterType?.GetMembers("Write").OfType<IMethodSymbol>().FirstOrDefault();
+        if (readMethod?.IsStatic == true || writeMethod?.IsStatic == true)
+        {
+            errors.Add(new DiagnosticInfo(Diagnostics.ConverterContractMismatch, syntax.GetLocation(), $"{methodSymbol.Name}, {targetProp.Name}"));
+            return null;
+        }
+
+        // Build ctor arg expressions / コンストラクター引数式を構築する
+        var ctorArgs = BuildConverterCtorArgs(attr, converterType, leadingCtorArgs);
+
+        // Determine size / コンバーターのサイズ種別と定数サイズを決定する
+        var (sizeKind, constSize) = DetermineConverterSize(converterType, ctorArgs);
+
+        var fieldName = $"Converter0_{propertyIndex}"; // MethodIndex will be fixed in MapperSourceBuilder / メソッドインデックスはソースビルダーで確定される
+        var converterCall = new ConverterCallModel(
+            converterFqn,
+            fieldName,
+            new EquatableArray<string>(ctorArgs.ToArray()),
+            sizeKind,
+            constSize);
+
+        var size = constSize ?? 0; // will be fixed for instance size converters
+
+        return new MemberMappingModel(targetProp.Name, offset, size, converterCall);
+    }
+
+    // True when the type carries any class-level [Map...Member] attribute (used to warn under [Map]).
+    // 型にクラスレベルの [Map...Member] 属性があるか（[Map] 下での警告に使用）。
+    private static bool HasMemberMappingAttribute(ITypeSymbol type, INamedTypeSymbol propertyAttrBase) =>
+        type.GetAttributes().Any(a => a.AttributeClass?.FindConverterAttributeBase(propertyAttrBase) is not null);
+
+    // True when any property of the type carries a converter attribute (used to warn under [MapProfile]).
+    // 型のいずれかのプロパティにコンバーター属性があるか（[MapProfile] 下での警告に使用）。
+    private static bool HasPropertyMappingAttribute(ITypeSymbol type, INamedTypeSymbol propertyAttrBase) =>
+        type.GetMembers().OfType<IPropertySymbol>()
+            .Any(p => p.GetAttributes().Any(a => a.AttributeClass?.FindConverterAttributeBase(propertyAttrBase) is not null));
 
     // Checks [ConverterSupportedTypes] on the attribute class against the target property type.
     // Returns false (and adds SBM0008) when the type is not supported.
@@ -407,8 +535,15 @@ internal static class ByteMapperModelBuilder
         IPropertySymbol prop,
         List<DiagnosticInfo> errors)
     {
-        var supportedAttr = attrClass.GetAttributes()
-            .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ConverterSupportedTypesAttributeName);
+        // [ConverterSupportedTypes] lives on the abstract base shared by the property and member forms,
+        // so walk the base chain to find it. / [ConverterSupportedTypes] はプロパティ版とメンバー版が共有する
+        // 抽象ベースに付くため、基底チェーンを辿って探す。
+        AttributeData? supportedAttr = null;
+        for (var current = (INamedTypeSymbol?)attrClass; current is not null && supportedAttr is null; current = current.BaseType)
+        {
+            supportedAttr = current.GetAttributes()
+                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ConverterSupportedTypesAttributeName);
+        }
 
         if (supportedAttr is null)
         {
@@ -433,13 +568,18 @@ internal static class ByteMapperModelBuilder
         return false;
     }
 
+    // leadingCtorArgs is the number of leading attribute ctor args that are not converter positional args:
+    // 1 for property attributes (offset), 2 for member attributes (member name, offset).
+    // leadingCtorArgs はコンバーターの位置引数ではない先頭の属性コンストラクター引数の数:
+    // プロパティ属性は 1（オフセット）、メンバー属性は 2（メンバー名・オフセット）。
     private static List<string> BuildConverterCtorArgs(
         AttributeData attr,
-        ITypeSymbol converterType)
+        ITypeSymbol converterType,
+        int leadingCtorArgs)
     {
-        // Collect ctor args from attribute: skip first arg (offset) / 属性からコンストラクター引数を収集する（先頭のオフセット引数はスキップ）
+        // Collect ctor args from attribute: skip the leading non-converter args / 属性からコンストラクター引数を収集する（先頭の非コンバーター引数はスキップ）
         var args = new List<string>();
-        for (var i = 1; i < attr.ConstructorArguments.Length; i++)
+        for (var i = leadingCtorArgs; i < attr.ConstructorArguments.Length; i++)
         {
             args.Add(attr.ConstructorArguments[i].ToLiteralExpression());
         }
@@ -458,11 +598,11 @@ internal static class ByteMapperModelBuilder
             {
                 // Map converter ctor params (skip already-covered positional params)
                 // コンバーターのコンストラクターパラメーターをマップする（位置引数で既に埋まっているものはスキップ）
-                // attr.ConstructorArguments includes offset at [0]; we skip that and add [1..] to args above.
-                // attr.ConstructorArguments の [0] はオフセット。スキップして [1..] を args に追加済み。
-                // So Converter ctor params [0 .. (attr.ConstructorArguments.Length-2)] are already covered.
-                // コンバーターのコンストラクターパラメーター [0 .. (attr.ConstructorArguments.Length-2)] は既に埋め済み。
-                var coveredCount = attr.ConstructorArguments.Length - 1; // number of converter ctor params already filled / 埋め済みのコンバーターコンストラクターパラメーター数
+                // The leading args (offset, and member name for member attributes) are skipped above, so the
+                // remaining attribute ctor args already fill the first converter params.
+                // 先頭引数（オフセット、メンバー属性ではメンバー名）は上でスキップ済みのため、残りの属性
+                // コンストラクター引数が先頭のコンバーターパラメーターを埋めている。
+                var coveredCount = attr.ConstructorArguments.Length - leadingCtorArgs; // number of converter ctor params already filled / 埋め済みのコンバーターコンストラクターパラメーター数
                 for (var i = coveredCount; i < ctor.Parameters.Length; i++)
                 {
                     var param = ctor.Parameters[i];
@@ -495,36 +635,44 @@ internal static class ByteMapperModelBuilder
 
     // Reads the default values from attribute class property initializers.
     // Returns pascal-cased property name → C# literal expression.
+    // The options are declared on the abstract base shared by the property and member forms, so walk the
+    // base chain; a derived declaration wins over a base one.
     // 属性クラスのプロパティイニシャライザーからデフォルト値を読み取る。
     // パスカルケースのプロパティ名 → C# リテラル式 の辞書を返す。
+    // オプションはプロパティ版とメンバー版が共有する抽象ベースに宣言されるため基底チェーンを辿る。
+    // 派生側の宣言が基底側より優先される。
     private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();
-        if (attrClass is null)
+
+        for (var current = attrClass; current is not null; current = current.BaseType)
         {
-            return result;
-        }
-
-        foreach (var member in attrClass.GetMembers())
-        {
-            if (member is not IPropertySymbol prop)
+            foreach (var member in current.GetMembers())
             {
-                continue;
-            }
-
-            if (prop.IsStatic || (prop.DeclaredAccessibility != Accessibility.Public))
-            {
-                continue;
-            }
-
-            foreach (var syntaxRef in prop.DeclaringSyntaxReferences)
-            {
-                var node = syntaxRef.GetSyntax();
-                if (node is PropertyDeclarationSyntax propSyntax
-                    && propSyntax.Initializer?.Value is not null)
+                if (member is not IPropertySymbol prop)
                 {
-                    result[prop.Name] = propSyntax.Initializer.Value.ToString();
-                    break;
+                    continue;
+                }
+
+                if (prop.IsStatic || (prop.DeclaredAccessibility != Accessibility.Public))
+                {
+                    continue;
+                }
+
+                if (result.ContainsKey(prop.Name))
+                {
+                    continue; // derived declaration already recorded / 派生側の宣言を記録済み
+                }
+
+                foreach (var syntaxRef in prop.DeclaringSyntaxReferences)
+                {
+                    var node = syntaxRef.GetSyntax();
+                    if (node is PropertyDeclarationSyntax propSyntax
+                        && propSyntax.Initializer?.Value is not null)
+                    {
+                        result[prop.Name] = propSyntax.Initializer.Value.ToString();
+                        break;
+                    }
                 }
             }
         }
@@ -554,6 +702,7 @@ internal static class ByteMapperModelBuilder
                 null => "null",
                 bool b => b ? "true" : "false",
                 byte bt => $"(byte)0x{bt:X2}",
+                char c => $"'{c}'",
                 string s => $"\"{s}\"",
                 _ => param.ExplicitDefaultValue.ToString() ?? "default"
             };

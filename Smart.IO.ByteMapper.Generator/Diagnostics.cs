@@ -115,4 +115,28 @@ internal static class Diagnostics
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
+
+    public static DiagnosticDescriptor MemberAttributeRequiresProfile { get; } = new(
+        id: "SBM0015",
+        title: "Member-mapping attribute requires [MapProfile]",
+        messageFormat: "Member-mapping attributes are only honored under [MapProfile] and are ignored under [Map]. type=[{0}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    public static DiagnosticDescriptor PropertyMappingIgnoredUnderProfile { get; } = new(
+        id: "SBM0016",
+        title: "Property-level mapping ignored under [MapProfile]",
+        messageFormat: "Property-level mapping attributes are ignored under [MapProfile]; use the [Map...Member] attributes. type=[{0}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
+
+    public static DiagnosticDescriptor ConflictingMapAttributes { get; } = new(
+        id: "SBM0017",
+        title: "[Map] and [MapProfile] cannot be combined",
+        messageFormat: "[Map] and [MapProfile] cannot be specified on the same type. type=[{0}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true);
 }
