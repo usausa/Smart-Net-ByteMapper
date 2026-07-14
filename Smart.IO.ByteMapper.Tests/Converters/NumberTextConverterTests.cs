@@ -101,6 +101,26 @@ public class NumberTextConverterTests
         Assert.Equal("100     ", Encoding.ASCII.GetString(buffer));
     }
 
+    // ---- 大きいフィールド（ArrayPool経路） ----
+
+    [Fact]
+    public void WhenLargeFieldIntRoundTripThenSameValue()
+    {
+        var converter = new NumberTextConverter<int>(300);
+        var buffer = new byte[300];
+        converter.Write(buffer, -123456);
+        Assert.Equal(-123456, converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenLargeFieldDecimalRoundTripThenSameValue()
+    {
+        var converter = new NumberTextConverter<decimal>(300, style: NumberStyles.Number);
+        var buffer = new byte[300];
+        converter.Write(buffer, 12345.67m);
+        Assert.Equal(12345.67m, converter.Read(buffer));
+    }
+
     // ---- Size ----
 
     [Fact]
