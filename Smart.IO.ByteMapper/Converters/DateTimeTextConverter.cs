@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Converters;
 
 using System;
+using System.Buffers;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -56,27 +57,80 @@ public sealed class DateTimeTextConverter<T>
             return default;
         }
 
-        Span<char> chars = stackalloc char[readCharCount];
-        var charCount = encoding.GetChars(source[..count], chars);
-        return ParseValue(chars[..charCount]);
+        if (readCharCount <= ByteMapperHelpers.StackallocCharThreshold)
+        {
+            return ReadCore(source[..count], stackalloc char[readCharCount]);
+        }
+
+        return ReadWithPooledBuffer(source[..count]);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, T value)
     {
-        Span<char> chars = stackalloc char[writeCharCount];
+        if ((writeCharCount <= ByteMapperHelpers.StackallocCharThreshold) && (writeByteCount <= ByteMapperHelpers.StackallocByteThreshold))
+        {
+            WriteCore(destination, value, stackalloc char[writeCharCount], stackalloc byte[writeByteCount]);
+        }
+        else
+        {
+            WriteWithPooledBuffer(destination, value);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private T ReadCore(ReadOnlySpan<byte> source, Span<char> chars)
+    {
+        var charCount = encoding.GetChars(source, chars);
+        return ParseValue(chars[..charCount]);
+    }
+
+    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private T ReadWithPooledBuffer(ReadOnlySpan<byte> source)
+    {
+        var chars = ArrayPool<char>.Shared.Rent(readCharCount);
+        try
+        {
+            return ReadCore(source, chars.AsSpan(0, readCharCount));
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(chars);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WriteCore(Span<byte> destination, T value, Span<char> chars, Span<byte> encoded)
+    {
         if (!TryFormatValue(value, chars, out var charsWritten))
         {
             destination[..size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[writeByteCount];
         var count = encoding.GetBytes(chars[..charsWritten], encoded);
         var written = Math.Min(count, size);
         encoded[..written].CopyTo(destination[..written]);
         if (written < size)
         {
             destination[written..size].Fill(filler);
+        }
+    }
+
+    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void WriteWithPooledBuffer(Span<byte> destination, T value)
+    {
+        var chars = ArrayPool<char>.Shared.Rent(writeCharCount);
+        var encoded = ArrayPool<byte>.Shared.Rent(writeByteCount);
+        try
+        {
+            WriteCore(destination, value, chars.AsSpan(0, writeCharCount), encoded.AsSpan(0, writeByteCount));
+        }
+        finally
+        {
+            ArrayPool<char>.Shared.Return(chars);
+            ArrayPool<byte>.Shared.Return(encoded);
         }
     }
 

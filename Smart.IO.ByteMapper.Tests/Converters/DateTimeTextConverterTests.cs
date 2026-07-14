@@ -87,6 +87,18 @@ public class DateTimeTextConverterTests
         Assert.Equal(default, converter.Read(buffer));
     }
 
+    // ---- 大きいフィールド（ArrayPool経路） ----
+
+    [Fact]
+    public void WhenLargeFieldDateTimeRoundTripThenSameValue()
+    {
+        var converter = new DateTimeTextConverter<DateTime>(300, "yyyyMMddHHmmss");
+        var dt = new DateTime(2024, 6, 1, 12, 30, 59);
+        var buffer = new byte[300];
+        converter.Write(buffer, dt);
+        Assert.Equal(dt, converter.Read(buffer));
+    }
+
     // ---- Size ----
 
     [Fact]
