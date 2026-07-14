@@ -6,6 +6,10 @@ using System.Text;
 
 public static class ByteMapperHelpers
 {
+    // Buffer size limits for the converter stackalloc fast path; above these, buffers are rented from ArrayPool.
+    internal const int StackallocByteThreshold = 512;
+    internal const int StackallocCharThreshold = 256;
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Encoding ResolveEncoding(int codePage) => codePage switch
     {

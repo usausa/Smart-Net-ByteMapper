@@ -75,4 +75,25 @@ public class TextConverterTests
         var converter = new TextConverter(16, true, Padding.Right, 0x20, 20127);
         Assert.Equal(16, converter.Size);
     }
+
+    // ---- 大きいバッファ（ArrayPool経路） ----
+
+    [Fact]
+    public void WhenWriteLargeStringThenLargeFieldRoundTrip()
+    {
+        var converter = new TextConverter(600, true, Padding.Right, 0x20, 20127);
+        var buffer = new byte[600];
+        var value = new string('X', 580);
+        converter.Write(buffer, value);
+        Assert.Equal(value, converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenWriteLargeStringIntoSmallFieldThenTruncated()
+    {
+        var converter = new TextConverter(8, false, Padding.Right, 0x20, 20127);
+        var buffer = new byte[8];
+        converter.Write(buffer, new string('A', 600));
+        Assert.All(buffer, static b => Assert.Equal((byte)'A', b));
+    }
 }

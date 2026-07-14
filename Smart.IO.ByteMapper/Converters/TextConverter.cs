@@ -1,5 +1,6 @@
 namespace Smart.IO.ByteMapper.Converters;
 
+using System.Buffers;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -48,9 +49,38 @@ public sealed class TextConverter
             destination[..size].Fill(filler);
             return;
         }
-        Span<byte> encoded = stackalloc byte[encoding.GetMaxByteCount(value.Length)];
+
+        var maxByteCount = encoding.GetMaxByteCount(value.Length);
+        if (maxByteCount <= ByteMapperHelpers.StackallocByteThreshold)
+        {
+            WriteCore(destination, value, stackalloc byte[maxByteCount]);
+        }
+        else
+        {
+            WriteWithPooledBuffer(destination, value, maxByteCount);
+        }
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void WriteCore(Span<byte> destination, string value, Span<byte> encoded)
+    {
         var count = encoding.GetBytes(value, encoded);
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, size, padding, filler);
+    }
+
+    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private void WriteWithPooledBuffer(Span<byte> destination, string value, int maxByteCount)
+    {
+        var encoded = ArrayPool<byte>.Shared.Rent(maxByteCount);
+        try
+        {
+            WriteCore(destination, value, encoded.AsSpan(0, maxByteCount));
+        }
+        finally
+        {
+            ArrayPool<byte>.Shared.Return(encoded);
+        }
     }
 }
 #pragma warning restore IDE0032
