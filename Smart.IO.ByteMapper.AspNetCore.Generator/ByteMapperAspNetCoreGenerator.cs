@@ -24,15 +24,28 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 static (s, _) => s is ClassDeclarationSyntax,
                 static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndpoints(ctx))
             .Where(static arr => arr.Count > 0)
-            .SelectMany(static (arr, _) => arr)
-            .Collect();
+            .SelectMany(static (arr, _) => arr);
 
+        // 生成は per-endpoint（1 endpoint = 1 ファイル）
         context.RegisterImplementationSourceOutput(
             endpoints,
-            static (spc, items) => Execute(spc, items));
+            static (spc, ep) => Execute(spc, ep));
+
+        // ブートストラップは全 endpoint の集約なので Collect のまま単一出力
+        context.RegisterImplementationSourceOutput(
+            endpoints.Collect(),
+            static (spc, items) => ExecuteBootstrap(spc, items));
     }
 
-    private static void Execute(
+    private static void Execute(SourceProductionContext spc, EndpointModel ep)
+    {
+        var builder = new SourceBuilder();
+        ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
+        var filename = ByteMapperAspNetCoreSourceBuilder.MakeFilename(ep.Namespace, ep.ClassName, ep.NameSuffix) + ".AspNetCore.g.cs";
+        spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
+    }
+
+    private static void ExecuteBootstrap(
         SourceProductionContext spc,
         ImmutableArray<EndpointModel> endpoints)
     {
@@ -42,16 +55,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         }
 
         var builder = new SourceBuilder();
-
-        foreach (var ep in endpoints)
-        {
-            builder.Clear();
-            ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
-            var filename = ByteMapperAspNetCoreSourceBuilder.MakeFilename(ep.Namespace, ep.ClassName, ep.NameSuffix) + ".AspNetCore.g.cs";
-            spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
-        }
-
-        builder.Clear();
         ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endpoints);
         spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", SourceText.From(builder.ToString(), Encoding.UTF8));
     }

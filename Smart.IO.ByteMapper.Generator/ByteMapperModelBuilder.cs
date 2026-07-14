@@ -36,7 +36,7 @@ internal static class ByteMapperModelBuilder
 
         if (!symbol.IsStatic || !symbol.IsPartialDefinition)
         {
-            return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodDefinition, syntax.GetLocation(), symbol.Name));
+            return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodDefinition, syntax.Identifier.GetLocation(), symbol.Name));
         }
 
         // Determine shape and target type / メソッドシグネチャからマッパーの形状とターゲット型を決定する
@@ -48,7 +48,7 @@ internal static class ByteMapperModelBuilder
 
         if (targetType is null)
         {
-            return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.GetLocation(), symbol.Name));
+            return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.Identifier.GetLocation(), symbol.Name));
         }
 
         // Check for SBM0014: return-value reader requires parameterless constructor
@@ -61,7 +61,7 @@ internal static class ByteMapperModelBuilder
                     namedTarget.InstanceConstructors.Any(c => (c.Parameters.Length == 0) && (c.DeclaredAccessibility == Accessibility.Public));
                 if (!hasDefaultCtor)
                 {
-                    return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.TargetNotInstantiatable, syntax.GetLocation(), symbol.Name));
+                    return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.TargetNotInstantiatable, syntax.Identifier.GetLocation(), symbol.Name));
                 }
             }
         }

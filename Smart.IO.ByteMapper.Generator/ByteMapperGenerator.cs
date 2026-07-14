@@ -37,42 +37,46 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var methods = readers.Combine(writers)
             .Select(static (t, _) => t.Left.AddRange(t.Right));
 
-        context.RegisterImplementationSourceOutput(
+        context.RegisterSourceOutput(
             methods,
-            static (spc, items) => Execute(spc, items));
+            static (spc, items) => ReportDiagnostics(spc, items));
+
+        var groups = methods.SelectMany(static (results, _) =>
+            results.SelectValue()
+                .GroupBy(static m => new { m.Namespace, m.ClassName })
+                .Select(static g => new ClassModel(g.Key.Namespace, g.Key.ClassName, new EquatableArray<MapperMethodModel>(g.ToArray())))
+                .ToImmutableArray());
+        context.RegisterImplementationSourceOutput(
+            groups,
+            static (spc, group) => Execute(spc, group));
     }
 
-    private static void Execute(SourceProductionContext context, ImmutableArray<Result<MapperMethodModel>> results)
+    private static void ReportDiagnostics(SourceProductionContext context, ImmutableArray<Result<MapperMethodModel>> results)
     {
         foreach (var error in results.SelectError())
         {
             context.ReportDiagnostic(error);
         }
 
-        var builder = new SourceBuilder();
-
-        var methodsByClass = results.SelectValue()
-            .GroupBy(m => new { m.Namespace, m.ClassName });
-
-        foreach (var group in methodsByClass)
+        // Report per-method diagnostics / メソッドごとの診断情報を報告する
+        foreach (var m in results.SelectValue())
         {
-            context.CancellationToken.ThrowIfCancellationRequested();
-
-            // Report per-method diagnostics / メソッドごとの診断情報を報告する
-            foreach (var m in group)
+            foreach (var err in m.Errors)
             {
-                foreach (var err in m.Errors)
-                {
-                    context.ReportDiagnostic(err);
-                }
+                context.ReportDiagnostic(err);
             }
-
-            builder.Clear();
-            ByteMapperSourceBuilder.Build(builder, group.ToList());
-
-            var filename = MakeFilename(group.Key.Namespace, group.Key.ClassName);
-            context.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
         }
+    }
+
+    private static void Execute(SourceProductionContext context, ClassModel group)
+    {
+        context.CancellationToken.ThrowIfCancellationRequested();
+
+        var builder = new SourceBuilder();
+        ByteMapperSourceBuilder.Build(builder, group.Methods.ToList());
+
+        var filename = MakeFilename(group.Namespace, group.ClassName);
+        context.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
     }
 
     private static string MakeFilename(string ns, string className)
