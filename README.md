@@ -12,7 +12,7 @@ Fixed-length binary/text byte array mapping library for .NET with source generat
 * Attribute-based mapping between C# objects and fixed-length byte arrays
 * Source generator produces zero-overhead reader/writer code at compile time
 * NativeAOT / trimming compatible
-* ASP.NET Core MVC input/output formatter integration
+* ASP.NET Core integration for both MVC (input/output formatters) and Minimal API (endpoint filters)
 
 ## Getting Started
 
@@ -192,6 +192,49 @@ public sealed class RecordController : Controller
     }
 }
 ```
+
+### Minimal API
+
+For Minimal API endpoints, `Smart.IO.ByteMapper.AspNetCore` provides route-handler filters instead of MVC formatters. Registration only needs `AddByteMapperFormatters` (the `MvcOptions` step above is MVC-only); the `[ByteMapperEndpoint]` mapper class supplies the bindings through the `ByteMapperRegistry`.
+
+```csharp
+using Smart.IO.ByteMapper.AspNetCore.Filters;
+
+public static void MapSampleEndpoints(this WebApplication app)
+{
+    var group = app.MapGroup("/sample");
+
+    // Write: handler returns SampleData[] -> binary response body
+    group.MapGet("/array", () => repository.GetAll())
+        .WithByteMapperArrayBody<SampleData>();
+
+    // Write: handler returns a single SampleData -> binary response body
+    group.MapGet("/single", () => repository.GetAll().First())
+        .WithByteMapperBody<SampleData>();
+
+    // Read: binary request body -> SampleData[], retrieved via GetByteMapperArrayBody<T>
+    group.MapPost("/array", (HttpContext ctx)
+            => Results.Ok(new { count = ctx.GetByteMapperArrayBody<SampleData>()?.Length ?? 0 }))
+        .WithByteMapperArrayBody<SampleData>();
+
+    // Read: binary request body -> single SampleData
+    group.MapPost("/single", (HttpContext ctx) =>
+        {
+            var value = ctx.GetByteMapperBody<SampleData>();
+            return value is null ? Results.BadRequest() : Results.Ok(new { value.Code });
+        })
+        .WithByteMapperBody<SampleData>();
+}
+```
+
+| Extension | Applies to | Purpose |
+|---|---|---|
+| `WithByteMapperBody<T>()` | route handler | Bind a single-record binary request body; write a returned `T` as binary |
+| `WithByteMapperArrayBody<T>()` | route handler | Bind a `T[]` binary request body; write a returned `T[]` as binary |
+| `GetByteMapperBody<T>()` | `HttpContext` | Retrieve the parsed single record inside the handler |
+| `GetByteMapperArrayBody<T>()` | `HttpContext` | Retrieve the parsed array inside the handler |
+
+To serialize with a profile layout, use the two-type-argument overloads, e.g. `WithByteMapperArrayBody<SampleData, SampleDataCodeNameProfile>()`.
 
 ### Profile-based layout switching
 
