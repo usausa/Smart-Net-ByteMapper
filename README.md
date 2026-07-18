@@ -111,6 +111,8 @@ public sealed class SampleData { /* ... */ }
 |---|---|---|
 | `Delimiter` | `null` | Delimiter bytes written at the tail of each record; occupies the last `Delimiter.Length` bytes within `Size` |
 | `UseDelimiter` | `true` | When `false`, the `Delimiter` is not written even if set |
+| `NullFiller` | `null` | Byte used to fill gaps between mapped fields on write; when unset, uncovered gaps are left as-is |
+| `AutoFiller` | `true` | Gap auto-fill switch; when `true` **and** `NullFiller` is set, uncovered gaps are filled on write. Set `false` to disable |
 
 Encoding, padding, filler, endianness, and boolean byte values are configured per property on the converter attributes (see the [Converters](#converters) table).
 
@@ -132,7 +134,9 @@ public sealed class MyRecord { ... }
 ### Setup
 
 ```csharp
+using Microsoft.AspNetCore.Mvc;
 using Smart.IO.ByteMapper.AspNetCore;
+using Smart.IO.ByteMapper.AspNetCore.Formatters;
 
 var builder = WebApplication.CreateBuilder(args);
 
