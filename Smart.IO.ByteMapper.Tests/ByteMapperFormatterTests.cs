@@ -1,3 +1,5 @@
+// ReSharper disable UseUtf8StringLiteral
+#pragma warning disable IDE0230
 namespace Smart.IO.ByteMapper;
 
 using System;
@@ -190,9 +192,7 @@ public class ByteMapperFormatterTests
     public async Task WhenProfileBindingExistsThenReadUsesProfileSize()
     {
         var formatter = CreateInputFormatter(withDefault: true, withProfile: true);
-#pragma warning disable IDE0230
         var body = new byte[] { 0x7B, 0x00, 0x00, 0x00 };  // プロファイルサイズ = 4
-#pragma warning restore IDE0230
         var context = CreateInputContext(CreateHttpContext(typeof(FormatterProfile), body), typeof(FormatterEntity));
 
         var result = await formatter.ReadRequestBodyAsync(context);
