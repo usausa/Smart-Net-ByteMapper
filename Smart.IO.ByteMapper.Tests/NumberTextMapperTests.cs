@@ -76,7 +76,7 @@ public class NumberTextMapperTests
             LongValue = 3,
             FloatValue = 4f,
             DoubleValue = 5d,
-            DecimalValue = 6m,
+            DecimalValue = 6m
         };
         NumberTextMappers.Read(buffer, record);
 
@@ -98,7 +98,7 @@ public class NumberTextMapperTests
             LongValue = 6789,
             FloatValue = 1.5f,
             DoubleValue = -2.5d,
-            DecimalValue = 1234.56m,
+            DecimalValue = 1234.56m
         };
         var buffer = new byte[44];
         NumberTextMappers.Write(buffer, original);
@@ -124,7 +124,7 @@ public class NumberTextMapperTests
             LongValue = null,
             FloatValue = null,
             DoubleValue = null,
-            DecimalValue = 99.5m,
+            DecimalValue = 99.5m
         };
         var buffer = new byte[44];
         NumberTextMappers.Write(buffer, original);

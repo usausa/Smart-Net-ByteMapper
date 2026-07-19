@@ -87,7 +87,7 @@ public class DateTimeTextMapperTests
         var original = new NullableDateTimeRecord
         {
             Date = new DateTime(2026, 7, 19),
-            Time = new TimeOnly(12, 34, 56),
+            Time = new TimeOnly(12, 34, 56)
         };
         var buffer = new byte[14];
         DateTimeTextMappers.Write(buffer, original);
@@ -135,7 +135,7 @@ public class DateTimeTextMapperTests
         var record = new NullableOffsetDateRecord
         {
             Stamp = DateTimeOffset.UnixEpoch,
-            DateOnlyValue = new DateOnly(2000, 1, 1),
+            DateOnlyValue = new DateOnly(2000, 1, 1)
         };
         DateTimeTextMappers.ReadOffsetDate(buffer, record);
 
@@ -150,7 +150,7 @@ public class DateTimeTextMapperTests
         var original = new NullableOffsetDateRecord
         {
             Stamp = DateTimeOffset.ParseExact("20260719", "yyyyMMdd", System.Globalization.CultureInfo.InvariantCulture),
-            DateOnlyValue = new DateOnly(2026, 7, 19),
+            DateOnlyValue = new DateOnly(2026, 7, 19)
         };
         var buffer = new byte[16];
         DateTimeTextMappers.WriteOffsetDate(buffer, original);
