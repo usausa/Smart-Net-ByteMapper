@@ -16,11 +16,29 @@ public class NumberTextConverterTests
     }
 
     [Fact]
-    public void WhenIntReadAllFillerThenReturnsDefault()
+    public void WhenIntReadAllFillerThenReturnsNull()
     {
         var converter = new NumberTextConverter<int>(4);
         var buffer = "    "u8.ToArray();
-        Assert.Equal(0, converter.Read(buffer));
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenIntWriteNullThenFillerFilled()
+    {
+        var converter = new NumberTextConverter<int>(4);
+        var buffer = new byte[4];
+        converter.Write(buffer, null);
+        Assert.Equal("    ", Encoding.ASCII.GetString(buffer));
+    }
+
+    [Fact]
+    public void WhenIntNullRoundTripThenNull()
+    {
+        var converter = new NumberTextConverter<int>(4);
+        var buffer = new byte[4];
+        converter.Write(buffer, null);
+        Assert.Null(converter.Read(buffer));
     }
 
     [Fact]
@@ -88,6 +106,23 @@ public class NumberTextConverterTests
         var buffer = new byte[14];
         converter.Write(buffer, 9999.99m);
         Assert.Equal(9999.99m, converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDecimalReadAllFillerThenReturnsNull()
+    {
+        var converter = new NumberTextConverter<decimal>(12, style: NumberStyles.Number);
+        var buffer = "            "u8.ToArray();
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDecimalWriteNullThenFillerFilled()
+    {
+        var converter = new NumberTextConverter<decimal>(12, style: NumberStyles.Number);
+        var buffer = new byte[12];
+        converter.Write(buffer, null);
+        Assert.Equal("            ", Encoding.ASCII.GetString(buffer));
     }
 
     // ---- right padding ----

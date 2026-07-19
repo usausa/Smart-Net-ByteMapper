@@ -15,21 +15,39 @@ public class DateTimeTextConverterTests
     }
 
     [Fact]
-    public void WhenDateTimeReadAllFillerThenReturnsDefault()
+    public void WhenDateTimeReadAllFillerThenReturnsNull()
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
         var buffer = "        "u8.ToArray();
-        Assert.Equal(default, converter.Read(buffer));
+        Assert.Null(converter.Read(buffer));
     }
 
     [Fact]
-    public void WhenDateTimeWriteNullFillsThenFillerFilled()
+    public void WhenDateTimeWriteNullThenFillerFilled()
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
         var buffer = new byte[8];
-        converter.Write(buffer, default);
-        // default DateTime は "00010101" に書き込まれる（fillerではなく値として）
+        converter.Write(buffer, null);
+        Assert.Equal("        ", Encoding.ASCII.GetString(buffer));
+    }
+
+    [Fact]
+    public void WhenDateTimeWriteDefaultValueThenValueWritten()
+    {
+        var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
+        var buffer = new byte[8];
+        converter.Write(buffer, default(DateTime));
+        // default DateTime は null ではなく値 "00010101" として書き込まれる
         Assert.Equal("00010101", Encoding.ASCII.GetString(buffer));
+    }
+
+    [Fact]
+    public void WhenDateTimeNullRoundTripThenNull()
+    {
+        var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd");
+        var buffer = new byte[8];
+        converter.Write(buffer, null);
+        Assert.Null(converter.Read(buffer));
     }
 
     [Fact]
@@ -54,6 +72,23 @@ public class DateTimeTextConverterTests
         Assert.Equal(date, converter.Read(buffer));
     }
 
+    [Fact]
+    public void WhenDateOnlyReadAllFillerThenReturnsNull()
+    {
+        var converter = new DateTimeTextConverter<DateOnly>(8, "yyyyMMdd");
+        var buffer = "        "u8.ToArray();
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDateOnlyWriteNullThenFillerFilled()
+    {
+        var converter = new DateTimeTextConverter<DateOnly>(8, "yyyyMMdd");
+        var buffer = new byte[8];
+        converter.Write(buffer, null);
+        Assert.Equal("        ", Encoding.ASCII.GetString(buffer));
+    }
+
     // ---- TimeOnly ----
 
     [Fact]
@@ -66,25 +101,51 @@ public class DateTimeTextConverterTests
         Assert.Equal(time, converter.Read(buffer));
     }
 
+    [Fact]
+    public void WhenTimeOnlyReadAllFillerThenReturnsNull()
+    {
+        var converter = new DateTimeTextConverter<TimeOnly>(6, "HHmmss");
+        var buffer = "      "u8.ToArray();
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenTimeOnlyWriteNullThenFillerFilled()
+    {
+        var converter = new DateTimeTextConverter<TimeOnly>(6, "HHmmss");
+        var buffer = new byte[6];
+        converter.Write(buffer, null);
+        Assert.Equal("      ", Encoding.ASCII.GetString(buffer));
+    }
+
     // ---- DateTimeOffset ----
 
     [Fact]
-    public void WhenDateTimeOffsetReadAllFillerThenReturnsDefault()
+    public void WhenDateTimeOffsetReadAllFillerThenReturnsNull()
     {
         var converter = new DateTimeTextConverter<DateTimeOffset>(8, "yyyyMMdd");
         var buffer = "        "u8.ToArray();
-        Assert.Equal(default, converter.Read(buffer));
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDateTimeOffsetWriteNullThenFillerFilled()
+    {
+        var converter = new DateTimeTextConverter<DateTimeOffset>(8, "yyyyMMdd");
+        var buffer = new byte[8];
+        converter.Write(buffer, null);
+        Assert.Equal("        ", Encoding.ASCII.GetString(buffer));
     }
 
     // ---- custom filler ----
 
     [Fact]
-    public void WhenCustomFillerThenFillerFilled()
+    public void WhenCustomFillerAllFilledThenReturnsNull()
     {
         var converter = new DateTimeTextConverter<DateTime>(8, "yyyyMMdd", filler: 0x30);
-        // フィラーで全体が埋まった場合はdefaultを返す
+        // フィラーで全体が埋まった場合は null を返す
         var buffer = "00000000"u8.ToArray();
-        Assert.Equal(default, converter.Read(buffer));
+        Assert.Null(converter.Read(buffer));
     }
 
     // ---- 大きいフィールド（ArrayPool経路） ----

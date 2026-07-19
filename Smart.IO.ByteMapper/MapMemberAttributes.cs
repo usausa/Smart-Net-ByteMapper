@@ -200,7 +200,13 @@ public sealed class MapBooleanMemberAttribute : MapBooleanAttributeBase
 }
 
 // MapNumberText<T>
-[ConverterSupportedTypes(typeof(short), typeof(int), typeof(long), typeof(float), typeof(double), typeof(decimal))]
+// Nullable variants map null to an all-filler field: reading an all-filler field yields null, and
+// writing null fills the field with the filler byte. For non-nullable properties an all-filler
+// field reads back as default (the generator appends .GetValueOrDefault()).
+// Nullable 型は null を全フィラーのフィールドに対応付ける: 全フィラーの読み取りは null になり、
+// null の書き込みはフィールドをフィラーで埋める。非 nullable プロパティでは全フィラーは default として
+// 読み戻る（ジェネレーターが .GetValueOrDefault() を付与する）。
+[ConverterSupportedTypes(typeof(short), typeof(short?), typeof(int), typeof(int?), typeof(long), typeof(long?), typeof(float), typeof(float?), typeof(double), typeof(double?), typeof(decimal), typeof(decimal?))]
 public abstract class MapNumberTextAttributeBase<T> : ByteMapperPropertyAttribute<NumberTextConverter<T>>
     where T : struct
 {
@@ -250,11 +256,13 @@ public sealed class MapNumberTextMemberAttribute<T> : MapNumberTextAttributeBase
 }
 
 // MapDateTimeText<T>
-// Nullable variants are not supported: the converter has no null representation on write
-// (an all-filler field reads back as default, not null). Use the Fast converters for nullable date/time.
-// Nullable 型は非対応: このコンバーターは書き込み時の null 表現を持たない
-// （全フィラーのフィールドは null ではなく default として読み戻る）。nullable の日時は Fast コンバーターを使用する。
-[ConverterSupportedTypes(typeof(DateTime), typeof(DateTimeOffset), typeof(DateOnly), typeof(TimeOnly))]
+// Nullable variants map null to an all-filler field: reading an all-filler field yields null, and
+// writing null fills the field with the filler byte. For non-nullable properties an all-filler
+// field reads back as default (the generator appends .GetValueOrDefault()).
+// Nullable 型は null を全フィラーのフィールドに対応付ける: 全フィラーの読み取りは null になり、
+// null の書き込みはフィールドをフィラーで埋める。非 nullable プロパティでは全フィラーは default として
+// 読み戻る（ジェネレーターが .GetValueOrDefault() を付与する）。
+[ConverterSupportedTypes(typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?), typeof(DateOnly), typeof(DateOnly?), typeof(TimeOnly), typeof(TimeOnly?))]
 public abstract class MapDateTimeTextAttributeBase<T> : ByteMapperPropertyAttribute<DateTimeTextConverter<T>>
     where T : struct
 {

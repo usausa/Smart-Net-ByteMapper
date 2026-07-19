@@ -125,11 +125,11 @@ public class CoreVsFastBenchmark
     // ===== Integer Read =====
 
     [Benchmark(OperationsPerInvoke = N)]
-    public int CoreIntRead()
+    public int? CoreIntRead()
     {
         var c = coreInt;
         var buf = intReadBuffer;
-        var r = 0;
+        int? r = null;
         for (var i = 0; i < N; i++)
         {
             r = c.Read(buf);
@@ -177,11 +177,11 @@ public class CoreVsFastBenchmark
     // ===== Decimal Read =====
 
     [Benchmark(OperationsPerInvoke = N)]
-    public decimal CoreDecimalRead()
+    public decimal? CoreDecimalRead()
     {
         var c = coreDec;
         var buf = decReadBuffer;
-        decimal r = 0;
+        decimal? r = null;
         for (var i = 0; i < N; i++)
         {
             r = c.Read(buf);
@@ -229,11 +229,11 @@ public class CoreVsFastBenchmark
     // ===== DateTime Read =====
 
     [Benchmark(OperationsPerInvoke = N)]
-    public DateTime CoreDateTimeRead()
+    public DateTime? CoreDateTimeRead()
     {
         var c = coreDt;
         var buf = dtReadBuffer;
-        var r = default(DateTime);
+        DateTime? r = null;
         for (var i = 0; i < N; i++)
         {
             r = c.Read(buf);

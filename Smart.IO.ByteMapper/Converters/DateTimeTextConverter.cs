@@ -6,6 +6,10 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+// Date/time text converter. Null maps to an all-filler field: Read returns null when the field is
+// all filler bytes, and Write fills the field with the filler byte for a null value.
+// 日時テキストコンバーター。null は全フィラーのフィールドに対応付ける: 全フィラーの読み取りは null を
+// 返し、null の書き込みはフィールドをフィラーで埋める。
 #pragma warning disable IDE0032
 public sealed class DateTimeTextConverter<T>
     where T : struct
@@ -43,7 +47,7 @@ public sealed class DateTimeTextConverter<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T Read(ReadOnlySpan<byte> source)
+    public T? Read(ReadOnlySpan<byte> source)
     {
         // trim filler from right
         var count = size;
@@ -54,7 +58,11 @@ public sealed class DateTimeTextConverter<T>
 
         if (count == 0)
         {
-            return default;
+            // An all-filler field represents null. Non-nullable properties receive default via the
+            // generator-emitted .GetValueOrDefault().
+            // 全フィラーのフィールドは null を表す。非 nullable プロパティにはジェネレーターが付与する
+            // .GetValueOrDefault() を通じて default が入る。
+            return null;
         }
 
         if (readCharCount <= ByteMapperHelpers.StackallocCharThreshold)
@@ -66,15 +74,22 @@ public sealed class DateTimeTextConverter<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(Span<byte> destination, T value)
+    public void Write(Span<byte> destination, T? value)
     {
+        // null is written as an all-filler field / null は全フィラーのフィールドとして書き込む
+        if (value is null)
+        {
+            destination[..size].Fill(filler);
+            return;
+        }
+
         if ((writeCharCount <= ByteMapperHelpers.StackallocCharThreshold) && (writeByteCount <= ByteMapperHelpers.StackallocByteThreshold))
         {
-            WriteCore(destination, value, stackalloc char[writeCharCount], stackalloc byte[writeByteCount]);
+            WriteCore(destination, value.GetValueOrDefault(), stackalloc char[writeCharCount], stackalloc byte[writeByteCount]);
         }
         else
         {
-            WriteWithPooledBuffer(destination, value);
+            WriteWithPooledBuffer(destination, value.GetValueOrDefault());
         }
     }
 

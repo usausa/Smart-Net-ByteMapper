@@ -575,33 +575,39 @@ public class DiagnosticTests
     }
 
     // -----------------------------------------------------------------------
-    // SBM0008 — MapDateTimeText は nullable 型をサポートしない
+    // nullable 日時 — null ⇔ 全フィラー対応により Reader/Writer ともコンパイル可能
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0008_NullableDateTimeWithDateTimeText_EmitsDiagnostic()
+    public void NullableDateTimeText_GeneratesCompilableCode()
     {
         const string source = """
             using System;
             using Smart.IO.ByteMapper;
 
-            [Map(8, UseDelimiter = false)]
-            public sealed class RecordSBM0008n
+            [Map(16, UseDelimiter = false)]
+            public sealed class NullableDateRecord
             {
                 [MapDateTimeText<DateTime>(0, 8, "yyyyMMdd")]
                 public DateTime? Date { get; set; }
+
+                [MapDateTimeText<DateOnly>(8, 8, "yyyyMMdd")]
+                public DateOnly? DateOnlyValue { get; set; }
             }
 
-            public static partial class MappersSBM0008n
+            public static partial class NullableDateMappers
             {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> buffer, NullableDateRecord target);
+
                 [ByteWriter]
-                public static partial void Write(Span<byte> buffer, RecordSBM0008n source);
+                public static partial void Write(Span<byte> buffer, NullableDateRecord source);
             }
             """;
 
-        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+        var diagnostics = GeneratorTestHelper.GetDiagnosticsAll(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0008");
+        Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 
     // -----------------------------------------------------------------------

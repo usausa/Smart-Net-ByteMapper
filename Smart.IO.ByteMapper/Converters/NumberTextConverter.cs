@@ -6,6 +6,12 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
+// Number text converter. Null maps to an all-filler field: Read returns null when the trimmed field
+// is empty (all filler bytes), and Write fills the field with the filler byte for a null value.
+// Null detection requires trim (the default); with trim disabled an all-filler field fails to parse.
+// 数値テキストコンバーター。null は全フィラーのフィールドに対応付ける: トリム後が空（全フィラー）の
+// 読み取りは null を返し、null の書き込みはフィールドをフィラーで埋める。
+// null 判定は trim（既定で有効）が前提で、trim 無効時の全フィラーはパース失敗になる。
 #pragma warning disable IDE0032
 public sealed class NumberTextConverter<T>
     where T : struct
@@ -49,7 +55,7 @@ public sealed class NumberTextConverter<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public T Read(ReadOnlySpan<byte> source)
+    public T? Read(ReadOnlySpan<byte> source)
     {
         var start = 0;
         var count = size;
@@ -59,7 +65,11 @@ public sealed class NumberTextConverter<T>
         }
         if (count == 0)
         {
-            return default;
+            // An all-filler field represents null. Non-nullable properties receive default via the
+            // generator-emitted .GetValueOrDefault().
+            // 全フィラーのフィールドは null を表す。非 nullable プロパティにはジェネレーターが付与する
+            // .GetValueOrDefault() を通じて default が入る。
+            return null;
         }
         if (readCharCount <= ByteMapperHelpers.StackallocCharThreshold)
         {
@@ -70,15 +80,22 @@ public sealed class NumberTextConverter<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(Span<byte> destination, T value)
+    public void Write(Span<byte> destination, T? value)
     {
+        // null is written as an all-filler field / null は全フィラーのフィールドとして書き込む
+        if (value is null)
+        {
+            destination[..size].Fill(filler);
+            return;
+        }
+
         if ((writeCharCount <= ByteMapperHelpers.StackallocCharThreshold) && (writeByteCount <= ByteMapperHelpers.StackallocByteThreshold))
         {
-            WriteCore(destination, value, stackalloc char[writeCharCount], stackalloc byte[writeByteCount]);
+            WriteCore(destination, value.GetValueOrDefault(), stackalloc char[writeCharCount], stackalloc byte[writeByteCount]);
         }
         else
         {
-            WriteWithPooledBuffer(destination, value);
+            WriteWithPooledBuffer(destination, value.GetValueOrDefault());
         }
     }
 

@@ -92,8 +92,8 @@ SampleDataMappers.Read(buffer, readBack);
 | `[MapBytes]` | `byte[]` | Raw byte array with optional filler |
 | `[MapText]` | `string` | Text with encoding (`CodePage`), `Trim`, and `Padding` |
 | `[MapBoolean]` | `bool`, `bool?` | Single byte; configurable `TrueValue` / `FalseValue` / `NullValue` |
-| `[MapNumberText<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal` | Number as text with `Format`, `Padding`, `Style`, `Culture` |
-| `[MapDateTimeText<T>]` | `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly` | Date/time as text with `Format` and `Style` |
+| `[MapNumberText<T>]` | `short`, `int`, `long`, `float`, `double`, `decimal` (and nullable variants; null ⇔ all-filler field) | Number as text with `Format`, `Padding`, `Style`, `Culture` |
+| `[MapDateTimeText<T>]` | `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly` (and nullable variants; null ⇔ all-filler field) | Date/time as text with `Format` and `Style` |
 
 Each converter also has a `[Map...Member]` form (e.g. `[MapTextMember]`) for describing a profile layout without re-declaring members — see [Profile-based layout switching](#profile-based-layout-switching).
 
