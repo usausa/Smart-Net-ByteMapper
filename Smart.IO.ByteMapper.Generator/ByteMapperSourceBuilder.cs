@@ -225,7 +225,7 @@ internal static class ByteMapperSourceBuilder
             .Append($"{member.Offset}")
             .Append(", ")
             .Append(size)
-            .Append("));")
+            .Append(member.ReadValueOrDefault ? ")).GetValueOrDefault();" : "));")
             .NewLine();
     }
 

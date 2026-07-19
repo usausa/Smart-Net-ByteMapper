@@ -9,7 +9,11 @@ public sealed class MapAttribute : Attribute
 
     public bool UseDelimiter { get; set; } = true;
 
-    public byte? NullFiller { get; set; }
+    // Gap auto-fill byte. Nullable types are not valid attribute argument types (CS0655), so this is
+    // a plain byte; the generator treats the option as "set" only when the named argument is present.
+    // ギャップ自動フィルのバイト値。Nullable 型は属性引数に使えない (CS0655) ため plain byte とし、
+    // ジェネレーターは名前付き引数が指定された場合のみ「設定あり」として扱う。
+    public byte NullFiller { get; set; }
 
     public byte[]? Delimiter { get; set; }
 
@@ -34,7 +38,8 @@ public sealed class MapProfileAttribute : Attribute
 
     public bool UseDelimiter { get; set; } = true;
 
-    public byte? NullFiller { get; set; }
+    // See MapAttribute.NullFiller for why this is a plain byte. / plain byte の理由は MapAttribute.NullFiller を参照。
+    public byte NullFiller { get; set; }
 
     public byte[]? Delimiter { get; set; }
 

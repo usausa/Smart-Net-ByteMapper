@@ -139,4 +139,12 @@ internal static class Diagnostics
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
+
+    public static DiagnosticDescriptor UnknownMemberSize { get; } = new(
+        id: "SBM0018",
+        title: "Member size is not statically known",
+        messageFormat: "Member size is not statically known; overlap and size validation skip the member. member=[{0}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Warning,
+        isEnabledByDefault: true);
 }

@@ -14,6 +14,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
     private const string ByteReaderAttributeName = "Smart.IO.ByteMapper.ByteReaderAttribute";
     private const string ByteWriterAttributeName = "Smart.IO.ByteMapper.ByteWriterAttribute";
     private const string MapAttributeName = "Smart.IO.ByteMapper.MapAttribute";
+    private const string MapProfileAttributeName = "Smart.IO.ByteMapper.MapProfileAttribute";
 
     public static EquatableArray<EndpointModel> ParseEndpoints(GeneratorAttributeSyntaxContext context)
     {
@@ -138,9 +139,16 @@ internal static class ByteMapperAspNetCoreModelBuilder
 
             var (readerMethodName, entityType, profileType) = readerKvp.Value;
 
+            // Size resolution mirrors the core generator: the layout source is the profile type when a
+            // profile is specified, and a profile layout is declared by [MapProfile] (a legacy
+            // property-mirror profile may still use [Map]). Fall back to the entity's [Map] only when
+            // the profile type carries neither.
+            // サイズ解決はコアジェネレーターと同じ: プロファイル指定時はプロファイル型がレイアウトソースで、
+            // プロファイルレイアウトは [MapProfile] で宣言される（旧式のプロパティミラー型プロファイルは
+            // [Map] の場合もある）。どちらも無い場合のみエンティティの [Map] にフォールバックする。
             var sizeSourceType = profileType ?? entityType;
             var mapAttr = sizeSourceType.GetAttributes()
-                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
+                .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() is MapProfileAttributeName or MapAttributeName);
             if (mapAttr is null && profileType is not null)
             {
                 mapAttr = entityType.GetAttributes()

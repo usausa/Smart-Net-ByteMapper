@@ -100,7 +100,15 @@ internal static class SymbolExtensions
         if (constant.Kind == TypedConstantKind.Enum && constant.Type is not null)
         {
             var fqn = constant.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            return $"{fqn}.{GetEnumMemberName(constant)}";
+            var memberName = FindEnumMemberName(constant);
+
+            // A combined flags value (e.g. NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign)
+            // has no single member name; emit a cast expression instead of an invalid "Type.36" literal.
+            // フラグ合成値（例: NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign）は単一の
+            // メンバー名を持たないため、不正な "Type.36" ではなくキャスト式を出力する。
+            return memberName is not null
+                ? $"{fqn}.{memberName}"
+                : $"({fqn})({constant.Value})";
         }
         if (constant.Kind == TypedConstantKind.Array && constant.Values != null)
         {
@@ -110,11 +118,14 @@ internal static class SymbolExtensions
         return constant.Value?.ToString() ?? "null";
     }
 
-    private static string GetEnumMemberName(TypedConstant constant)
+    // Returns the enum member name for an exact value match, or null when the value is not a single
+    // named member (e.g. a combined flags value).
+    // 値が単一メンバーに一致する場合はその名前を、一致しない場合（フラグ合成値など）は null を返す。
+    private static string? FindEnumMemberName(TypedConstant constant)
     {
         if ((constant.Type is null) || (constant.Value is null))
         {
-            return constant.Value?.ToString() ?? "0";
+            return null;
         }
         var enumType = constant.Type;
         foreach (var member in enumType.GetMembers())
@@ -124,6 +135,6 @@ internal static class SymbolExtensions
                 return field.Name;
             }
         }
-        return constant.Value.ToString() ?? "0";
+        return null;
     }
 }

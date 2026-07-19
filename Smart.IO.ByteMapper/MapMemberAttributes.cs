@@ -250,7 +250,11 @@ public sealed class MapNumberTextMemberAttribute<T> : MapNumberTextAttributeBase
 }
 
 // MapDateTimeText<T>
-[ConverterSupportedTypes(typeof(DateTime), typeof(DateTime?), typeof(DateTimeOffset), typeof(DateTimeOffset?), typeof(DateOnly), typeof(DateOnly?), typeof(TimeOnly), typeof(TimeOnly?))]
+// Nullable variants are not supported: the converter has no null representation on write
+// (an all-filler field reads back as default, not null). Use the Fast converters for nullable date/time.
+// Nullable 型は非対応: このコンバーターは書き込み時の null 表現を持たない
+// （全フィラーのフィールドは null ではなく default として読み戻る）。nullable の日時は Fast コンバーターを使用する。
+[ConverterSupportedTypes(typeof(DateTime), typeof(DateTimeOffset), typeof(DateOnly), typeof(TimeOnly))]
 public abstract class MapDateTimeTextAttributeBase<T> : ByteMapperPropertyAttribute<DateTimeTextConverter<T>>
     where T : struct
 {

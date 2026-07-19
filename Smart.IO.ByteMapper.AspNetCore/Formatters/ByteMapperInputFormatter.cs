@@ -42,6 +42,29 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         return registry.HasAnyBinding(type);
     }
 
+    // Per-request refinement over CanReadType: when no profile is declared the default binding must
+    // exist (an entity registered only under profiles is not readable without one). With a profile
+    // declared the request is claimed, and a missing profile binding surfaces as a configuration
+    // error in ReadRequestBodyAsync instead of being hidden by content negotiation.
+    // CanReadType のリクエスト単位の絞り込み: プロファイル未指定時はデフォルトバインディングの存在を
+    // 要求する（プロファイルのみ登録のエンティティはプロファイル無しでは読めない）。プロファイル指定時は
+    // リクエストを引き受け、バインディング未登録は交渉で隠さず ReadRequestBodyAsync で設定エラーとして表面化させる。
+    public override bool CanRead(InputFormatterContext context)
+    {
+        if (!base.CanRead(context))
+        {
+            return false;
+        }
+
+        var profile = context.HttpContext.Items[ByteMapperConst.ProfileKey] as Type;
+        if (profile is not null)
+        {
+            return true;
+        }
+
+        return registry.GetBinding(ResolveElementType(context.ModelType)) is not null;
+    }
+
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
@@ -74,13 +97,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         if (modelType.IsArray)
         {
             var elementType = modelType.GetElementType()!;
-            var binding = (profile is not null ? registry.GetBinding(elementType, profile) : null)
-                          ?? registry.GetBinding(elementType);
-            if (binding is null)
-            {
-                return await InputFormatterResult.FailureAsync().ConfigureAwait(false);
-            }
-
+            var binding = GetRequiredBinding(elementType, profile);
             var result = await ReadArrayAsync(binding, elementType, httpContext.Request.Body, cancellationToken).ConfigureAwait(false);
             return await InputFormatterResult.SuccessAsync(result).ConfigureAwait(false);
         }
@@ -90,29 +107,34 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         var enumElemType = GetEnumerableElementType(modelType);
         if (enumElemType is not null)
         {
-            var binding = (profile is not null ? registry.GetBinding(enumElemType, profile) : null)
-                          ?? registry.GetBinding(enumElemType);
-            if (binding is null)
-            {
-                return await InputFormatterResult.FailureAsync().ConfigureAwait(false);
-            }
-
+            var binding = GetRequiredBinding(enumElemType, profile);
             var result = await ReadArrayAsync(binding, enumElemType, httpContext.Request.Body, cancellationToken).ConfigureAwait(false);
             return await InputFormatterResult.SuccessAsync(result).ConfigureAwait(false);
         }
 
         {
-            var binding = (profile is not null ? registry.GetBinding(modelType, profile) : null)
-                          ?? registry.GetBinding(modelType);
-            if (binding is null)
-            {
-                return await InputFormatterResult.FailureAsync().ConfigureAwait(false);
-            }
-
+            var binding = GetRequiredBinding(modelType, profile);
             var result = await ReadSingleAsync(binding, httpContext.Request.Body, cancellationToken).ConfigureAwait(false);
             return await InputFormatterResult.SuccessAsync(result).ConfigureAwait(false);
         }
     }
+
+    // Resolves the binding for the current request. A declared profile must resolve exactly — falling
+    // back to the default layout would silently mis-frame the data — and a missing binding is a server
+    // configuration error reported like the Minimal API filters do.
+    // 現在のリクエストのバインディングを解決する。プロファイル指定時は厳密に解決する（デフォルトレイアウトへの
+    // フォールバックはデータのフレーミングを黙って壊す）。未登録は Minimal API フィルターと同様にサーバー設定エラー。
+    private ByteMapperBinding GetRequiredBinding(Type elementType, Type? profile)
+    {
+        var binding = profile is not null
+            ? registry.GetBinding(elementType, profile)
+            : registry.GetBinding(elementType);
+        return binding ?? throw new InvalidOperationException(
+            $"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
+    }
+
+    private static Type ResolveElementType(Type type)
+        => type.IsArray ? type.GetElementType()! : GetEnumerableElementType(type) ?? type;
 
     private static async ValueTask<object?> ReadSingleAsync(
         ByteMapperBinding binding,

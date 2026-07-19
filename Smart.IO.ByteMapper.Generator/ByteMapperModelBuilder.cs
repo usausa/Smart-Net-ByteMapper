@@ -181,7 +181,7 @@ internal static class ByteMapperModelBuilder
         List<MemberMappingModel> members;
         if (isProfileMode)
         {
-            members = CollectMemberMappings(symbol, attrSourceType, targetType, propertyAttrBase, syntax, diagnostics);
+            members = CollectMemberMappings(compilation, symbol, attrSourceType, targetType, propertyAttrBase, syntax, diagnostics);
 
             // SBM0016: property-level mapping attributes are ignored under [MapProfile] / [MapProfile] 下ではプロパティのマッピング属性は無視される
             if (HasPropertyMappingAttribute(attrSourceType, propertyAttrBase))
@@ -191,7 +191,7 @@ internal static class ByteMapperModelBuilder
         }
         else
         {
-            members = CollectMembers(symbol, attrSourceType, targetType, profileType, propertyAttrBase, syntax, diagnostics);
+            members = CollectMembers(compilation, symbol, attrSourceType, targetType, profileType, propertyAttrBase, syntax, diagnostics);
 
             // SBM0015: class-level [Map...Member] attributes are ignored under [Map] / [Map] 下ではクラスレベルの [Map...Member] 属性は無視される
             if (HasMemberMappingAttribute(attrSourceType, propertyAttrBase))
@@ -333,6 +333,7 @@ internal static class ByteMapperModelBuilder
     // attribute hung on each property (the original behavior).
     // オブジェクトモード: 属性ソース型のプロパティを走査し、各プロパティに付いたコンバーター属性を読む（従来の挙動）。
     private static List<MemberMappingModel> CollectMembers(
+        Compilation compilation,
         IMethodSymbol methodSymbol,
         ITypeSymbol attrSourceType,
         ITypeSymbol targetType,
@@ -379,7 +380,7 @@ internal static class ByteMapperModelBuilder
                 }
 
                 // Property attribute layout: ctorArgs[0] is offset / プロパティ属性のレイアウト: ctorArgs[0] はオフセット
-                var mapping = BuildMemberMapping(methodSymbol, attr, attr.AttributeClass, converterBase, targetProp, offset, leadingCtorArgs: 1, propertyIndex, syntax, errors);
+                var mapping = BuildMemberMapping(compilation, methodSymbol, attr, attr.AttributeClass, converterBase, targetProp, offset, leadingCtorArgs: 1, propertyIndex, syntax, errors);
                 if (mapping is not null)
                 {
                     members.Add(mapping);
@@ -398,6 +399,7 @@ internal static class ByteMapperModelBuilder
     // プロファイルモード: プロファイルのクラスレベル [Map...Member] 属性を走査し、属性が持つメンバー名
     // (ctorArgs[0]) で対象プロパティを引き当てる。
     private static List<MemberMappingModel> CollectMemberMappings(
+        Compilation compilation,
         IMethodSymbol methodSymbol,
         ITypeSymbol attrSourceType,
         ITypeSymbol targetType,
@@ -445,7 +447,7 @@ internal static class ByteMapperModelBuilder
                 continue;
             }
 
-            var mapping = BuildMemberMapping(methodSymbol, attr, attrClass, converterBase, targetProp, offset, leadingCtorArgs: 2, propertyIndex, syntax, errors);
+            var mapping = BuildMemberMapping(compilation, methodSymbol, attr, attrClass, converterBase, targetProp, offset, leadingCtorArgs: 2, propertyIndex, syntax, errors);
             if (mapping is not null)
             {
                 members.Add(mapping);
@@ -461,6 +463,7 @@ internal static class ByteMapperModelBuilder
     // 両モードで共有する単一メンバーマッピングの組み立て。型/契約チェックを満たさない場合は
     // 診断を追加して null を返す。
     private static MemberMappingModel? BuildMemberMapping(
+        Compilation compilation,
         IMethodSymbol methodSymbol,
         AttributeData attr,
         INamedTypeSymbol attrClass,
@@ -495,10 +498,17 @@ internal static class ByteMapperModelBuilder
         }
 
         // Build ctor arg expressions / コンストラクター引数式を構築する
-        var ctorArgs = BuildConverterCtorArgs(attr, converterType, leadingCtorArgs);
+        var ctorArgs = BuildConverterCtorArgs(compilation, attr, converterType, leadingCtorArgs);
 
         // Determine size / コンバーターのサイズ種別と定数サイズを決定する
-        var (sizeKind, constSize) = DetermineConverterSize(converterType, ctorArgs);
+        // The first converter ctor arg defines the field extent by convention (int = length itself,
+        // string = format whose length is the byte size, e.g. FastDateTimeConverter).
+        // 規約によりコンバーターの第1引数がフィールドの大きさを決める（int は長さそのもの、
+        // string は書式でその長さがバイトサイズ。例: FastDateTimeConverter）。
+        TypedConstant? firstConverterArg = attr.ConstructorArguments.Length > leadingCtorArgs
+            ? attr.ConstructorArguments[leadingCtorArgs]
+            : null;
+        var (sizeKind, constSize) = DetermineConverterSize(converterType, firstConverterArg);
 
         var fieldName = $"Converter0_{propertyIndex}"; // MethodIndex will be fixed in MapperSourceBuilder / メソッドインデックスはソースビルダーで確定される
         var converterCall = new ConverterCallModel(
@@ -508,9 +518,21 @@ internal static class ByteMapperModelBuilder
             sizeKind,
             constSize);
 
-        var size = constSize ?? 0; // will be fixed for instance size converters
+        // Size 0 = statically unknown (SBM0018): the member is excluded from layout validation and the
+        // emitted code falls back to the converter's runtime Size for the slice length.
+        // Size 0 = 静的に不明 (SBM0018): レイアウト検証から除外され、生成コードのスライス長は
+        // コンバーターの実行時 Size にフォールバックする。
+        var size = constSize ?? 0;
 
-        return new MemberMappingModel(targetProp.Name, offset, size, converterCall);
+        // Read returns Nullable<T> while the property is the non-nullable T
+        // (e.g. BooleanConverter.Read is bool? but the property is bool) → append .GetValueOrDefault().
+        // Read が Nullable<T> を返しプロパティが非 nullable の T の場合
+        // （例: BooleanConverter.Read は bool? だがプロパティは bool）→ .GetValueOrDefault() を付与する。
+        var readValueOrDefault =
+            readMethod?.ReturnType is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullableReturn
+            && SymbolEqualityComparer.Default.Equals(nullableReturn.TypeArguments[0], targetProp.Type);
+
+        return new MemberMappingModel(targetProp.Name, offset, size, converterCall, readValueOrDefault);
     }
 
     // True when the type carries any class-level [Map...Member] attribute (used to warn under [Map]).
@@ -574,6 +596,7 @@ internal static class ByteMapperModelBuilder
     // leadingCtorArgs はコンバーターの位置引数ではない先頭の属性コンストラクター引数の数:
     // プロパティ属性は 1（オフセット）、メンバー属性は 2（メンバー名・オフセット）。
     private static List<string> BuildConverterCtorArgs(
+        Compilation compilation,
         AttributeData attr,
         ITypeSymbol converterType,
         int leadingCtorArgs)
@@ -590,7 +613,7 @@ internal static class ByteMapperModelBuilder
 
         // Build lookup of attribute property defaults from attribute class property initializers
         // 属性クラスのプロパティイニシャライザーからデフォルト値のルックアップを構築する
-        var attrPropDefaults = GetAttributePropertyDefaults(attr.AttributeClass);
+        var attrPropDefaults = GetAttributePropertyDefaults(compilation, attr.AttributeClass);
 
         if (converterType is INamedTypeSymbol namedConverter)
         {
@@ -638,11 +661,20 @@ internal static class ByteMapperModelBuilder
     // Returns pascal-cased property name → C# literal expression.
     // The options are declared on the abstract base shared by the property and member forms, so walk the
     // base chain; a derived declaration wins over a base one.
+    // Initializer syntax is only available when the attribute class is part of this compilation
+    // (user-defined converter attributes); the initializer is evaluated to a constant and emitted as a
+    // fully-qualified literal, because raw syntax text (e.g. "Padding.Right") would not resolve in the
+    // generated file, which has no using directives. Non-constant initializers fall back to the
+    // converter ctor parameter default.
     // 属性クラスのプロパティイニシャライザーからデフォルト値を読み取る。
     // パスカルケースのプロパティ名 → C# リテラル式 の辞書を返す。
     // オプションはプロパティ版とメンバー版が共有する抽象ベースに宣言されるため基底チェーンを辿る。
     // 派生側の宣言が基底側より優先される。
-    private static Dictionary<string, string> GetAttributePropertyDefaults(INamedTypeSymbol? attrClass)
+    // イニシャライザー構文が得られるのは属性クラスが同一コンパイル内にある場合（ユーザー定義の
+    // コンバーター属性）のみ。生成ファイルには using が無く生の構文テキスト（例: "Padding.Right"）は
+    // 解決できないため、イニシャライザーを定数として評価し完全修飾リテラルで出力する。
+    // 定数評価できないイニシャライザーはコンバーターのコンストラクター既定値にフォールバックする。
+    private static Dictionary<string, string> GetAttributePropertyDefaults(Compilation compilation, INamedTypeSymbol? attrClass)
     {
         var result = new Dictionary<string, string>();
 
@@ -668,17 +700,59 @@ internal static class ByteMapperModelBuilder
                 foreach (var syntaxRef in prop.DeclaringSyntaxReferences)
                 {
                     var node = syntaxRef.GetSyntax();
-                    if (node is PropertyDeclarationSyntax propSyntax
-                        && propSyntax.Initializer?.Value is not null)
+                    if (node is not PropertyDeclarationSyntax { Initializer.Value: { } initializer })
                     {
-                        result[prop.Name] = propSyntax.Initializer.Value.ToString();
-                        break;
+                        continue;
                     }
+
+                    if (compilation.ContainsSyntaxTree(node.SyntaxTree))
+                    {
+                        var constantValue = compilation.GetSemanticModel(node.SyntaxTree).GetConstantValue(initializer);
+                        if (constantValue.HasValue)
+                        {
+                            result[prop.Name] = FormatConstantLiteral(constantValue.Value, prop.Type);
+                        }
+                    }
+
+                    break;
                 }
             }
         }
 
         return result;
+    }
+
+    // Formats a constant value of the given type as a fully-qualified C# literal expression.
+    // 指定型の定数値を完全修飾の C# リテラル式として整形する。
+    private static string FormatConstantLiteral(object? value, ITypeSymbol type)
+    {
+        if (value is null)
+        {
+            return "null";
+        }
+
+        if (type.TypeKind == TypeKind.Enum)
+        {
+            var fqn = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            foreach (var member in type.GetMembers())
+            {
+                if (member is IFieldSymbol field && field.HasConstantValue && Equals(field.ConstantValue, value))
+                {
+                    return $"{fqn}.{field.Name}";
+                }
+            }
+            return $"({fqn})({value})";
+        }
+
+        return value switch
+        {
+            bool b => b ? "true" : "false",
+            string s => $"\"{s.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"",
+            byte bt => $"(byte)0x{bt:X2}",
+            sbyte sb => $"(sbyte){sb}",
+            char c => $"'{c}'",
+            _ => Convert.ToString(value, System.Globalization.CultureInfo.InvariantCulture) ?? "default"
+        };
     }
 
     private static string GetDefaultLiteral(IParameterSymbol param)
@@ -711,7 +785,7 @@ internal static class ByteMapperModelBuilder
         return "default";
     }
 
-    private static (SizeKind SizeKind, int? ConstSize) DetermineConverterSize(ITypeSymbol converterType, List<string> ctorArgs)
+    private static (SizeKind SizeKind, int? ConstSize) DetermineConverterSize(ITypeSymbol converterType, TypedConstant? firstConverterArg)
     {
         if (converterType is not INamedTypeSymbol namedConverter)
         {
@@ -750,25 +824,28 @@ internal static class ByteMapperModelBuilder
 
             if (member is IPropertySymbol { IsStatic: false })
             {
-                // Instance Size property - try to determine from ctor args (first arg is length)
-                // インスタンス Size プロパティ — コンストラクター引数の先頭（長さ）から値を推定する
-                if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var len))
-                {
-                    return (SizeKind.Instance, len);
-                }
-
-                return (SizeKind.Instance, null);
+                // Instance Size property — derive the value from the first converter ctor arg
+                // インスタンス Size プロパティ — コンバーター第1引数から値を導出する
+                return (SizeKind.Instance, ResolveFirstArgSize(firstConverterArg));
             }
         }
 
         // Fallback: use first ctor arg as size / フォールバック: コンストラクター引数の先頭をサイズとして使用する
-        if ((ctorArgs.Count > 0) && Int32.TryParse(ctorArgs[0], out var fallback))
-        {
-            return (SizeKind.Instance, fallback);
-        }
-
-        return (SizeKind.Instance, null);
+        return (SizeKind.Instance, ResolveFirstArgSize(firstConverterArg));
     }
+
+    // First-converter-arg size convention: an int is the length itself; a string is a format whose
+    // length equals the byte size (e.g. FastDateTimeConverter's "yyyyMMdd" → 8). Anything else is
+    // statically unknown (SBM0018 is reported and layout validation skips the member).
+    // コンバーター第1引数のサイズ規約: int は長さそのもの、string は書式でその長さがバイトサイズ
+    // （例: FastDateTimeConverter の "yyyyMMdd" → 8）。それ以外は静的に不明
+    // （SBM0018 を報告しレイアウト検証はスキップされる）。
+    private static int? ResolveFirstArgSize(TypedConstant? firstConverterArg) => firstConverterArg?.Value switch
+    {
+        int length => length,
+        string format => format.Length,
+        _ => null
+    };
 
     private static void ResolveLayout(
         List<MemberMappingModel> members,
@@ -783,6 +860,21 @@ internal static class ByteMapperModelBuilder
         // Sort members by offset / メンバーをオフセット順にソートする
         members.Sort((a, b) => a.Offset.CompareTo(b.Offset));
         typeMappings.Sort((a, b) => a.Offset.CompareTo(b.Offset));
+
+        // SBM0018: a member without a statically-known size participates as zero-width below, so the
+        // overlap/size checks cannot cover it — make the gap visible instead of staying silent.
+        // SBM0018: サイズが静的に不明なメンバーは以降の検査に幅0で参加するため、重複・サイズ検査の
+        // 対象外になる — 黙ってスキップせず警告で可視化する。
+        if (validateLayout)
+        {
+            foreach (var member in members)
+            {
+                if (!member.Converter.ConstSize.HasValue)
+                {
+                    errors.Add(new DiagnosticInfo(Diagnostics.UnknownMemberSize, syntax.GetLocation(), $"{methodName}, {member.PropertyName}"));
+                }
+            }
+        }
 
         var allRanges = members.Select(m => (m.Offset, m.Size))
             .Concat(typeMappings.Select(t => (t.Offset, t.Size)))

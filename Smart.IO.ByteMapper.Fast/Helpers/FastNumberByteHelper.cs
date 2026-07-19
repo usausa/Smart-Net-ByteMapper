@@ -465,7 +465,13 @@ internal static partial class FastNumberByteHelper
                             break;
                         }
 
-                        mantissa.Multiply10AndAdd((ulong)num);
+                        // 29 digits can exceed the 96-bit mantissa; overflow must fail like the integer loop.
+                        // 29桁は96bit仮数を超え得るため、整数部ループと同様にオーバーフローで失敗させる。
+                        if (!mantissa.Multiply10AndAdd((ulong)num))
+                        {
+                            return false;
+                        }
+
                         count++;
                     }
                     else if (*(pBytes + i) == filler)

@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper.Generator\Smart.IO.ByteMapper.Generator.csproj" />
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Fast\Smart.IO.ByteMapper.Fast.csproj" />
   </ItemGroup>
 
 </Project>

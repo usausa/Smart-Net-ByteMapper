@@ -1,5 +1,7 @@
 namespace Smart.IO.ByteMapper.Generator.Tests;
 
+using Microsoft.CodeAnalysis;
+
 // Source Generator が正しい診断（SBM0001〜SBM0007）を発行することを検証するテスト。
 public class DiagnosticTests
 {
@@ -570,5 +572,333 @@ public class DiagnosticTests
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
         Assert.Contains(diagnostics, static d => d.Id == "SBM0011");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0008 — MapDateTimeText は nullable 型をサポートしない
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0008_NullableDateTimeWithDateTimeText_EmitsDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(8, UseDelimiter = false)]
+            public sealed class RecordSBM0008n
+            {
+                [MapDateTimeText<DateTime>(0, 8, "yyyyMMdd")]
+                public DateTime? Date { get; set; }
+            }
+
+            public static partial class MappersSBM0008n
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, RecordSBM0008n source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0008");
+    }
+
+    // -----------------------------------------------------------------------
+    // 非 nullable bool — Reader は .GetValueOrDefault() 付きでコンパイル可能
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void NonNullableBoolReader_GeneratesCompilableCode()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(1, UseDelimiter = false)]
+            public sealed class StrictBoolRecord
+            {
+                [MapBoolean(0)]
+                public bool Flag { get; set; }
+            }
+
+            public static partial class StrictBoolMappers
+            {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> buffer, StrictBoolRecord target);
+
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, StrictBoolRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnosticsAll(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    // -----------------------------------------------------------------------
+    // 文字列第1引数(書式)からのサイズ導出 — Fast 日時フィールドもレイアウト検証の対象になる
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void SBM0006_FastDateTimeOverlap_EmitsDiagnostic()
+    {
+        // "yyyyMMddHHmmss" = 14バイト (0..13) と Qty(8..13) の重複が検出される
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(20, UseDelimiter = false)]
+            public sealed class FastOverlapRecord
+            {
+                [MapFastDateTime(0, "yyyyMMddHHmmss")]
+                public DateTime? Timestamp { get; set; }
+
+                [MapFastInteger<int>(8, 6)]
+                public int? Qty { get; set; }
+            }
+
+            public static partial class FastOverlapMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, FastOverlapRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
+    }
+
+    [Fact]
+    public void SBM0007_FastDateTimeExceedsMapSize_EmitsDiagnostic()
+    {
+        // "yyyyMMddHHmmss" = 14バイト > Map(10) が検出される
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(10, UseDelimiter = false)]
+            public sealed class FastExceedsRecord
+            {
+                [MapFastDateTime(0, "yyyyMMddHHmmss")]
+                public DateTime? Timestamp { get; set; }
+            }
+
+            public static partial class FastExceedsMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, FastExceedsRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0007");
+    }
+
+    [Fact]
+    public void FastDateTimeValidLayout_DoesNotEmitDiagnostic()
+    {
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            [Map(14, UseDelimiter = false)]
+            public sealed class FastValidRecord
+            {
+                [MapFastDateTime(0, "yyyyMMdd")]
+                public DateTime? Timestamp { get; set; }
+
+                [MapFastInteger<int>(8, 6)]
+                public int? Qty { get; set; }
+            }
+
+            public static partial class FastValidMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, FastValidRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Id is "SBM0006" or "SBM0007" or "SBM0018");
+    }
+
+    // -----------------------------------------------------------------------
+    // SBM0018 — サイズを静的に導出できないメンバーは検証スキップを警告する
+    // -----------------------------------------------------------------------
+
+    private const string DynamicSizeConverterSource = """
+        using System;
+        using Smart.IO.ByteMapper;
+
+        public sealed class DynamicSizeConverter
+        {
+            public int Size { get; }
+
+            public DynamicSizeConverter(byte marker)
+            {
+                Size = 4;
+            }
+
+            public int Read(ReadOnlySpan<byte> buffer) => 0;
+
+            public void Write(Span<byte> buffer, int value) { }
+        }
+
+        [ConverterSupportedTypes(typeof(int))]
+        public sealed class MapDynamicAttribute : ByteMapperPropertyAttribute<DynamicSizeConverter>
+        {
+            public byte Marker { get; }
+
+            public MapDynamicAttribute(int offset, byte marker)
+                : base(offset)
+            {
+                Marker = marker;
+            }
+        }
+
+        [Map(8, UseDelimiter = false)]
+        public sealed class DynamicSizeRecord
+        {
+            [MapDynamic(0, 0x01)]
+            public int Value { get; set; }
+        }
+        """;
+
+    [Fact]
+    public void SBM0018_UnknownMemberSize_EmitsDiagnostic()
+    {
+        const string source = DynamicSizeConverterSource + """
+
+            public static partial class DynamicSizeMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, DynamicSizeRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0018");
+    }
+
+    [Fact]
+    public void SBM0018_ValidateLayoutFalse_DoesNotEmitDiagnostic()
+    {
+        const string source = DynamicSizeConverterSource + """
+
+            public static partial class DynamicSizeMappers
+            {
+                [ByteWriter(ValidateLayout = false)]
+                public static partial void Write(Span<byte> buffer, DynamicSizeRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0018");
+    }
+
+    // -----------------------------------------------------------------------
+    // 同一コンパイル内のカスタム属性 — イニシャライザーは定数評価して FQN で出力される
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void CustomAttributeWithEnumInitializer_GeneratesCompilableCode()
+    {
+        // The attribute class lives in the test compilation, so its property initializers are read
+        // from syntax. The raw text "Padding.Left" would not resolve in the generated file (no
+        // using directives, global namespace here); it must be emitted fully qualified.
+        const string source = """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            public sealed class CustomTextConverter
+            {
+                public int Size { get; }
+                private readonly Padding padding;
+                private readonly byte filler;
+
+                public CustomTextConverter(int length, Padding padding = Padding.Right, byte filler = 0x20)
+                {
+                    Size = length;
+                    this.padding = padding;
+                    this.filler = filler;
+                }
+
+                public string Read(ReadOnlySpan<byte> buffer) => string.Empty;
+
+                public void Write(Span<byte> buffer, string value) { }
+            }
+
+            [ConverterSupportedTypes(typeof(string))]
+            public sealed class MapCustomTextAttribute : ByteMapperPropertyAttribute<CustomTextConverter>
+            {
+                public int Length { get; }
+
+                public Padding Padding { get; init; } = Padding.Left;
+
+                public MapCustomTextAttribute(int offset, int length)
+                    : base(offset)
+                {
+                    Length = length;
+                }
+            }
+
+            [Map(8, UseDelimiter = false)]
+            public sealed class CustomAttrRecord
+            {
+                [MapCustomText(0, 8)]
+                public string Code { get; set; } = default!;
+            }
+
+            public static partial class CustomAttrMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, CustomAttrRecord source);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnosticsAll(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    // -----------------------------------------------------------------------
+    // フラグ合成値 — 単一メンバー名を持たない列挙値はキャスト式で出力される
+    // -----------------------------------------------------------------------
+
+    [Fact]
+    public void CombinedFlagsStyle_GeneratesCompilableCode()
+    {
+        const string source = """
+            using System;
+            using System.Globalization;
+            using Smart.IO.ByteMapper;
+
+            [Map(10, UseDelimiter = false)]
+            public sealed class FlagsStyleRecord
+            {
+                [MapNumberText<decimal>(0, 10, Style = NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign)]
+                public decimal Price { get; set; }
+            }
+
+            public static partial class FlagsStyleMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> buffer, FlagsStyleRecord source);
+
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> buffer, FlagsStyleRecord target);
+            }
+            """;
+
+        var diagnostics = GeneratorTestHelper.GetDiagnosticsAll(source);
+
+        Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 }

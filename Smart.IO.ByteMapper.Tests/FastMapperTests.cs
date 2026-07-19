@@ -39,6 +39,16 @@ internal sealed class FastMemberProfile
 }
 #pragma warning restore CA1812
 
+// ---- Date-only record: the date field is the record tail (8 bytes) ----
+// A null (all-filler) date at the end of the record must not scan past the buffer.
+
+[Map(8, UseDelimiter = false)]
+internal sealed class FastDateEntity
+{
+    [MapFastDateTime(0, "yyyyMMdd")]
+    public DateTime? Date { get; set; }
+}
+
 // ---- DateTimeOffset coverage (8 bytes) ----
 
 [Map(8, UseDelimiter = false)]
@@ -75,6 +85,12 @@ internal static partial class FastMappers
 
     [ByteWriter(Profile = typeof(FastOffsetProfile))]
     public static partial void WriteOffsetProfile(Span<byte> buffer, FastOffsetEntity source);
+
+    [ByteWriter]
+    public static partial void WriteDate(Span<byte> buffer, FastDateEntity source);
+
+    [ByteReader]
+    public static partial void ReadDate(ReadOnlySpan<byte> buffer, FastDateEntity target);
 }
 
 public class FastMapperTests
@@ -119,5 +135,52 @@ public class FastMapperTests
         FastMappers.WriteOffsetProfile(profile, entity);
 
         Assert.Equal(self, profile);
+    }
+
+    // ---- Null date: the all-filler field must read back as null ----
+
+    [Fact]
+    public void WhenNullDateAtRecordTailThenRoundTripsAsNull()
+    {
+        // The date field ends exactly at the buffer end; the parser must not scan past it.
+        var buffer = new byte[8];
+        FastMappers.WriteDate(buffer, new FastDateEntity { Date = null });
+
+        Assert.Equal("        "u8.ToArray(), buffer);
+
+        var restored = new FastDateEntity { Date = new DateTime(2000, 1, 1) };
+        FastMappers.ReadDate(buffer, restored);
+
+        Assert.Null(restored.Date);
+    }
+
+    [Fact]
+    public void WhenNullDateFollowedByDigitBytesThenReadsAsNull()
+    {
+        // Name "12345" places digit bytes right after the all-space date field; the date parser
+        // must not pick them up as year/month/day digits.
+        var entity = new FastEntity { Id = 1, Amount = 1m, Date = null, Name = "12345" };
+        var buffer = new byte[40];
+        FastMappers.Write(buffer, entity);
+
+        var restored = new FastEntity();
+        FastMappers.Read(buffer, restored);
+
+        Assert.Null(restored.Date);
+        Assert.Equal("12345", restored.Name);
+    }
+
+    [Fact]
+    public void WhenNullDateRoundTripsViaMemberProfileThenDateIsNull()
+    {
+        var entity = new FastEntity { Id = 42, Amount = 12.34m, Date = null, Name = "Test" };
+
+        var buffer = new byte[40];
+        FastMappers.WriteProfile(buffer, entity);
+        var restored = new FastEntity();
+        FastMappers.ReadProfile(buffer, restored);
+
+        Assert.Null(restored.Date);
+        Assert.Equal(entity.Id, restored.Id);
     }
 }

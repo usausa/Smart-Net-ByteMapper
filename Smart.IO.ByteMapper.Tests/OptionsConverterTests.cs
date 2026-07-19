@@ -168,6 +168,40 @@ public class OptionsConverterTests
         Assert.Equal(999.123m, converter.Read(buffer));
     }
 
+    [Fact]
+    public void WhenDecimalReadFractionOverflowThenReturnsNull()
+    {
+        // 29 significant digits above the 96-bit mantissa max (7.92...e28) are unrepresentable;
+        // the fraction loop must fail on overflow just like the integer loop.
+        var converter = new FastDecimalConverter(30);
+        var buffer = "9.9999999999999999999999999999"u8.ToArray().AsSpan();
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDecimalReadIntegerOverflowThenReturnsNull()
+    {
+        var converter = new FastDecimalConverter(30);
+        var buffer = " 99999999999999999999999999999"u8.ToArray().AsSpan();
+        Assert.Null(converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDecimalReadMantissaMaxThenReturnsDecimalMaxValue()
+    {
+        var converter = new FastDecimalConverter(29);
+        var buffer = "79228162514264337593543950335"u8.ToArray().AsSpan();
+        Assert.Equal(decimal.MaxValue, converter.Read(buffer));
+    }
+
+    [Fact]
+    public void WhenDecimalReadMantissaMaxWithFractionThenReturnsValue()
+    {
+        var converter = new FastDecimalConverter(30);
+        var buffer = "7.9228162514264337593543950335"u8.ToArray().AsSpan();
+        Assert.Equal(7.9228162514264337593543950335m, converter.Read(buffer));
+    }
+
     //--------------------------------------------------------------------------------
     // FastDateTimeConverter
     //--------------------------------------------------------------------------------

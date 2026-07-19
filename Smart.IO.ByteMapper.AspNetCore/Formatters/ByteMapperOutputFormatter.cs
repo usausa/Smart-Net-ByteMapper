@@ -48,6 +48,35 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         return registry.HasAnyBinding(type);
     }
 
+    // Per-request refinement over CanWriteType: when no profile is declared the default binding must
+    // exist, so an entity registered only under profiles no longer negotiates successfully and then
+    // produces an empty response. With a profile declared the request is claimed, and a missing
+    // profile binding surfaces as a configuration error in WriteResponseBodyAsync.
+    // CanWriteType のリクエスト単位の絞り込み: プロファイル未指定時はデフォルトバインディングの存在を
+    // 要求し、プロファイルのみ登録のエンティティが交渉を通過して空レスポンスになる事態を防ぐ。
+    // プロファイル指定時はリクエストを引き受け、未登録は WriteResponseBodyAsync で設定エラーとして表面化させる。
+    public override bool CanWriteResult(OutputFormatterCanWriteContext context)
+    {
+        if (!base.CanWriteResult(context))
+        {
+            return false;
+        }
+
+        var objectType = context.ObjectType;
+        if (objectType is null)
+        {
+            return false;
+        }
+
+        var profile = context.HttpContext.Items[ByteMapperConst.ProfileKey] as Type;
+        if (profile is not null)
+        {
+            return true;
+        }
+
+        return registry.GetBinding(ResolveElementType(objectType)) is not null;
+    }
+
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
@@ -73,16 +102,19 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
     public override async Task WriteResponseBodyAsync(OutputFormatterWriteContext context)
     {
         var objectType = context.ObjectType;
+        if (objectType is null)
+        {
+            return;
+        }
+
         var httpContext = context.HttpContext;
         var cancellationToken = httpContext.RequestAborted;
         var profile = httpContext.Items[ByteMapperConst.ProfileKey] as Type;
 
-        if (objectType is not null && objectType.IsArray)
+        if (objectType.IsArray)
         {
-            var elementType = objectType.GetElementType()!;
-            var binding = (profile is not null ? registry.GetBinding(elementType, profile) : null)
-                          ?? registry.GetBinding(elementType);
-            if (binding is not null && context.Object is IEnumerable enumerable)
+            var binding = GetRequiredBinding(objectType.GetElementType()!, profile);
+            if (context.Object is IEnumerable enumerable)
             {
                 await WriteEnumerableAsync(binding, enumerable, httpContext.Response.Body, cancellationToken).ConfigureAwait(false);
             }
@@ -91,32 +123,43 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         }
 
         // IEnumerable<T>
-        if (objectType is not null)
+        var enumElem = GetEnumerableElementType(objectType);
+        if (enumElem is not null)
         {
-            var enumElem = GetEnumerableElementType(objectType);
-            if (enumElem is not null)
+            var binding = GetRequiredBinding(enumElem, profile);
+            if (context.Object is IEnumerable enumerable)
             {
-                var binding = (profile is not null ? registry.GetBinding(enumElem, profile) : null)
-                              ?? registry.GetBinding(enumElem);
-                if (binding is not null && context.Object is IEnumerable enumerable)
-                {
-                    await WriteEnumerableAsync(binding, enumerable, httpContext.Response.Body, cancellationToken).ConfigureAwait(false);
-                }
-
-                return;
+                await WriteEnumerableAsync(binding, enumerable, httpContext.Response.Body, cancellationToken).ConfigureAwait(false);
             }
+
+            return;
         }
 
-        if (objectType is not null)
         {
-            var binding = (profile is not null ? registry.GetBinding(objectType, profile) : null)
-                          ?? registry.GetBinding(objectType);
-            if (binding is not null && context.Object is not null)
+            var binding = GetRequiredBinding(objectType, profile);
+            if (context.Object is not null)
             {
                 await WriteSingleAsync(binding, context.Object, httpContext.Response.Body, cancellationToken).ConfigureAwait(false);
             }
         }
     }
+
+    // Resolves the binding for the current request. A declared profile must resolve exactly — falling
+    // back to the default layout would silently mis-frame the data — and a missing binding is a server
+    // configuration error reported like the Minimal API filters do.
+    // 現在のリクエストのバインディングを解決する。プロファイル指定時は厳密に解決する（デフォルトレイアウトへの
+    // フォールバックはデータのフレーミングを黙って壊す）。未登録は Minimal API フィルターと同様にサーバー設定エラー。
+    private ByteMapperBinding GetRequiredBinding(Type elementType, Type? profile)
+    {
+        var binding = profile is not null
+            ? registry.GetBinding(elementType, profile)
+            : registry.GetBinding(elementType);
+        return binding ?? throw new InvalidOperationException(
+            $"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
+    }
+
+    private static Type ResolveElementType(Type type)
+        => type.IsArray ? type.GetElementType()! : GetEnumerableElementType(type) ?? type;
 
     private static async ValueTask WriteSingleAsync(
         ByteMapperBinding binding,

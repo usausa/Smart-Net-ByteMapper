@@ -6,7 +6,6 @@ internal static partial class FastDateTimeByteHelper
 {
     private const byte Num0 = (byte)'0';
     private const byte Space = (byte)' ';
-    private const int SpaceDiff = Space - Num0;
 
     private const char FormatYear = 'y';
     private const char FormatMonth = 'M';
@@ -284,14 +283,23 @@ internal static partial class FastDateTimeByteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe int ParseDateTimePart(byte* pBase, int length)
     {
+        // Skip leading spaces within the part only; an all-space part is invalid (-1).
+        // Without the length bound an all-filler (null) field would scan past the part
+        // into adjacent fields or beyond the buffer.
+        // 先頭スペースのスキップはパート内に限定する。全スペースのパートは無効 (-1)。
+        // 長さ上限が無いと全フィラー (null) フィールドで隣接フィールドやバッファ外まで走査してしまう。
         var i = 0;
-
-        int num;
-        while ((num = *(pBase + i) - Num0) == SpaceDiff)
+        while ((i < length) && (*(pBase + i) == Space))
         {
             i++;
         }
 
+        if (i == length)
+        {
+            return -1;
+        }
+
+        var num = *(pBase + i) - Num0;
         if (!IsValidNumber(num))
         {
             return -1;

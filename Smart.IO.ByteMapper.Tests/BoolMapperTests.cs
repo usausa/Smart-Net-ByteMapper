@@ -236,3 +236,80 @@ public class BoolMapperRoundTripTests
         Assert.Equal(flag, read.Flag);
     }
 }
+
+// ---- Non-nullable bool: the reader maps an unknown byte to false via GetValueOrDefault ----
+
+[Map(2, UseDelimiter = false)]
+internal sealed class BoolStrictRecord
+{
+    [MapBoolean(0)]
+    public bool Flag { get; set; }
+
+    [MapBoolean(1, TrueValue = 0x59, FalseValue = 0x4E)]
+    public bool YesNo { get; set; }
+}
+
+internal static partial class BoolStrictMappers
+{
+    [ByteReader]
+    public static partial void Read(ReadOnlySpan<byte> buffer, BoolStrictRecord target);
+
+    [ByteWriter]
+    public static partial void Write(Span<byte> buffer, BoolStrictRecord source);
+}
+
+public class BoolStrictMapperTests
+{
+    [Theory]
+    [InlineData(true, 0x31)]
+    [InlineData(false, 0x30)]
+    public void WhenWriteFlagThenByteIsWritten(bool flag, byte expected)
+    {
+        var buffer = new byte[2];
+        BoolStrictMappers.Write(buffer, new BoolStrictRecord { Flag = flag });
+
+        Assert.Equal(expected, buffer[0]);
+    }
+
+    [Theory]
+    [InlineData(0x31, true)]
+    [InlineData(0x30, false)]
+    public void WhenReadFlagByteThenFlagIsMapped(byte value, bool expected)
+    {
+        var buffer = new byte[] { value, 0x4E };
+        var record = new BoolStrictRecord();
+        BoolStrictMappers.Read(buffer, record);
+
+        Assert.Equal(expected, record.Flag);
+    }
+
+    [Fact]
+    public void WhenReadUnknownByteThenFlagIsFalse()
+    {
+        // A byte that is neither TrueValue nor FalseValue maps to null in the converter;
+        // for a non-nullable property it becomes false. (0x20 unknown, 0x59 'Y')
+        var buffer = " Y"u8.ToArray();
+        var record = new BoolStrictRecord { Flag = true };
+        BoolStrictMappers.Read(buffer, record);
+
+        Assert.False(record.Flag);
+        Assert.True(record.YesNo);
+    }
+
+    [Theory]
+    [InlineData(true, true)]
+    [InlineData(false, false)]
+    [InlineData(true, false)]
+    public void WhenRoundTripThenFlagsArePreserved(bool flag, bool yesNo)
+    {
+        var original = new BoolStrictRecord { Flag = flag, YesNo = yesNo };
+        var buffer = new byte[2];
+        BoolStrictMappers.Write(buffer, original);
+
+        var read = new BoolStrictRecord();
+        BoolStrictMappers.Read(buffer, read);
+
+        Assert.Equal(flag, read.Flag);
+        Assert.Equal(yesNo, read.YesNo);
+    }
+}
