@@ -68,8 +68,7 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
             return false;
         }
 
-        var profile = context.HttpContext.Items[ByteMapperConst.ProfileKey] as Type;
-        if (profile is not null)
+        if (context.HttpContext.Items[ByteMapperConst.ProfileKey] is Type)
         {
             return true;
         }
