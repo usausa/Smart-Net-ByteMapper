@@ -4,7 +4,7 @@
   </Folder>
   <Folder Name="/Example/">
     <Project Path="Example.Web/Example.Web.csproj" />
-    <Project Path="Example/Example.csproj" />
+    <Project Path="Example/Example.csproj" DefaultStartup="true" />
   </Folder>
   <Folder Name="/Library/">
     <Project Path="Smart.IO.ByteMapper.AspNetCore.Generator/Smart.IO.ByteMapper.AspNetCore.Generator.csproj" />
