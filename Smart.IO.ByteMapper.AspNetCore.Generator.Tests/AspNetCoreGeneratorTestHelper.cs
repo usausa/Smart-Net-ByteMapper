@@ -1,7 +1,6 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 
 using System.Collections.Generic;
-using System.Linq;
 
 using Microsoft.CodeAnalysis;
 

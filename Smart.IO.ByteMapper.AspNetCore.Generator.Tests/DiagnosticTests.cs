@@ -1,8 +1,5 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 
-// Diagnostic coverage for the endpoint binding generator.
-// These inputs used to be dropped silently (a bare `continue`), which left the user with no
-// generated binding and no explanation.
 public class DiagnosticTests
 {
     private const string Entity = """

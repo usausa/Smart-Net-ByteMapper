@@ -1,7 +1,6 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
 using System.Collections.Immutable;
-using System.Linq;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;

@@ -2,9 +2,6 @@ namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
 using Microsoft.CodeAnalysis;
 
-// Diagnostics for the AspNetCore endpoint binding generator.
-// The SBM1xxx band is reserved for this package; the core ByteMapper generator owns SBM0xxx
-// (the same split Smart.Data.Accessor uses between its core and builder generators).
 internal static class Diagnostics
 {
     public static DiagnosticDescriptor ReaderWithoutWriter { get; } = new(
