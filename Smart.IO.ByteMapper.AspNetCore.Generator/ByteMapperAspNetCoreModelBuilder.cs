@@ -16,18 +16,18 @@ internal static class ByteMapperAspNetCoreModelBuilder
     private const string MapAttributeName = "Smart.IO.ByteMapper.MapAttribute";
     private const string MapProfileAttributeName = "Smart.IO.ByteMapper.MapProfileAttribute";
 
-    public static EquatableArray<EndpointModel> ParseEndpoints(GeneratorAttributeSyntaxContext context)
+    public static Result<EndpointCollection> ParseEndpoints(GeneratorAttributeSyntaxContext context)
     {
         if (context.TargetSymbol is not INamedTypeSymbol classSymbol)
         {
-            return EquatableArray<EndpointModel>.Empty;
+            return Results.Success(EndpointCollection.Empty);
         }
 
         var endpointAttr = classSymbol.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteMapperEndpointAttributeName);
         if (endpointAttr is null)
         {
-            return EquatableArray<EndpointModel>.Empty;
+            return Results.Success(EndpointCollection.Empty);
         }
 
         var generateArray = true;
@@ -38,6 +38,8 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 generateArray = b;
             }
         }
+
+        var diagnostics = new List<DiagnosticInfo>();
 
         // Collect all [ByteReader] and [ByteWriter] methods, keyed by (entity FQN, profile FQN or "default").
         // The key ties a reader to its matching writer of the same entity and profile, so multiple
@@ -134,6 +136,13 @@ internal static class ByteMapperAspNetCoreModelBuilder
         {
             if (!writers.TryGetValue(readerKvp.Key, out var writer))
             {
+                // A reader with no matching writer cannot form a binding; report it instead of
+                // silently dropping the endpoint.
+                diagnostics.Add(new DiagnosticInfo(
+                    Diagnostics.ReaderWithoutWriter,
+                    classSymbol.Locations.FirstOrDefault(),
+                    readerKvp.Value.Name,
+                    readerKvp.Value.Entity.ToDisplayString()));
                 continue;
             }
 
@@ -159,6 +168,11 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 : -1;
             if (size <= 0)
             {
+                // Without a positive [Map]/[MapProfile] size the binding cannot be emitted.
+                diagnostics.Add(new DiagnosticInfo(
+                    Diagnostics.UnknownEntitySize,
+                    classSymbol.Locations.FirstOrDefault(),
+                    entityType.ToDisplayString()));
                 continue;
             }
 
@@ -194,9 +208,10 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 nameSuffix));
         }
 
-        return results.Count == 0
-            ? EquatableArray<EndpointModel>.Empty
-            : new EquatableArray<EndpointModel>([.. results]);
+        var collection = new EndpointCollection(new EquatableArray<EndpointModel>([.. results]));
+        return diagnostics.Count == 0
+            ? Results.Success(collection)
+            : new Result<EndpointCollection>(collection, new EquatableArray<DiagnosticInfo>([.. diagnostics]));
     }
 
     private static string DetermineRootNamespace(INamedTypeSymbol symbol)

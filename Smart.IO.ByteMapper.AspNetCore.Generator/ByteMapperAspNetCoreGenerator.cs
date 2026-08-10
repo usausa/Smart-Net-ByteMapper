@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
 using System.Collections.Immutable;
+using System.Linq;
 using System.Text;
 
 using Microsoft.CodeAnalysis;
@@ -18,13 +19,18 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 {
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
-        var endpoints = context.SyntaxProvider
+        var parsed = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 ByteMapperAspNetCoreModelBuilder.ByteMapperEndpointAttributeName,
                 static (s, _) => s is ClassDeclarationSyntax,
-                static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndpoints(ctx))
-            .Where(static arr => arr.Count > 0)
-            .SelectMany(static (arr, _) => arr);
+                static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndpoints(ctx));
+
+        // 診断はライブ表示のため RegisterSourceOutput 側へ分離する
+        context.RegisterSourceOutput(
+            parsed.Collect(),
+            static (spc, results) => ReportDiagnostics(spc, results));
+
+        var endpoints = parsed.SelectMany(static (result, _) => result.Value.Endpoints);
 
         // 生成は per-endpoint（1 endpoint = 1 ファイル）
         context.RegisterImplementationSourceOutput(
@@ -35,6 +41,14 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         context.RegisterImplementationSourceOutput(
             endpoints.Collect(),
             static (spc, items) => ExecuteBootstrap(spc, items));
+    }
+
+    private static void ReportDiagnostics(SourceProductionContext spc, ImmutableArray<Result<EndpointCollection>> results)
+    {
+        foreach (var diagnostic in results.SelectError())
+        {
+            spc.ReportDiagnostic(diagnostic);
+        }
     }
 
     private static void Execute(SourceProductionContext spc, EndpointModel ep)

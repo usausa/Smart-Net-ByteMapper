@@ -3,6 +3,8 @@ namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 using System.Collections.Generic;
 using System.Linq;
 
+using Microsoft.CodeAnalysis;
+
 using Smart.IO.ByteMapper.AspNetCore;
 using Smart.IO.ByteMapper.Generator;
 
@@ -19,4 +21,7 @@ internal static class AspNetCoreGeneratorTestHelper
 
     public static IReadOnlyList<string> GetGeneratedSources(string source) =>
         [.. Runner.Run(source).GeneratedSources.Values];
+
+    public static IReadOnlyList<Diagnostic> GetDiagnostics(string source) =>
+        Runner.WithDiagnosticPrefix("SBM").GetDiagnostics(source);
 }
