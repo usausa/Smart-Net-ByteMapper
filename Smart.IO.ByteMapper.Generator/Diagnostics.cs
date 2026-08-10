@@ -36,14 +36,6 @@ internal static class Diagnostics
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static DiagnosticDescriptor TypeMismatch { get; } = new(
-        id: "SBM0005",
-        title: "Attribute and property type mismatch",
-        messageFormat: "Attribute and property type do not match. method=[{0}], property=[{1}]",
-        category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
     public static DiagnosticDescriptor RangeOverlap { get; } = new(
         id: "SBM0006",
         title: "Range overlap detected",
@@ -68,14 +60,6 @@ internal static class Diagnostics
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
-    public static DiagnosticDescriptor InvalidEncodingOrCulture { get; } = new(
-        id: "SBM0009",
-        title: "Invalid Encoding or Culture name",
-        messageFormat: "Invalid encoding or culture name. method=[{0}], property=[{1}]",
-        category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
     public static DiagnosticDescriptor ConverterContractMismatch { get; } = new(
         id: "SBM0010",
         title: "Custom Converter does not satisfy contract",
@@ -88,14 +72,6 @@ internal static class Diagnostics
         id: "SBM0011",
         title: "Profile property not found in target",
         messageFormat: "Profile property not found in target type. method=[{0}], property=[{1}]",
-        category: "Usage",
-        defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
-
-    public static DiagnosticDescriptor ProfilePropertyTypeMismatch { get; } = new(
-        id: "SBM0012",
-        title: "Profile property type mismatch",
-        messageFormat: "Profile and target property type mismatch. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);

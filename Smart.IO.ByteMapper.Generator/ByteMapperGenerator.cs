@@ -61,7 +61,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         // Report per-method diagnostics / メソッドごとの診断情報を報告する
         foreach (var m in results.SelectValue())
         {
-            foreach (var err in m.Errors)
+            foreach (var err in m.Diagnostics)
             {
                 context.ReportDiagnostic(err);
             }
