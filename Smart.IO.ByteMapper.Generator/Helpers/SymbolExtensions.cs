@@ -64,22 +64,6 @@ internal static class SymbolExtensions
         return null;
     }
 
-    // Returns true when type inherits from baseType.
-    // type が baseType を継承している場合に true を返す。
-    public static bool InheritsFrom(this ITypeSymbol type, INamedTypeSymbol baseType)
-    {
-        var current = type.BaseType;
-        while (current is not null)
-        {
-            if (SymbolEqualityComparer.Default.Equals(current.OriginalDefinition, baseType.OriginalDefinition))
-            {
-                return true;
-            }
-            current = current.BaseType;
-        }
-        return false;
-    }
-
     // Converts a TypedConstant to a C# source-code literal expression.
     // TypedConstant を C# ソースコードのリテラル式文字列に変換する。
     public static string ToLiteralExpression(this TypedConstant constant)

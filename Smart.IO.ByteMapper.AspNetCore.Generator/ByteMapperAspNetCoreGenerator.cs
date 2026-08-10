@@ -2,11 +2,9 @@ namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 using Smart.IO.ByteMapper.AspNetCore.Generator.Models;
 
@@ -55,8 +53,12 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
     {
         var builder = new SourceBuilder();
         ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
-        var filename = ByteMapperAspNetCoreSourceBuilder.MakeFilename(ep.Namespace, ep.ClassName, ep.NameSuffix) + ".AspNetCore.g.cs";
-        spc.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
+        // NameSuffix arrives already '_'-prefixed (or empty); HintNameBuilder inserts the separator
+        // itself, so trim it before handing the parts over.
+        spc.AddSource(
+            HintNameBuilder.BuildWithExtension(
+                ep.Namespace, ".AspNetCore.g.cs", ep.ClassName, ep.NameSuffix.TrimStart('_')),
+            builder);
     }
 
     private static void ExecuteBootstrap(
@@ -70,6 +72,6 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
         var builder = new SourceBuilder();
         ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endpoints);
-        spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", SourceText.From(builder.ToString(), Encoding.UTF8));
+        spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", builder);
     }
 }

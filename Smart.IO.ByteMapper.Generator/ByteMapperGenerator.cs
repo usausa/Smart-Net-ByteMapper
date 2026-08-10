@@ -1,13 +1,10 @@
 namespace Smart.IO.ByteMapper.Generator;
 
-using System;
 using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
 
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 using Smart.IO.ByteMapper.Generator.Models;
 
@@ -75,20 +72,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var builder = new SourceBuilder();
         ByteMapperSourceBuilder.Build(builder, group.Methods.ToList());
 
-        var filename = MakeFilename(group.Namespace, group.ClassName);
-        context.AddSource(filename, SourceText.From(builder.ToString(), Encoding.UTF8));
-    }
-
-    private static string MakeFilename(string ns, string className)
-    {
-        var buffer = new StringBuilder();
-        if (!String.IsNullOrEmpty(ns))
-        {
-            buffer.Append(ns.Replace('.', '_'));
-            buffer.Append('_');
-        }
-        buffer.Append(className.Replace('<', '[').Replace('>', ']'));
-        buffer.Append(".g.cs");
-        return buffer.ToString();
+        context.AddSource(HintNameBuilder.Build(group.Namespace, group.ClassName), builder);
     }
 }

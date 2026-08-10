@@ -29,7 +29,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SourceGenerateHelper" Version="1.18.0" GeneratePathProperty="true" PrivateAssets="all" />
+    <PackageReference Include="SourceGenerateHelper" Version="1.19.0" GeneratePathProperty="true" PrivateAssets="all" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <!-- Build order only. PackBuildOutputs reads the generator's bin directory directly, so packing
+         this project on its own fails unless the generator happened to be built first. This makes
+         the ordering explicit. ReferenceOutputAssembly keeps the generator off this project's
+         compile references, PrivateAssets keeps it out of the package dependencies. -->
+    <ProjectReference Include="..\Smart.IO.ByteMapper.Generator\Smart.IO.ByteMapper.Generator.csproj" ReferenceOutputAssembly="false" PrivateAssets="all" />
+  </ItemGroup>
 </Project>

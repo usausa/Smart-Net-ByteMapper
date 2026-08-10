@@ -22,7 +22,7 @@
     <Rule Id="SA1633" Action="Hidden" />
     <Rule Id="SA1649" Action="Hidden" />
   </Rules>
-  <Rules AnalyzerId="Microsoft.CodeQuality.Analyzers" RuleNamespace="Microsoft.CodeQuality.Analyzers">
+  <Rules AnalyzerId="Microsoft.CodeAnalysis.NetAnalyzers" RuleNamespace="Microsoft.CodeAnalysis.NetAnalyzers">
     <Rule Id="CA1000" Action="Hidden" />
     <Rule Id="CA1002" Action="Hidden" />
     <Rule Id="CA1028" Action="Hidden" />
@@ -32,7 +32,5 @@
     <Rule Id="CA1062" Action="Hidden" />
     <Rule Id="CA1716" Action="Hidden" />
     <Rule Id="CA1724" Action="Hidden" />
-  </Rules>
-  <Rules AnalyzerId="Smart.Analyzers.JapaneseComment" RuleNamespace="Smart.Analyzers.JapaneseComment">
   </Rules>
 </RuleSet>

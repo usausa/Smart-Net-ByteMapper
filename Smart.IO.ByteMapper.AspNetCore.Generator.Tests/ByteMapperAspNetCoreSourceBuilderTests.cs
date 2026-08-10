@@ -160,30 +160,31 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     }
 
     // -------------------------------------------------------
-    // MakeFilename
+    // Hint name
     // -------------------------------------------------------
+
+    // The local MakeFilename was replaced by the shared HintNameBuilder; these keep asserting the
+    // names this generator actually emits, now through the call the generator makes.
+    private static string HintName(string ns, string className, string nameSuffix) =>
+        HintNameBuilder.BuildWithExtension(ns, ".AspNetCore.g.cs", className, nameSuffix.TrimStart('_'));
 
     [Fact]
     public void WhenNoSuffixThenFilenameIsNamespacedClass()
     {
-        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", string.Empty);
-
-        Assert.Equal("Test_Ns_SampleMappers", name);
+        Assert.Equal("Test_Ns_SampleMappers.AspNetCore.g.cs", HintName("Test.Ns", "SampleMappers", string.Empty));
     }
 
     [Fact]
     public void WhenSuffixThenFilenameIncludesSuffix()
     {
-        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", "_MyProfile");
-
-        Assert.Equal("Test_Ns_SampleMappers_MyProfile", name);
+        Assert.Equal("Test_Ns_SampleMappers_MyProfile.AspNetCore.g.cs", HintName("Test.Ns", "SampleMappers", "_MyProfile"));
     }
 
     [Fact]
     public void WhenEntityAndProfileSuffixThenFilenameIncludesBoth()
     {
-        var name = ByteMapperAspNetCoreSourceBuilder.MakeFilename("Test.Ns", "SampleMappers", "_EntityA_MyProfile");
-
-        Assert.Equal("Test_Ns_SampleMappers_EntityA_MyProfile", name);
+        Assert.Equal(
+            "Test_Ns_SampleMappers_EntityA_MyProfile.AspNetCore.g.cs",
+            HintName("Test.Ns", "SampleMappers", "_EntityA_MyProfile"));
     }
 }

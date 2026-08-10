@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator;
 
-using System.Text;
-
 using Smart.IO.ByteMapper.AspNetCore.Generator.Models;
 
 using SourceGenerateHelper;
@@ -145,20 +143,5 @@ internal static class ByteMapperAspNetCoreSourceBuilder
         builder.Indent().Append("        configure);").NewLine();
 
         builder.EndScope();
-    }
-
-    // Source file name (without extension) for an endpoint binding. The NameSuffix (entity/profile
-    // disambiguator) keeps the hint unique when a class declares multiple bindings.
-    public static string MakeFilename(string ns, string className, string nameSuffix)
-    {
-        var buffer = new StringBuilder();
-        if (!String.IsNullOrEmpty(ns))
-        {
-            buffer.Append(ns.Replace('.', '_'));
-            buffer.Append('_');
-        }
-        buffer.Append(className.Replace('<', '[').Replace('>', ']'));
-        buffer.Append(nameSuffix);
-        return buffer.ToString();
     }
 }

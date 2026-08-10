@@ -2,7 +2,7 @@
   "profiles": {
     "Smart.IO.ByteMapper.Generator": {
       "commandName": "DebugRoslynComponent",
-      "targetProject": "..\Develop\Example.csproj"
+      "targetProject": "..\\Develop\\Example.csproj"
     }
   }
 }
