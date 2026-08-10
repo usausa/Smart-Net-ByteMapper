@@ -11,7 +11,7 @@ using SourceGenerateHelper.Testing;
 
 internal static class AspNetCoreGeneratorTestHelper
 {
-    // The endpoint binding depends on the Read/Write mappers, so both generators run together.
+    // The endPoint binding depends on the Read/Write mappers, so both generators run together.
     private static GeneratorTestRunner Runner => new GeneratorTestRunner(
             new ByteMapperGenerator(),
             new ByteMapperAspNetCoreGenerator())

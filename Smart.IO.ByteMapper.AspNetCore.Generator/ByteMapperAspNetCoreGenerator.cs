@@ -20,27 +20,27 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             .ForAttributeWithMetadataName(
                 ByteMapperAspNetCoreModelBuilder.ByteMapperEndpointAttributeName,
                 static (s, _) => s is ClassDeclarationSyntax,
-                static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndpoints(ctx));
+                static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndPoints(ctx));
 
         // 診断はライブ表示のため RegisterSourceOutput 側へ分離する
         context.RegisterSourceOutput(
             parsed.Collect(),
             static (spc, results) => ReportDiagnostics(spc, results));
 
-        var endpoints = parsed.SelectMany(static (result, _) => result.Value.Endpoints);
+        var endPoints = parsed.SelectMany(static (result, _) => result.Value.EndPoints);
 
-        // 生成は per-endpoint（1 endpoint = 1 ファイル）
+        // 生成は per-endPoint（1 endPoint = 1 ファイル）
         context.RegisterImplementationSourceOutput(
-            endpoints,
+            endPoints,
             static (spc, ep) => Execute(spc, ep));
 
-        // ブートストラップは全 endpoint の集約なので Collect のまま単一出力
+        // ブートストラップは全 endPoint の集約なので Collect のまま単一出力
         context.RegisterImplementationSourceOutput(
-            endpoints.Collect(),
+            endPoints.Collect(),
             static (spc, items) => ExecuteBootstrap(spc, items));
     }
 
-    private static void ReportDiagnostics(SourceProductionContext spc, ImmutableArray<Result<EndpointCollection>> results)
+    private static void ReportDiagnostics(SourceProductionContext spc, ImmutableArray<Result<EndPointCollection>> results)
     {
         foreach (var diagnostic in results.SelectError())
         {
@@ -48,7 +48,7 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
         }
     }
 
-    private static void Execute(SourceProductionContext spc, EndpointModel ep)
+    private static void Execute(SourceProductionContext spc, EndPointModel ep)
     {
         var builder = new SourceBuilder();
         ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
@@ -62,15 +62,15 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
 
     private static void ExecuteBootstrap(
         SourceProductionContext spc,
-        ImmutableArray<EndpointModel> endpoints)
+        ImmutableArray<EndPointModel> endPoints)
     {
-        if (endpoints.IsDefaultOrEmpty)
+        if (endPoints.IsDefaultOrEmpty)
         {
             return;
         }
 
         var builder = new SourceBuilder();
-        ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endpoints);
+        ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endPoints);
         spc.AddSource("__ByteMapperAspNetCoreBootstrap.g.cs", builder);
     }
 }

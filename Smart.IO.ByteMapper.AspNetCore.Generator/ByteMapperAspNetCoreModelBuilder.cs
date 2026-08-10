@@ -6,7 +6,7 @@ using Smart.IO.ByteMapper.AspNetCore.Generator.Models;
 
 using SourceGenerateHelper;
 
-// Parse/transform stage: scans a [ByteMapperEndpoint] class and produces one EndpointModel per
+// Parse/transform stage: scans a [ByteMapperEndpoint] class and produces one EndPointModel per
 // (entity, profile) reader+writer pair. Pure of source emission.
 internal static class ByteMapperAspNetCoreModelBuilder
 {
@@ -16,22 +16,22 @@ internal static class ByteMapperAspNetCoreModelBuilder
     private const string MapAttributeName = "Smart.IO.ByteMapper.MapAttribute";
     private const string MapProfileAttributeName = "Smart.IO.ByteMapper.MapProfileAttribute";
 
-    public static Result<EndpointCollection> ParseEndpoints(GeneratorAttributeSyntaxContext context)
+    public static Result<EndPointCollection> ParseEndPoints(GeneratorAttributeSyntaxContext context)
     {
         if (context.TargetSymbol is not INamedTypeSymbol classSymbol)
         {
-            return Results.Success(EndpointCollection.Empty);
+            return Results.Success(EndPointCollection.Empty);
         }
 
-        var endpointAttr = classSymbol.GetAttributes()
+        var endPointAttr = classSymbol.GetAttributes()
             .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ByteMapperEndpointAttributeName);
-        if (endpointAttr is null)
+        if (endPointAttr is null)
         {
-            return Results.Success(EndpointCollection.Empty);
+            return Results.Success(EndPointCollection.Empty);
         }
 
         var generateArray = true;
-        foreach (var na in endpointAttr.NamedArguments)
+        foreach (var na in endPointAttr.NamedArguments)
         {
             if (na.Key == "GenerateArrayBinding" && na.Value.Value is bool b)
             {
@@ -137,7 +137,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
             if (!writers.TryGetValue(readerKvp.Key, out var writer))
             {
                 // A reader with no matching writer cannot form a binding; report it instead of
-                // silently dropping the endpoint.
+                // silently dropping the endPoint.
                 diagnostics.Add(new DiagnosticInfo(
                     Diagnostics.ReaderWithoutWriter,
                     classSymbol.Locations.FirstOrDefault(),
@@ -187,7 +187,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
             .Distinct()
             .Count() > 1;
 
-        var results = new List<EndpointModel>();
+        var results = new List<EndPointModel>();
         foreach (var (readerName, writerName, entityType, profileType, size) in pairs)
         {
             var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -195,23 +195,23 @@ internal static class ByteMapperAspNetCoreModelBuilder
             var profileSuffix = profileType is not null ? $"_{profileType.Name}" : String.Empty;
             var nameSuffix = $"{entitySuffix}{profileSuffix}";
 
-            results.Add(new EndpointModel(
+            results.Add(new EndPointModel(
                 ns,
                 classSymbol.Name,
-                entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 readerName,
                 writerName,
-                size,
+                entityType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
                 profileFqn,
+                size,
                 generateArray,
                 rootNs,
                 nameSuffix));
         }
 
-        var collection = new EndpointCollection(new EquatableArray<EndpointModel>([.. results]));
+        var collection = new EndPointCollection(new EquatableArray<EndPointModel>([.. results]));
         return diagnostics.Count == 0
             ? Results.Success(collection)
-            : new Result<EndpointCollection>(collection, new EquatableArray<DiagnosticInfo>([.. diagnostics]));
+            : new Result<EndPointCollection>(collection, new EquatableArray<DiagnosticInfo>([.. diagnostics]));
     }
 
     private static string DetermineRootNamespace(INamedTypeSymbol symbol)

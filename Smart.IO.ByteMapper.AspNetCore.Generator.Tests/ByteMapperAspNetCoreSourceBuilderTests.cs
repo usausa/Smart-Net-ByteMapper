@@ -5,11 +5,11 @@ using Smart.IO.ByteMapper.AspNetCore.Generator.Models;
 
 using SourceGenerateHelper;
 
-// Direct unit tests for the emit stage. EndpointModel records are constructed in-memory and the
+// Direct unit tests for the emit stage. EndPointModel records are constructed in-memory and the
 // emitted source is asserted as a string — no Roslyn compilation/driver needed.
 public class ByteMapperAspNetCoreSourceBuilderTests
 {
-    private static EndpointModel Endpoint(
+    private static EndPointModel EndPoint(
         string? profileFqn = null,
         bool generateArray = true,
         string ns = "Test",
@@ -20,26 +20,26 @@ public class ByteMapperAspNetCoreSourceBuilderTests
         => new(
             ns,
             className,
-            entityFqn,
             "Read",
             "Write",
-            size,
+            entityFqn,
             profileFqn,
+            size,
             generateArray,
             "Test",
             nameSuffix);
 
-    private static string BuildBinding(EndpointModel ep)
+    private static string BuildBinding(EndPointModel ep)
     {
         var builder = new SourceBuilder();
         ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
         return builder.ToString();
     }
 
-    private static string BuildBootstrap(params EndpointModel[] endpoints)
+    private static string BuildBootstrap(params EndPointModel[] endPoints)
     {
         var builder = new SourceBuilder();
-        ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endpoints);
+        ByteMapperAspNetCoreSourceBuilder.BuildBootstrap(builder, endPoints);
         return builder.ToString();
     }
 
@@ -50,7 +50,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenBuildBindingThenEmitsPartialClass()
     {
-        var src = BuildBinding(Endpoint());
+        var src = BuildBinding(EndPoint());
 
         Assert.Contains("partial class SampleMappers", src, StringComparison.Ordinal);
     }
@@ -58,7 +58,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenBuildBindingThenEmitsSingleFactoryWithSizeAndDelegates()
     {
-        var src = BuildBinding(Endpoint());
+        var src = BuildBinding(EndPoint());
 
         Assert.Contains("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperBinding<global::Test.Sample> CreateByteMapperBinding()", src, StringComparison.Ordinal);
         Assert.Contains("size: 8,", src, StringComparison.Ordinal);
@@ -70,7 +70,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenGenerateArrayBindingTrueThenEmitsArrayFactory()
     {
-        var src = BuildBinding(Endpoint(generateArray: true));
+        var src = BuildBinding(EndPoint(generateArray: true));
 
         Assert.Contains("CreateByteMapperArrayBinding()", src, StringComparison.Ordinal);
         Assert.Contains("elementSize:  8,", src, StringComparison.Ordinal);
@@ -79,7 +79,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenGenerateArrayBindingFalseThenOmitsArrayFactory()
     {
-        var src = BuildBinding(Endpoint(generateArray: false));
+        var src = BuildBinding(EndPoint(generateArray: false));
 
         Assert.DoesNotContain("CreateByteMapperArrayBinding", src, StringComparison.Ordinal);
     }
@@ -87,7 +87,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenProfileSuffixThenEmitsSuffixedFactory()
     {
-        var src = BuildBinding(Endpoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
+        var src = BuildBinding(EndPoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
 
         Assert.Contains("CreateByteMapperBinding_MyProfile()", src, StringComparison.Ordinal);
         Assert.Contains("CreateByteMapperArrayBinding_MyProfile()", src, StringComparison.Ordinal);
@@ -96,7 +96,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenEntitySuffixThenEmitsEntitySuffixedFactory()
     {
-        var src = BuildBinding(Endpoint(nameSuffix: "_Sample"));
+        var src = BuildBinding(EndPoint(nameSuffix: "_Sample"));
 
         Assert.Contains("CreateByteMapperBinding_Sample()", src, StringComparison.Ordinal);
     }
@@ -104,7 +104,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenNamespaceSetThenEmitsNamespace()
     {
-        var src = BuildBinding(Endpoint());
+        var src = BuildBinding(EndPoint());
 
         Assert.Contains("namespace Test", src, StringComparison.Ordinal);
     }
@@ -116,7 +116,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenBuildBootstrapThenEmitsRegistryBuildAndExtension()
     {
-        var src = BuildBootstrap(Endpoint());
+        var src = BuildBootstrap(EndPoint());
 
         Assert.Contains("internal static class __ByteMapperAspNetCoreBootstrap", src, StringComparison.Ordinal);
         Assert.Contains("public static global::Smart.IO.ByteMapper.AspNetCore.ByteMapperRegistry Build()", src, StringComparison.Ordinal);
@@ -126,7 +126,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenDefaultBindingThenProfileLiteralIsNull()
     {
-        var src = BuildBootstrap(Endpoint(profileFqn: null));
+        var src = BuildBootstrap(EndPoint(profileFqn: null));
 
         Assert.Contains("{ (typeof(global::Test.Sample), null), global::Test.SampleMappers.CreateByteMapperBinding() },", src, StringComparison.Ordinal);
     }
@@ -134,7 +134,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenProfileBindingThenProfileLiteralIsTypeof()
     {
-        var src = BuildBootstrap(Endpoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
+        var src = BuildBootstrap(EndPoint(profileFqn: "global::Test.MyProfile", nameSuffix: "_MyProfile"));
 
         Assert.Contains("{ (typeof(global::Test.Sample), typeof(global::Test.MyProfile)), global::Test.SampleMappers.CreateByteMapperBinding_MyProfile() },", src, StringComparison.Ordinal);
     }
@@ -142,16 +142,16 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     [Fact]
     public void WhenArrayBindingDisabledThenArrayDictionaryEntryOmitted()
     {
-        var src = BuildBootstrap(Endpoint(generateArray: false));
+        var src = BuildBootstrap(EndPoint(generateArray: false));
 
         Assert.DoesNotContain("CreateByteMapperArrayBinding", src, StringComparison.Ordinal);
     }
 
     [Fact]
-    public void WhenMultipleEndpointsThenBothRegistered()
+    public void WhenMultipleEndPointsThenBothRegistered()
     {
-        var a = Endpoint(entityFqn: "global::Test.A", nameSuffix: "_A");
-        var b = Endpoint(entityFqn: "global::Test.B", nameSuffix: "_B");
+        var a = EndPoint(entityFqn: "global::Test.A", nameSuffix: "_A");
+        var b = EndPoint(entityFqn: "global::Test.B", nameSuffix: "_B");
 
         var src = BuildBootstrap(a, b);
 

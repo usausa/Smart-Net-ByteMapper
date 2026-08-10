@@ -75,7 +75,7 @@ public class DiagnosticTests
     //-----------------------------------------------------------------------
 
     [Fact]
-    public void ValidEndpointEmitsNoDiagnostic()
+    public void ValidEndPointEmitsNoDiagnostic()
     {
         var diagnostics = AspNetCoreGeneratorTestHelper.GetDiagnostics(Entity +
             """

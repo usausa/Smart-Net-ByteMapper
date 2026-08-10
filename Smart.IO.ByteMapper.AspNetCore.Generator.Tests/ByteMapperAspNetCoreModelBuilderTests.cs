@@ -3,7 +3,7 @@ namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 using System.Linq;
 
 // Driver-based tests for the parse stage. The regression target is size resolution: a profile
-// endpoint must take its record size from the profile's [MapProfile], not from the entity's [Map].
+// endPoint must take its record size from the profile's [MapProfile], not from the entity's [Map].
 public class ByteMapperAspNetCoreModelBuilderTests
 {
     private const string Source = """
@@ -60,7 +60,7 @@ public class ByteMapperAspNetCoreModelBuilderTests
     }
 
     [Fact]
-    public void WhenProfileEndpointThenBindingUsesMapProfileSize()
+    public void WhenProfileEndPointThenBindingUsesMapProfileSize()
     {
         var binding = FindBindingSource("SampleDataCodeNameMappers");
 
@@ -69,7 +69,7 @@ public class ByteMapperAspNetCoreModelBuilderTests
     }
 
     [Fact]
-    public void WhenDefaultEndpointThenBindingUsesMapSize()
+    public void WhenDefaultEndPointThenBindingUsesMapSize()
     {
         var binding = FindBindingSource("SampleDataMappers");
 
@@ -78,7 +78,7 @@ public class ByteMapperAspNetCoreModelBuilderTests
     }
 
     [Fact]
-    public void WhenProfileEndpointThenRegisteredWithProfileType()
+    public void WhenProfileEndPointThenRegisteredWithProfileType()
     {
         var sources = AspNetCoreGeneratorTestHelper.GetGeneratedSources(Source);
         var bootstrap = sources.Single(static s => s.Contains("__ByteMapperAspNetCoreBootstrap", StringComparison.Ordinal));

@@ -7,7 +7,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor ReaderWithoutWriter { get; } = new(
         id: "SBM1001",
         title: "Reader has no matching writer",
-        messageFormat: "An endpoint binding needs both a [ByteReader] and a [ByteWriter] for the same entity and profile. reader=[{0}], entity=[{1}]",
+        messageFormat: "An endPoint binding needs both a [ByteReader] and a [ByteWriter] for the same entity and profile. reader=[{0}], entity=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
