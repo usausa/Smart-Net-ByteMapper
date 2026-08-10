@@ -104,11 +104,11 @@ public class DiagnosticTests
     }
 
     // -----------------------------------------------------------------------
-    // SBM0006 — レンジの重複
+    // SBM0005 — レンジの重複
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0006_OverlappingMembers_EmitsDiagnostic()
+    public void SBM0005_OverlappingMembers_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -124,7 +124,7 @@ public class DiagnosticTests
                 public int B { get; set; }
             }
 
-            public static partial class MappersSBM0006
+            public static partial class MappersSBM0005
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, OverlapRecord source);
@@ -133,15 +133,15 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0005");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0007 — レイアウトが Map(size) を超過
+    // SBM0006 — レイアウトが Map(size) を超過
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0007_MemberExceedsMapSize_EmitsDiagnostic()
+    public void SBM0006_MemberExceedsMapSize_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -154,7 +154,7 @@ public class DiagnosticTests
                 public string Name { get; set; } = default!;
             }
 
-            public static partial class MappersSBM0007a
+            public static partial class MappersSBM0006a
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, OverflowRecord source);
@@ -163,11 +163,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0007");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
     }
 
     [Fact]
-    public void SBM0007_MemberFitsExactly_DoesNotEmitDiagnostic()
+    public void SBM0006_MemberFitsExactly_DoesNotEmitDiagnostic()
     {
         const string source = """
             using System;
@@ -180,7 +180,7 @@ public class DiagnosticTests
                 public int Id { get; set; }
             }
 
-            public static partial class MappersSBM0007b
+            public static partial class MappersSBM0006b
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, ExactRecord source);
@@ -189,11 +189,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0007");
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0006");
     }
 
     [Fact]
-    public void SBM0007_FillerExceedsMapSize_EmitsDiagnostic()
+    public void SBM0006_FillerExceedsMapSize_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -205,7 +205,7 @@ public class DiagnosticTests
             {
             }
 
-            public static partial class MappersSBM0007c
+            public static partial class MappersSBM0006c
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, FillerOverflowRecord source);
@@ -214,11 +214,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0007");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
     }
 
     [Fact]
-    public void SBM0007_ConstantExceedsMapSize_EmitsDiagnostic()
+    public void SBM0006_ConstantExceedsMapSize_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -230,7 +230,7 @@ public class DiagnosticTests
             {
             }
 
-            public static partial class MappersSBM0007d
+            public static partial class MappersSBM0006d
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, ConstantOverflowRecord source);
@@ -239,11 +239,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0007");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
     }
 
     [Fact]
-    public void SBM0007_MembersWithGapAllFitWithinMapSize_DoesNotEmitDiagnostic()
+    public void SBM0006_MembersWithGapAllFitWithinMapSize_DoesNotEmitDiagnostic()
     {
         const string source = """
             using System;
@@ -259,7 +259,7 @@ public class DiagnosticTests
                 public bool Flag { get; set; }
             }
 
-            public static partial class MappersSBM0007e
+            public static partial class MappersSBM0006e
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, GapRecord source);
@@ -268,7 +268,7 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0007");
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0006");
     }
 
     // -----------------------------------------------------------------------
@@ -352,11 +352,11 @@ public class DiagnosticTests
     }
 
     // -----------------------------------------------------------------------
-    // SBM0010 — converter の Read / Write が static（インスタンスメソッドでない）
+    // SBM0008 — converter の Read / Write が static（インスタンスメソッドでない）
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0010_ConverterWithStaticWrite_EmitsDiagnostic()
+    public void SBM0008_ConverterWithStaticWrite_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -384,7 +384,7 @@ public class DiagnosticTests
                     public int Id { get; set; }
                 }
 
-                public static partial class MappersSBM0010
+                public static partial class MappersSBM0008
                 {
                     [ByteWriter]
                     public static partial void Write(Span<byte> buffer, StaticWriteRecord source);
@@ -394,15 +394,15 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0010");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0008");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0015 — [Map] 下でクラスレベルの [Map...Member] 属性が使われている（警告）
+    // SBM0012 — [Map] 下でクラスレベルの [Map...Member] 属性が使われている（警告）
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0015_MemberAttributeUnderMap_EmitsWarning()
+    public void SBM0012_MemberAttributeUnderMap_EmitsWarning()
     {
         const string source = """
             using System;
@@ -415,7 +415,7 @@ public class DiagnosticTests
                 public int Id { get; set; }
             }
 
-            public static partial class MappersSBM0015
+            public static partial class MappersSBM0012
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, MemberUnderMapRecord source);
@@ -424,11 +424,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0015");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0012");
     }
 
     [Fact]
-    public void SBM0015_PropertyMappingUnderMap_DoesNotEmitWarning()
+    public void SBM0012_PropertyMappingUnderMap_DoesNotEmitWarning()
     {
         const string source = """
             using System;
@@ -441,7 +441,7 @@ public class DiagnosticTests
                 public int Id { get; set; }
             }
 
-            public static partial class MappersSBM0015b
+            public static partial class MappersSBM0012b
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, PlainMapRecord source);
@@ -450,75 +450,75 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0015");
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0012");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0016 — [MapProfile] 下でプロパティに マッピング属性がある（警告）
+    // SBM0013 — [MapProfile] 下でプロパティに マッピング属性がある（警告）
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0016_PropertyMappingUnderProfile_EmitsWarning()
+    public void SBM0013_PropertyMappingUnderProfile_EmitsWarning()
     {
         const string source = """
             using System;
             using Smart.IO.ByteMapper;
 
-            public sealed class TargetSBM0016 { public string Code { get; set; } = default!; }
+            public sealed class TargetSBM0013 { public string Code { get; set; } = default!; }
 
             [MapProfile(8, UseDelimiter = false)]
-            [MapTextMember(nameof(TargetSBM0016.Code), 0, 8)]
-            public sealed class ProfileSBM0016
+            [MapTextMember(nameof(TargetSBM0013.Code), 0, 8)]
+            public sealed class ProfileSBM0013
             {
                 [MapText(0, 8)]
                 public string Code { get; set; } = default!;
             }
 
-            public static partial class MappersSBM0016
+            public static partial class MappersSBM0013
             {
-                [ByteWriter(Profile = typeof(ProfileSBM0016))]
-                public static partial void Write(Span<byte> buffer, TargetSBM0016 source);
+                [ByteWriter(Profile = typeof(ProfileSBM0013))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0013 source);
             }
             """;
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0016");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0013");
     }
 
     [Fact]
-    public void SBM0016_MemberOnlyProfile_DoesNotEmitWarning()
+    public void SBM0013_MemberOnlyProfile_DoesNotEmitWarning()
     {
         const string source = """
             using System;
             using Smart.IO.ByteMapper;
 
-            public sealed class TargetSBM0016b { public string Code { get; set; } = default!; }
+            public sealed class TargetSBM0013b { public string Code { get; set; } = default!; }
 
             [MapProfile(8, UseDelimiter = false)]
-            [MapTextMember(nameof(TargetSBM0016b.Code), 0, 8)]
-            public sealed class ProfileSBM0016b
+            [MapTextMember(nameof(TargetSBM0013b.Code), 0, 8)]
+            public sealed class ProfileSBM0013b
             {
             }
 
-            public static partial class MappersSBM0016b
+            public static partial class MappersSBM0013b
             {
-                [ByteWriter(Profile = typeof(ProfileSBM0016b))]
-                public static partial void Write(Span<byte> buffer, TargetSBM0016b source);
+                [ByteWriter(Profile = typeof(ProfileSBM0013b))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0013b source);
             }
             """;
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0016");
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0013");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0017 — [Map] と [MapProfile] の併用（エラー）
+    // SBM0014 — [Map] と [MapProfile] の併用（エラー）
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0017_BothMapAndMapProfile_EmitsDiagnostic()
+    public void SBM0014_BothMapAndMapProfile_EmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -530,7 +530,7 @@ public class DiagnosticTests
             {
             }
 
-            public static partial class MappersSBM0017
+            public static partial class MappersSBM0014
             {
                 [ByteWriter]
                 public static partial void Write(Span<byte> buffer, BothMapRecord source);
@@ -539,38 +539,38 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0017");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0014");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0011 — [MapProfile] のメンバー名がターゲットに無い
+    // SBM0009 — [MapProfile] のメンバー名がターゲットに無い
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0011_MemberNameNotFoundInTarget_EmitsDiagnostic()
+    public void SBM0009_MemberNameNotFoundInTarget_EmitsDiagnostic()
     {
         const string source = """
             using System;
             using Smart.IO.ByteMapper;
 
-            public sealed class TargetSBM0011 { public string Code { get; set; } = default!; }
+            public sealed class TargetSBM0009 { public string Code { get; set; } = default!; }
 
             [MapProfile(8, UseDelimiter = false)]
             [MapTextMember("Missing", 0, 8)]
-            public sealed class ProfileSBM0011
+            public sealed class ProfileSBM0009
             {
             }
 
-            public static partial class MappersSBM0011
+            public static partial class MappersSBM0009
             {
-                [ByteWriter(Profile = typeof(ProfileSBM0011))]
-                public static partial void Write(Span<byte> buffer, TargetSBM0011 source);
+                [ByteWriter(Profile = typeof(ProfileSBM0009))]
+                public static partial void Write(Span<byte> buffer, TargetSBM0009 source);
             }
             """;
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0011");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0009");
     }
 
     // -----------------------------------------------------------------------
@@ -647,7 +647,7 @@ public class DiagnosticTests
     // -----------------------------------------------------------------------
 
     [Fact]
-    public void SBM0006_FastDateTimeOverlap_EmitsDiagnostic()
+    public void SBM0005_FastDateTimeOverlap_EmitsDiagnostic()
     {
         // "yyyyMMddHHmmss" = 14バイト (0..13) と Qty(8..13) の重複が検出される
         const string source = """
@@ -673,11 +673,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0005");
     }
 
     [Fact]
-    public void SBM0007_FastDateTimeExceedsMapSize_EmitsDiagnostic()
+    public void SBM0006_FastDateTimeExceedsMapSize_EmitsDiagnostic()
     {
         // "yyyyMMddHHmmss" = 14バイト > Map(10) が検出される
         const string source = """
@@ -700,7 +700,7 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0007");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0006");
     }
 
     [Fact]
@@ -729,11 +729,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id is "SBM0006" or "SBM0007" or "SBM0018");
+        Assert.DoesNotContain(diagnostics, static d => d.Id is "SBM0005" or "SBM0006" or "SBM0015");
     }
 
     // -----------------------------------------------------------------------
-    // SBM0018 — サイズを静的に導出できないメンバーは検証スキップを警告する
+    // SBM0015 — サイズを静的に導出できないメンバーは検証スキップを警告する
     // -----------------------------------------------------------------------
 
     private const string DynamicSizeConverterSource = """
@@ -775,7 +775,7 @@ public class DiagnosticTests
         """;
 
     [Fact]
-    public void SBM0018_UnknownMemberSize_EmitsDiagnostic()
+    public void SBM0015_UnknownMemberSize_EmitsDiagnostic()
     {
         const string source = DynamicSizeConverterSource + """
 
@@ -788,11 +788,11 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.Contains(diagnostics, static d => d.Id == "SBM0018");
+        Assert.Contains(diagnostics, static d => d.Id == "SBM0015");
     }
 
     [Fact]
-    public void SBM0018_ValidateLayoutFalse_DoesNotEmitDiagnostic()
+    public void SBM0015_ValidateLayoutFalse_DoesNotEmitDiagnostic()
     {
         const string source = DynamicSizeConverterSource + """
 
@@ -805,7 +805,7 @@ public class DiagnosticTests
 
         var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
 
-        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0018");
+        Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0015");
     }
 
     // -----------------------------------------------------------------------

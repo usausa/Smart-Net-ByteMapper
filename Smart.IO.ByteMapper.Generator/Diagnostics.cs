@@ -37,7 +37,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor RangeOverlap { get; } = new(
-        id: "SBM0006",
+        id: "SBM0005",
         title: "Range overlap detected",
         messageFormat: "Range overlap detected. type=[{0}]",
         category: "Usage",
@@ -45,7 +45,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor LayoutExceedsSize { get; } = new(
-        id: "SBM0007",
+        id: "SBM0006",
         title: "Layout exceeds Map size",
         messageFormat: "Layout exceeds Map(size). type=[{0}]",
         category: "Usage",
@@ -53,7 +53,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor UnsupportedBinaryType { get; } = new(
-        id: "SBM0008",
+        id: "SBM0007",
         title: "Unsupported type for MapBinary",
         messageFormat: "Unsupported type for MapBinary. method=[{0}], property=[{1}]",
         category: "Usage",
@@ -61,7 +61,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ConverterContractMismatch { get; } = new(
-        id: "SBM0010",
+        id: "SBM0008",
         title: "Custom Converter does not satisfy contract",
         messageFormat: "Custom Converter does not satisfy contract. method=[{0}], property=[{1}]",
         category: "Usage",
@@ -69,7 +69,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ProfilePropertyNotFound { get; } = new(
-        id: "SBM0011",
+        id: "SBM0009",
         title: "Profile property not found in target",
         messageFormat: "Profile property not found in target type. method=[{0}], property=[{1}]",
         category: "Usage",
@@ -77,7 +77,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ProfileMissingMapAttribute { get; } = new(
-        id: "SBM0013",
+        id: "SBM0010",
         title: "Profile type missing [Map] attribute",
         messageFormat: "Profile type must have [Map] attribute. method=[{0}]",
         category: "Usage",
@@ -85,7 +85,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor TargetNotInstantiatable { get; } = new(
-        id: "SBM0014",
+        id: "SBM0011",
         title: "Target type is not instantiatable",
         messageFormat: "Target type must have a public parameterless constructor for return-value Read method. method=[{0}]",
         category: "Usage",
@@ -93,7 +93,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor MemberAttributeRequiresProfile { get; } = new(
-        id: "SBM0015",
+        id: "SBM0012",
         title: "Member-mapping attribute requires [MapProfile]",
         messageFormat: "Member-mapping attributes are only honored under [MapProfile] and are ignored under [Map]. type=[{0}]",
         category: "Usage",
@@ -101,7 +101,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor PropertyMappingIgnoredUnderProfile { get; } = new(
-        id: "SBM0016",
+        id: "SBM0013",
         title: "Property-level mapping ignored under [MapProfile]",
         messageFormat: "Property-level mapping attributes are ignored under [MapProfile]; use the [Map...Member] attributes. type=[{0}]",
         category: "Usage",
@@ -109,7 +109,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ConflictingMapAttributes { get; } = new(
-        id: "SBM0017",
+        id: "SBM0014",
         title: "[Map] and [MapProfile] cannot be combined",
         messageFormat: "[Map] and [MapProfile] cannot be specified on the same type. type=[{0}]",
         category: "Usage",
@@ -117,7 +117,7 @@ internal static class Diagnostics
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor UnknownMemberSize { get; } = new(
-        id: "SBM0018",
+        id: "SBM0015",
         title: "Member size is not statically known",
         messageFormat: "Member size is not statically known; overlap and size validation skip the member. member=[{0}]",
         category: "Usage",

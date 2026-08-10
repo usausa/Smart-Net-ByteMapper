@@ -51,8 +51,8 @@ internal static class ByteMapperModelBuilder
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.InvalidMethodSignature, syntax.Identifier.GetLocation(), symbol.Name));
         }
 
-        // Check for SBM0014: return-value reader requires parameterless constructor
-        // SBM0014 チェック: 戻り値型リーダーはデフォルトコンストラクターが必要
+        // Check for SBM0011: return-value reader requires parameterless constructor
+        // SBM0011 チェック: 戻り値型リーダーはデフォルトコンストラクターが必要
         if (shape == MapperShape.NewInstance)
         {
             if (targetType is INamedTypeSymbol namedTarget)
@@ -99,7 +99,7 @@ internal static class ByteMapperModelBuilder
         var mapAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
         var mapProfileAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapProfileAttributeName);
 
-        // SBM0017: [Map] and [MapProfile] are mutually exclusive / [Map] と [MapProfile] は併用不可
+        // SBM0014: [Map] and [MapProfile] are mutually exclusive / [Map] と [MapProfile] は併用不可
         if (mapAttr is not null && mapProfileAttr is not null)
         {
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.ConflictingMapAttributes, syntax.GetLocation(), attrSourceType.Name));
@@ -183,7 +183,7 @@ internal static class ByteMapperModelBuilder
         {
             members = CollectMemberMappings(compilation, symbol, attrSourceType, targetType, propertyAttrBase, syntax, diagnostics);
 
-            // SBM0016: property-level mapping attributes are ignored under [MapProfile] / [MapProfile] 下ではプロパティのマッピング属性は無視される
+            // SBM0013: property-level mapping attributes are ignored under [MapProfile] / [MapProfile] 下ではプロパティのマッピング属性は無視される
             if (HasPropertyMappingAttribute(attrSourceType, propertyAttrBase))
             {
                 diagnostics.Add(new DiagnosticInfo(Diagnostics.PropertyMappingIgnoredUnderProfile, syntax.GetLocation(), attrSourceType.Name));
@@ -193,7 +193,7 @@ internal static class ByteMapperModelBuilder
         {
             members = CollectMembers(compilation, symbol, attrSourceType, targetType, profileType, propertyAttrBase, syntax, diagnostics);
 
-            // SBM0015: class-level [Map...Member] attributes are ignored under [Map] / [Map] 下ではクラスレベルの [Map...Member] 属性は無視される
+            // SBM0012: class-level [Map...Member] attributes are ignored under [Map] / [Map] 下ではクラスレベルの [Map...Member] 属性は無視される
             if (HasMemberMappingAttribute(attrSourceType, propertyAttrBase))
             {
                 diagnostics.Add(new DiagnosticInfo(Diagnostics.MemberAttributeRequiresProfile, syntax.GetLocation(), attrSourceType.Name));
@@ -478,14 +478,14 @@ internal static class ByteMapperModelBuilder
         var converterType = converterBase.TypeArguments[0];
         var converterFqn = converterType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
 
-        // SBM0008: check [ConverterSupportedTypes] on the attribute class
-        // SBM0008 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
+        // SBM0007: check [ConverterSupportedTypes] on the attribute class
+        // SBM0007 チェック: 属性クラスの [ConverterSupportedTypes] でプロパティ型が許可されているか検証する
         if (!CheckSupportedTypes(attrClass, targetProp.Type, syntax, methodSymbol, targetProp, errors))
         {
             return null;
         }
 
-        // SBM0010: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
+        // SBM0008: converter Read/Write must be instance methods / コンバーターの Read/Write はインスタンスメソッドである必要がある
         // The source builder always emits instance calls (field.Read / field.Write), so a static
         // Read or Write would break with a plain compile error rather than a diagnostic.
         var namedConverterType = converterType as INamedTypeSymbol;
@@ -518,9 +518,9 @@ internal static class ByteMapperModelBuilder
             sizeKind,
             constSize);
 
-        // Size 0 = statically unknown (SBM0018): the member is excluded from layout validation and the
+        // Size 0 = statically unknown (SBM0015): the member is excluded from layout validation and the
         // emitted code falls back to the converter's runtime Size for the slice length.
-        // Size 0 = 静的に不明 (SBM0018): レイアウト検証から除外され、生成コードのスライス長は
+        // Size 0 = 静的に不明 (SBM0015): レイアウト検証から除外され、生成コードのスライス長は
         // コンバーターの実行時 Size にフォールバックする。
         var size = constSize ?? 0;
 
@@ -547,9 +547,9 @@ internal static class ByteMapperModelBuilder
             .Any(p => p.GetAttributes().Any(a => a.AttributeClass?.FindConverterAttributeBase(propertyAttrBase) is not null));
 
     // Checks [ConverterSupportedTypes] on the attribute class against the target property type.
-    // Returns false (and adds SBM0008) when the type is not supported.
+    // Returns false (and adds SBM0007) when the type is not supported.
     // 属性クラスの [ConverterSupportedTypes] をターゲットプロパティ型と照合する。
-    // 型が非対応の場合は false を返し SBM0008 を追加する。
+    // 型が非対応の場合は false を返し SBM0007 を追加する。
     private static bool CheckSupportedTypes(
         INamedTypeSymbol attrClass,
         ITypeSymbol propType,
@@ -836,10 +836,10 @@ internal static class ByteMapperModelBuilder
 
     // First-converter-arg size convention: an int is the length itself; a string is a format whose
     // length equals the byte size (e.g. FastDateTimeConverter's "yyyyMMdd" → 8). Anything else is
-    // statically unknown (SBM0018 is reported and layout validation skips the member).
+    // statically unknown (SBM0015 is reported and layout validation skips the member).
     // コンバーター第1引数のサイズ規約: int は長さそのもの、string は書式でその長さがバイトサイズ
     // （例: FastDateTimeConverter の "yyyyMMdd" → 8）。それ以外は静的に不明
-    // （SBM0018 を報告しレイアウト検証はスキップされる）。
+    // （SBM0015 を報告しレイアウト検証はスキップされる）。
     private static int? ResolveFirstArgSize(TypedConstant? firstConverterArg) => firstConverterArg?.Value switch
     {
         int length => length,
@@ -861,9 +861,9 @@ internal static class ByteMapperModelBuilder
         members.Sort((a, b) => a.Offset.CompareTo(b.Offset));
         typeMappings.Sort((a, b) => a.Offset.CompareTo(b.Offset));
 
-        // SBM0018: a member without a statically-known size participates as zero-width below, so the
+        // SBM0015: a member without a statically-known size participates as zero-width below, so the
         // overlap/size checks cannot cover it — make the gap visible instead of staying silent.
-        // SBM0018: サイズが静的に不明なメンバーは以降の検査に幅0で参加するため、重複・サイズ検査の
+        // SBM0015: サイズが静的に不明なメンバーは以降の検査に幅0で参加するため、重複・サイズ検査の
         // 対象外になる — 黙ってスキップせず警告で可視化する。
         if (validateLayout)
         {
@@ -891,7 +891,7 @@ internal static class ByteMapperModelBuilder
             }
         }
 
-        // SBM0006: Validate overlap / 範囲の重複を検証する
+        // SBM0005: Validate overlap / 範囲の重複を検証する
         if (validateLayout)
         {
             for (var i = 0; i < allRanges.Count - 1; i++)
@@ -904,7 +904,7 @@ internal static class ByteMapperModelBuilder
             }
         }
 
-        // SBM0007: Validate that no mapping exceeds Map(size) / Map(size) を超えるマッピングがないか検証する
+        // SBM0006: Validate that no mapping exceeds Map(size) / Map(size) を超えるマッピングがないか検証する
         if (allRanges.Count > 0)
         {
             var maxEnd = allRanges.Max(static r => r.Offset + r.Size);
