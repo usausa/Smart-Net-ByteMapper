@@ -20,6 +20,7 @@ public sealed class AsciiConverter
         this.filler = filler;
     }
 
+    // ReShaper disable once RedundantUnsafeContext
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public unsafe string Read(ReadOnlySpan<byte> buffer)
     {

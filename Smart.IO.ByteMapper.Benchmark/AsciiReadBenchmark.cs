@@ -56,6 +56,7 @@ public class AsciiReadBenchmark
         Encoding.ASCII.GetString(bytes.Slice(index, length));
 
     // ---- Current implementation (現行) ----
+    // ReShaper disable once RedundantUnsafeContext
     [MethodImpl(MethodImplOptions.NoInlining)]
     private static unsafe string GetAsciiToUtf16(ReadOnlySpan<byte> bytes, int index, int length)
     {

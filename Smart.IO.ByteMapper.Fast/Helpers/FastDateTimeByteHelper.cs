@@ -153,6 +153,7 @@ internal static partial class FastDateTimeByteHelper
     // Parse
     //--------------------------------------------------------------------------------
 
+    // ReShaper disable once RedundantUnsafeContext
     public static unsafe bool TryParseDateTime(ReadOnlySpan<byte> bytes, int index, FastDateTimeFormatEntry[] entries, DateTimeKind kind, out DateTime value)
     {
         fixed (byte* pPinned = bytes)
