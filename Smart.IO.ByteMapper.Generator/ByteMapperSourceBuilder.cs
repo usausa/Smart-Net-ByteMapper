@@ -129,7 +129,7 @@ internal static class ByteMapperSourceBuilder
             }).ToArray();
             numberedMethods.Add(m with
             {
-                Members = new EquatableArray<MemberMappingModel>(fixedMembers)
+                Members = [with(fixedMembers)]
             });
         }
 
