@@ -21,7 +21,7 @@
   </Target>
 
   <PropertyGroup>
-    <PackageId>Smart.IO.ByteMapper.AspNetCore</PackageId>
+    <PackageId>Usa.Smart.IO.ByteMapper.AspNetCore</PackageId>
     <Title>Smart.IO.ByteMapper.AspNetCore</Title>
     <Description>Smart byte mapper library ASP.NET Core extensions (AOT compatible).</Description>
     <PackageTags>sourcegenerator aspnetcore</PackageTags>

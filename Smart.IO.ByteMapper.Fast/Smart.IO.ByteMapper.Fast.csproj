@@ -8,6 +8,13 @@
     <CodeAnalysisRuleSet>..\Analyzers.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Usa.Smart.IO.ByteMapper.Fast</PackageId>
+    <Title>Smart.IO.ByteMapper.Fast</Title>
+    <Description>Template source generator.</Description>
+    <PackageTags>sourcegenerator</PackageTags>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper\Smart.IO.ByteMapper.csproj" />
   </ItemGroup>

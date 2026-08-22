@@ -22,7 +22,7 @@
   </Target>
 
   <PropertyGroup>
-    <PackageId>Smart.IO.ByteMapper</PackageId>
+    <PackageId>Usa.Smart.IO.ByteMapper</PackageId>
     <Title>Smart.IO.ByteMapper</Title>
     <Description>Template source generator.</Description>
     <PackageTags>sourcegenerator</PackageTags>
