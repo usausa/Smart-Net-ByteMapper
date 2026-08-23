@@ -74,6 +74,7 @@ public sealed class DateTimeTextConverter<T>
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [SkipLocalsInit]
     public void Write(Span<byte> destination, T? value)
     {
         // null is written as an all-filler field / null は全フィラーのフィールドとして書き込む

@@ -430,20 +430,21 @@ internal static partial class FastDateTimeByteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe void FormatDateTimePart4(byte* pBytes, int value, int length)
     {
+        var table = Table;
         if (length == 4)
         {
-            var hi = Table[value / 100];
-            var lo = Table[value % 100];
-            *pBytes = hi[0];
-            *(pBytes + 1) = hi[1];
-            *(pBytes + 2) = lo[0];
-            *(pBytes + 3) = lo[1];
+            var hi = (value / 100) * 2;
+            var lo = (value % 100) * 2;
+            *pBytes = table[hi];
+            *(pBytes + 1) = table[hi + 1];
+            *(pBytes + 2) = table[lo];
+            *(pBytes + 3) = table[lo + 1];
         }
         else if (length == 2)
         {
-            var lo = Table[value % 100];
-            *pBytes = lo[0];
-            *(pBytes + 1) = lo[1];
+            var lo = (value % 100) * 2;
+            *pBytes = table[lo];
+            *(pBytes + 1) = table[lo + 1];
         }
         else if (length > 4)
         {
@@ -453,20 +454,20 @@ internal static partial class FastDateTimeByteHelper
                 *(pBytes + offset++) = Num0;
             }
 
-            var hi = Table[value / 100];
-            var lo = Table[value % 100];
-            *(pBytes + offset++) = hi[0];
-            *(pBytes + offset++) = hi[1];
-            *(pBytes + offset++) = lo[0];
-            *(pBytes + offset) = lo[1];
+            var hi = (value / 100) * 2;
+            var lo = (value % 100) * 2;
+            *(pBytes + offset++) = table[hi];
+            *(pBytes + offset++) = table[hi + 1];
+            *(pBytes + offset++) = table[lo];
+            *(pBytes + offset) = table[lo + 1];
         }
         else if (length == 3)
         {
-            var hi = Table[value / 100];
-            var lo = Table[value % 100];
-            *pBytes = hi[1];
-            *(pBytes + 1) = lo[0];
-            *(pBytes + 2) = lo[1];
+            var hi = (value / 100) * 2;
+            var lo = (value % 100) * 2;
+            *pBytes = table[hi + 1];
+            *(pBytes + 1) = table[lo];
+            *(pBytes + 2) = table[lo + 1];
         }
         else
         {
@@ -477,11 +478,12 @@ internal static partial class FastDateTimeByteHelper
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe void FormatDateTimePart2(byte* pBytes, int value, int length)
     {
+        var table = Table;
         if (length == 2)
         {
-            var bytes = Table[value];
-            *pBytes = bytes[0];
-            *(pBytes + 1) = bytes[1];
+            var bytes = value * 2;
+            *pBytes = table[bytes];
+            *(pBytes + 1) = table[bytes + 1];
         }
         else if (length > 2)
         {
@@ -491,32 +493,33 @@ internal static partial class FastDateTimeByteHelper
                 *(pBytes + offset++) = Num0;
             }
 
-            var bytes = Table[value];
-            *(pBytes + offset++) = bytes[0];
-            *(pBytes + offset) = bytes[1];
+            var bytes = value * 2;
+            *(pBytes + offset++) = table[bytes];
+            *(pBytes + offset) = table[bytes + 1];
         }
         else
         {
-            var bytes = Table[value];
-            *pBytes = bytes[1];
+            var bytes = value * 2;
+            *pBytes = table[bytes + 1];
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static unsafe void FormatDateTimeMillisecond(byte* pBytes, int value, int length)
     {
+        var table = Table;
         if (length == 3)
         {
-            var lo = Table[value % 100];
+            var lo = (value % 100) * 2;
             *pBytes = (byte)(Num0 + (value / 100));
-            *(pBytes + 1) = lo[0];
-            *(pBytes + 2) = lo[1];
+            *(pBytes + 1) = table[lo];
+            *(pBytes + 2) = table[lo + 1];
         }
         else if (length == 2)
         {
-            var lo = Table[value % 100];
+            var lo = (value % 100) * 2;
             *pBytes = (byte)(Num0 + (value / 100));
-            *(pBytes + 1) = lo[0];
+            *(pBytes + 1) = table[lo];
         }
         else
         {
