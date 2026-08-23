@@ -2,6 +2,7 @@ namespace Smart.IO.ByteMapper.Helpers;
 
 internal static partial class FastNumberByteHelper
 {
+    // ReSharper disable once UseCollectionExpression
 #pragma warning disable IDE0300
     private static readonly long[] Table =
     {
