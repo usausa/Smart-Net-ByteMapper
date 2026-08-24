@@ -68,7 +68,6 @@ public sealed class TextConverter
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, size, padding, filler);
     }
 
-    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void WriteWithPooledBuffer(Span<byte> destination, string value, int maxByteCount)
     {

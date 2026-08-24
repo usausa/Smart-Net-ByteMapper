@@ -14,8 +14,6 @@ public abstract class ByteMapperPropertyAttribute<TConverter> : Attribute
     }
 }
 
-// Specifies the property types that a converter attribute supports.
-// The source generator emits SBM0007 when the mapped property type is not in the list.
 [AttributeUsage(AttributeTargets.Class, Inherited = false)]
 public sealed class ConverterSupportedTypesAttribute : Attribute
 {

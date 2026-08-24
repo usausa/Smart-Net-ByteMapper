@@ -4,7 +4,10 @@ using Smart.IO.ByteMapper.Converters;
 
 Console.WriteLine("=== Smart.IO.ByteMapper AOT Test ===");
 
-// --- Core: ByteMapper read/write ---
+//-----------------------------------------------------------------------
+// Core
+//-----------------------------------------------------------------------
+
 var record = new SampleRecord
 {
     Code = "ITEM0001",
@@ -50,8 +53,10 @@ if (readBack.Value != record.Value)
     return;
 }
 
-// --- Fast converters ---
-// FastIntegerConverter<int>
+//-----------------------------------------------------------------------
+// Fast
+//-----------------------------------------------------------------------
+
 var intConverter = new FastIntegerConverter<int>(10);
 Span<byte> intBuf = stackalloc byte[10];
 intBuf.Fill(0x20);
@@ -64,7 +69,6 @@ if (intResult != 42)
     return;
 }
 
-// FastDecimalConverter
 var decConverter = new FastDecimalConverter(12, scale: 2);
 Span<byte> decBuf = stackalloc byte[12];
 decBuf.Fill(0x20);
@@ -77,7 +81,6 @@ if (decResult != 123.45m)
     return;
 }
 
-// FastDateTimeConverter
 var dtConverter = new FastDateTimeConverter("yyyyMMddHHmmss");
 Span<byte> dtBuf = stackalloc byte[14];
 var dt = new DateTime(2025, 1, 15, 10, 30, 0);
@@ -90,7 +93,6 @@ if (dtResult != dt)
     return;
 }
 
-// FastUnicodeConverter
 var unicodeConverter = new FastUnicodeConverter(20);
 Span<byte> unicodeBuf = stackalloc byte[20];
 unicodeBuf.Fill(0x20);

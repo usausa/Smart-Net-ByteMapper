@@ -6,10 +6,6 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-// Date/time text converter. Null maps to an all-filler field: Read returns null when the field is
-// all filler bytes, and Write fills the field with the filler byte for a null value.
-// 日時テキストコンバーター。null は全フィラーのフィールドに対応付ける: 全フィラーの読み取りは null を
-// 返し、null の書き込みはフィールドをフィラーで埋める。
 #pragma warning disable IDE0032
 public sealed class DateTimeTextConverter<T>
     where T : struct
@@ -20,7 +16,6 @@ public sealed class DateTimeTextConverter<T>
     private readonly string format;
     private readonly DateTimeStyles style;
     private readonly IFormatProvider provider;
-    // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
     private readonly int readCharCount;
     private readonly int writeCharCount;
     private readonly int writeByteCount;
@@ -49,7 +44,6 @@ public sealed class DateTimeTextConverter<T>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public T? Read(ReadOnlySpan<byte> source)
     {
-        // trim filler from right
         var count = size;
         while ((count > 0) && (source[count - 1] == filler))
         {
@@ -58,10 +52,7 @@ public sealed class DateTimeTextConverter<T>
 
         if (count == 0)
         {
-            // An all-filler field represents null. Non-nullable properties receive default via the
-            // generator-emitted .GetValueOrDefault().
-            // 全フィラーのフィールドは null を表す。非 nullable プロパティにはジェネレーターが付与する
-            // .GetValueOrDefault() を通じて default が入る。
+            // All filler returns null
             return null;
         }
 
@@ -77,9 +68,9 @@ public sealed class DateTimeTextConverter<T>
     [SkipLocalsInit]
     public void Write(Span<byte> destination, T? value)
     {
-        // null is written as an all-filler field / null は全フィラーのフィールドとして書き込む
         if (value is null)
         {
+            // null write all-filler field
             destination[..size].Fill(filler);
             return;
         }
@@ -101,7 +92,6 @@ public sealed class DateTimeTextConverter<T>
         return ParseValue(chars[..charCount]);
     }
 
-    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
     [MethodImpl(MethodImplOptions.NoInlining)]
     private T ReadWithPooledBuffer(ReadOnlySpan<byte> source)
     {
@@ -133,7 +123,6 @@ public sealed class DateTimeTextConverter<T>
         }
     }
 
-    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void WriteWithPooledBuffer(Span<byte> destination, T value)
     {

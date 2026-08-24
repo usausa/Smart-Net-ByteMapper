@@ -1,10 +1,13 @@
+namespace Smart.IO.ByteMapper.Benchmark;
+
 using System.Reflection;
 
 using BenchmarkDotNet.Running;
 
-BenchmarkSwitcher.FromAssembly(typeof(Program).GetTypeInfo().Assembly).Run(args);
-
-// Workaround for top-level statement partial class requirement
-internal partial class Program
+internal static class Program
 {
+    public static void Main(string[] args)
+    {
+        BenchmarkSwitcher.FromAssembly(typeof(Program).GetTypeInfo().Assembly).Run(args);
+    }
 }

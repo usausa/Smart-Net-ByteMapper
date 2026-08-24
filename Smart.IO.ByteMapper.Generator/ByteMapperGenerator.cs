@@ -10,8 +10,6 @@ using Smart.IO.ByteMapper.Generator.Models;
 
 using SourceGenerateHelper;
 
-// Incremental generator orchestrator. Parsing lives in ByteMapperModelBuilder and source emission in
-// ByteMapperSourceBuilder; this type only wires the pipeline and reports diagnostics.
 [Generator]
 public sealed class ByteMapperGenerator : IIncrementalGenerator
 {
@@ -55,7 +53,6 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
             context.ReportDiagnostic(error);
         }
 
-        // Report per-method diagnostics / メソッドごとの診断情報を報告する
         foreach (var m in results.SelectValue())
         {
             foreach (var err in m.Diagnostics)

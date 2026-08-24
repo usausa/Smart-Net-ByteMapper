@@ -7,7 +7,7 @@ internal static class Program
 {
     public static void Main()
     {
-        // Basic smoke test: BinaryConverter<int>
+        // BinaryConverter<int>
         var conv = new BinaryConverter<int>();
         var buf = new byte[4];
         conv.Write(buf, 12345);

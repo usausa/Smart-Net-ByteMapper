@@ -7,8 +7,6 @@ using Smart.IO.ByteMapper.Generator.Models;
 
 using SourceGenerateHelper;
 
-// Direct unit tests for the emit stage. Models are constructed in-memory and the emitted source is
-// asserted as a string — no Roslyn compilation/driver needed.
 public class ByteMapperSourceBuilderTests
 {
     private const string EntityFqn = "global::Test.Entity";

@@ -12,8 +12,6 @@ internal sealed class BenchmarkConfig : ManualConfig
 {
     public BenchmarkConfig()
     {
-        // JitOptimizationsValidator is not compatible with InProcessEmitToolchain
-        // AddValidator(JitOptimizationsValidator.FailOnError);
         AddDiagnoser(MemoryDiagnoser.Default);
         AddColumn(StatisticColumn.OperationsPerSecond);
         AddJob(Job.MediumRun.WithJit(Jit.RyuJit).WithPlatform(Platform.X64).WithToolchain(InProcessEmitToolchain.Instance));

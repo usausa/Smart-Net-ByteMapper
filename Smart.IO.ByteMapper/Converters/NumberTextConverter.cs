@@ -6,12 +6,6 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-// Number text converter. Null maps to an all-filler field: Read returns null when the trimmed field
-// is empty (all filler bytes), and Write fills the field with the filler byte for a null value.
-// Null detection requires trim (the default); with trim disabled an all-filler field fails to parse.
-// 数値テキストコンバーター。null は全フィラーのフィールドに対応付ける: トリム後が空（全フィラー）の
-// 読み取りは null を返し、null の書き込みはフィールドをフィラーで埋める。
-// null 判定は trim（既定で有効）が前提で、trim 無効時の全フィラーはパース失敗になる。
 #pragma warning disable IDE0032
 public sealed class NumberTextConverter<T>
     where T : struct
@@ -24,7 +18,6 @@ public sealed class NumberTextConverter<T>
     private readonly string? format;
     private readonly NumberStyles style;
     private readonly IFormatProvider provider;
-    // Precomputed max buffer sizes to avoid per-call virtual dispatch on encoding.
     private readonly int readCharCount;
     private readonly int writeCharCount;
     private readonly int writeByteCount;
@@ -65,10 +58,7 @@ public sealed class NumberTextConverter<T>
         }
         if (count == 0)
         {
-            // An all-filler field represents null. Non-nullable properties receive default via the
-            // generator-emitted .GetValueOrDefault().
-            // 全フィラーのフィールドは null を表す。非 nullable プロパティにはジェネレーターが付与する
-            // .GetValueOrDefault() を通じて default が入る。
+            // All filler returns null
             return null;
         }
         if (readCharCount <= ByteMapperHelpers.StackallocCharThreshold)
@@ -83,9 +73,9 @@ public sealed class NumberTextConverter<T>
     [SkipLocalsInit]
     public void Write(Span<byte> destination, T? value)
     {
-        // null is written as an all-filler field / null は全フィラーのフィールドとして書き込む
         if (value is null)
         {
+            // null write all-filler field
             destination[..size].Fill(filler);
             return;
         }
@@ -107,7 +97,6 @@ public sealed class NumberTextConverter<T>
         return ParseValue(chars[..charCount]);
     }
 
-    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
     [MethodImpl(MethodImplOptions.NoInlining)]
     private T ReadWithPooledBuffer(ReadOnlySpan<byte> source)
     {
@@ -134,7 +123,6 @@ public sealed class NumberTextConverter<T>
         ByteMapperHelpers.CopyWithPadding(encoded[..count], destination, Size, padding, filler);
     }
 
-    // Keep the rare large-buffer path out of the inlined fast path (try/finally blocks inlining).
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void WriteWithPooledBuffer(Span<byte> destination, T value)
     {
