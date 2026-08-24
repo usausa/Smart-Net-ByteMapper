@@ -4,9 +4,6 @@ using System;
 using System.Collections.Frozen;
 using System.Collections.Generic;
 
-// Immutable registry of ByteMapperBinding and ByteMapperArrayBinding<T> instances,
-// keyed by (Type entity, Type? profile). Populated once at startup by the source-generator
-// produced bootstrap helper; no reflection is involved after construction.
 public sealed class ByteMapperRegistry
 {
     private readonly FrozenDictionary<(Type Type, Type? Profile), ByteMapperBinding> singleBindings;
@@ -20,7 +17,9 @@ public sealed class ByteMapperRegistry
         arrayBindings = arrayDict.ToFrozenDictionary();
     }
 
-    // ---- single entity ----
+    //-----------------------------------------------------------------------
+    // Single
+    //-----------------------------------------------------------------------
 
     public ByteMapperBinding<T>? GetBinding<T>()
         => singleBindings.TryGetValue((typeof(T), null), out var v) ? (ByteMapperBinding<T>)v : null;
@@ -32,14 +31,13 @@ public sealed class ByteMapperRegistry
     public ByteMapperBinding? GetBinding(Type type, Type? profileType = null)
         => singleBindings.GetValueOrDefault((type, profileType));
 
-    // Returns true when the type has at least one binding registered, regardless of profile.
-    // Used by formatters to decide whether they can handle the type before the request profile is known.
     public bool HasAnyBinding(Type type)
     {
         if (singleBindings.ContainsKey((type, null)))
         {
             return true;
         }
+
         foreach (var key in singleBindings.Keys)
         {
             if (key.Type == type)
@@ -50,7 +48,9 @@ public sealed class ByteMapperRegistry
         return false;
     }
 
-    // ---- array / enumerable ----
+    //-----------------------------------------------------------------------
+    // Array / Enumerable
+    //-----------------------------------------------------------------------
 
     public ByteMapperArrayBinding<T>? GetArrayBinding<T>()
         => arrayBindings.TryGetValue((typeof(T), null), out var v) ? (ByteMapperArrayBinding<T>)v : null;

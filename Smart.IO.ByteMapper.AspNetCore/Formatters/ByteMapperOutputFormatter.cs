@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-// MVC OutputFormatter that serialises objects to binary using ByteMapper source-generated mappers.
-// AOT/Trim safe: no reflection after startup.
 public sealed class ByteMapperOutputFormatter : OutputFormatter
 {
     private readonly ByteMapperRegistry registry;
@@ -48,13 +46,6 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         return registry.HasAnyBinding(type);
     }
 
-    // Per-request refinement over CanWriteType: when no profile is declared the default binding must
-    // exist, so an entity registered only under profiles no longer negotiates successfully and then
-    // produces an empty response. With a profile declared the request is claimed, and a missing
-    // profile binding surfaces as a configuration error in WriteResponseBodyAsync.
-    // CanWriteType のリクエスト単位の絞り込み: プロファイル未指定時はデフォルトバインディングの存在を
-    // 要求し、プロファイルのみ登録のエンティティが交渉を通過して空レスポンスになる事態を防ぐ。
-    // プロファイル指定時はリクエストを引き受け、未登録は WriteResponseBodyAsync で設定エラーとして表面化させる。
     public override bool CanWriteResult(OutputFormatterCanWriteContext context)
     {
         if (!base.CanWriteResult(context))
@@ -79,9 +70,8 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
-        // Type itself may be IEnumerable<T>
-        if (type.IsGenericType &&
-            type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        // IEnumerable<T>
+        if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
         {
             return type.GetGenericArguments()[0];
         }
@@ -143,18 +133,10 @@ public sealed class ByteMapperOutputFormatter : OutputFormatter
         }
     }
 
-    // Resolves the binding for the current request. A declared profile must resolve exactly — falling
-    // back to the default layout would silently mis-frame the data — and a missing binding is a server
-    // configuration error reported like the Minimal API filters do.
-    // 現在のリクエストのバインディングを解決する。プロファイル指定時は厳密に解決する（デフォルトレイアウトへの
-    // フォールバックはデータのフレーミングを黙って壊す）。未登録は Minimal API フィルターと同様にサーバー設定エラー。
     private ByteMapperBinding GetRequiredBinding(Type elementType, Type? profile)
     {
-        var binding = profile is not null
-            ? registry.GetBinding(elementType, profile)
-            : registry.GetBinding(elementType);
-        return binding ?? throw new InvalidOperationException(
-            $"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
+        var binding = profile is not null ? registry.GetBinding(elementType, profile) : registry.GetBinding(elementType);
+        return binding ?? throw new InvalidOperationException($"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
     }
 
     private static Type ResolveElementType(Type type)

@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Formatters;
 
-// MVC InputFormatter that deserialises binary bodies using ByteMapper source-generated mappers.
-// AOT/Trim safe: no reflection after startup.
 public sealed class ByteMapperInputFormatter : InputFormatter
 {
     private readonly ByteMapperRegistry registry;
@@ -42,13 +40,6 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         return registry.HasAnyBinding(type);
     }
 
-    // Per-request refinement over CanReadType: when no profile is declared the default binding must
-    // exist (an entity registered only under profiles is not readable without one). With a profile
-    // declared the request is claimed, and a missing profile binding surfaces as a configuration
-    // error in ReadRequestBodyAsync instead of being hidden by content negotiation.
-    // CanReadType のリクエスト単位の絞り込み: プロファイル未指定時はデフォルトバインディングの存在を
-    // 要求する（プロファイルのみ登録のエンティティはプロファイル無しでは読めない）。プロファイル指定時は
-    // リクエストを引き受け、バインディング未登録は交渉で隠さず ReadRequestBodyAsync で設定エラーとして表面化させる。
     public override bool CanRead(InputFormatterContext context)
     {
         if (!base.CanRead(context))
@@ -67,9 +58,8 @@ public sealed class ByteMapperInputFormatter : InputFormatter
     [UnconditionalSuppressMessage("Trimming", "IL2070", Justification = "Type is a well-known registered ByteMapper entity type; interface metadata is preserved by the source generator.")]
     private static Type? GetEnumerableElementType(Type type)
     {
-        // Type itself may be IEnumerable<T>
-        if (type.IsGenericType &&
-            type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+        // IEnumerable<T>
+        if (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
         {
             return type.GetGenericArguments()[0];
         }
@@ -101,8 +91,7 @@ public sealed class ByteMapperInputFormatter : InputFormatter
             return await InputFormatterResult.SuccessAsync(result).ConfigureAwait(false);
         }
 
-        // IEnumerable<T> — read as array, return as array (assignable to IEnumerable<T>)
-        // Suppressed: modelType is a well-known registered type; GetInterfaces is safe here.
+        // IEnumerable<T>
         var enumElemType = GetEnumerableElementType(modelType);
         if (enumElemType is not null)
         {
@@ -118,18 +107,10 @@ public sealed class ByteMapperInputFormatter : InputFormatter
         }
     }
 
-    // Resolves the binding for the current request. A declared profile must resolve exactly — falling
-    // back to the default layout would silently mis-frame the data — and a missing binding is a server
-    // configuration error reported like the Minimal API filters do.
-    // 現在のリクエストのバインディングを解決する。プロファイル指定時は厳密に解決する（デフォルトレイアウトへの
-    // フォールバックはデータのフレーミングを黙って壊す）。未登録は Minimal API フィルターと同様にサーバー設定エラー。
     private ByteMapperBinding GetRequiredBinding(Type elementType, Type? profile)
     {
-        var binding = profile is not null
-            ? registry.GetBinding(elementType, profile)
-            : registry.GetBinding(elementType);
-        return binding ?? throw new InvalidOperationException(
-            $"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
+        var binding = profile is not null ? registry.GetBinding(elementType, profile) : registry.GetBinding(elementType);
+        return binding ?? throw new InvalidOperationException($"No ByteMapperBinding registered for {elementType.FullName} (profile={(profile is null ? "default" : profile.FullName)}).");
     }
 
     private static Type ResolveElementType(Type type)
