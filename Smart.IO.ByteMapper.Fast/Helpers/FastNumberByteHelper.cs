@@ -1,6 +1,7 @@
 namespace Smart.IO.ByteMapper.Helpers;
 
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 internal static partial class FastNumberByteHelper
 {
@@ -138,83 +139,82 @@ internal static partial class FastNumberByteHelper
 
     public static unsafe void FormatInt32(Span<byte> bytes, int index, int length, int value, Padding padding, bool zerofill, byte filler)
     {
+        ref var pTable = ref MemoryMarshal.GetArrayDataReference(Digits2Table);
+
         fixed (byte* pBase = bytes)
         {
-            fixed (ushort* pTable = Digits2Table)
+            var pBytes = pBase + index;
+            var i = length - 1;
+
+            if ((value == Int32.MinValue) && (i >= 0))
             {
-                var pBytes = pBase + index;
-                var i = length - 1;
+                *(pBytes + i--) = Int32MinValueMod10;
+                value = Int32MinValueDiv10;
+            }
 
-                if ((value == Int32.MinValue) && (i >= 0))
+            var negative = value < 0;
+            if (negative)
+            {
+                value = -value;
+            }
+
+            while ((i >= 1) && (value >= 10))
+            {
+                var q = value / 100;
+                var r = value - (q * 100);
+                var pair = Unsafe.Add(ref pTable, r);
+                *(pBytes + i--) = (byte)pair;
+                *(pBytes + i--) = (byte)(pair >> 8);
+                value = q;
+            }
+
+            if (value > 0)
+            {
+                if (i >= 0)
                 {
-                    *(pBytes + i--) = Int32MinValueMod10;
-                    value = Int32MinValueDiv10;
+                    *(pBytes + i--) = (byte)(Num0 + value);
+                }
+            }
+
+            if (zerofill)
+            {
+                while (i >= (negative ? 1 : 0))
+                {
+                    *(pBytes + i--) = Num0;
                 }
 
-                var negative = value < 0;
-                if (negative)
+                if (negative && (i >= 0))
                 {
-                    value = -value;
+                    *pBytes = Minus;
+                }
+            }
+            else if (padding == Padding.Left)
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
                 }
 
-                while ((i >= 1) && (value >= 10))
+                while (i >= 0)
                 {
-                    var q = value / 100;
-                    var r = value - (q * 100);
-                    var pair = pTable[r];
-                    *(pBytes + i--) = (byte)pair;
-                    *(pBytes + i--) = (byte)(pair >> 8);
-                    value = q;
+                    *(pBytes + i--) = filler;
+                }
+            }
+            else
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
                 }
 
-                if (value > 0)
+                if (i >= 0)
                 {
-                    if (i >= 0)
-                    {
-                        *(pBytes + i--) = (byte)(Num0 + value);
-                    }
-                }
+                    var size = length - (i + 1);
+                    Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
 
-                if (zerofill)
-                {
-                    while (i >= (negative ? 1 : 0))
+                    for (var j = size; j < length; j++)
                     {
-                        *(pBytes + i--) = Num0;
-                    }
-
-                    if (negative && (i >= 0))
-                    {
-                        *pBytes = Minus;
-                    }
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    while (i >= 0)
-                    {
-                        *(pBytes + i--) = filler;
-                    }
-                }
-                else
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    if (i >= 0)
-                    {
-                        var size = length - (i + 1);
-                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
-
-                        for (var j = size; j < length; j++)
-                        {
-                            *(pBytes + j) = filler;
-                        }
+                        *(pBytes + j) = filler;
                     }
                 }
             }
@@ -223,83 +223,82 @@ internal static partial class FastNumberByteHelper
 
     public static unsafe void FormatInt64(Span<byte> bytes, int index, int length, long value, Padding padding, bool zerofill, byte filler)
     {
+        ref var pTable = ref MemoryMarshal.GetArrayDataReference(Digits2Table);
+
         fixed (byte* pBase = bytes)
         {
-            fixed (ushort* pTable = Digits2Table)
+            var pBytes = pBase + index;
+            var i = length - 1;
+
+            if ((value == Int64.MinValue) && (i >= 0))
             {
-                var pBytes = pBase + index;
-                var i = length - 1;
+                *(pBytes + i--) = Int64MinValueMod10;
+                value = Int64MinValueDiv10;
+            }
 
-                if ((value == Int64.MinValue) && (i >= 0))
+            var negative = value < 0;
+            if (negative)
+            {
+                value = -value;
+            }
+
+            while ((i >= 1) && (value >= 10))
+            {
+                var q = value / 100;
+                var r = value - (q * 100);
+                var pair = Unsafe.Add(ref pTable, (int)r);
+                *(pBytes + i--) = (byte)pair;
+                *(pBytes + i--) = (byte)(pair >> 8);
+                value = q;
+            }
+
+            if (value > 0)
+            {
+                if (i >= 0)
                 {
-                    *(pBytes + i--) = Int64MinValueMod10;
-                    value = Int64MinValueDiv10;
+                    *(pBytes + i--) = (byte)(Num0 + value);
+                }
+            }
+
+            if (zerofill)
+            {
+                while (i >= (negative ? 1 : 0))
+                {
+                    *(pBytes + i--) = Num0;
                 }
 
-                var negative = value < 0;
-                if (negative)
+                if (negative && (i >= 0))
                 {
-                    value = -value;
+                    *pBytes = Minus;
+                }
+            }
+            else if (padding == Padding.Left)
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
                 }
 
-                while ((i >= 1) && (value >= 10))
+                while (i >= 0)
                 {
-                    var q = value / 100;
-                    var r = value - (q * 100);
-                    var pair = pTable[r];
-                    *(pBytes + i--) = (byte)pair;
-                    *(pBytes + i--) = (byte)(pair >> 8);
-                    value = q;
+                    *(pBytes + i--) = filler;
+                }
+            }
+            else
+            {
+                if (negative && (i >= 0))
+                {
+                    *(pBytes + i--) = Minus;
                 }
 
-                if (value > 0)
+                if (i >= 0)
                 {
-                    if (i >= 0)
-                    {
-                        *(pBytes + i--) = (byte)(Num0 + value);
-                    }
-                }
+                    var size = length - (i + 1);
+                    Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
 
-                if (zerofill)
-                {
-                    while (i >= (negative ? 1 : 0))
+                    for (var j = size; j < length; j++)
                     {
-                        *(pBytes + i--) = Num0;
-                    }
-
-                    if (negative && (i >= 0))
-                    {
-                        *pBytes = Minus;
-                    }
-                }
-                else if (padding == Padding.Left)
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    while (i >= 0)
-                    {
-                        *(pBytes + i--) = filler;
-                    }
-                }
-                else
-                {
-                    if (negative && (i >= 0))
-                    {
-                        *(pBytes + i--) = Minus;
-                    }
-
-                    if (i >= 0)
-                    {
-                        var size = length - (i + 1);
-                        Buffer.MemoryCopy(pBytes + i + 1, pBytes, size, size);
-
-                        for (var j = size; j < length; j++)
-                        {
-                            *(pBytes + j) = filler;
-                        }
+                        *(pBytes + j) = filler;
                     }
                 }
             }
