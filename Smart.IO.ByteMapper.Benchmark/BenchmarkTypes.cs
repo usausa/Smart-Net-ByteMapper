@@ -2,7 +2,9 @@ namespace Smart.IO.ByteMapper.Benchmark;
 
 using System;
 
-// ---- Record definitions ----
+//-----------------------------------------------------------------------
+// Record
+//-----------------------------------------------------------------------
 
 [Map(4, UseDelimiter = false, AutoFiller = false)]
 internal sealed class BinaryRecord
@@ -59,7 +61,9 @@ internal sealed class BinaryRecord10
     public int V9 { get; set; }
 }
 
-// ---- Mapper (source-generated) ----
+//-----------------------------------------------------------------------
+// Mapper
+//-----------------------------------------------------------------------
 
 internal static partial class BenchmarkMappers
 {

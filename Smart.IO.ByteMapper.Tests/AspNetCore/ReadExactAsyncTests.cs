@@ -5,8 +5,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-// Stream that returns at most `chunkSize` bytes per ReadAsync call regardless of request size.
-// Simulates HTTP streams that may return short reads.
 internal sealed class ChunkedStream(byte[] data, int chunkSize) : Stream
 {
     private int position;

@@ -5,7 +5,9 @@ namespace Smart.IO.ByteMapper.Converters;
 
 public class BinaryConverterTests
 {
-    // ---- int ----
+    //-----------------------------------------------------------------------
+    // int
+    //-----------------------------------------------------------------------
 
     [Fact]
     public void WhenReadIntBigEndianThenCorrectValue()
@@ -41,7 +43,9 @@ public class BinaryConverterTests
         Assert.Equal(new byte[] { 0x39, 0x30, 0x00, 0x00 }, buffer);
     }
 
-    // ---- round-trip ----
+    //-----------------------------------------------------------------------
+    // Round trip
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(0)]

@@ -8,8 +8,6 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-// Verifies the batched fixed-length record reader: multiple records per ReadAsync, short reads,
-// elements straddling buffer boundaries, and trailing partial discard at EOF.
 public class ReadRecordsAsyncTests
 {
     private const int ElementSize = 4;

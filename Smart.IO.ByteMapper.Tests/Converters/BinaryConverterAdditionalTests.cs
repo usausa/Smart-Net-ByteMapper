@@ -2,7 +2,9 @@ namespace Smart.IO.ByteMapper.Converters;
 
 public class BinaryConverterAdditionalTests
 {
-    // ---- byte / sbyte ----
+    //-----------------------------------------------------------------------
+    // byte / sbyte
+    //-----------------------------------------------------------------------
 
     [Fact]
     public void WhenReadByteThenCorrectValue()
@@ -36,7 +38,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(0xFF, buffer[0]);
     }
 
-    // ---- short / ushort ----
+    //-----------------------------------------------------------------------
+    // short / ushort
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -60,7 +64,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(ushort.MaxValue, converter.Read(buffer));
     }
 
-    // ---- uint ----
+    //-----------------------------------------------------------------------
+    // uint
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -73,7 +79,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(uint.MaxValue, converter.Read(buffer));
     }
 
-    // ---- ulong ----
+    //-----------------------------------------------------------------------
+    // ulong
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -86,7 +94,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(ulong.MaxValue, converter.Read(buffer));
     }
 
-    // ---- float ----
+    //-----------------------------------------------------------------------
+    // float
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -99,7 +109,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(3.14f, converter.Read(buffer));
     }
 
-    // ---- double ----
+    //-----------------------------------------------------------------------
+    // double
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -112,7 +124,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(Math.PI, converter.Read(buffer));
     }
 
-    // ---- decimal ----
+    //-----------------------------------------------------------------------
+    // decimal
+    //-----------------------------------------------------------------------
 
     [Theory]
     [InlineData(Endian.Big)]
@@ -125,7 +139,9 @@ public class BinaryConverterAdditionalTests
         Assert.Equal(1234567890.123456789m, converter.Read(buffer));
     }
 
-    // ---- Size constants ----
+    //-----------------------------------------------------------------------
+    // Size constants
+    //-----------------------------------------------------------------------
 
     [Fact]
     public void WhenSizeIsCorrectForShort() => Assert.Equal(2, BinaryConverter<short>.Size);

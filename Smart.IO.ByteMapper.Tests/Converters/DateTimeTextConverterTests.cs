@@ -4,7 +4,9 @@ using System.Text;
 
 public class DateTimeTextConverterTests
 {
-    // ---- DateTime ----
+    //-----------------------------------------------------------------------
+    // DateTime
+    //-----------------------------------------------------------------------
 
     [Fact]
     public void WhenDateTimeReadValidDateThenReturnsDateTime()
@@ -60,7 +62,9 @@ public class DateTimeTextConverterTests
         Assert.Equal(dt, converter.Read(buffer));
     }
 
-    // ---- DateOnly ----
+    //-----------------------------------------------------------------------
+    // DateOnly
+    //-----------------------------------------------------------------------
 
     [Fact]
     public void WhenDateOnlyRoundTripThenSameValue()
