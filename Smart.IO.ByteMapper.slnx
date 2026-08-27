@@ -27,8 +27,9 @@
     <File Path="Directory.Build.targets" />
     <File Path="LICENSE" />
     <File Path="README.md" />
-    <File Path="Smart.IO.ByteMapper.props" />
+    <File Path="Smart.IO.ByteMapper.AspNetCore.targets" />
     <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
+    <File Path="Smart.IO.ByteMapper.targets" />
   </Folder>
   <Folder Name="/Tests/">
     <Project Path="Smart.IO.ByteMapper.AotTest/Smart.IO.ByteMapper.AotTest.csproj" />

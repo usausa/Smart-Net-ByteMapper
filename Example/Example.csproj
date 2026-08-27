@@ -14,11 +14,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
-  <Import Project="..\Smart.IO.ByteMapper.props" />
-
-  <PropertyGroup>
-    <TemplateLibraryGeneratorValue>test</TemplateLibraryGeneratorValue>
-  </PropertyGroup>
+  <Import Project="..\Smart.IO.ByteMapper.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\Smart.IO.ByteMapper.Generator\Smart.IO.ByteMapper.Generator.csproj" OutputItemType="analyzer" ReferenceOutputAssembly="false" />

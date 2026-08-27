@@ -7,7 +7,6 @@
     <PublishAot>true</PublishAot>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
-    <TemplateLibraryGeneratorValue>test</TemplateLibraryGeneratorValue>
   </PropertyGroup>
 
   <ItemGroup>

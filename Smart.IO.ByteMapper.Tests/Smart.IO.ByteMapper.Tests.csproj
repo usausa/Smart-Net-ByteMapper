@@ -17,11 +17,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <TemplateLibraryGeneratorValue>test</TemplateLibraryGeneratorValue>
-  </PropertyGroup>
-
-  <Import Project="..\Smart.IO.ByteMapper.props" />
+  <Import Project="..\Smart.IO.ByteMapper.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
