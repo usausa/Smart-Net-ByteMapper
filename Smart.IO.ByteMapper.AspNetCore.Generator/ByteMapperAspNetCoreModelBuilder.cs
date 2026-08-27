@@ -208,10 +208,10 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 nameSuffix));
         }
 
-        var collection = new EndPointCollection(new EquatableArray<EndPointModel>([.. results]));
+        var collection = new EndPointCollection(new EquatableArray<EndPointModel>(results));
         return diagnostics.Count == 0
             ? Results.Success(collection)
-            : new Result<EndPointCollection>(collection, new EquatableArray<DiagnosticInfo>([.. diagnostics]));
+            : new Result<EndPointCollection>(collection, new EquatableArray<DiagnosticInfo>(diagnostics));
     }
 
     private static string DetermineRootNamespace(INamedTypeSymbol symbol)

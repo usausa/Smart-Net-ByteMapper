@@ -39,7 +39,7 @@ public sealed class ByteMapperGenerator : IIncrementalGenerator
         var groups = methods.SelectMany(static (results, _) =>
             results.SelectValue()
                 .GroupBy(static m => new { m.Namespace, m.ClassName })
-                .Select(static g => new ClassModel(g.Key.Namespace, g.Key.ClassName, new EquatableArray<MapperMethodModel>(g.ToArray())))
+                .Select(static g => new ClassModel(g.Key.Namespace, g.Key.ClassName, new EquatableArray<MapperMethodModel>(g)))
                 .ToImmutableArray());
         context.RegisterImplementationSourceOutput(
             groups,

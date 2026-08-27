@@ -229,9 +229,9 @@ internal static class ByteMapperModelBuilder
             mapSize,
             bufferParamName,
             targetParamName,
-            new EquatableArray<MemberMappingModel>(members.ToArray()),
-            new EquatableArray<TypeMappingModel>(typeMappings.ToArray()),
-            new EquatableArray<DiagnosticInfo>(diagnostics.ToArray()));
+            new EquatableArray<MemberMappingModel>(members),
+            new EquatableArray<TypeMappingModel>(typeMappings),
+            new EquatableArray<DiagnosticInfo>(diagnostics));
 
         return Results.Success(model);
     }
@@ -514,7 +514,7 @@ internal static class ByteMapperModelBuilder
         var converterCall = new ConverterCallModel(
             converterFqn,
             fieldName,
-            new EquatableArray<string>(ctorArgs.ToArray()),
+            new EquatableArray<string>(ctorArgs),
             sizeKind,
             constSize);
 
