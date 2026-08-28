@@ -6,7 +6,7 @@ internal static class Diagnostics
 {
     public static DiagnosticDescriptor InvalidMethodDefinition { get; } = new(
         id: "SBM0001",
-        title: "Method must be static partial",
+        title: "Invalid method definition",
         messageFormat: "Method must be static partial. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
@@ -23,7 +23,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor MissingMapAttribute { get; } = new(
         id: "SBM0003",
         title: "Target type missing [Map] attribute",
-        messageFormat: "Target type must have [Map] attribute or Profile must be specified. method=[{0}]",
+        messageFormat: "Target type has no [Map] attribute. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -38,8 +38,8 @@ internal static class Diagnostics
 
     public static DiagnosticDescriptor RangeOverlap { get; } = new(
         id: "SBM0005",
-        title: "Range overlap detected",
-        messageFormat: "Range overlap detected. type=[{0}]",
+        title: "Range overlap",
+        messageFormat: "Layout ranges overlap. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -54,16 +54,16 @@ internal static class Diagnostics
 
     public static DiagnosticDescriptor UnsupportedBinaryType { get; } = new(
         id: "SBM0007",
-        title: "Unsupported type for MapBinary",
-        messageFormat: "Unsupported type for MapBinary. method=[{0}], property=[{1}]",
+        title: "Unsupported MapBinary type",
+        messageFormat: "Type is not supported for MapBinary. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ConverterContractMismatch { get; } = new(
         id: "SBM0008",
-        title: "Custom Converter does not satisfy contract",
-        messageFormat: "Custom Converter does not satisfy contract. method=[{0}], property=[{1}]",
+        title: "Converter contract mismatch",
+        messageFormat: "Converter does not satisfy the contract. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -71,7 +71,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor ProfilePropertyNotFound { get; } = new(
         id: "SBM0009",
         title: "Profile property not found in target",
-        messageFormat: "Profile property not found in target type. method=[{0}], property=[{1}]",
+        messageFormat: "Property is not found in the target type. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -87,39 +87,39 @@ internal static class Diagnostics
     public static DiagnosticDescriptor TargetNotInstantiatable { get; } = new(
         id: "SBM0011",
         title: "Target type is not instantiatable",
-        messageFormat: "Target type must have a public parameterless constructor for return-value Read method. method=[{0}]",
+        messageFormat: "Target type has no parameterless constructor. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor MemberAttributeRequiresProfile { get; } = new(
         id: "SBM0012",
-        title: "Member-mapping attribute requires [MapProfile]",
-        messageFormat: "Member-mapping attributes are only honored under [MapProfile] and are ignored under [Map]. type=[{0}]",
+        title: "Member mapping requires [MapProfile]",
+        messageFormat: "Member-mapping attributes are ignored. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor PropertyMappingIgnoredUnderProfile { get; } = new(
         id: "SBM0013",
-        title: "Property-level mapping ignored under [MapProfile]",
-        messageFormat: "Property-level mapping attributes are ignored under [MapProfile]; use the [Map...Member] attributes. type=[{0}]",
+        title: "Property mapping is ignored",
+        messageFormat: "Property-level mapping is ignored. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor ConflictingMapAttributes { get; } = new(
         id: "SBM0014",
-        title: "[Map] and [MapProfile] cannot be combined",
-        messageFormat: "[Map] and [MapProfile] cannot be specified on the same type. type=[{0}]",
+        title: "Conflicting map attributes",
+        messageFormat: "[Map] and [MapProfile] cannot be combined. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
 
     public static DiagnosticDescriptor UnknownMemberSize { get; } = new(
         id: "SBM0015",
-        title: "Member size is not statically known",
-        messageFormat: "Member size is not statically known; overlap and size validation skip the member. member=[{0}]",
+        title: "Unknown member size",
+        messageFormat: "Member size is not statically known. member=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);

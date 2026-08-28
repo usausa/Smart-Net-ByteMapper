@@ -23,12 +23,15 @@
     <File Path="Analyzers.ruleset" />
     <File Path="CLAUDE.md" />
     <File Path="CodeCoverage.runsettings" />
+    <File Path="Diagnostics.md" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="LICENSE" />
     <File Path="README.md" />
+    <File Path="Smart.IO.ByteMapper.AspNetCore.props" />
     <File Path="Smart.IO.ByteMapper.AspNetCore.targets" />
     <File Path="Smart.IO.ByteMapper.sln.DotSettings" />
+    <File Path="Smart.IO.ByteMapper.props" />
     <File Path="Smart.IO.ByteMapper.targets" />
   </Folder>
   <Folder Name="/Tests/">
