@@ -2,14 +2,131 @@ namespace Smart.IO.ByteMapper.Generator.Tests;
 
 using Microsoft.CodeAnalysis;
 
-public class DiagnosticTests
+public class DiagnosticTest
 {
-    // -----------------------------------------------------------------------
-    // SBM0001 — メソッドが static partial でない
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
+    // Binary type
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0001_NonPartialMethod_EmitsDiagnostic()
+    public void Sbm0007UnsupportedBinaryTypeEmitsDiagnostic()
+    {
+        // Arrange
+        const string source =
+            """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            namespace Test;
+
+            [Map(36, UseDelimiter = false)]
+            public sealed class SampleRecord
+            {
+                [MapBinary<int>(0)]
+                public string Name { get; set; } = default!;
+            }
+
+            public static partial class SampleMappers
+            {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> buffer, SampleRecord target);
+            }
+            """;
+
+        // Act
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static x => x.Id == "SBM0007");
+    }
+
+    // ------------------------------------------------------------
+    // Profile
+    // ------------------------------------------------------------
+
+    [Fact]
+    public void Sbm0010ProfileMissingMapAttributeEmitsDiagnostic()
+    {
+        // Arrange
+        const string source =
+            """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            namespace Test;
+
+            [Map(36, UseDelimiter = false)]
+            public sealed class SampleRecord
+            {
+                [MapText(0, 32)]
+                public string Name { get; set; } = default!;
+            }
+
+            public sealed class SampleProfile
+            {
+            }
+
+            public static partial class SampleMappers
+            {
+                [ByteReader(Profile = typeof(SampleProfile))]
+                public static partial void Read(ReadOnlySpan<byte> buffer, SampleRecord target);
+            }
+            """;
+
+        // Act
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static x => x.Id == "SBM0010");
+    }
+
+    // ------------------------------------------------------------
+    // Target instantiation
+    // ------------------------------------------------------------
+
+    [Fact]
+    public void Sbm0011TargetNotInstantiatableEmitsDiagnostic()
+    {
+        // Arrange
+        const string source =
+            """
+            using System;
+            using Smart.IO.ByteMapper;
+
+            namespace Test;
+
+            [Map(36, UseDelimiter = false)]
+            public sealed class SampleRecord
+            {
+                public SampleRecord(int id)
+                {
+                    Id = id;
+                }
+
+                [MapBinary<int>(0)]
+                public int Id { get; set; }
+            }
+
+            public static partial class SampleMappers
+            {
+                [ByteReader]
+                public static partial SampleRecord Read(ReadOnlySpan<byte> buffer);
+            }
+            """;
+
+        // Act
+        var diagnostics = GeneratorTestHelper.GetDiagnostics(source);
+
+        // Assert
+        Assert.Contains(diagnostics, static x => x.Id == "SBM0011");
+    }
+
+    // ------------------------------------------------------------
+    // SBM0001 — メソッドが static partial でない
+    // ------------------------------------------------------------
+
+    [Fact]
+    public void Sbm0001NonPartialMethodEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -31,7 +148,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0001_InstanceMethod_EmitsDiagnostic()
+    public void Sbm0001InstanceMethodEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -52,12 +169,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0001");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0002 — メソッドシグネチャが不正
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0002_InvalidReaderSignature_EmitsDiagnostic()
+    public void Sbm0002InvalidReaderSignatureEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -78,12 +195,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0002");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0003 — ターゲット型に [Map] 属性がない
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0003_MissingMapAttribute_EmitsDiagnostic()
+    public void Sbm0003MissingMapAttributeEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -103,12 +220,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0003");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0005 — レンジの重複
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0005_OverlappingMembers_EmitsDiagnostic()
+    public void Sbm0005OverlappingMembersEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -136,12 +253,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0005");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0006 — レイアウトが Map(size) を超過
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0006_MemberExceedsMapSize_EmitsDiagnostic()
+    public void Sbm0006MemberExceedsMapSizeEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -167,7 +284,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0006_MemberFitsExactly_DoesNotEmitDiagnostic()
+    public void Sbm0006MemberFitsExactlyEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -193,7 +310,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0006_FillerExceedsMapSize_EmitsDiagnostic()
+    public void Sbm0006FillerExceedsMapSizeEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -218,7 +335,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0006_ConstantExceedsMapSize_EmitsDiagnostic()
+    public void Sbm0006ConstantExceedsMapSizeEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -243,7 +360,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0006_MembersWithGapAllFitWithinMapSize_DoesNotEmitDiagnostic()
+    public void Sbm0006MembersWithGapAllFitWithinMapSizeEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -271,12 +388,12 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0006");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0004 — Delimiter がレコード長を超える（負のオフセット）
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0004_DelimiterLongerThanMapSize_EmitsDiagnostic()
+    public void Sbm0004DelimiterLongerThanMapSizeEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -302,7 +419,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0004_DelimiterEqualToMapSize_DoesNotEmitDiagnostic()
+    public void Sbm0004DelimiterEqualToMapSizeEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -326,7 +443,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0004_NegativeMemberOffset_EmitsDiagnostic()
+    public void Sbm0004NegativeMemberOffsetEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -351,12 +468,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0004");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0008 — converter の Read / Write が static（インスタンスメソッドでない）
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0008_ConverterWithStaticWrite_EmitsDiagnostic()
+    public void Sbm0008ConverterWithStaticWriteEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -397,12 +514,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0008");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0012 — [Map] 下でクラスレベルの [Map...Member] 属性が使われている（警告）
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0012_MemberAttributeUnderMap_EmitsWarning()
+    public void Sbm0012MemberAttributeUnderMapEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -428,7 +545,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0012_PropertyMappingUnderMap_DoesNotEmitWarning()
+    public void Sbm0012PropertyMappingUnderMapEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -453,12 +570,12 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0012");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0013 — [MapProfile] 下でプロパティに マッピング属性がある（警告）
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0013_PropertyMappingUnderProfile_EmitsWarning()
+    public void Sbm0013PropertyMappingUnderProfileEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -487,7 +604,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0013_MemberOnlyProfile_DoesNotEmitWarning()
+    public void Sbm0013MemberOnlyProfileEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -513,12 +630,12 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0013");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0014 — [Map] と [MapProfile] の併用（エラー）
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0014_BothMapAndMapProfile_EmitsDiagnostic()
+    public void Sbm0014BothMapAndMapProfileEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -542,12 +659,12 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0014");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0009 — [MapProfile] のメンバー名がターゲットに無い
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0009_MemberNameNotFoundInTarget_EmitsDiagnostic()
+    public void Sbm0009MemberNameNotFoundInTargetEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -573,9 +690,9 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static d => d.Id == "SBM0009");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // nullable 日時 — null ⇔ 全フィラー対応により Reader/Writer ともコンパイル可能
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void NullableDateTimeText_GeneratesCompilableCode()
@@ -609,9 +726,9 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // 非 nullable bool — Reader は .GetValueOrDefault() 付きでコンパイル可能
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void NonNullableBoolReader_GeneratesCompilableCode()
@@ -642,12 +759,12 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // 文字列第1引数(書式)からのサイズ導出 — Fast 日時フィールドもレイアウト検証の対象になる
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
-    public void SBM0005_FastDateTimeOverlap_EmitsDiagnostic()
+    public void Sbm0005FastDateTimeOverlapEmitsDiagnostic()
     {
         // "yyyyMMddHHmmss" = 14バイト (0..13) と Qty(8..13) の重複が検出される
         const string source = """
@@ -677,7 +794,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0006_FastDateTimeExceedsMapSize_EmitsDiagnostic()
+    public void Sbm0006FastDateTimeExceedsMapSizeEmitsDiagnostic()
     {
         // "yyyyMMddHHmmss" = 14バイト > Map(10) が検出される
         const string source = """
@@ -704,7 +821,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void FastDateTimeValidLayout_DoesNotEmitDiagnostic()
+    public void Sbm0005FastDateTimeValidLayoutEmitsNoDiagnostic()
     {
         const string source = """
             using System;
@@ -732,9 +849,9 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Id is "SBM0005" or "SBM0006" or "SBM0015");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM0015 — サイズを静的に導出できないメンバーは検証スキップを警告する
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     private const string DynamicSizeConverterSource = """
         using System;
@@ -775,7 +892,7 @@ public class DiagnosticTests
         """;
 
     [Fact]
-    public void SBM0015_UnknownMemberSize_EmitsDiagnostic()
+    public void Sbm0015UnknownMemberSizeEmitsDiagnostic()
     {
         const string source = DynamicSizeConverterSource + """
 
@@ -792,7 +909,7 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void SBM0015_ValidateLayoutFalse_DoesNotEmitDiagnostic()
+    public void Sbm0015ValidateLayoutFalseEmitsNoDiagnostic()
     {
         const string source = DynamicSizeConverterSource + """
 
@@ -808,9 +925,9 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Id == "SBM0015");
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // 同一コンパイル内のカスタム属性 — イニシャライザーは定数評価して FQN で出力される
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void CustomAttributeWithEnumInitializer_GeneratesCompilableCode()
@@ -873,9 +990,9 @@ public class DiagnosticTests
         Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // フラグ合成値 — 単一メンバー名を持たない列挙値はキャスト式で出力される
-    // -----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void CombinedFlagsStyle_GeneratesCompilableCode()

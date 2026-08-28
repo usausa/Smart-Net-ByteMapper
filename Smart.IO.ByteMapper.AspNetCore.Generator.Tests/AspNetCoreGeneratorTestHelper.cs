@@ -22,4 +22,7 @@ internal static class AspNetCoreGeneratorTestHelper
 
     public static IReadOnlyList<Diagnostic> GetDiagnostics(string source) =>
         Runner.WithDiagnosticPrefix("SBM").GetDiagnostics(source);
+
+    public static IncrementalRunResult RunIncremental(string source, string addedSource) =>
+        Runner.WithTracking().RunIncremental(source, addedSource);
 }

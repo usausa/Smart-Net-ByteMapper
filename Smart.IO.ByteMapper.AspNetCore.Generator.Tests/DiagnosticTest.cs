@@ -1,6 +1,6 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 
-public class DiagnosticTests
+public class DiagnosticTest
 {
     private const string Entity = """
         using System;
@@ -25,9 +25,9 @@ public class DiagnosticTests
         }
         """;
 
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM1001 : a reader has no matching writer
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void Sbm1001ReaderWithoutWriterEmitsDiagnostic()
@@ -46,9 +46,9 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static x => x.Id == "SBM1001");
     }
 
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // SBM1002 : the entity size cannot be resolved
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void Sbm1002UnknownEntitySizeEmitsDiagnostic()
@@ -70,9 +70,9 @@ public class DiagnosticTests
         Assert.Contains(diagnostics, static x => x.Id == "SBM1002");
     }
 
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
     // A complete pair must stay clean
-    //-----------------------------------------------------------------------
+    // ------------------------------------------------------------
 
     [Fact]
     public void ValidEndPointEmitsNoDiagnostic()
