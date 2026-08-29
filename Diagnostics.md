@@ -4,13 +4,13 @@
 
 | ID | Severity | Description | How to fix |
 |---|---|---|---|
-| SBM0001 | ❌ Error | Target method is not `static partial` | Declare the method as `static partial` |
-| SBM0002 | ❌ Error | Method signature is not supported | Use one of the supported reader/writer signatures |
+| SBM0001 | ❌ Error | `[ByteReader]` / `[ByteWriter]` method is not `static partial` | Declare the method as `static partial` |
+| SBM0002 | ❌ Error | `[ByteReader]` / `[ByteWriter]` method signature is not supported | Use one of the supported reader/writer signatures |
 | SBM0003 | ❌ Error | Target type has no `[Map]` attribute and no `Profile` is specified | Add `[Map]` to the target type, or specify `Profile` |
 | SBM0004 | ❌ Error | Offset or length is negative | Give the offset and length non-negative values |
 | SBM0005 | ⚠️ Warning | Two member ranges overlap in the layout | Adjust the offsets so that the ranges do not overlap |
 | SBM0006 | ❌ Error | Layout extends past the size given to `[Map]` | Enlarge `Map(size)`, or shorten the layout |
-| SBM0007 | ❌ Error | Member type is not supported by `MapBinary` | Use a type supported by `MapBinary` |
+| SBM0007 | ❌ Error | Member type is not supported by `[MapBinary]` | Use a type supported by `MapBinary` |
 | SBM0008 | ❌ Error | Custom converter does not satisfy the converter contract | Implement the converter contract on the custom converter |
 | SBM0009 | ❌ Error | Property declared in the profile is not found in the target type | Correct the property name, or add the property to the target type |
 | SBM0010 | ❌ Error | Profile type has no `[Map]` attribute | Add `[Map]` to the profile type |

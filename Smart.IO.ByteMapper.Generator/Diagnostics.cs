@@ -7,7 +7,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor InvalidMethodDefinition { get; } = new(
         id: "SBM0001",
         title: "Invalid method definition",
-        messageFormat: "Method must be static partial. method=[{0}]",
+        messageFormat: "[ByteReader]/[ByteWriter] method must be static partial. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -15,7 +15,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor InvalidMethodSignature { get; } = new(
         id: "SBM0002",
         title: "Unsupported method signature",
-        messageFormat: "Method signature is not supported. method=[{0}]",
+        messageFormat: "[ByteReader]/[ByteWriter] method signature is not supported. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -47,7 +47,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor LayoutExceedsSize { get; } = new(
         id: "SBM0006",
         title: "Layout exceeds Map size",
-        messageFormat: "Layout exceeds Map(size). type=[{0}]",
+        messageFormat: "Layout exceeds [Map] size. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -55,7 +55,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor UnsupportedBinaryType { get; } = new(
         id: "SBM0007",
         title: "Unsupported MapBinary type",
-        messageFormat: "Type is not supported for MapBinary. method=[{0}], property=[{1}]",
+        messageFormat: "Type is not supported for [MapBinary]. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
         isEnabledByDefault: true);
@@ -95,7 +95,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor MemberAttributeRequiresProfile { get; } = new(
         id: "SBM0012",
         title: "Member mapping requires [MapProfile]",
-        messageFormat: "Member-mapping attributes are ignored. type=[{0}]",
+        messageFormat: "Member-mapping attributes are ignored under [Map]. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
@@ -103,7 +103,7 @@ internal static class Diagnostics
     public static DiagnosticDescriptor PropertyMappingIgnoredUnderProfile { get; } = new(
         id: "SBM0013",
         title: "Property mapping is ignored",
-        messageFormat: "Property-level mapping is ignored. type=[{0}]",
+        messageFormat: "Property-level mapping is ignored under [MapProfile]. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
