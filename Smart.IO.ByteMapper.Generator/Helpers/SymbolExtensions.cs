@@ -5,6 +5,8 @@ using System.Linq;
 
 using Microsoft.CodeAnalysis;
 
+using SourceGenerateHelper;
+
 internal static class SymbolExtensions
 {
     // Sizes of well-known unmanaged primitive types (used to resolve BinaryConverter<T>.Size at code-gen time).
@@ -68,57 +70,27 @@ internal static class SymbolExtensions
     // TypedConstant を C# ソースコードのリテラル式文字列に変換する。
     public static string ToLiteralExpression(this TypedConstant constant)
     {
+        // Byte values are written as hex, and arrays as byte[], as the byte layout domain expects
+        // バイト値は16進、配列は byte[] として出力する（バイトレイアウトの用途に合わせる）
         if (constant.Kind == TypedConstantKind.Primitive)
         {
-            return constant.Value switch
+            if (constant.Value is byte b)
             {
-                null => "null",
-                bool b => b ? "true" : "false",
-                string s => $"\"{s.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"",
-                byte b => $"(byte)0x{b:X2}",
-                sbyte sb => $"(sbyte){sb}",
-                char c => $"'{c}'",
-                _ => constant.Value!.ToString() ?? "null"
-            };
-        }
-        if (constant.Kind == TypedConstantKind.Enum && constant.Type is not null)
-        {
-            var fqn = constant.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var memberName = FindEnumMemberName(constant);
+                return $"(byte)0x{b:X2}";
+            }
 
-            // A combined flags value (e.g. NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign)
-            // has no single member name; emit a cast expression instead of an invalid "Type.36" literal.
-            // フラグ合成値（例: NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign）は単一の
-            // メンバー名を持たないため、不正な "Type.36" ではなくキャスト式を出力する。
-            return memberName is not null
-                ? $"{fqn}.{memberName}"
-                : $"({fqn})({constant.Value})";
-        }
-        if (constant.Kind == TypedConstantKind.Array && constant.Values != null)
-        {
-            var elements = String.Join(", ", constant.Values.Select(v => v.ToLiteralExpression()));
-            return $"new byte[] {{ {elements} }}";
-        }
-        return constant.Value?.ToString() ?? "null";
-    }
-
-    // Returns the enum member name for an exact value match, or null when the value is not a single
-    // named member (e.g. a combined flags value).
-    // 値が単一メンバーに一致する場合はその名前を、一致しない場合（フラグ合成値など）は null を返す。
-    private static string? FindEnumMemberName(TypedConstant constant)
-    {
-        if ((constant.Type is null) || (constant.Value is null))
-        {
-            return null;
-        }
-        var enumType = constant.Type;
-        foreach (var member in enumType.GetMembers())
-        {
-            if (member is IFieldSymbol field && field.HasConstantValue && Equals(field.ConstantValue, constant.Value))
+            if (constant.Value is sbyte sb)
             {
-                return field.Name;
+                return $"(sbyte){sb}";
             }
         }
-        return null;
+
+        if ((constant.Kind == TypedConstantKind.Array) && !constant.Values.IsDefault)
+        {
+            var elements = String.Join(", ", constant.Values.Select(static x => x.ToLiteralExpression()));
+            return $"new byte[] {{ {elements} }}";
+        }
+
+        return constant.ToCSharpExpression() ?? "null";
     }
 }
