@@ -67,7 +67,7 @@ internal static partial class FastDateTimeByteHelper
 
         n -= y1 * DaysPerYear;
 
-        var leapYear = y1 == 3 && (y4 != 24 || y100 == 3);
+        var leapYear = (y1 == 3) && ((y4 != 24) || (y100 == 3));
         var days = leapYear ? DaysToMonth366 : DaysToMonth365;
         var m = (n >> 5) + 1;
         while (n >= days[m])
@@ -82,13 +82,13 @@ internal static partial class FastDateTimeByteHelper
 
     private static bool IsDateTimeFormatChar(char c)
     {
-        return c == FormatYear || c == FormatMonth || c == FormatDay ||
-               c == FormatHour || c == FormatMinute || c == FormatSecond || c == FormatMillisecond;
+        return (c == FormatYear) || (c == FormatMonth) || (c == FormatDay) ||
+               (c == FormatHour) || (c == FormatMinute) || (c == FormatSecond) || (c == FormatMillisecond);
     }
 
     private static bool IsDatePartChar(char c)
     {
-        return c == FormatYear || c == FormatMonth || c == FormatDay;
+        return (c == FormatYear) || (c == FormatMonth) || (c == FormatDay);
     }
 
     public static FastDateTimeFormatEntry[] ParseDateTimeFormat(string format, out bool hasDatePart)
@@ -103,7 +103,7 @@ internal static partial class FastDateTimeByteHelper
             var c = format[index++];
             if (IsDateTimeFormatChar(c))
             {
-                while (index < format.Length && format[index] == c)
+                while ((index < format.Length) && (format[index] == c))
                 {
                     index++;
                 }
@@ -123,7 +123,7 @@ internal static partial class FastDateTimeByteHelper
             }
             else
             {
-                while (index < format.Length && !IsDateTimeFormatChar(format[index]))
+                while ((index < format.Length) && !IsDateTimeFormatChar(format[index]))
                 {
                     index++;
                 }

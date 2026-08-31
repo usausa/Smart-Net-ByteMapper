@@ -56,7 +56,7 @@ internal static class StreamExtensions
 
                 // Carry the incomplete trailing element to the front of the buffer.
                 var leftover = filled - offset;
-                if (offset > 0 && leftover > 0)
+                if ((offset > 0) && (leftover > 0))
                 {
                     buffer.AsSpan(offset, leftover).CopyTo(buffer.AsSpan(0, leftover));
                 }

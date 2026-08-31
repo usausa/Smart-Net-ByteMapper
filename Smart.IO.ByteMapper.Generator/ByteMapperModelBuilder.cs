@@ -76,12 +76,12 @@ internal static class ByteMapperModelBuilder
         {
             foreach (var na in methodAttr.NamedArguments)
             {
-                if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                if ((na.Key == "Profile") && (na.Value.Value is ITypeSymbol pt))
                 {
                     profileType = pt;
                 }
 
-                if (na.Key == "ValidateLayout" && na.Value.Value is bool vl)
+                if ((na.Key == "ValidateLayout") && (na.Value.Value is bool vl))
                 {
                     validateLayout = vl;
                 }
@@ -100,7 +100,7 @@ internal static class ByteMapperModelBuilder
         var mapProfileAttr = attrSourceType.GetAttributes().FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapProfileAttributeName);
 
         // SBM0014: [Map] and [MapProfile] are mutually exclusive / [Map] と [MapProfile] は併用不可
-        if (mapAttr is not null && mapProfileAttr is not null)
+        if ((mapAttr is not null) && (mapProfileAttr is not null))
         {
             return Results.Error<MapperMethodModel>(new DiagnosticInfo(Diagnostics.ConflictingMapAttributes, syntax.GetLocation(), attrSourceType.Name));
         }
@@ -158,7 +158,7 @@ internal static class ByteMapperModelBuilder
         var typeMappings = CollectTypeMappings(attrSourceType);
 
         // Delimiter: written as constant at end of record / 区切り文字をレコード末尾の定数マッピングとして追加する
-        if (useDelimiter && delimiter is { Length: > 0 })
+        if (useDelimiter && (delimiter is { Length: > 0 }))
         {
             // SBM0004: a delimiter longer than the record yields a negative offset / 区切り文字がレコード長を超えると負のオフセットになる
             if (delimiter.Length > mapSize)
@@ -238,18 +238,18 @@ internal static class ByteMapperModelBuilder
 
     private static bool IsReadOnlySpanOfByte(ITypeSymbol type)
     {
-        return type is INamedTypeSymbol { Name: "ReadOnlySpan", IsGenericType: true } named
-            && named.ContainingNamespace.ToDisplayString() == "System"
-            && named.TypeArguments.Length == 1
-            && named.TypeArguments[0].SpecialType == SpecialType.System_Byte;
+        return (type is INamedTypeSymbol { Name: "ReadOnlySpan", IsGenericType: true } named)
+            && (named.ContainingNamespace.ToDisplayString() == "System")
+            && (named.TypeArguments.Length == 1)
+            && (named.TypeArguments[0].SpecialType == SpecialType.System_Byte);
     }
 
     private static bool IsSpanOfByte(ITypeSymbol type)
     {
-        return type is INamedTypeSymbol { Name: "Span", IsGenericType: true } named
-            && named.ContainingNamespace.ToDisplayString() == "System"
-            && named.TypeArguments.Length == 1
-            && named.TypeArguments[0].SpecialType == SpecialType.System_Byte;
+        return (type is INamedTypeSymbol { Name: "Span", IsGenericType: true } named)
+            && (named.ContainingNamespace.ToDisplayString() == "System")
+            && (named.TypeArguments.Length == 1)
+            && (named.TypeArguments[0].SpecialType == SpecialType.System_Byte);
     }
 
     private static (MapperShape Shape, ITypeSymbol? TargetType, string BufferParamName, string TargetParamName, List<DiagnosticInfo> Errors) DetermineShape(
@@ -262,7 +262,7 @@ internal static class ByteMapperModelBuilder
         {
             // void Read(ReadOnlySpan<byte> source, T target)
             if (symbol.ReturnsVoid
-                && symbol.Parameters.Length == 2
+                && (symbol.Parameters.Length == 2)
                 && IsReadOnlySpanOfByte(symbol.Parameters[0].Type))
             {
                 return (MapperShape.InPlace, symbol.Parameters[1].Type, symbol.Parameters[0].Name, symbol.Parameters[1].Name, errors);
@@ -270,7 +270,7 @@ internal static class ByteMapperModelBuilder
 
             // T Read(ReadOnlySpan<byte> source)
             if (!symbol.ReturnsVoid
-                && symbol.Parameters.Length == 1
+                && (symbol.Parameters.Length == 1)
                 && IsReadOnlySpanOfByte(symbol.Parameters[0].Type))
             {
                 return (MapperShape.NewInstance, symbol.ReturnType, symbol.Parameters[0].Name, "target", errors);
@@ -280,7 +280,7 @@ internal static class ByteMapperModelBuilder
         {
             // void Write(Span<byte> destination, T source)
             if (symbol.ReturnsVoid
-                && symbol.Parameters.Length == 2
+                && (symbol.Parameters.Length == 2)
                 && IsSpanOfByte(symbol.Parameters[0].Type))
             {
                 return (MapperShape.WriteSpan, symbol.Parameters[1].Type, symbol.Parameters[0].Name, symbol.Parameters[1].Name, errors);
@@ -288,8 +288,8 @@ internal static class ByteMapperModelBuilder
 
             // byte[] Write(T source)
             if (!symbol.ReturnsVoid
-                && symbol.Parameters.Length == 1
-                && symbol.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte })
+                && (symbol.Parameters.Length == 1)
+                && (symbol.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte }))
             {
                 return (MapperShape.WriteAlloc, symbol.Parameters[0].Type, "buffer", symbol.Parameters[0].Name, errors);
             }
@@ -491,7 +491,7 @@ internal static class ByteMapperModelBuilder
         var namedConverterType = converterType as INamedTypeSymbol;
         var readMethod = namedConverterType?.GetMembers("Read").OfType<IMethodSymbol>().FirstOrDefault();
         var writeMethod = namedConverterType?.GetMembers("Write").OfType<IMethodSymbol>().FirstOrDefault();
-        if (readMethod?.IsStatic == true || writeMethod?.IsStatic == true)
+        if ((readMethod?.IsStatic == true) || (writeMethod?.IsStatic == true))
         {
             errors.Add(new DiagnosticInfo(Diagnostics.ConverterContractMismatch, syntax.GetLocation(), $"{methodSymbol.Name}, {targetProp.Name}"));
             return null;
@@ -529,7 +529,7 @@ internal static class ByteMapperModelBuilder
         // Read が Nullable<T> を返しプロパティが非 nullable の T の場合
         // （例: BooleanConverter.Read は bool? だがプロパティは bool）→ .GetValueOrDefault() を付与する。
         var readValueOrDefault =
-            readMethod?.ReturnType is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullableReturn
+            (readMethod?.ReturnType is INamedTypeSymbol { OriginalDefinition.SpecialType: SpecialType.System_Nullable_T } nullableReturn)
             && SymbolEqualityComparer.Default.Equals(nullableReturn.TypeArguments[0], targetProp.Type);
 
         return new MemberMappingModel(targetProp.Name, offset, size, converterCall, readValueOrDefault);
@@ -562,7 +562,7 @@ internal static class ByteMapperModelBuilder
         // so walk the base chain to find it. / [ConverterSupportedTypes] はプロパティ版とメンバー版が共有する
         // 抽象ベースに付くため、基底チェーンを辿って探す。
         AttributeData? supportedAttr = null;
-        for (var current = (INamedTypeSymbol?)attrClass; current is not null && supportedAttr is null; current = current.BaseType)
+        for (var current = (INamedTypeSymbol?)attrClass; (current is not null) && (supportedAttr is null); current = current.BaseType)
         {
             supportedAttr = current.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == ConverterSupportedTypesAttributeName);
@@ -736,7 +736,7 @@ internal static class ByteMapperModelBuilder
             var fqn = type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             foreach (var member in type.GetMembers())
             {
-                if (member is IFieldSymbol field && field.HasConstantValue && Equals(field.ConstantValue, value))
+                if ((member is IFieldSymbol field) && field.HasConstantValue && Equals(field.ConstantValue, value))
                 {
                     return $"{fqn}.{field.Name}";
                 }
@@ -759,13 +759,13 @@ internal static class ByteMapperModelBuilder
     {
         if (param.HasExplicitDefaultValue)
         {
-            if (param.Type.TypeKind == TypeKind.Enum && param.ExplicitDefaultValue is not null)
+            if ((param.Type.TypeKind == TypeKind.Enum) && (param.ExplicitDefaultValue is not null))
             {
                 var fqn = param.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 // Find enum member name
                 foreach (var member in param.Type.GetMembers())
                 {
-                    if (member is IFieldSymbol f && f.HasConstantValue && Equals(f.ConstantValue, param.ExplicitDefaultValue))
+                    if ((member is IFieldSymbol f) && f.HasConstantValue && Equals(f.ConstantValue, param.ExplicitDefaultValue))
                     {
                         return $"{fqn}.{f.Name}";
                     }
@@ -809,7 +809,7 @@ internal static class ByteMapperModelBuilder
                 // ジェネリックコンバーター（例: BinaryConverter<int>）の場合、型引数のサイズをヘルパーで解決する
                 if (field.IsStatic && field.IsReadOnly)
                 {
-                    if (namedConverter.IsGenericType && namedConverter.TypeArguments.Length == 1)
+                    if (namedConverter.IsGenericType && (namedConverter.TypeArguments.Length == 1))
                     {
                         var typeArg = namedConverter.TypeArguments[0];
                         if (typeArg.TryGetUnmanagedSize(out var knownSize))
@@ -884,7 +884,7 @@ internal static class ByteMapperModelBuilder
         // SBM0004: Validate no negative offset or length / 負のオフセット・長さを検証する
         foreach (var (offset, size) in allRanges)
         {
-            if (offset < 0 || size < 0)
+            if ((offset < 0) || (size < 0))
             {
                 errors.Add(new DiagnosticInfo(Diagnostics.InvalidOffset, syntax.GetLocation(), $"{methodName}, {typeName}"));
                 break;

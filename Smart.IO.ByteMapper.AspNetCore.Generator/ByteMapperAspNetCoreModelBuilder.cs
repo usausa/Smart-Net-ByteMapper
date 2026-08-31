@@ -33,7 +33,7 @@ internal static class ByteMapperAspNetCoreModelBuilder
         var generateArray = true;
         foreach (var na in endPointAttr.NamedArguments)
         {
-            if (na.Key == "GenerateArrayBinding" && na.Value.Value is bool b)
+            if ((na.Key == "GenerateArrayBinding") && (na.Value.Value is bool b))
             {
                 generateArray = b;
             }
@@ -62,14 +62,14 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 ITypeSymbol? profileType = null;
                 foreach (var na in readerAttr.NamedArguments)
                 {
-                    if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                    if ((na.Key == "Profile") && (na.Value.Value is ITypeSymbol pt))
                     {
                         profileType = pt;
                     }
                 }
 
                 ITypeSymbol? entityType = null;
-                if (!method.ReturnsVoid && method.Parameters.Length == 1)
+                if (!method.ReturnsVoid && (method.Parameters.Length == 1))
                 {
                     entityType = method.ReturnType;
                 }
@@ -94,21 +94,21 @@ internal static class ByteMapperAspNetCoreModelBuilder
                 ITypeSymbol? profileType = null;
                 foreach (var na in writerAttr.NamedArguments)
                 {
-                    if (na.Key == "Profile" && na.Value.Value is ITypeSymbol pt)
+                    if ((na.Key == "Profile") && (na.Value.Value is ITypeSymbol pt))
                     {
                         profileType = pt;
                     }
                 }
 
                 ITypeSymbol? entityType = null;
-                if (method.ReturnsVoid && method.Parameters.Length == 2)
+                if (method.ReturnsVoid && (method.Parameters.Length == 2))
                 {
                     // void Write(Span<byte> destination, T source) — entity is the second parameter.
                     entityType = method.Parameters[1].Type;
                 }
                 else if (!method.ReturnsVoid
-                    && method.Parameters.Length == 1
-                    && method.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte })
+                    && (method.Parameters.Length == 1)
+                    && (method.ReturnType is IArrayTypeSymbol { ElementType.SpecialType: SpecialType.System_Byte }))
                 {
                     // byte[] Write(T source) — entity is the only parameter.
                     entityType = method.Parameters[0].Type;
@@ -158,12 +158,12 @@ internal static class ByteMapperAspNetCoreModelBuilder
             var sizeSourceType = profileType ?? entityType;
             var mapAttr = sizeSourceType.GetAttributes()
                 .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() is MapProfileAttributeName or MapAttributeName);
-            if (mapAttr is null && profileType is not null)
+            if ((mapAttr is null) && (profileType is not null))
             {
                 mapAttr = entityType.GetAttributes()
                     .FirstOrDefault(a => a.AttributeClass?.ToDisplayString() == MapAttributeName);
             }
-            var size = mapAttr is not null && mapAttr.ConstructorArguments.Length > 0
+            var size = (mapAttr is not null) && (mapAttr.ConstructorArguments.Length > 0)
                 ? (int)(mapAttr.ConstructorArguments[0].Value ?? 0)
                 : -1;
             if (size <= 0)
@@ -191,8 +191,8 @@ internal static class ByteMapperAspNetCoreModelBuilder
         foreach (var (readerName, writerName, entityType, profileType, size) in pairs)
         {
             var profileFqn = profileType?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var entitySuffix = multipleEntities ? $"_{entityType.Name}" : String.Empty;
-            var profileSuffix = profileType is not null ? $"_{profileType.Name}" : String.Empty;
+            var entitySuffix = multipleEntities ? $"_{entityType.Name}" : string.Empty;
+            var profileSuffix = profileType is not null ? $"_{profileType.Name}" : string.Empty;
             var nameSuffix = $"{entitySuffix}{profileSuffix}";
 
             results.Add(new EndPointModel(

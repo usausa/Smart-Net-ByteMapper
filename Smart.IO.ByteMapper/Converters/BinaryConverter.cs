@@ -234,7 +234,7 @@ public sealed class BinaryConverter<T>
         {
             var d = Unsafe.BitCast<T, decimal>(value);
             Span<int> parts = stackalloc int[4];
-            decimal.GetBits(d, parts);
+            Decimal.GetBits(d, parts);
             for (var i = 0; i < 4; i++)
             {
                 if (endian == Endian.Big)
