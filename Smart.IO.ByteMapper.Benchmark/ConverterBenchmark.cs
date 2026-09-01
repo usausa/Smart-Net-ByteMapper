@@ -8,7 +8,6 @@ using Smart.IO.ByteMapper.Converters;
 [Config(typeof(BenchmarkConfig))]
 public class ConverterBenchmark
 {
-#pragma warning disable SA1203
     private const int N = 1000;
 
     // --- Binary (int, big-endian) ---
@@ -36,7 +35,6 @@ public class ConverterBenchmark
     private readonly byte[] boolReadTrueBuffer = [0x31];
 
     private readonly byte[] boolWriteBuffer = new byte[1];
-#pragma warning restore SA1203
 
     [GlobalSetup]
     public void Setup()

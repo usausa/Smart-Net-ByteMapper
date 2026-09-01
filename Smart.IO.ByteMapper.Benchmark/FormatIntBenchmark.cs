@@ -16,7 +16,7 @@ public class FormatIntBenchmark
     // --- Write: int (FormatInt32) ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt32 (int=1234)")]
-    public void FormatInt32_Int()
+    public void FormatInt32Int()
     {
         for (var i = 0; i < N; i++)
         {
@@ -27,7 +27,7 @@ public class FormatIntBenchmark
     // --- Write: int via FormatInt64 ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt64 (int=1234)")]
-    public void FormatInt64_AsInt()
+    public void FormatInt64AsInt()
     {
         for (var i = 0; i < N; i++)
         {
@@ -38,7 +38,7 @@ public class FormatIntBenchmark
     // --- Write: short via FormatInt32 (current path) ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt32 (short=1234)")]
-    public void FormatInt32_Short()
+    public void FormatInt32Short()
     {
         for (var i = 0; i < N; i++)
         {
@@ -49,7 +49,7 @@ public class FormatIntBenchmark
     // --- Write: short via FormatInt64 (proposed path) ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt64 (short=1234)")]
-    public void FormatInt64_AsShort()
+    public void FormatInt64AsShort()
     {
         for (var i = 0; i < N; i++)
         {
@@ -60,7 +60,7 @@ public class FormatIntBenchmark
     // --- Write: long (FormatInt64) ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt64 (long=1234)")]
-    public void FormatInt64_Long()
+    public void FormatInt64Long()
     {
         for (var i = 0; i < N; i++)
         {
@@ -71,7 +71,7 @@ public class FormatIntBenchmark
     // --- Write: large int ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt32 (int=Int32.MaxValue)")]
-    public void FormatInt32_Max()
+    public void FormatInt32Max()
     {
         for (var i = 0; i < N; i++)
         {
@@ -80,7 +80,7 @@ public class FormatIntBenchmark
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt64 (int=Int32.MaxValue)")]
-    public void FormatInt64_AsIntMax()
+    public void FormatInt64AsIntMax()
     {
         for (var i = 0; i < N; i++)
         {
@@ -91,7 +91,7 @@ public class FormatIntBenchmark
     // --- Write: large long ---
 
     [Benchmark(OperationsPerInvoke = N, Description = "FormatInt64 (long=Int64.MaxValue)")]
-    public void FormatInt64_Max()
+    public void FormatInt64Max()
     {
         for (var i = 0; i < N; i++)
         {
@@ -106,7 +106,7 @@ public class FormatIntBenchmark
     private readonly byte[] parseLongBuffer = "  12345678901234"u8.ToArray();
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt32 (int=1234)")]
-    public int TryParseInt32_Short()
+    public int TryParseInt32Short()
     {
         var result = 0;
         for (var i = 0; i < N; i++)
@@ -118,7 +118,7 @@ public class FormatIntBenchmark
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt64 (int=1234)")]
-    public long TryParseInt64_Short()
+    public long TryParseInt64Short()
     {
         var result = 0L;
         for (var i = 0; i < N; i++)
@@ -130,7 +130,7 @@ public class FormatIntBenchmark
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt32 (int=123456)")]
-    public int TryParseInt32_Int()
+    public int TryParseInt32Int()
     {
         var result = 0;
         for (var i = 0; i < N; i++)
@@ -142,7 +142,7 @@ public class FormatIntBenchmark
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt64 (int=123456)")]
-    public long TryParseInt64_Int()
+    public long TryParseInt64Int()
     {
         var result = 0L;
         for (var i = 0; i < N; i++)
@@ -154,7 +154,7 @@ public class FormatIntBenchmark
     }
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt64 (long=12345678901234)")]
-    public long TryParseInt64_Long()
+    public long TryParseInt64Long()
     {
         var result = 0L;
         for (var i = 0; i < N; i++)

@@ -695,7 +695,7 @@ public class DiagnosticTest
     // ------------------------------------------------------------
 
     [Fact]
-    public void NullableDateTimeText_GeneratesCompilableCode()
+    public void NullableDateTimeTextGeneratesCompilableCode()
     {
         const string source = """
             using System;
@@ -731,7 +731,7 @@ public class DiagnosticTest
     // ------------------------------------------------------------
 
     [Fact]
-    public void NonNullableBoolReader_GeneratesCompilableCode()
+    public void NonNullableBoolReaderGeneratesCompilableCode()
     {
         const string source = """
             using System;
@@ -930,7 +930,7 @@ public class DiagnosticTest
     // ------------------------------------------------------------
 
     [Fact]
-    public void CustomAttributeWithEnumInitializer_GeneratesCompilableCode()
+    public void CustomAttributeWithEnumInitializerGeneratesCompilableCode()
     {
         // The attribute class lives in the test compilation, so its property initializers are read
         // from syntax. The raw text "Padding.Left" would not resolve in the generated file (no
@@ -995,7 +995,7 @@ public class DiagnosticTest
     // ------------------------------------------------------------
 
     [Fact]
-    public void CombinedFlagsStyle_GeneratesCompilableCode()
+    public void CombinedFlagsStyleGeneratesCompilableCode()
     {
         const string source = """
             using System;

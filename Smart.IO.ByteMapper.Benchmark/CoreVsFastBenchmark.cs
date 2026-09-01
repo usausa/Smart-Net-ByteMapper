@@ -16,7 +16,6 @@ using Smart.IO.ByteMapper.Converters;
 [Config(typeof(BenchmarkConfig))]
 public class CoreVsFastBenchmark
 {
-#pragma warning disable SA1203
     private const int N = 1000;
     private const int FieldLen = 20;
 
@@ -43,7 +42,6 @@ public class CoreVsFastBenchmark
     private readonly byte[] decReadBuffer = new byte[20];
     private readonly byte[] decWriteBuffer = new byte[20];
     private const decimal DecValue = 12345.67m;
-#pragma warning restore SA1203
 
     // ---- DateTime テキスト ----
     private const string DateFormat = "yyyyMMddHHmmss";
