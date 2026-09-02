@@ -7,6 +7,4 @@ using Smart.IO.ByteMapper;
 [MapProfile(35)]
 [MapTextMember(nameof(SampleData.Code), 0, 13)]
 [MapTextMember(nameof(SampleData.Name), 13, 20, CodePage = 932)]
-public sealed class SampleDataCodeNameProfile
-{
-}
+public sealed class SampleDataCodeNameProfile;

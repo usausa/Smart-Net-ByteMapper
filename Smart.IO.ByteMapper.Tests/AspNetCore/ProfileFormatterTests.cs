@@ -9,25 +9,15 @@ using Smart.IO.ByteMapper.AspNetCore.Formatters;
 // ── Dummy entity types for test isolation ────────────────────────────────────
 
 #pragma warning disable CA1812
-internal sealed class DefaultOnlyEntity
-{
-}
+internal sealed class DefaultOnlyEntity;
 
-internal sealed class ProfileOnlyEntity
-{
-}
+internal sealed class ProfileOnlyEntity;
 
-internal sealed class BothEntity
-{
-}
+internal sealed class BothEntity;
 
-internal sealed class NoBindingEntity
-{
-}
+internal sealed class NoBindingEntity;
 
-internal sealed class ProfileMarker
-{
-}
+internal sealed class ProfileMarker;
 #pragma warning restore CA1812
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

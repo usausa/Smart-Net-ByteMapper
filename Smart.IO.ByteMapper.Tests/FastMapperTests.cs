@@ -34,9 +34,7 @@ internal sealed class FastEntity
 [MapFastDecimalMember(nameof(FastEntity.Amount), 10, 12, Scale = 2)]
 [MapFastDateTimeMember(nameof(FastEntity.Date), 22, "yyyyMMdd")]
 [MapFastUnicodeMember(nameof(FastEntity.Name), 30, 10)]
-internal sealed class FastMemberProfile
-{
-}
+internal sealed class FastMemberProfile;
 #pragma warning restore CA1812
 
 // ---- Date-only record: the date field is the record tail (8 bytes) ----
@@ -61,9 +59,7 @@ internal sealed class FastOffsetEntity
 #pragma warning disable CA1812
 [MapProfile(8, UseDelimiter = false)]
 [MapFastDateTimeOffsetMember(nameof(FastOffsetEntity.Stamp), 0, "yyyyMMdd")]
-internal sealed class FastOffsetProfile
-{
-}
+internal sealed class FastOffsetProfile;
 #pragma warning restore CA1812
 
 internal static partial class FastMappers

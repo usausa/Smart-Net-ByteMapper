@@ -13,9 +13,7 @@ using System.Runtime.CompilerServices;
 namespace System.Runtime.CompilerServices
 {
     // For compatibility
-    internal sealed class IsExternalInit
-    {
-    }
+    internal sealed class IsExternalInit;
 }
 #pragma warning restore IDE0161
 #pragma warning restore IDE0130

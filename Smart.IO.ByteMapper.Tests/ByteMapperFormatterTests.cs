@@ -22,9 +22,7 @@ internal sealed class FormatterEntity
 }
 
 #pragma warning disable CA1812
-internal sealed class FormatterProfile
-{
-}
+internal sealed class FormatterProfile;
 #pragma warning restore CA1812
 
 // MVC フォーマッターのプロファイル解決を検証する。

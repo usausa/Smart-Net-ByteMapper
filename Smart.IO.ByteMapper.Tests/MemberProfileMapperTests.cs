@@ -15,9 +15,7 @@ using System;
 [MapTextMember(nameof(ProfileTarget.Code), 4, 8)]
 [MapBooleanMember(nameof(ProfileTarget.Active), 12)]
 [MapTextMember(nameof(ProfileTarget.Label), 13, 7)]
-internal sealed class MemberProfileA
-{
-}
+internal sealed class MemberProfileA;
 #pragma warning restore CA1812
 
 // ---- Option profiles: same MapText options expressed both ways (8 bytes, Code only) ----
@@ -34,9 +32,7 @@ internal sealed class OptPropertyProfile
 #pragma warning disable CA1812
 [MapProfile(8, UseDelimiter = false)]
 [MapTextMember(nameof(ProfileTarget.Code), 0, 8, Padding = Padding.Left, Filler = 0x2A)]
-internal sealed class OptMemberProfile
-{
-}
+internal sealed class OptMemberProfile;
 #pragma warning restore CA1812
 
 // ---- Mappers ----
