@@ -18,7 +18,7 @@ internal static class AspNetCoreGeneratorTestHelper
         .WithReference(typeof(ByteMapperEndpointAttribute).Assembly);
 
     public static IReadOnlyList<string> GetGeneratedSources(string source) =>
-        [.. Runner.Run(source).GeneratedSources.Values];
+        Runner.Run(source).GeneratedSources.Values.ToArray();
 
     public static IReadOnlyList<Diagnostic> GetDiagnostics(string source) =>
         Runner.WithDiagnosticPrefix("SBM").GetDiagnostics(source);
