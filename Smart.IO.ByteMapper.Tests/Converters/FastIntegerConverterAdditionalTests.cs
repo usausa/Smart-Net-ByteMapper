@@ -3,8 +3,6 @@ namespace Smart.IO.ByteMapper.Converters;
 using System;
 using System.Text;
 
-using Xunit;
-
 public class FastIntegerConverterAdditionalTests
 {
     // ---- null書き込み ----

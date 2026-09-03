@@ -1,35 +1,30 @@
-namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
+namespace Smart.IO.ByteMapper.Generator.Tests;
 
 using SourceGenerateHelper.Testing;
 
-public sealed class PipelineCacheTest
+public sealed class PipelineCacheTests
 {
     private const string Source =
         """
         using System;
         using Smart.IO.ByteMapper;
-        using Smart.IO.ByteMapper.AspNetCore;
 
         namespace Test;
 
-        [Map(33)]
-        public sealed class SampleData
+        [Map(36, UseDelimiter = false)]
+        public sealed class SampleRecord
         {
-            [MapText(0, 13)]
-            public string Code { get; set; } = default!;
+            [MapBinary<int>(0)]
+            public int Id { get; set; }
 
-            [MapText(13, 20)]
+            [MapText(4, 32)]
             public string Name { get; set; } = default!;
         }
 
-        [ByteMapperEndpoint]
-        public static partial class SampleDataMappers
+        public static partial class SampleMappers
         {
             [ByteReader]
-            public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
-
-            [ByteWriter]
-            public static partial void Write(Span<byte> destination, SampleData source);
+            public static partial void Read(ReadOnlySpan<byte> buffer, SampleRecord target);
         }
         """;
 
@@ -44,15 +39,13 @@ public sealed class PipelineCacheTest
         """
         using System;
         using Smart.IO.ByteMapper;
-        using Smart.IO.ByteMapper.AspNetCore;
 
         namespace Test;
 
-        [ByteMapperEndpoint]
         public static partial class AddedMappers
         {
-            [ByteReader]
-            public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+            [ByteWriter]
+            public static partial void Write(Span<byte> buffer, SampleRecord source);
         }
         """;
 
@@ -64,7 +57,7 @@ public sealed class PipelineCacheTest
     public void UnrelatedEditKeepsModelCached()
     {
         // Arrange & Act
-        var result = AspNetCoreGeneratorTestHelper.RunIncremental(Source, UnrelatedSource);
+        var result = GeneratorTestHelper.RunIncremental(Source, UnrelatedSource);
 
         // Assert
         Assert.Equal(result.FirstGeneratedText, result.SecondGeneratedText);
@@ -76,7 +69,7 @@ public sealed class PipelineCacheTest
     public void TargetEditRebuildsModel()
     {
         // Arrange & Act
-        var result = AspNetCoreGeneratorTestHelper.RunIncremental(Source, AddedTargetSource);
+        var result = GeneratorTestHelper.RunIncremental(Source, AddedTargetSource);
 
         // Assert
         Assert.Contains(result.OutputReasons, static x => x.IsChanged());

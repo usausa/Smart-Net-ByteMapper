@@ -2,7 +2,7 @@ namespace Smart.IO.ByteMapper.Generator.Tests;
 
 using Microsoft.CodeAnalysis;
 
-public class DiagnosticTest
+public class DiagnosticTests
 {
     // ------------------------------------------------------------
     // Binary type

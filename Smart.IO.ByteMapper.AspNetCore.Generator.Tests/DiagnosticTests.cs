@@ -1,6 +1,6 @@
 namespace Smart.IO.ByteMapper.AspNetCore.Generator.Tests;
 
-public class DiagnosticTest
+public class DiagnosticTests
 {
     private const string Entity = """
         using System;

@@ -1,8 +1,6 @@
 // ReSharper disable RedundantArgumentDefaultValue
 namespace Smart.IO.ByteMapper.Converters;
 
-using Xunit;
-
 public class TextConverterTests
 {
     [Fact]
