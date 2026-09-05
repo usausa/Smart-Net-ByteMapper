@@ -101,9 +101,11 @@ public class FormatIntBenchmark
 
     // --- Read: int via TryParseInt32 ---
 
+#pragma warning disable IDE0028
     private readonly byte[] parseShortBuffer = "      1234"u8.ToArray();
     private readonly byte[] parseIntBuffer = "    123456"u8.ToArray();
     private readonly byte[] parseLongBuffer = "  12345678901234"u8.ToArray();
+#pragma warning restore IDE0028
 
     [Benchmark(OperationsPerInvoke = N, Description = "TryParseInt32 (int=1234)")]
     public int TryParseInt32Short()

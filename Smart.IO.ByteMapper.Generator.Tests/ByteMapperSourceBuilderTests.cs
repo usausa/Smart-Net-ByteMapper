@@ -143,7 +143,9 @@ public class ByteMapperSourceBuilderTests
     [Fact]
     public void WhenConstantTypeMappingThenEmitsStaticFieldAndCopy()
     {
+#pragma warning disable IDE0028
         var tm = new TypeMappingModel(4, 2, TypeMappingKind.Constant, new EquatableArray<byte>("\r\n"u8.ToArray()), 0);
+#pragma warning restore IDE0028
         var src = Build(Method(MapperShape.WriteSpan, "Write", 6, [Member("Id", 0, 4)], [tm]));
 
         Assert.Contains("private static readonly byte[] ConstantBytes0 = [0x0D, 0x0A];", src, StringComparison.Ordinal);
