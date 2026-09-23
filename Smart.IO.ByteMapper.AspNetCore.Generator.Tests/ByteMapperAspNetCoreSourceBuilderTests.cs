@@ -184,7 +184,7 @@ public class ByteMapperAspNetCoreSourceBuilderTests
     public void WhenEntityAndProfileSuffixThenFilenameIncludesBoth()
     {
         Assert.Equal(
-            "Test_Ns_SampleMappers_EntityA_MyProfile.AspNetCore.g.cs",
+            "Test_Ns_SampleMappers_EntityA-MyProfile.AspNetCore.g.cs",
             HintName("Test.Ns", "SampleMappers", "_EntityA_MyProfile"));
     }
 }
