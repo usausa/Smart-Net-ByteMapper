@@ -63,7 +63,7 @@ public class TextConverterTests
     {
         var converter = new TextConverter(4, true, Padding.Right, 0x20, 20127);
         var buffer = new byte[4];
-        converter.Write(buffer, null!);
+        converter.Write(buffer, null);
         Assert.All(buffer, b => Assert.Equal(0x20, b));
     }
 

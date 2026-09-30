@@ -66,6 +66,49 @@ internal static class SymbolExtensions
         return null;
     }
 
+    public static List<IPropertySymbol> GetPropertiesWithBase(this ITypeSymbol type)
+    {
+        var types = new List<ITypeSymbol>();
+        for (var current = type; (current is not null) && (current.SpecialType != SpecialType.System_Object); current = current.BaseType)
+        {
+            types.Add(current);
+        }
+
+        var hidden = new HashSet<string>(StringComparer.Ordinal);
+        var properties = new List<IPropertySymbol>[types.Count];
+        for (var i = 0; i < types.Count; i++)
+        {
+            properties[i] = [];
+            var declared = new List<string>();
+            foreach (var member in types[i].GetMembers())
+            {
+                if (hidden.Contains(member.Name))
+                {
+                    continue;
+                }
+                if (member is IPropertySymbol { IsIndexer: false } property)
+                {
+                    properties[i].Add(property);
+                }
+                if (member.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal)
+                {
+                    declared.Add(member.Name);
+                }
+            }
+            hidden.UnionWith(declared);
+        }
+
+        var result = new List<IPropertySymbol>();
+        for (var i = types.Count - 1; i >= 0; i--)
+        {
+            result.AddRange(properties[i]);
+        }
+        return result;
+    }
+
+    public static IPropertySymbol? FindPropertyWithBase(this ITypeSymbol type, string name) =>
+        type.GetPropertiesWithBase().FirstOrDefault(x => x.Name == name);
+
     // Converts a TypedConstant to a C# source-code literal expression.
     // TypedConstant を C# ソースコードのリテラル式文字列に変換する。
     public static string ToLiteralExpression(this TypedConstant constant)

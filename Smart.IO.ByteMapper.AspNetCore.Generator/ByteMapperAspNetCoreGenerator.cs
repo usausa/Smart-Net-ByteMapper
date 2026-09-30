@@ -22,12 +22,19 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
                 static (s, _) => s is ClassDeclarationSyntax,
                 static (ctx, _) => ByteMapperAspNetCoreModelBuilder.ParseEndPoints(ctx));
 
-        // 診断はライブ表示のため RegisterSourceOutput 側へ分離する
-        context.RegisterSourceOutput(
-            parsed.Collect(),
-            static (spc, results) => ReportDiagnostics(spc, results));
+        var trees = context.ForAttributeWithMetadataNameSyntaxTrees(
+            ByteMapperAspNetCoreModelBuilder.ByteMapperEndpointAttributeName,
+            static (s, _) => s is ClassDeclarationSyntax);
 
-        var endPoints = parsed.SelectMany(static (result, _) => result.Value.EndPoints);
+        // 診断はライブ表示のため RegisterSourceOutput 側へ分離する
+        var collected = parsed.Collect();
+        context.RegisterSourceOutput(
+            collected.Combine(trees),
+            static (spc, results) => spc.ReportDiagnostics(
+                results.Left.SelectError().Concat(FindHintNameCollisions(results.Left).Values).Distinct(),
+                results.Right));
+
+        var endPoints = collected.SelectMany(static (results, _) => SelectEndPoints(results));
 
         // 生成は per-endPoint（1 endPoint = 1 ファイル）
         context.RegisterImplementationSourceOutput(
@@ -40,24 +47,46 @@ public sealed class ByteMapperAspNetCoreGenerator : IIncrementalGenerator
             static (spc, items) => ExecuteBootstrap(spc, items));
     }
 
-    private static void ReportDiagnostics(SourceProductionContext spc, ImmutableArray<Result<EndPointCollection>> results)
+    private static IEnumerable<EndPointModel> SelectEndPoints(ImmutableArray<Result<EndPointCollection>> results)
     {
-        foreach (var diagnostic in results.SelectError())
+        var collisions = FindHintNameCollisions(results);
+        var emitted = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var ep in results.SelectValue().SelectMany(static x => x.EndPoints))
         {
-            spc.ReportDiagnostic(diagnostic);
+            if (!collisions.ContainsKey(ep.HintName) && emitted.Add(ep.HintName))
+            {
+                yield return ep;
+            }
         }
     }
+
+    private static Dictionary<string, DiagnosticInfo> FindHintNameCollisions(ImmutableArray<Result<EndPointCollection>> results)
+    {
+        var collisions = new Dictionary<string, DiagnosticInfo>(StringComparer.Ordinal);
+        var firsts = new Dictionary<string, EndPointModel>(StringComparer.OrdinalIgnoreCase);
+        foreach (var ep in results.SelectValue().SelectMany(static x => x.EndPoints).OrderBy(static x => x.HintName, StringComparer.Ordinal))
+        {
+            if (!firsts.TryGetValue(ep.HintName, out var first))
+            {
+                firsts.Add(ep.HintName, ep);
+            }
+            else if ((first.HintName != ep.HintName) && !collisions.ContainsKey(ep.HintName))
+            {
+                collisions.Add(ep.HintName, new DiagnosticInfo(Diagnostics.HintNameCollision, (Location?)null, TrimGlobal(ep.ClassFullName), TrimGlobal(first.ClassFullName)));
+            }
+        }
+
+        return collisions;
+    }
+
+    private static string TrimGlobal(string name) =>
+        name.StartsWith("global::", StringComparison.Ordinal) ? name.Substring("global::".Length) : name;
 
     private static void Execute(SourceProductionContext spc, EndPointModel ep)
     {
         var builder = new SourceBuilder();
         ByteMapperAspNetCoreSourceBuilder.BuildBinding(builder, ep);
-        // NameSuffix arrives already '_'-prefixed (or empty); HintNameBuilder inserts the separator
-        // itself, so trim it before handing the parts over.
-        spc.AddSource(
-            HintNameBuilder.BuildWithExtension(
-                ep.Namespace, ".AspNetCore.g.cs", ep.ClassName, ep.NameSuffix.TrimStart('_')),
-            builder);
+        spc.AddSource(ep.HintName, builder);
     }
 
     private static void ExecuteBootstrap(

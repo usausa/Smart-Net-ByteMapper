@@ -42,7 +42,7 @@ public sealed class TextConverter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public void Write(Span<byte> destination, string value)
+    public void Write(Span<byte> destination, string? value)
     {
         if (String.IsNullOrEmpty(value))
         {

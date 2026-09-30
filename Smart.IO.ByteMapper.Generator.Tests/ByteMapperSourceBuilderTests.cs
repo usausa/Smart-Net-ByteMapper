@@ -1,7 +1,5 @@
 namespace Smart.IO.ByteMapper.Generator.Tests;
 
-using Microsoft.CodeAnalysis;
-
 using Smart.IO.ByteMapper.Generator;
 using Smart.IO.ByteMapper.Generator.Models;
 
@@ -37,10 +35,15 @@ public class ByteMapperSourceBuilderTests
         string targetParam = "target")
         => new(
             "Test",
-            "Mappers",
-            isValueType,
-            Accessibility.Public,
-            methodName,
+            new EquatableArray<string>([isValueType ? "partial struct Mappers" : "partial class Mappers"]),
+            "Test_Mappers.g.cs",
+            shape switch
+            {
+                MapperShape.InPlace => $"public static partial void {methodName}(global::System.ReadOnlySpan<byte> {bufferParam}, {EntityFqn} {targetParam})",
+                MapperShape.NewInstance => $"public static partial {EntityFqn} {methodName}(global::System.ReadOnlySpan<byte> {bufferParam})",
+                MapperShape.WriteSpan => $"public static partial void {methodName}(global::System.Span<byte> {bufferParam}, {EntityFqn} {targetParam})",
+                _ => $"public static partial byte[] {methodName}({EntityFqn} {targetParam})"
+            },
             shape,
             EntityFqn,
             size,
@@ -79,7 +82,7 @@ public class ByteMapperSourceBuilderTests
         var src = Build(Method(MapperShape.InPlace, "Read", 4, [Member("Id", 0, 4)]));
 
         Assert.Contains("static partial void Read(global::System.ReadOnlySpan<byte> buffer, global::Test.Entity target)", src, StringComparison.Ordinal);
-        Assert.Contains("target.Id = Converter0.Read(buffer.Slice(0, 4));", src, StringComparison.Ordinal);
+        Assert.Contains("target.Id = __Converter0.Read(buffer.Slice(0, 4));", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -96,7 +99,7 @@ public class ByteMapperSourceBuilderTests
     {
         var src = Build(Method(MapperShape.WriteSpan, "Write", 4, [Member("Id", 0, 4)]));
 
-        Assert.Contains("Converter0.Write(buffer.Slice(0, 4), target.Id);", src, StringComparison.Ordinal);
+        Assert.Contains("__Converter0.Write(buffer.Slice(0, 4), target.Id);", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -105,7 +108,7 @@ public class ByteMapperSourceBuilderTests
         var src = Build(Method(MapperShape.WriteAlloc, "WriteAlloc", 4, [Member("Id", 0, 4)]));
 
         Assert.Contains("var buffer = new byte[4];", src, StringComparison.Ordinal);
-        Assert.Contains("var span = (global::System.Span<byte>)buffer;", src, StringComparison.Ordinal);
+        Assert.Contains("var __span = (global::System.Span<byte>)buffer;", src, StringComparison.Ordinal);
         Assert.Contains("return buffer;", src, StringComparison.Ordinal);
     }
 
@@ -114,7 +117,7 @@ public class ByteMapperSourceBuilderTests
     {
         var src = Build(Method(MapperShape.InPlace, "Read", 4, [Member("Id", 0, 4, converterFqn: "global::Test.IntConverter")]));
 
-        Assert.Contains("private static readonly global::Test.IntConverter Converter0 = new();", src, StringComparison.Ordinal);
+        Assert.Contains("private static readonly global::Test.IntConverter __Converter0 = new();", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -126,9 +129,9 @@ public class ByteMapperSourceBuilderTests
         var src = Build(read, write);
 
         // Deduplicated to a single shared field; Converter1 must not appear.
-        var firstIndex = src.IndexOf("Converter0 = new()", StringComparison.Ordinal);
+        var firstIndex = src.IndexOf("__Converter0 = new()", StringComparison.Ordinal);
         Assert.NotEqual(-1, firstIndex);
-        Assert.DoesNotContain("Converter1", src, StringComparison.Ordinal);
+        Assert.DoesNotContain("__Converter1", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -148,8 +151,8 @@ public class ByteMapperSourceBuilderTests
 #pragma warning restore IDE0028
         var src = Build(Method(MapperShape.WriteSpan, "Write", 6, [Member("Id", 0, 4)], [tm]));
 
-        Assert.Contains("private static readonly byte[] ConstantBytes0 = [0x0D, 0x0A];", src, StringComparison.Ordinal);
-        Assert.Contains("new global::System.ReadOnlySpan<byte>(ConstantBytes0).CopyTo(buffer.Slice(4, 2));", src, StringComparison.Ordinal);
+        Assert.Contains("private static readonly byte[] __ConstantBytes0 = [0x0D, 0x0A];", src, StringComparison.Ordinal);
+        Assert.Contains("new global::System.ReadOnlySpan<byte>(__ConstantBytes0).CopyTo(buffer.Slice(4, 2));", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -158,7 +161,7 @@ public class ByteMapperSourceBuilderTests
         var member = Member("Value", 0, 0, SizeKind.StaticMember, converterFqn: "global::Test.BinaryConverter");
         var src = Build(Method(MapperShape.InPlace, "Read", 4, [member]));
 
-        Assert.Contains("Converter0.Read(buffer.Slice(0, global::Test.BinaryConverter.Size));", src, StringComparison.Ordinal);
+        Assert.Contains("__Converter0.Read(buffer.Slice(0, global::Test.BinaryConverter.Size));", src, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -167,7 +170,7 @@ public class ByteMapperSourceBuilderTests
         var member = Member("Value", 0, 0, SizeKind.Instance, converterFqn: "global::Test.TextConverter");
         var src = Build(Method(MapperShape.InPlace, "Read", 4, [member]));
 
-        Assert.Contains("Converter0.Read(buffer.Slice(0, Converter0.Size));", src, StringComparison.Ordinal);
+        Assert.Contains("__Converter0.Read(buffer.Slice(0, __Converter0.Size));", src, StringComparison.Ordinal);
     }
 
     [Fact]

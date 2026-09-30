@@ -1,17 +1,14 @@
 namespace Smart.IO.ByteMapper.Generator.Models;
 
-using Microsoft.CodeAnalysis;
-
 using SourceGenerateHelper;
 
 internal sealed record MapperMethodModel(
     // Containing type
     string Namespace,
-    string ClassName,
-    bool IsValueType,
+    EquatableArray<string> ContainingTypes,
+    string HintName,
     // Method signature
-    Accessibility MethodAccessibility,
-    string MethodName,
+    string Signature,
     // Mapping target and layout
     MapperShape Shape,
     string TargetTypeFqn,
@@ -21,4 +18,7 @@ internal sealed record MapperMethodModel(
     EquatableArray<MemberMappingModel> Members,
     EquatableArray<TypeMappingModel> TypeMappings,
     // Diagnostics
-    EquatableArray<DiagnosticInfo> Diagnostics);
+    EquatableArray<DiagnosticInfo> Diagnostics,
+    bool IsFallback = false,
+    string TypeName = "",
+    bool HasMethodImpl = false);

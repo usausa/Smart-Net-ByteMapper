@@ -2,15 +2,18 @@ namespace Smart.IO.ByteMapper.Generator;
 
 using Microsoft.CodeAnalysis;
 
+using SourceGenerateHelper;
+
 internal static class Diagnostics
 {
     public static DiagnosticDescriptor InvalidMethodDefinition { get; } = new(
         id: "SBM0001",
         title: "Invalid method definition",
-        messageFormat: "[ByteReader]/[ByteWriter] method must be static partial. method=[{0}]",
+        messageFormat: "[ByteReader]/[ByteWriter] method must be static partial without an implementation. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor InvalidMethodSignature { get; } = new(
         id: "SBM0002",
@@ -18,7 +21,8 @@ internal static class Diagnostics
         messageFormat: "[ByteReader]/[ByteWriter] method signature is not supported. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor MissingMapAttribute { get; } = new(
         id: "SBM0003",
@@ -26,7 +30,8 @@ internal static class Diagnostics
         messageFormat: "Target type has no [Map] attribute. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor InvalidOffset { get; } = new(
         id: "SBM0004",
@@ -34,7 +39,8 @@ internal static class Diagnostics
         messageFormat: "Offset or length must not be negative. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor RangeOverlap { get; } = new(
         id: "SBM0005",
@@ -50,7 +56,8 @@ internal static class Diagnostics
         messageFormat: "Layout exceeds [Map] size. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor UnsupportedBinaryType { get; } = new(
         id: "SBM0007",
@@ -58,7 +65,8 @@ internal static class Diagnostics
         messageFormat: "Type is not supported for [MapBinary]. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor ConverterContractMismatch { get; } = new(
         id: "SBM0008",
@@ -66,7 +74,8 @@ internal static class Diagnostics
         messageFormat: "Converter does not satisfy the contract. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor ProfilePropertyNotFound { get; } = new(
         id: "SBM0009",
@@ -74,7 +83,8 @@ internal static class Diagnostics
         messageFormat: "Property is not found in the target type. method=[{0}], property=[{1}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor ProfileMissingMapAttribute { get; } = new(
         id: "SBM0010",
@@ -82,15 +92,17 @@ internal static class Diagnostics
         messageFormat: "Profile type must have [Map] attribute. method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor TargetNotInstantiatable { get; } = new(
         id: "SBM0011",
         title: "Target type is not instantiatable",
-        messageFormat: "Target type has no parameterless constructor. method=[{0}]",
+        messageFormat: "Target type cannot be created with a public parameterless constructor (or has required members). method=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor MemberAttributeRequiresProfile { get; } = new(
         id: "SBM0012",
@@ -114,7 +126,8 @@ internal static class Diagnostics
         messageFormat: "[Map] and [MapProfile] cannot be combined. type=[{0}]",
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Error,
-        isEnabledByDefault: true);
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 
     public static DiagnosticDescriptor UnknownMemberSize { get; } = new(
         id: "SBM0015",
@@ -123,4 +136,22 @@ internal static class Diagnostics
         category: "Usage",
         defaultSeverity: DiagnosticSeverity.Warning,
         isEnabledByDefault: true);
+
+    public static DiagnosticDescriptor UnmappableProperty { get; } = new(
+        id: "SBM0016",
+        title: "Property cannot be mapped",
+        messageFormat: "Property cannot be read or written by the mapper (static, inaccessible, init-only, required, obsolete as an error, or without the accessor). method=[{0}], property=[{1}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
+
+    public static DiagnosticDescriptor HintNameCollision { get; } = new(
+        id: "SBM0017",
+        title: "Type name differs only in case",
+        messageFormat: "Type name differs only in case from another type, and its source is not generated. type=[{0}], other=[{1}]",
+        category: "Usage",
+        defaultSeverity: DiagnosticSeverity.Error,
+        isEnabledByDefault: true,
+        customTags: DiagnosticTags.NotSuppressible);
 }
