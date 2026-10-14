@@ -30,11 +30,75 @@ public class DiagnosticTests
         """;
 
     // ------------------------------------------------------------
-    // SBM1001 : a reader has no matching writer
+    // Endpoint binding (10xx)
     // ------------------------------------------------------------
 
+    [Theory]
+    [InlineData("public static class Outer", "public static partial class SampleDataMappers")]
+    [InlineData("public static partial class Outer", "private static partial class SampleDataMappers")]
+    [InlineData("public partial class Outer<T>", "public static partial class SampleDataMappers")]
+    [InlineData("public static partial class Outer", "public static class SampleDataMappers")]
+    public void Sbm1001InvalidEndpointClassEmitsDiagnostic(string outer, string inner)
+    {
+        var diagnostics = AspNetCoreGeneratorTestHelper.GetDiagnostics(Entity +
+            $$"""
+
+            {{outer}}
+            {
+                [ByteMapperEndpoint]
+                {{inner}}
+                {
+                    [ByteReader]
+                    public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+
+                    [ByteWriter]
+                    public static partial void Write(Span<byte> destination, SampleData source);
+                }
+            }
+            """);
+
+        Assert.Contains(diagnostics, static x => x.Id == "SBM1001");
+    }
+
     [Fact]
-    public void Sbm1001ReaderWithoutWriterEmitsDiagnostic()
+    public void Sbm1002WriterWithoutReaderEmitsDiagnostic()
+    {
+        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
+            """
+
+            [ByteMapperEndpoint]
+            public static partial class SampleDataMappers
+            {
+                [ByteWriter]
+                public static partial void Write(Span<byte> destination, SampleData source);
+            }
+            """);
+
+        Assert.Equal(["SBM1002"], problems);
+    }
+
+    [Fact]
+    public void Sbm1002ReaderReturningNewInstanceIsNotPaired()
+    {
+        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
+            """
+
+            [ByteMapperEndpoint]
+            public static partial class SampleDataMappers
+            {
+                [ByteReader]
+                public static partial SampleData Read(ReadOnlySpan<byte> source);
+
+                [ByteWriter]
+                public static partial void Write(Span<byte> destination, SampleData source);
+            }
+            """);
+
+        Assert.Equal(["SBM1002"], problems);
+    }
+
+    [Fact]
+    public void Sbm1003ReaderWithoutWriterEmitsDiagnostic()
     {
         var diagnostics = AspNetCoreGeneratorTestHelper.GetDiagnostics(Entity +
             """
@@ -47,15 +111,47 @@ public class DiagnosticTests
             }
             """);
 
-        Assert.Contains(diagnostics, static x => x.Id == "SBM1001");
+        Assert.Contains(diagnostics, static x => x.Id == "SBM1003");
     }
 
-    // ------------------------------------------------------------
-    // SBM1002 : the entity size cannot be resolved
-    // ------------------------------------------------------------
+    [Theory]
+    [InlineData("public Created(string code) => Code = code;")]
+    [InlineData("private Created() { }")]
+    [InlineData("public required int Id { get; set; }")]
+    public void Sbm1004EntityNotCreatableEmitsDiagnostic(string member)
+    {
+        var source = $$"""
+            using System;
+            using Smart.IO.ByteMapper;
+            using Smart.IO.ByteMapper.AspNetCore;
+
+            namespace Test;
+
+            [Map(13)]
+            public sealed class Created
+            {
+                {{member}}
+
+                [MapText(0, 13)]
+                public string Code { get; set; } = default!;
+            }
+
+            [ByteMapperEndpoint]
+            public static partial class CreatedMappers
+            {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> source, Created target);
+
+                [ByteWriter]
+                public static partial void Write(Span<byte> destination, Created source);
+            }
+            """;
+
+        Assert.Equal(["SBM1004"], AspNetCoreGeneratorTestHelper.GetProblemIds(source));
+    }
 
     [Fact]
-    public void Sbm1002UnknownEntitySizeEmitsDiagnostic()
+    public void Sbm1005UnknownEntitySizeEmitsDiagnostic()
     {
         var diagnostics = AspNetCoreGeneratorTestHelper.GetDiagnostics(Entity +
             """
@@ -71,11 +167,42 @@ public class DiagnosticTests
             }
             """);
 
-        Assert.Contains(diagnostics, static x => x.Id == "SBM1002");
+        Assert.Contains(diagnostics, static x => x.Id == "SBM1005");
+    }
+
+    [Fact]
+    public void Sbm1006CaseOnlyClassNamesGenerateTheFirstOnly()
+    {
+        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
+            """
+
+            [ByteMapperEndpoint]
+            public static partial class Mappers
+            {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+
+                [ByteWriter]
+                public static partial void Write(Span<byte> destination, SampleData source);
+            }
+
+            [ByteMapperEndpoint]
+            public static partial class mappers
+            {
+                [ByteReader]
+                public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
+
+                [ByteWriter]
+                public static partial void Write(Span<byte> destination, SampleData source);
+            }
+            """);
+
+        Assert.Contains("SBM1006", problems);
+        Assert.DoesNotContain("CS8785", problems);
     }
 
     // ------------------------------------------------------------
-    // A complete pair must stay clean
+    // Valid
     // ------------------------------------------------------------
 
     [Fact]
@@ -97,51 +224,6 @@ public class DiagnosticTests
 
         Assert.Empty(diagnostics);
     }
-
-    // ------------------------------------------------------------
-    // SBM1003 : a writer has no reader to pair
-    // ------------------------------------------------------------
-
-    [Fact]
-    public void Sbm1003WriterWithoutReaderEmitsDiagnostic()
-    {
-        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
-            """
-
-            [ByteMapperEndpoint]
-            public static partial class SampleDataMappers
-            {
-                [ByteWriter]
-                public static partial void Write(Span<byte> destination, SampleData source);
-            }
-            """);
-
-        Assert.Equal(["SBM1003"], problems);
-    }
-
-    [Fact]
-    public void Sbm1003ReaderReturningNewInstanceIsNotPaired()
-    {
-        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
-            """
-
-            [ByteMapperEndpoint]
-            public static partial class SampleDataMappers
-            {
-                [ByteReader]
-                public static partial SampleData Read(ReadOnlySpan<byte> source);
-
-                [ByteWriter]
-                public static partial void Write(Span<byte> destination, SampleData source);
-            }
-            """);
-
-        Assert.Equal(["SBM1003"], problems);
-    }
-
-    // ------------------------------------------------------------
-    // Generated bindings compile
-    // ------------------------------------------------------------
 
     [Fact]
     public void WriterReturningArrayIsAdapted()
@@ -236,24 +318,6 @@ public class DiagnosticTests
     }
 
     [Fact]
-    public void ErrorsCannotBeSuppressed()
-    {
-        var descriptors = typeof(Diagnostics)
-            .GetProperties(BindingFlags.Public | BindingFlags.Static)
-            .Where(static x => x.PropertyType == typeof(DiagnosticDescriptor))
-            .Select(static x => (DiagnosticDescriptor)x.GetValue(null)!)
-            .ToList();
-
-        Assert.All(
-            descriptors.Where(static x => x.DefaultSeverity == DiagnosticSeverity.Error),
-            static x => Assert.Equal([WellKnownDiagnosticTags.NotConfigurable, WellKnownDiagnosticTags.Compiler], x.CustomTags));
-    }
-
-    // ------------------------------------------------------------
-    // Nested endpoint classes repeat the containing types
-    // ------------------------------------------------------------
-
-    [Fact]
     public void NestedEndpointClassRepeatsContainingTypes()
     {
         var source = Entity +
@@ -278,108 +342,20 @@ public class DiagnosticTests
     }
 
     // ------------------------------------------------------------
-    // SBM1004 : the endpoint class cannot be extended by the generated code
-    // ------------------------------------------------------------
-
-    [Theory]
-    [InlineData("public static class Outer", "public static partial class SampleDataMappers")]
-    [InlineData("public static partial class Outer", "private static partial class SampleDataMappers")]
-    [InlineData("public partial class Outer<T>", "public static partial class SampleDataMappers")]
-    [InlineData("public static partial class Outer", "public static class SampleDataMappers")]
-    public void Sbm1004InvalidEndpointClassEmitsDiagnostic(string outer, string inner)
-    {
-        var diagnostics = AspNetCoreGeneratorTestHelper.GetDiagnostics(Entity +
-            $$"""
-
-            {{outer}}
-            {
-                [ByteMapperEndpoint]
-                {{inner}}
-                {
-                    [ByteReader]
-                    public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
-
-                    [ByteWriter]
-                    public static partial void Write(Span<byte> destination, SampleData source);
-                }
-            }
-            """);
-
-        Assert.Contains(diagnostics, static x => x.Id == "SBM1004");
-    }
-
-    // ------------------------------------------------------------
-    // SBM1005 : the binding cannot create the entity
-    // ------------------------------------------------------------
-
-    [Theory]
-    [InlineData("public Created(string code) => Code = code;")]
-    [InlineData("private Created() { }")]
-    [InlineData("public required int Id { get; set; }")]
-    public void Sbm1005EntityNotCreatableEmitsDiagnostic(string member)
-    {
-        var source = $$"""
-            using System;
-            using Smart.IO.ByteMapper;
-            using Smart.IO.ByteMapper.AspNetCore;
-
-            namespace Test;
-
-            [Map(13)]
-            public sealed class Created
-            {
-                {{member}}
-
-                [MapText(0, 13)]
-                public string Code { get; set; } = default!;
-            }
-
-            [ByteMapperEndpoint]
-            public static partial class CreatedMappers
-            {
-                [ByteReader]
-                public static partial void Read(ReadOnlySpan<byte> source, Created target);
-
-                [ByteWriter]
-                public static partial void Write(Span<byte> destination, Created source);
-            }
-            """;
-
-        Assert.Equal(["SBM1005"], AspNetCoreGeneratorTestHelper.GetProblemIds(source));
-    }
-
-    // ------------------------------------------------------------
-    // SBM1006 : endpoint class names differing only in case
+    // Reporting
     // ------------------------------------------------------------
 
     [Fact]
-    public void Sbm1006CaseOnlyClassNamesGenerateTheFirstOnly()
+    public void ErrorsCannotBeSuppressed()
     {
-        var problems = AspNetCoreGeneratorTestHelper.GetProblemIds(Entity +
-            """
+        var descriptors = typeof(Diagnostics)
+            .GetProperties(BindingFlags.Public | BindingFlags.Static)
+            .Where(static x => x.PropertyType == typeof(DiagnosticDescriptor))
+            .Select(static x => (DiagnosticDescriptor)x.GetValue(null)!)
+            .ToList();
 
-            [ByteMapperEndpoint]
-            public static partial class Mappers
-            {
-                [ByteReader]
-                public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
-
-                [ByteWriter]
-                public static partial void Write(Span<byte> destination, SampleData source);
-            }
-
-            [ByteMapperEndpoint]
-            public static partial class mappers
-            {
-                [ByteReader]
-                public static partial void Read(ReadOnlySpan<byte> source, SampleData target);
-
-                [ByteWriter]
-                public static partial void Write(Span<byte> destination, SampleData source);
-            }
-            """);
-
-        Assert.Contains("SBM1006", problems);
-        Assert.DoesNotContain("CS8785", problems);
+        Assert.All(
+            descriptors.Where(static x => x.DefaultSeverity == DiagnosticSeverity.Error),
+            static x => Assert.Equal([WellKnownDiagnosticTags.NotConfigurable, WellKnownDiagnosticTags.Compiler], x.CustomTags));
     }
 }

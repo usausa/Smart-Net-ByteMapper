@@ -132,7 +132,7 @@ public class RobustnessTests
     }
 
     // ------------------------------------------------------------
-    // SBM0016 — 生成コードが読み書きできないプロパティ
+    // SBM0202 — 生成コードが読み書きできないプロパティ
     // ------------------------------------------------------------
 
     [Theory]
@@ -140,7 +140,7 @@ public class RobustnessTests
     [InlineData("public string Code { get; } = default!;")]
     [InlineData("public static string Code { get; set; } = default!;")]
     [InlineData("public string Code { get; private set; } = default!;")]
-    public void Sbm0016UnassignablePropertyEmitsDiagnostic(string property)
+    public void Sbm0202UnassignablePropertyEmitsDiagnostic(string property)
     {
         var source = $$"""
             using System;
@@ -160,11 +160,11 @@ public class RobustnessTests
             }
             """;
 
-        Assert.Equal(["SBM0016"], GeneratorTestHelper.GetProblemIds(source));
+        Assert.Equal(["SBM0202"], GeneratorTestHelper.GetProblemIds(source));
     }
 
     [Fact]
-    public void Sbm0011RequiredMemberWithNewInstanceEmitsDiagnostic()
+    public void Sbm0101RequiredMemberWithNewInstanceEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -184,15 +184,15 @@ public class RobustnessTests
             }
             """;
 
-        Assert.Equal(["SBM0011"], GeneratorTestHelper.GetProblemIds(source));
+        Assert.Equal(["SBM0101"], GeneratorTestHelper.GetProblemIds(source));
     }
 
     // ------------------------------------------------------------
-    // SBM0008 — コンバーターの型がプロパティと合わない
+    // SBM0204 — コンバーターの型がプロパティと合わない
     // ------------------------------------------------------------
 
     [Fact]
-    public void Sbm0008ConverterTypeMismatchEmitsDiagnostic()
+    public void Sbm0204ConverterTypeMismatchEmitsDiagnostic()
     {
         const string source = """
             using System;
@@ -212,7 +212,7 @@ public class RobustnessTests
             }
             """;
 
-        Assert.Equal(["SBM0008"], GeneratorTestHelper.GetProblemIds(source));
+        Assert.Equal(["SBM0204"], GeneratorTestHelper.GetProblemIds(source));
     }
 
     // ------------------------------------------------------------
@@ -362,7 +362,7 @@ public class RobustnessTests
             }
             """;
 
-        Assert.Equal(["SBM0007"], GeneratorTestHelper.GetProblemIds(source));
+        Assert.Equal(["SBM0203"], GeneratorTestHelper.GetProblemIds(source));
     }
 
     [Fact]
@@ -384,10 +384,10 @@ public class RobustnessTests
 
             public static partial class Mappers
             {
-            #pragma warning disable SBM0005
+            #pragma warning disable SBM0304
                 [ByteReader]
                 public static partial void Read(ReadOnlySpan<byte> buffer, Record target);
-            #pragma warning restore SBM0005
+            #pragma warning restore SBM0304
             }
             """;
 
@@ -440,11 +440,11 @@ public class RobustnessTests
     }
 
     // ------------------------------------------------------------
-    // SBM0017 : 大文字小文字だけ違う型は最初の 1 つだけ生成する
+    // SBM0401 : 大文字小文字だけ違う型は最初の 1 つだけ生成する
     // ------------------------------------------------------------
 
     [Fact]
-    public void Sbm0017CaseOnlyTypeNamesGenerateTheFirstOnly()
+    public void Sbm0401CaseOnlyTypeNamesGenerateTheFirstOnly()
     {
         const string source = """
             using System;
@@ -472,7 +472,7 @@ public class RobustnessTests
 
         var problems = GeneratorTestHelper.GetProblemIds(source);
 
-        Assert.Contains("SBM0017", problems);
+        Assert.Contains("SBM0401", problems);
         Assert.DoesNotContain("CS8785", problems);
     }
 
@@ -580,12 +580,12 @@ public class RobustnessTests
     }
 
     // ------------------------------------------------------------
-    // [Obsolete] のプロパティは警告なしに写像し、エラーのものは SBM0016
+    // [Obsolete] のプロパティは警告なしに写像し、エラーのものは SBM0202
     // ------------------------------------------------------------
 
     [Theory]
     [InlineData("[Obsolete]", new string[0])]
-    [InlineData("[Obsolete(\"old\", true)]", new[] { "SBM0016" })]
+    [InlineData("[Obsolete(\"old\", true)]", new[] { "SBM0202" })]
     public void ObsoletePropertyIsMappedWithoutWarning(string attribute, string[] expected)
     {
         var source = $$"""

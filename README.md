@@ -262,6 +262,6 @@ Every converter has a matching `[Map...Member]` form (`[MapTextMember]`, `[MapBi
 
 | Situation | Diagnostic |
 |---|---|
-| `[Map...Member]` used under `[Map]` | **SBM0012** (warning, ignored) |
-| property-level converter attributes under `[MapProfile]` | **SBM0013** (warning, ignored) |
-| both `[Map]` and `[MapProfile]` on one type | **SBM0014** (error) |
+| `[Map...Member]` used under `[Map]` | **SBM0206** (warning, ignored) |
+| property-level converter attributes under `[MapProfile]` | **SBM0205** (warning, ignored) |
+| both `[Map]` and `[MapProfile]` on one type | **SBM0102** (error) |
