@@ -7,6 +7,8 @@
 
 Fixed-length binary/text byte array mapping library for .NET with source generator support.
 
+[Source Generator 詳細ソースリーディングガイド（日本語）](docs/SourceGenerator-Guide.ja.md)
+
 ## Features
 
 * Attribute-based mapping between C# objects and fixed-length byte arrays

@@ -17,9 +17,7 @@ public sealed class BytesConverter
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-#pragma warning disable IDE0028
     public byte[] Read(ReadOnlySpan<byte> source) => source[..size].ToArray();
-#pragma warning restore IDE0028
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Write(Span<byte> destination, byte[]? value)
